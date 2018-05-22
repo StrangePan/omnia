@@ -7,18 +7,18 @@ public interface DirectedGraph<E> extends Graph<E> {
   interface Node<E> extends Graph.Node<E> {
 
     @Override
-    Collection<? extends Edge<E>> edges();
+    Set<? extends Edge<E>> edges();
 
-    Collection<? extends Edge<E>> outgoingEdges();
+    Set<? extends Edge<E>> outgoingEdges();
 
-    Collection<? extends Edge<E>> incomingEdges();
+    Set<? extends Edge<E>> incomingEdges();
 
     @Override
-    Collection<? extends Node<E>> neighbors();
+    Set<? extends Node<E>> neighbors();
 
-    Collection<? extends Node<E>> successors();
+    Set<? extends Node<E>> successors();
 
-    Collection<? extends Node<E>> predecessors();
+    Set<? extends Node<E>> predecessors();
   }
 
   interface Edge<E> extends Graph.Edge<E> {
@@ -35,8 +35,8 @@ public interface DirectedGraph<E> extends Graph<E> {
   Optional<? extends Node<E>> nodeOf(E element);
 
   @Override
-  Collection<? extends Node<E>> nodes();
+  Set<? extends Node<E>> nodes();
 
   @Override
-  Collection<? extends Edge<E>> edges();
+  Set<? extends Edge<E>> edges();
 }

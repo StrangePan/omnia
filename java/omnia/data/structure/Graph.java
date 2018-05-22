@@ -11,7 +11,7 @@ public interface Graph<E> extends Container<E>, Countable {
 
     E element();
 
-    Collection<? extends Edge<E>> edges();
+    Set<? extends Edge<E>> edges();
 
     Set<? extends Node<E>> neighbors();
   }
@@ -23,7 +23,9 @@ public interface Graph<E> extends Container<E>, Countable {
 
   Optional<? extends Node<E>> nodeOf(E element);
 
+  Set<E> contents();
+
   Set<? extends Node<E>> nodes();
 
-  Collection<? extends Edge<E>> edges();
+  Set<? extends Edge<E>> edges();
 }

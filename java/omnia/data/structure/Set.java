@@ -1,3 +1,45 @@
 package omnia.data.structure;
 
-public interface Set<E> extends Collection<E> {}
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.stream.Stream;
+
+public interface Set<E> extends Collection<E> {
+
+  static <E> Set<E> masking(java.util.Set<E> javaSet) {
+    return new Set<>() {
+
+      @Override
+      public int count() {
+        return javaSet.size();
+      }
+
+      @Override
+      public boolean contains(E element) {
+        return javaSet.contains(element);
+      }
+
+      @Override
+      public Iterator<E> iterator() {
+        return javaSet.iterator();
+      }
+
+      @Override
+      public Stream<E> stream() {
+        return javaSet.stream();
+      }
+    };
+  }
+
+  static <E> Set<E> masking(java.util.Collection<E> javaCollection) {
+    return Set.masking(new HashSet<>(javaCollection));
+  }
+
+  Set<?> EMPTY_SET = masking(Collections.emptySet());
+
+  @SuppressWarnings("unchecked")
+  static <E> Set<E> empty() {
+    return (Set<E>) EMPTY_SET;
+  }
+}
