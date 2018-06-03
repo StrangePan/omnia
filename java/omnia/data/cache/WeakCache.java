@@ -5,6 +5,7 @@ import omnia.contract.Container;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class WeakCache<K, V> implements Container<K> {
@@ -26,5 +27,11 @@ public class WeakCache<K, V> implements Container<K> {
       cache.put(key, new WeakReference<>(cachedResult));
     }
     return cachedResult;
+  }
+
+  public Optional<V> get(K key) {
+    WeakReference<V> cachedReference = cache.get(key);
+    V cachedResult = cachedReference != null ? cachedReference.get() : null;
+    return Optional.ofNullable(cachedResult);
   }
 }
