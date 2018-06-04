@@ -1,6 +1,10 @@
-package omnia.data.structure;
+package omnia.data.structure.immutable;
 
 import omnia.data.cache.WeakCache;
+import omnia.data.structure.Collection;
+import omnia.data.structure.Graph;
+import omnia.data.structure.Set;
+import omnia.data.structure.UnorderedPair;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -11,12 +15,12 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static omnia.data.stream.Collectors.toSet;
 
-public final class HashGraph<E> implements Graph<E> {
+public final class ImmutableGraph<E> implements Graph<E> {
 
   private final Set<E> elements;
   private final Set<UnorderedPair<E>> edges;
 
-  private HashGraph(Builder<E> builder) {
+  private ImmutableGraph(Builder<E> builder) {
     elements =
         Stream.concat(
                 builder.nodes.stream(),
@@ -113,8 +117,8 @@ public final class HashGraph<E> implements Graph<E> {
       return this;
     }
 
-    public HashGraph<E> build() {
-      return new HashGraph<>(this);
+    public ImmutableGraph<E> build() {
+      return new ImmutableGraph<>(this);
     }
 
     private Builder() {

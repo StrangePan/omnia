@@ -2,9 +2,7 @@ package omnia.data.structure.immutable;
 
 import omnia.data.structure.List;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public final class ImmutableList<E> implements List<E> {
@@ -24,6 +22,16 @@ public final class ImmutableList<E> implements List<E> {
           String.format("%d outside the range of [0,%d)", index, elements.length));
     }
     return elements[index];
+  }
+
+  @Override
+  public OptionalInt indexOf(E element) {
+    for (int i = 0; i <  elements.length; i++) {
+      if (Objects.equals(element, elements[i])) {
+        return OptionalInt.of(i);
+      }
+    }
+    return OptionalInt.empty();
   }
 
   @Override
