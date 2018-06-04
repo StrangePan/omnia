@@ -28,7 +28,7 @@ class MaskingList<E> implements MutableList<E> {
   }
 
   @Override
-  public E getAt(int index) {
+  public E itemAt(int index) {
     return javaList.get(index);
   }
 

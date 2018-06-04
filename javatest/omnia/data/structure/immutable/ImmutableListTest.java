@@ -24,36 +24,36 @@ public class ImmutableListTest {
   public void getAt_whenFirst_didReturnFirst() {
     List<String> underTest = createTestSubject();
 
-    assertSame(TEST_ITEM_1, underTest.getAt(0));
+    assertSame(TEST_ITEM_1, underTest.itemAt(0));
   }
 
   @Test
   public void getAt_whenMiddle_didReturnMiddle() {
     List<String> underTest = createTestSubject();
 
-    assertSame(TEST_ITEM_2, underTest.getAt(1));
+    assertSame(TEST_ITEM_2, underTest.itemAt(1));
   }
 
   @Test
   public void getAt_whenLast_didReturnLast() {
     List<String> underTest = createTestSubject();
 
-    assertSame(TEST_ITEM_3, underTest.getAt(2));
+    assertSame(TEST_ITEM_3, underTest.itemAt(2));
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
   public void getAt_whenEmpty_didThrowException() {
-    ImmutableList.builder().build().getAt(0);
+    ImmutableList.builder().build().itemAt(0);
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
   public void getAt_negative_didThrowException() {
-    createTestSubject().getAt(-1);
+    createTestSubject().itemAt(-1);
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
   public void getAt_tooHigh_didThrowException() {
-    createTestSubject().getAt(20);
+    createTestSubject().itemAt(20);
   }
 
   @Test

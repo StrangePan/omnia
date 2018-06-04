@@ -1,14 +1,12 @@
 package omnia.data.structure;
 
+import omnia.contract.Indexable;
+
 import java.util.Iterator;
 import java.util.OptionalInt;
 import java.util.stream.Stream;
 
-public interface List<E> extends Collection<E> {
-
-  E getAt(int index);
-
-  OptionalInt indexOf(E element);
+public interface List<E> extends Collection<E>, Indexable<E> {
 
   static <E> List<E> masking(java.util.List<E> javaList) {
     return new List<>() {
@@ -34,7 +32,7 @@ public interface List<E> extends Collection<E> {
       }
 
       @Override
-      public E getAt(int index) {
+      public E itemAt(int index) {
         return javaList.get(index);
       }
 

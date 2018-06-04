@@ -16,7 +16,7 @@ public final class ImmutableList<E> implements List<E> {
   }
 
   @Override
-  public E getAt(int index) {
+  public E itemAt(int index) {
     if (index < 0 || index >= elements.length) {
       throw new IndexOutOfBoundsException(
           String.format("%d outside the range of [0,%d)", index, elements.length));
