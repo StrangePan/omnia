@@ -1,13 +1,13 @@
 package omnia.data.structure.immutable;
 
-import omnia.data.structure.Collection;
+import omnia.data.structure.Set;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public final class ImmutableSet<E> implements Collection<E> {
+public final class ImmutableSet<E> implements Set<E> {
   private final E[] elements;
 
   private ImmutableSet(Builder<E> builder) {

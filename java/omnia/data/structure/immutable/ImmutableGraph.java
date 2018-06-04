@@ -4,7 +4,6 @@ import omnia.data.cache.WeakCache;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Graph;
 import omnia.data.structure.Set;
-import omnia.data.structure.UnorderedPair;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -13,20 +12,21 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
 public final class ImmutableGraph<E> implements Graph<E> {
 
-  private final Set<E> elements;
-  private final Set<UnorderedPair<E>> edges;
+  private final ImmutableSet<E> elements;
+  private final ImmutableSet<ImmutableUnorderedPair<E>> edges;
 
   private ImmutableGraph(Builder<E> builder) {
     elements =
         Stream.concat(
                 builder.nodes.stream(),
-                builder.edges.stream().flatMap(UnorderedPair::stream))
-            .collect(toSet());
-    edges = Set.masking(builder.edges);
+                builder.edges.stream().flatMap(ImmutableUnorderedPair::stream))
+            .collect(toImmutableSet());
+    edges = builder.edges.stream().collect(toImmutableSet());
   }
 
   @Override
@@ -87,15 +87,15 @@ public final class ImmutableGraph<E> implements Graph<E> {
   }
 
   private class Edge implements Graph.Edge<E> {
-    private final UnorderedPair<E> endpoints;
+    private final ImmutableUnorderedPair<E> endpoints;
 
-    private Edge(UnorderedPair<E> endpoints) {
+    private Edge(ImmutableUnorderedPair<E> endpoints) {
       this.endpoints = endpoints;
     }
 
     @Override
     public Collection<? extends Node> endpoints() {
-      return Collection.of(endpoints.stream().map(toNode()).collect(toList()));
+      return Collection.masking(endpoints.stream().map(toNode()).collect(toList()));
     }
   }
 
@@ -105,7 +105,7 @@ public final class ImmutableGraph<E> implements Graph<E> {
 
   public static class Builder<E> {
     java.util.Set<E> nodes = new HashSet<>();
-    java.util.Set<UnorderedPair<E>> edges = new HashSet<>();
+    java.util.Set<ImmutableUnorderedPair<E>> edges = new HashSet<>();
 
     public Builder<E> addNode(E element) {
       nodes.add(requireNonNull(element));
@@ -113,7 +113,7 @@ public final class ImmutableGraph<E> implements Graph<E> {
     }
 
     public Builder<E> addEdge(E element1, E element2) {
-      edges.add(UnorderedPair.of(element1, element2));
+      edges.add(ImmutableUnorderedPair.of(element1, element2));
       return this;
     }
 
@@ -129,7 +129,7 @@ public final class ImmutableGraph<E> implements Graph<E> {
     return this::getOrCreateNode;
   }
 
-  private Function<? super UnorderedPair<E>, ? extends Edge> toEdge() {
+  private Function<? super ImmutableUnorderedPair<E>, ? extends Edge> toEdge() {
     return this::getOrCreateEdge;
   }
 
@@ -139,9 +139,9 @@ public final class ImmutableGraph<E> implements Graph<E> {
     return nodeCache.getOrCache(element, () -> new Node(element));
   }
 
-  private WeakCache<UnorderedPair<E>, Edge> edgeCache = new WeakCache<>();
+  private WeakCache<ImmutableUnorderedPair<E>, Edge> edgeCache = new WeakCache<>();
 
-  private Edge getOrCreateEdge(UnorderedPair<E> endpoints) {
+  private Edge getOrCreateEdge(ImmutableUnorderedPair<E> endpoints) {
     return edgeCache.getOrCache(endpoints, () -> new Edge(endpoints));
   }
 }

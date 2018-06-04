@@ -1,5 +1,7 @@
 package omnia.data.structure.immutable;
 
+import omnia.data.structure.Collection;
+
 import java.util.LinkedList;
 
 abstract class AbstractBuilder<E, B extends AbstractBuilder<E, B, R>, R> {
@@ -7,6 +9,13 @@ abstract class AbstractBuilder<E, B extends AbstractBuilder<E, B, R>, R> {
 
   public B add(E element) {
     elements.add(element);
+    return getSelf();
+  }
+
+  public B addAll(Collection<E> elements) {
+    for (E element : elements) {
+      this.elements.add(element);
+    }
     return getSelf();
   }
 

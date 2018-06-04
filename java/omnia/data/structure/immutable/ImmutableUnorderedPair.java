@@ -1,4 +1,6 @@
-package omnia.data.structure;
+package omnia.data.structure.immutable;
+
+import omnia.data.structure.HomogeneousPair;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,16 +11,16 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
-public final class UnorderedPair<E> implements HomogeneousPair<E> {
+public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
 
   private final E first;
   private final E second;
 
-  public static <E> UnorderedPair<E> of(E first, E second) {
-    return new UnorderedPair<>(requireNonNull(first), requireNonNull(second));
+  public static <E> ImmutableUnorderedPair<E> of(E first, E second) {
+    return new ImmutableUnorderedPair<>(requireNonNull(first), requireNonNull(second));
   }
 
-  private UnorderedPair(E first, E second) {
+  private ImmutableUnorderedPair(E first, E second) {
     this.first = first;
     this.second = second;
   }
@@ -55,14 +57,14 @@ public final class UnorderedPair<E> implements HomogeneousPair<E> {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof UnorderedPair)) {
+    if (!(other instanceof ImmutableUnorderedPair)) {
       return false;
     }
     if (this == other) {
       return true;
     }
 
-    UnorderedPair<?> otherUnorderedPair = (UnorderedPair<?>) other;
+    ImmutableUnorderedPair<?> otherUnorderedPair = (ImmutableUnorderedPair<?>) other;
 
     if (this.first.equals(otherUnorderedPair.first)) {
       return this.second.equals(otherUnorderedPair.second);
