@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public interface Collection<E> extends Container<E>, Countable, Iterable<E>, Streamable<E> {
 
-  static <E> Collection<E> of(java.util.Collection<E> javaCollection) {
+  static <E> Collection<E> masking(java.util.Collection<E> javaCollection) {
     return new Collection<>() {
 
       @Override
@@ -29,7 +29,7 @@ public interface Collection<E> extends Container<E>, Countable, Iterable<E>, Str
 
       @Override
       public Iterator<E> iterator() {
-        return javaCollection.iterator();
+        return new ReadOnlyIterator<>(javaCollection.iterator());
       }
     };
   }

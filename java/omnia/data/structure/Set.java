@@ -22,19 +22,7 @@ public interface Set<E> extends Collection<E> {
 
       @Override
       public Iterator<E> iterator() {
-        Iterator<E> javaIterator = javaSet.iterator();
-        return new Iterator<E>() {
-
-          @Override
-          public boolean hasNext() {
-            return javaIterator.hasNext();
-          }
-
-          @Override
-          public E next() {
-            return javaIterator.next();
-          }
-        };
+        return new ReadOnlyIterator<>(javaSet.iterator());
       }
 
       @Override

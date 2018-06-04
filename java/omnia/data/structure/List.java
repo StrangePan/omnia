@@ -30,19 +30,7 @@ public interface List<E> extends Collection<E> {
 
       @Override
       public Iterator<E> iterator() {
-        Iterator<E> javaIterator = javaList.iterator();
-        return new Iterator<>() {
-
-          @Override
-          public boolean hasNext() {
-            return javaIterator.hasNext();
-          }
-
-          @Override
-          public E next() {
-            return javaIterator.next();
-          }
-        };
+        return new ReadOnlyIterator<>(javaList.iterator());
       }
 
       @Override
