@@ -11,12 +11,15 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
+/** Collection of collectors for Omnia data structures that can be used with Java streams. */
 public final class Collectors {
 
+  /** Creates a {@link Collector} that collects stream items into a {@link Set}. */
   public static <E> Collector<E, ?, Set<E>> toSet() {
     return new MaskingCollector<>(java.util.stream.Collectors.toSet(), Set::masking);
   }
 
+  /** Creates a {@link Collector} that collects stream items into an {@link ImmutableSet}. */
   public static <E> Collector<E, ?, ImmutableSet<E>> toImmutableSet() {
     return new Collector<E, HashSet<E>, ImmutableSet<E>>() {
 
@@ -52,10 +55,23 @@ public final class Collectors {
     };
   }
 
+  /**
+   * A simple forwarding {@link Collector} that applies a custom finisher on top the finisher
+   * provided by the given target {@link Collector}.
+   *
+   * @param <T> the type of item in the stream
+   * @param <A> the mutable data structure type of the target collector {@code R1}
+   * @param <R1> the return type of the target collector
+   * @param <R2> the return type of this collector
+   */
   static final class MaskingCollector<T, A, R1, R2> implements Collector<T, A, R2> {
     private final Collector<T, A, R1> maskedCollector;
     private final Function<R1, R2> finisher;
 
+    /**
+     * Creates a {@link Collector} that forwards all calls to the given {@code maskedCollector} and
+     * applies the given {@code finisher} {@link Function} to the final result.
+     */
     MaskingCollector(Collector<T, A, R1> maskedCollector, Function<R1, R2> finisher) {
       this.maskedCollector = maskedCollector;
       this.finisher = finisher;
@@ -87,5 +103,7 @@ public final class Collectors {
     }
   }
 
-  private Collectors() {}
+  private Collectors() {
+    // Class is intentionally non-instantiable.
+  }
 }
