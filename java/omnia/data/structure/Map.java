@@ -6,16 +6,22 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toSet;
 
+/** A {@link Map} is a data structure that associates keys to values. */
 public interface Map<K, V> {
 
+  /** Retrieves a read-only, unordered set of all of the keys contained in this map. */
   Set<K> keys();
 
+  /** Retrieves a read-only, unordered collection of all the values contained in this map. */
   Collection<V> values();
 
+  /** Retrieves a read-only, unordered set of every key-value pairing in the map. */
   Set<Entry<K, V>> entries();
 
-  Optional<V> getValueOf(K key);
+  /** Retrieves the value associated with the given key if it is contained in the map. */
+  Optional<V> valueOf(K key);
 
+  /** An {@link Entry} is read-only representing of a single key-value mapping.  */
   interface Entry<K, V> {
 
     K key();
@@ -51,6 +57,7 @@ public interface Map<K, V> {
     }
   }
 
+  /** Creates a read-only, Omnia-compatible view of the given {@link java.util.Map}. */
   static <K, V> Map<K, V> masking(java.util.Map<K, V> javaMap) {
     return new Map<>() {
 
@@ -70,7 +77,7 @@ public interface Map<K, V> {
       }
 
       @Override
-      public Optional<V> getValueOf(K key) {
+      public Optional<V> valueOf(K key) {
         return javaMap.containsKey(key) ? Optional.of(javaMap.get(key)) : Optional.empty();
       }
     };
