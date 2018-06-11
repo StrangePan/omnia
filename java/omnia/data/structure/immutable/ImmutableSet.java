@@ -1,5 +1,6 @@
 package omnia.data.structure.immutable;
 
+import omnia.data.iterate.ArrayIterator;
 import omnia.data.structure.Set;
 
 import java.util.HashSet;

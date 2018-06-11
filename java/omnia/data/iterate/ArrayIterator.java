@@ -1,12 +1,12 @@
-package omnia.data.structure.immutable;
+package omnia.data.iterate;
 
 import java.util.Iterator;
 
-final class ArrayIterator<E> implements Iterator<E> {
+public final class ArrayIterator<E> implements Iterator<E> {
   private final E[] elements;
   private int i = 0;
 
-  ArrayIterator(E[] elements) {
+  public ArrayIterator(E[] elements) {
     this.elements = elements;
   }
 
@@ -18,5 +18,10 @@ final class ArrayIterator<E> implements Iterator<E> {
   @Override
   public E next() {
     return elements[i++];
+  }
+
+  @Override
+  public void remove() {
+    throw new UnsupportedOperationException("Cannot remove elements from arrays.");
   }
 }
