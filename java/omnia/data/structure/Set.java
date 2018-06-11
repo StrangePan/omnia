@@ -1,5 +1,7 @@
 package omnia.data.structure;
 
+import omnia.data.iterate.ReadOnlyIterator;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;

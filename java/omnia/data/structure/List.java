@@ -1,6 +1,7 @@
 package omnia.data.structure;
 
 import omnia.contract.Indexable;
+import omnia.data.iterate.ReadOnlyIterator;
 
 import java.util.Iterator;
 import java.util.OptionalInt;

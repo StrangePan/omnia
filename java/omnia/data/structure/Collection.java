@@ -3,6 +3,7 @@ package omnia.data.structure;
 import omnia.contract.Container;
 import omnia.contract.Countable;
 import omnia.contract.Streamable;
+import omnia.data.iterate.ReadOnlyIterator;
 
 import java.util.Iterator;
 import java.util.stream.Stream;

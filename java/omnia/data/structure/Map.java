@@ -4,9 +4,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static omnia.data.stream.Collectors.toSet;
+import static omnia.data.stream.Collectors.toImmutableSet;
 
-/** A {@link Map} is a data structure that associates keys to values. */
+/** A {@link Map} is a data structure that associates unique keys to corresponding values. */
 public interface Map<K, V> {
 
   /** Retrieves a read-only, unordered set of all of the keys contained in this map. */
@@ -15,11 +15,17 @@ public interface Map<K, V> {
   /** Retrieves a read-only, unordered collection of all the values contained in this map. */
   Collection<V> values();
 
-  /** Retrieves a read-only, unordered set of every key-value pairing in the map. */
+  /** Retrieves a read-only, unordered set of all the entries contained in this map. */
   Set<Entry<K, V>> entries();
 
   /** Retrieves the value associated with the given key if it is contained in the map. */
   Optional<V> valueOf(K key);
+
+  /**
+   * Retrieves the one or more keys associated with the given value. This reverse lookup is likely
+   * to be far slower than the {@link #valueOf(K)} counterpart.
+   */
+  Set<K> keysOf(V value);
 
   /** An {@link Entry} is read-only representing of a single key-value mapping.  */
   interface Entry<K, V> {
@@ -28,9 +34,10 @@ public interface Map<K, V> {
 
     V value();
 
-    static <K, V> Entry<K, V> masking(java.util.Map.Entry<K, V> javaEntry) {
+    static <K, V> Entry<K, V> masking(java.util.Map.Entry<? extends K, ? extends V> javaEntry) {
       class MaskedEntry implements Entry<K, V> {
-        private final java.util.Map.Entry<K, V> jEntry = requireNonNull(javaEntry);
+        private final java.util.Map.Entry<? extends K, ? extends V> jEntry =
+            requireNonNull(javaEntry);
 
         @Override
         public K key() {
@@ -51,7 +58,7 @@ public interface Map<K, V> {
         public int hashCode() {
           return Objects.hash(jEntry);
         }
-      };
+      }
 
       return new MaskedEntry();
     }
@@ -72,13 +79,22 @@ public interface Map<K, V> {
       }
 
       @Override
-      public Set<Entry<K, V>> entries() {
-        return javaMap.entrySet().stream().map(Entry::masking).collect(toSet());
+      public Optional<V> valueOf(K key) {
+        return javaMap.containsKey(key) ? Optional.of(javaMap.get(key)) : Optional.empty();
       }
 
       @Override
-      public Optional<V> valueOf(K key) {
-        return javaMap.containsKey(key) ? Optional.of(javaMap.get(key)) : Optional.empty();
+      public Set<K> keysOf(V value) {
+        return javaMap.entrySet()
+            .stream()
+            .filter(e -> Objects.equals(e.getValue(), value))
+            .map(java.util.Map.Entry::getKey)
+            .collect(toImmutableSet());
+      }
+
+      @Override
+      public Set<Entry<K, V>> entries() {
+        return javaMap.entrySet().stream().map(Entry::masking).collect(toImmutableSet());
       }
     };
   }

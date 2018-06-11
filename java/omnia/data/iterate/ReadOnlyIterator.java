@@ -1,14 +1,20 @@
-package omnia.data.structure;
+package omnia.data.iterate;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-final class ReadOnlyIterator<E> implements Iterator<E> {
+import static java.util.Objects.requireNonNull;
+
+/**
+ * An {@link Iterator} that delegates to another source {@link Iterator}, but does not support
+ * any operations that would mutate the underlying data structure.
+ */
+public final class ReadOnlyIterator<E> implements Iterator<E> {
 
   private final Iterator<E> maskedIterator;
 
-  ReadOnlyIterator(Iterator<E> maskedIterator) {
-    this.maskedIterator = maskedIterator;
+  public ReadOnlyIterator(Iterator<E> maskedIterator) {
+    this.maskedIterator = requireNonNull(maskedIterator);
   }
 
   @Override
