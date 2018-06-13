@@ -4,8 +4,9 @@ import omnia.data.cache.WeakCache;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Graph;
 import omnia.data.structure.Set;
+import omnia.data.structure.mutable.HashSet;
+import omnia.data.structure.mutable.MutableSet;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -104,8 +105,8 @@ public final class ImmutableGraph<E> implements Graph<E> {
   }
 
   public static class Builder<E> {
-    java.util.Set<E> nodes = new HashSet<>();
-    java.util.Set<ImmutableUnorderedPair<E>> edges = new HashSet<>();
+    MutableSet<E> nodes = new HashSet<>();
+    MutableSet<ImmutableUnorderedPair<E>> edges = new HashSet<>();
 
     public Builder<E> addNode(E element) {
       nodes.add(requireNonNull(element));
@@ -121,8 +122,7 @@ public final class ImmutableGraph<E> implements Graph<E> {
       return new ImmutableGraph<>(this);
     }
 
-    private Builder() {
-    }
+    private Builder() {}
   }
 
   private Function<? super E, ? extends Node> toNode() {

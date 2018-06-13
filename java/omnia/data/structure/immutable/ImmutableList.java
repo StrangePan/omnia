@@ -3,7 +3,9 @@ package omnia.data.structure.immutable;
 import omnia.data.iterate.ArrayIterator;
 import omnia.data.structure.List;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.stream.Stream;
 
 public final class ImmutableList<E> implements List<E> {
@@ -12,7 +14,10 @@ public final class ImmutableList<E> implements List<E> {
 
   private ImmutableList(Builder<E> builder) {
     @SuppressWarnings("unchecked") // The elements array must never be accessible externally.
-    E[] elements = (E[]) builder.elements.toArray();
+    E[] elements = (E[]) new Object[builder.elements.count()];
+    for (int i = 0; i < builder.elements.count(); i++) {
+      elements[i] = builder.elements.itemAt(i);
+    }
     this.elements = elements;
   }
 

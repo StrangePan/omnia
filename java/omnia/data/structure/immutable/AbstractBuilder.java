@@ -1,11 +1,11 @@
 package omnia.data.structure.immutable;
 
 import omnia.data.structure.Collection;
-
-import java.util.LinkedList;
+import omnia.data.structure.mutable.LinkedList;
+import omnia.data.structure.mutable.MutableList;
 
 abstract class AbstractBuilder<E, B extends AbstractBuilder<E, B, R>, R> {
-  final java.util.List<E> elements = new LinkedList<>();
+  final MutableList<E> elements = new LinkedList<>();
 
   public B add(E element) {
     elements.add(element);

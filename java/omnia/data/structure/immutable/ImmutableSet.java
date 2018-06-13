@@ -1,48 +1,42 @@
 package omnia.data.structure.immutable;
 
-import omnia.data.iterate.ArrayIterator;
+import omnia.data.iterate.ReadOnlyIterator;
 import omnia.data.structure.Set;
+import omnia.data.structure.mutable.HashSet;
+import omnia.data.structure.mutable.MutableSet;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class ImmutableSet<E> implements Set<E> {
-  private final E[] elements;
+  private final Set<E> elements;
 
   private ImmutableSet(Builder<E> builder) {
-    java.util.Set<E> tempSet = new HashSet<>();
-    tempSet.addAll(builder.elements);
-
-    @SuppressWarnings("unchecked") // elements must never be accessible externally
-    E[] elements = (E[]) tempSet.toArray();
-    this.elements = elements;
+    MutableSet<E> tempSet = new HashSet<>();
+    for (E element : builder.elements) {
+      tempSet.add(element);
+    }
+    this.elements = tempSet;
   }
 
   @Override
   public Iterator<E> iterator() {
-    return new ArrayIterator<>(elements);
+    return new ReadOnlyIterator<>(elements.iterator());
   }
 
   @Override
   public boolean contains(E element) {
-    for (E element1 : elements) {
-      if (Objects.equals(element, element1)) {
-        return true;
-      }
-    }
-    return false;
+    return elements.contains(element);
   }
 
   @Override
   public int count() {
-    return elements.length;
+    return elements.count();
   }
 
   @Override
   public Stream<E> stream() {
-    return Stream.of(elements);
+    return elements.stream();
   }
 
   public static <E> Builder<E> builder() {
