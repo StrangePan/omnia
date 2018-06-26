@@ -1,5 +1,6 @@
 package omnia.data.cache;
 
+import omnia.contract.Holder;
 import java.util.function.Supplier;
 
 /**
@@ -9,13 +10,15 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of object to be memoized
  */
-public interface Memoized<T> {
+public interface Memoized<T> extends Holder<T> {
 
   /**
    * Gets the value represented by this object, optionally computed if the value has not already
-   * been memoized.
+   * been memoized. This value must never be null.
+   *
+   * @return the non-null memoized value
    */
-  T value();
+  @Override T value();
 
   /**
    * Creates a {@link Memoized} implementation that uses the provided {@link Supplier} as the

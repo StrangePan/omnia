@@ -14,5 +14,5 @@ public interface DoubleHolder {
    *
    * @return the number held in this object, which may be any valid {@code double} value.
    */
-  int value();
+  double value();
 }

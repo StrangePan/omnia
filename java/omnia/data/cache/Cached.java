@@ -1,5 +1,8 @@
 package omnia.data.cache;
 
+import omnia.contract.Holder;
+import omnia.contract.Invalidable;
+
 import java.util.function.Supplier;
 
 /**
@@ -10,17 +13,22 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of object to be cached
  */
-public interface Cached<T> {
+public interface Cached<T> extends Holder<T>, Invalidable {
 
-  /** Gets the cached value if it is still valid, or else recomputes the value. */
-  T value();
+  /**
+   * Get the cached value reference. If no value is cached or the cache is invalid, will cause the
+   * value to be recomputed and then cached for subsequent calls.
+   *
+   * @return the cached object reference
+   */
+  @Override T value();
 
   /**
    * Invalidates the cached value and clears any lingering references to it. This method can be
-   * invoked any number of times. When called, the next time {@link #value()} is invoked will cause
-   * the value to be recomputed.
+   * invoked any number of times. The next time {@link #value()} is called after invoking this
+   * method will cause the value to be recomputed.
    */
-  void invalidate();
+  @Override void invalidate();
 
   /**
    * Creates a {@link Cached} implementation that uses the provided {@link Supplier} as the
