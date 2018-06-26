@@ -28,7 +28,7 @@ public interface CachedLong extends CachedValue, LongHolder {
    * @return a new {@link CachedLong} instance that will cache the created value
    */
   static CachedLong cache(LongSupplier supplier) {
-    return new SimpleLongCacher<>(supplier);
+    return new SimpleLongCacher(supplier);
   }
 
 }

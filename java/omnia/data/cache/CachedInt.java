@@ -28,6 +28,6 @@ public interface CachedInt extends CachedValue, IntHolder {
    * @return a new {@link CachedInt} instance that will cache the created value
    */
   static CachedInt cache(IntSupplier supplier) {
-    return new SimpleIntCacher<>(supplier);
+    return new SimpleIntCacher(supplier);
   }
 }

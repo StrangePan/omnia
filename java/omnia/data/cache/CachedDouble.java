@@ -28,6 +28,6 @@ public interface CachedDouble extends CachedValue, DoubleHolder {
    * @return a new {@link CachedDouble} instance that will cache the created value
    */
   static CachedDouble cache(DoubleSupplier supplier) {
-    return new SimpleDoubleCacher<>(supplier);
+    return new SimpleDoubleCacher(supplier);
   }
 }
