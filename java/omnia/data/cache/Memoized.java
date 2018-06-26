@@ -17,6 +17,14 @@ public interface Memoized<T> {
    */
   T value();
 
+  /**
+   * Creates a {@link Memoized} implementation that uses the provided {@link Supplier} as the
+   * factory that supplies the value to be memoized.
+   *
+   * @param supplier the supplier that will create the value to be memoized
+   * @param <T> the type of object to be memoized
+   * @return a new {@link Memoized} instance that will memoize the created value
+   */
   static <T> Memoized<T> memoize(Supplier<T> supplier) {
     return new SimpleMemoizer<>(supplier);
   }
