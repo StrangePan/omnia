@@ -1,4 +1,6 @@
-package omnia.util;
+package omnia.data.cache;
+
+import java.util.function.Supplier;
 
 /**
  * A memoized object is one whose value is calculated once and retained indefinitely in memory.
@@ -14,4 +16,8 @@ public interface Memoized<T> {
    * been memoized.
    */
   T value();
+
+  static <T> Memoized<T> memoize(Supplier<T> supplier) {
+    return new SimpleMemoizer<>(supplier);
+  }
 }
