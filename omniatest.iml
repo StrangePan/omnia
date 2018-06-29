@@ -3,7 +3,7 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/javatest">
-      <sourceFolder url="file://$MODULE_DIR$/javatest" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/javatest" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -18,5 +18,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="omnia" />
+    <orderEntry type="module" module-name="mockito" />
+    <orderEntry type="module" module-name="mockito_main" scope="TEST" />
   </component>
 </module>
