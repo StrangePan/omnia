@@ -21,6 +21,16 @@ public class SimpleMemoizerTest {
   }
 
   @Test
+  public void value_twice_didReturnSuppliedResult() {
+    Object testValue = new Object();
+    Memoized<Object> testSubject = new SimpleMemoizer<>(() -> testValue);
+
+    testSubject.value();
+
+    assertSame(testValue, testSubject.value());
+  }
+
+  @Test
   public void value_didInvokeSupplier() {
     Supplier<Object> supplier = setUpSupplier();
     Memoized<Object> testSubject = new SimpleMemoizer<>(supplier);
@@ -47,16 +57,6 @@ public class SimpleMemoizerTest {
     testSubject.value();
 
     verify(supplier, times(1)).get();
-  }
-
-  @Test
-  public void value_twice_didReturnSuppliedResult() {
-    Object testValue = new Object();
-    Memoized<Object> testSubject = new SimpleMemoizer<>(() -> testValue);
-
-    testSubject.value();
-
-    assertSame(testValue, testSubject.value());
   }
 
   @Test(expected = NullPointerException.class)

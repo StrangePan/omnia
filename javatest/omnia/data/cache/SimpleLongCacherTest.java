@@ -17,7 +17,7 @@ public class SimpleLongCacherTest {
     long testValue = 132L;
     CachedLong testSubject = new SimpleLongCacher(() -> testValue);
 
-    assertEquals(testValue, testSubject.value(),  /* delta= */ 0);
+    assertEquals(testValue, testSubject.value());
   }
 
   @Test
@@ -27,7 +27,7 @@ public class SimpleLongCacherTest {
 
     testSubject.value();
 
-    assertEquals(testValue, testSubject.value(), /* delta= */ 0);
+    assertEquals(testValue, testSubject.value());
   }
 
   @Test
