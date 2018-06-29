@@ -1,6 +1,7 @@
 package omnia.data.iterate;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /** A simple read-only iterator that iterates over the elements of an array in sequential order. */
 public final class ArrayIterator<E> implements Iterator<E> {
@@ -18,7 +19,11 @@ public final class ArrayIterator<E> implements Iterator<E> {
 
   @Override
   public E next() {
-    return elements[i++];
+    if (i < elements.length) {
+      return elements[i++];
+    }
+    throw new NoSuchElementException(
+        String.format("ArrayIterator reached last index in array: %d", i));
   }
 
   @Override
