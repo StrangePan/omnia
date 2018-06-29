@@ -2,6 +2,7 @@ package omnia.data.iterate;
 
 import java.util.Iterator;
 
+/** A simple read-only iterator that iterates over the elements of an array in sequential order. */
 public final class ArrayIterator<E> implements Iterator<E> {
   private final E[] elements;
   private int i = 0;
