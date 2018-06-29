@@ -31,6 +31,14 @@ public class SimpleMemoizerTest {
   }
 
   @Test
+  public void new_didNotInvokeSupplier() {
+    Supplier<Object> supplier = setUpSupplier();
+    new SimpleMemoizer<>(supplier);
+
+    verify(supplier, never()).get();
+  }
+
+  @Test
   public void value_twice_onlyInvokedSupplierOnce() {
     Supplier<Object> supplier = setUpSupplier();
     Memoized<Object> testSubject = new SimpleMemoizer<>(supplier);
@@ -47,9 +55,20 @@ public class SimpleMemoizerTest {
     Memoized<Object> testSubject = new SimpleMemoizer<>(() -> testValue);
 
     testSubject.value();
-    Object resultValue = testSubject.value();
 
-    assertSame(resultValue, testValue);
+    assertSame(testValue, testSubject.value());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void new_withNullSupplier_didThrowException() {
+    new SimpleMemoizer<>(null);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void value_whenSupplierReturnsNull_didThrowException() {
+    Memoized<Object> testSubject = new SimpleMemoizer<>(() -> null);
+
+    testSubject.value();
   }
 
   private static Supplier<Object> setUpSupplier() {
