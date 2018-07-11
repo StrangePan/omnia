@@ -55,6 +55,11 @@ public interface Queue<E> extends Countable, Iterable<E> {
       }
 
       @Override
+      public boolean isPopulated() {
+        return !javaQueue.isEmpty();
+      }
+
+      @Override
       public Iterator<E> iterator() {
         return new Iterator<>() {
 

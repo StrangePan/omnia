@@ -1,9 +1,5 @@
 package omnia.data.structure.mutable;
 
-import omnia.data.structure.mutable.LinkedList;
-import omnia.data.structure.mutable.MutableList;
-import omnia.data.structure.mutable.Queue;
-
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -14,7 +10,7 @@ public final class LinkedQueue<E> implements Queue<E> {
 
   @Override
   public Optional<E> nextAndRemove() {
-    if (items.isPopulated()) {
+    if (!items.isPopulated()) {
       return Optional.empty();
     }
     E item = items.itemAt(0);
@@ -24,7 +20,7 @@ public final class LinkedQueue<E> implements Queue<E> {
 
   @Override
   public Optional<E> next() {
-    return items.isPopulated() ? Optional.empty() : Optional.of(items.itemAt(0));
+    return items.isPopulated() ? Optional.of(items.itemAt(0)) : Optional.empty();
   }
 
   @Override

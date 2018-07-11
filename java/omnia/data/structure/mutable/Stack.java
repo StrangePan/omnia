@@ -32,6 +32,11 @@ public interface Stack<E> extends Countable, Iterable<E> {
       }
 
       @Override
+      public boolean isPopulated() {
+        return !javaStack.isEmpty();
+      }
+
+      @Override
       public Iterator<E> iterator() {
         return new Iterator<>() {
 

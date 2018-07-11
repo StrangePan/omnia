@@ -60,6 +60,11 @@ public final class ImmutableGraph<E> implements Graph<E> {
     return elements.count();
   }
 
+  @Override
+  public boolean isPopulated() {
+    return elements.isPopulated();
+  }
+
   private class Node implements Graph.Node<E> {
     private final E element;
 
