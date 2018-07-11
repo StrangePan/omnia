@@ -1,8 +1,7 @@
 package omnia.data.cache;
 
-import omnia.contract.IntHolder;
-
 import java.util.function.IntSupplier;
+import omnia.contract.IntHolder;
 
 /**
  * A cached int is one whose value is computed once and retrained indefinitely in memory until

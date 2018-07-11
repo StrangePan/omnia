@@ -1,8 +1,8 @@
 package omnia.data.cache;
 
-import java.util.function.LongSupplier;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.function.LongSupplier;
 
 /**
  * A {@link CachedLong} implementation that uses the given {@link LongSupplier} to provide the

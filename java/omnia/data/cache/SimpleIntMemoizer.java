@@ -1,8 +1,8 @@
 package omnia.data.cache;
 
-import java.util.function.IntSupplier;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.function.IntSupplier;
 
 /**
  * A {@link MemoizedInt} implementation that uses a client-given {@link IntSupplier} to lazily

@@ -1,9 +1,9 @@
 package omnia.data.iterate;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Iterator;
 import java.util.function.Consumer;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * An {@link Iterator} that delegates to another source {@link Iterator}, but does not support

@@ -1,10 +1,10 @@
 package omnia.data.structure;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /** A {@link Map} is a data structure that associates unique keys to corresponding values. */
 public interface Map<K, V> {

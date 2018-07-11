@@ -1,8 +1,7 @@
 package omnia.data.cache;
 
-import omnia.contract.LongHolder;
-
 import java.util.function.LongSupplier;
+import omnia.contract.LongHolder;
 
 /**
  * A cached long is one whose value is computed once and retrained indefinitely in memory until

@@ -1,16 +1,15 @@
 package omnia.data.structure.mutable;
 
-import omnia.data.structure.Collection;
-import omnia.data.structure.Set;
+import static java.util.Objects.requireNonNull;
+import static omnia.data.stream.Collectors.toImmutableSet;
 
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import static java.util.Objects.requireNonNull;
-import static omnia.data.stream.Collectors.toImmutableSet;
+import omnia.data.structure.Collection;
+import omnia.data.structure.Set;
 
 class MaskingMap<K, V> implements MutableMap<K, V> {
 

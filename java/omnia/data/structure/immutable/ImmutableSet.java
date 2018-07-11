@@ -1,12 +1,11 @@
 package omnia.data.structure.immutable;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
 import omnia.data.iterate.ReadOnlyIterator;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableSet;
-
-import java.util.Iterator;
-import java.util.stream.Stream;
 
 public final class ImmutableSet<E> implements Set<E> {
   private final Set<E> elements;

@@ -1,20 +1,19 @@
 package omnia.data.structure.immutable;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+import static omnia.data.stream.Collectors.toImmutableSet;
+import static omnia.data.stream.Collectors.toSet;
+
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import omnia.data.cache.WeakCache;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Graph;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableSet;
-
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
-import static omnia.data.stream.Collectors.toImmutableSet;
-import static omnia.data.stream.Collectors.toSet;
 
 public final class ImmutableGraph<E> implements Graph<E> {
 

@@ -1,8 +1,7 @@
 package omnia.data.cache;
 
-import omnia.contract.LongHolder;
-
 import java.util.function.LongSupplier;
+import omnia.contract.LongHolder;
 
 /**
  * A memoized long is one whose value is calculated once and retained indefinitely in memory.

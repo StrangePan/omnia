@@ -1,8 +1,8 @@
 package omnia.data.cache;
 
-import java.util.function.DoubleSupplier;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.function.DoubleSupplier;
 
 /**
  * A {@link MemoizedDouble} implementation that uses a client-given {@link DoubleSupplier} to

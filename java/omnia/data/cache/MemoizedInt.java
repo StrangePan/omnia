@@ -1,8 +1,7 @@
 package omnia.data.cache;
 
-import omnia.contract.IntHolder;
-
 import java.util.function.IntSupplier;
+import omnia.contract.IntHolder;
 
 /**
  * A memoized int is one whose value is calculated once and retained indefinitely in memory.

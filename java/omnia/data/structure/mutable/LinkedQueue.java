@@ -1,8 +1,8 @@
 package omnia.data.structure.mutable;
 
-import java.util.Optional;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
 
 public final class LinkedQueue<E> implements Queue<E> {
 

@@ -1,9 +1,8 @@
 package omnia.data.cache;
 
+import java.util.function.Supplier;
 import omnia.contract.Holder;
 import omnia.contract.Invalidable;
-
-import java.util.function.Supplier;
 
 /**
  * A cached value is one that is lazily computed and temporary cached until it is invalidated.

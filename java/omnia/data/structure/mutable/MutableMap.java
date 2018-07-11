@@ -1,10 +1,7 @@
 package omnia.data.structure.mutable;
 
-import omnia.data.structure.Map;
-
 import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
+import omnia.data.structure.Map;
 
 public interface MutableMap<K, V> extends Map<K, V> {
 

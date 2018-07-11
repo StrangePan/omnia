@@ -1,8 +1,7 @@
 package omnia.data.cache;
 
-import omnia.contract.DoubleHolder;
-
 import java.util.function.DoubleSupplier;
+import omnia.contract.DoubleHolder;
 
 /**
  * A cached double is one whose value is computed once and retrained indefinitely in memory until

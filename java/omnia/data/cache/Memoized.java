@@ -1,7 +1,7 @@
 package omnia.data.cache;
 
-import omnia.contract.Holder;
 import java.util.function.Supplier;
+import omnia.contract.Holder;
 
 /**
  * A memoized object is one whose value is calculated once and retained indefinitely in memory.

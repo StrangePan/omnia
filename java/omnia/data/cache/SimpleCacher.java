@@ -1,8 +1,8 @@
 package omnia.data.cache;
 
-import java.util.function.Supplier;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.function.Supplier;
 
 /**
  * A {@link Cached} implementation that uses the given {@link Supplier} to provide the value to be

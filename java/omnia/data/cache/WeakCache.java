@@ -1,12 +1,11 @@
 package omnia.data.cache;
 
-import omnia.contract.Container;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import omnia.contract.Container;
 
 /**
  * A cache implementation that stores items using {@link WeakReferences} as a form of lazy,

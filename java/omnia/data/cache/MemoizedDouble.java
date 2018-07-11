@@ -1,8 +1,7 @@
 package omnia.data.cache;
 
-import omnia.contract.DoubleHolder;
-
 import java.util.function.DoubleSupplier;
+import omnia.contract.DoubleHolder;
 
 /**
  * A memoized double is one whose value is calculated once and retained indefinitely in memory.

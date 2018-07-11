@@ -1,12 +1,11 @@
 package omnia.data.structure;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
 import omnia.contract.Container;
 import omnia.contract.Countable;
 import omnia.contract.Streamable;
 import omnia.data.iterate.ReadOnlyIterator;
-
-import java.util.Iterator;
-import java.util.stream.Stream;
 
 /**
  * A {@link Collection} is a generic data structure that contains a known number of items which can

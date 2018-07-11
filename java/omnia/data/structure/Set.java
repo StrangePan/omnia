@@ -1,11 +1,10 @@
 package omnia.data.structure;
 
-import omnia.data.iterate.ReadOnlyIterator;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.stream.Stream;
+import omnia.data.iterate.ReadOnlyIterator;
 
 public interface Set<E> extends Collection<E> {
 

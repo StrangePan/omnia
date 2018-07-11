@@ -1,10 +1,10 @@
 package omnia.data.iterate;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static java.util.Objects.requireNonNull;
 
 /** An {@link Iterator} that takes a source iterator and maps its elements to a new value. */
 public final class MappingIterator<T, R> implements Iterator<R> {

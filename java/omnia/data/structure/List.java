@@ -1,11 +1,10 @@
 package omnia.data.structure;
 
-import omnia.contract.Indexable;
-import omnia.data.iterate.ReadOnlyIterator;
-
 import java.util.Iterator;
 import java.util.OptionalInt;
 import java.util.stream.Stream;
+import omnia.contract.Indexable;
+import omnia.data.iterate.ReadOnlyIterator;
 
 /** A {@link List} is a data structure that contains a linear sequence of items represented by
  * integer indexes with a distinct "start" and "end".

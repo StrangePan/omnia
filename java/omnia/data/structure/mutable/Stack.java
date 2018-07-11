@@ -1,11 +1,10 @@
 package omnia.data.structure.mutable;
 
-import omnia.contract.Countable;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
 import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
+import omnia.contract.Countable;
 
 public interface Stack<E> extends Countable, Iterable<E> {
 

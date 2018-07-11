@@ -1,8 +1,8 @@
 package omnia.data.cache;
 
-import java.util.function.DoubleSupplier;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.function.DoubleSupplier;
 
 /**
  * A {@link CachedDouble} implementation that uses the given {@link DoubleSupplier} to provide the

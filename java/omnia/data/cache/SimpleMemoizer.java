@@ -1,8 +1,8 @@
 package omnia.data.cache;
 
-import java.util.function.Supplier;
-
 import static java.util.Objects.requireNonNull;
+
+import java.util.function.Supplier;
 
 /**
  * A {@link Memoized} implementation that uses a client-given {@link Supplier} to lazily compute

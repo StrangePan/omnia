@@ -1,13 +1,16 @@
 package omnia.data.cache;
 
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.function.Supplier;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.function.Supplier;
-
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
 public class SimpleMemoizerTest {

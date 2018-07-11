@@ -1,12 +1,11 @@
 package omnia.data.structure.immutable;
 
-import omnia.data.iterate.ArrayIterator;
-import omnia.data.structure.List;
-
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.stream.Stream;
+import omnia.data.iterate.ArrayIterator;
+import omnia.data.structure.List;
 
 public final class ImmutableList<E> implements List<E> {
 

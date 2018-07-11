@@ -1,15 +1,14 @@
 package omnia.data.stream;
 
-import omnia.data.structure.Collection;
-import omnia.data.structure.Set;
-import omnia.data.structure.immutable.ImmutableSet;
-
 import java.util.HashSet;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import omnia.data.structure.Collection;
+import omnia.data.structure.Set;
+import omnia.data.structure.immutable.ImmutableSet;
 
 /** Collection of collectors for Omnia data structures that can be used with Java streams. */
 public final class Collectors {

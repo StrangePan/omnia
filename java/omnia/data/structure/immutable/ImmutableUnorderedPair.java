@@ -1,16 +1,15 @@
 package omnia.data.structure.immutable;
 
-import omnia.data.structure.HomogeneousPair;
-import omnia.data.structure.Set;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.util.Objects.requireNonNull;
+import omnia.data.structure.HomogeneousPair;
+import omnia.data.structure.Set;
 
 /**
  * An immutable implementation of {@link HomogeneousPair} in which the order of the contents are
