@@ -51,6 +51,11 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
       }
 
       @Override
+      public boolean isPopulated() {
+        return !javaEntries.isEmpty();
+      }
+
+      @Override
       public int count() {
         return javaEntries.size();
       }

@@ -15,4 +15,6 @@ public interface Countable {
    * @return a non-negative integer between {@code 0} and {@link Integer#MAX_VALUE} inclusive.
    */
   int count();
+
+  boolean isPopulated();
 }

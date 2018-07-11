@@ -33,6 +33,11 @@ public interface Collection<E> extends Container<E>, Countable, Iterable<E>, Str
     return new Collection<>() {
 
       @Override
+      public boolean isPopulated() {
+        return !javaCollection.isEmpty();
+      }
+
+      @Override
       public Stream<E> stream() {
         return javaCollection.stream();
       }

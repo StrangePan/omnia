@@ -35,6 +35,11 @@ public interface List<E> extends Collection<E>, Indexable<E> {
     return new List<>() {
 
       @Override
+      public boolean isPopulated() {
+        return !javaList.isEmpty();
+      }
+
+      @Override
       public Stream<E> stream() {
         return javaList.stream();
       }

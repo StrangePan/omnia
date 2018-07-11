@@ -46,6 +46,11 @@ public final class ImmutableList<E> implements List<E> {
   }
 
   @Override
+  public boolean isPopulated() {
+    return elements.length > 0;
+  }
+
+  @Override
   public boolean contains(E element) {
     for (E element1 : elements) {
       if (Objects.equals(element, element1)) {

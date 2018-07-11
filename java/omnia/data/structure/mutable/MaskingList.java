@@ -64,6 +64,11 @@ class MaskingList<E> implements MutableList<E> {
   }
 
   @Override
+  public boolean isPopulated() {
+    return !javaList.isEmpty();
+  }
+
+  @Override
   public int count() {
     return javaList.size();
   }

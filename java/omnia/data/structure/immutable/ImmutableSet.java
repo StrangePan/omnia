@@ -30,6 +30,11 @@ public final class ImmutableSet<E> implements Set<E> {
   }
 
   @Override
+  public boolean isPopulated() {
+    return elements.isPopulated();
+  }
+
+  @Override
   public int count() {
     return elements.count();
   }

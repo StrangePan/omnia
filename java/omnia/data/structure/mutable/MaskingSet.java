@@ -37,6 +37,11 @@ class MaskingSet<E> implements MutableSet<E> {
   }
 
   @Override
+  public boolean isPopulated() {
+    return !javaSet.isEmpty();
+  }
+
+  @Override
   public int count() {
     return javaSet.size();
   }

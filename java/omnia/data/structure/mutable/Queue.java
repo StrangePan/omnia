@@ -15,6 +15,22 @@ public interface Queue<E> extends Countable, Iterable<E> {
 
   void enqueue(E item);
 
+  @Override
+  default Iterator<E> iterator() {
+    return new Iterator<>() {
+
+      @Override
+      public boolean hasNext() {
+        return Queue.this.next().isPresent();
+      }
+
+      @Override
+      public E next() {
+        return nextAndRemove().get();
+      }
+    };
+  }
+
   static <E> Queue<E> masking(java.util.Queue<E> javaQueue) {
     return new Queue<>() {
 

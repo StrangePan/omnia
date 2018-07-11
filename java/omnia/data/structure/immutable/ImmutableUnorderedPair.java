@@ -42,8 +42,8 @@ public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
   }
 
   private ImmutableUnorderedPair(E first, E second) {
-    this.first = first;
-    this.second = second;
+    this.first = requireNonNull(first);
+    this.second = requireNonNull(second);
   }
 
   @Override
@@ -69,6 +69,11 @@ public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
   @Override
   public E second() {
     return second;
+  }
+
+  @Override
+  public boolean isPopulated() {
+    return true;
   }
 
   @Override

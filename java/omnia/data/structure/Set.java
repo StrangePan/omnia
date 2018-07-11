@@ -13,6 +13,11 @@ public interface Set<E> extends Collection<E> {
     return new Set<>() {
 
       @Override
+      public boolean isPopulated() {
+        return !javaSet.isEmpty();
+      }
+
+      @Override
       public int count() {
         return javaSet.size();
       }
