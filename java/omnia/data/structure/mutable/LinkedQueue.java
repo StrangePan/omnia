@@ -1,4 +1,4 @@
-package omnia.data.structure.mutable.queue;
+package omnia.data.structure.mutable;
 
 import omnia.data.structure.mutable.LinkedList;
 import omnia.data.structure.mutable.MutableList;
