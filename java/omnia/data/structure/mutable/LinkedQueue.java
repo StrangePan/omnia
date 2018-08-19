@@ -9,7 +9,12 @@ public final class LinkedQueue<E> implements Queue<E> {
   private final MutableList<E> items = new LinkedList<>();
 
   @Override
-  public Optional<E> nextAndRemove() {
+  public void enqueue(E item) {
+    items.add(requireNonNull(item));
+  }
+
+  @Override
+  public Optional<E> dequeue() {
     if (!items.isPopulated()) {
       return Optional.empty();
     }
@@ -19,13 +24,8 @@ public final class LinkedQueue<E> implements Queue<E> {
   }
 
   @Override
-  public Optional<E> next() {
+  public Optional<E> peek() {
     return items.isPopulated() ? Optional.of(items.itemAt(0)) : Optional.empty();
-  }
-
-  @Override
-  public void enqueue(E item) {
-    items.add(requireNonNull(item));
   }
 
   @Override

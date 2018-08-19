@@ -8,11 +8,11 @@ import omnia.contract.Countable;
 
 public interface Queue<E> extends Countable, Iterable<E> {
 
-  Optional<E> nextAndRemove();
-
-  Optional<E> next();
-
   void enqueue(E item);
+
+  Optional<E> dequeue();
+
+  Optional<E> peek();
 
   @Override
   default Iterator<E> iterator() {
@@ -20,12 +20,12 @@ public interface Queue<E> extends Countable, Iterable<E> {
 
       @Override
       public boolean hasNext() {
-        return Queue.this.next().isPresent();
+        return Queue.this.peek().isPresent();
       }
 
       @Override
       public E next() {
-        return nextAndRemove().get();
+        return dequeue().get();
       }
     };
   }
@@ -34,12 +34,12 @@ public interface Queue<E> extends Countable, Iterable<E> {
     return new Queue<>() {
 
       @Override
-      public Optional<E> nextAndRemove() {
+      public Optional<E> dequeue() {
         return Optional.ofNullable(javaQueue.poll());
       }
 
       @Override
-      public Optional<E> next() {
+      public Optional<E> peek() {
         return Optional.ofNullable(javaQueue.peek());
       }
 
