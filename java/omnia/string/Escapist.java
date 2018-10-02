@@ -1,6 +1,7 @@
 package omnia.string;
 
 import java.util.Objects;
+import omnia.data.structure.Collection;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableSet;
 
@@ -9,12 +10,15 @@ public final class Escapist {
   private final char escapeChar;
   private final Set<Character> specialChars;
 
-  private Escapist(char escapeChar) {
+  public Escapist(char escapeChar, Collection<Character> specialChars) {
     if (escapeChar == '\0') {
       throw new IllegalArgumentException("Escape character cannot be \\0");
     }
     this.escapeChar = escapeChar;
-    specialChars = ImmutableSet.<Character>builder().add(escapeChar).build();
+    this.specialChars = ImmutableSet.<Character>builder()
+        .addAll(specialChars)
+        .add(escapeChar)
+        .build();
   }
 
   public String escape(String source) {
