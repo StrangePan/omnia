@@ -46,7 +46,7 @@ public final class ImmutableList<E> implements List<E> {
   }
 
   @Override
-  public boolean contains(E element) {
+  public boolean contains(Object element) {
     for (E element1 : elements) {
       if (Objects.equals(element, element1)) {
         return true;

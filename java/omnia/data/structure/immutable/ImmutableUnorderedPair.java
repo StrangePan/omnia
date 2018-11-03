@@ -52,7 +52,7 @@ public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
   }
 
   @Override
-  public boolean contains(E element) {
+  public boolean contains(Object element) {
     return first.equals(element) || second.equals(element);
   }
 
@@ -69,11 +69,6 @@ public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
   @Override
   public E second() {
     return second;
-  }
-
-  @Override
-  public int count() {
-    return 2;
   }
 
   /**

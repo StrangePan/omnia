@@ -56,7 +56,7 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
       }
 
       @Override
-      public boolean contains(Entry<K, V> element) {
+      public boolean contains(Object element) {
         return javaEntries.stream()
             .map(Entry::masking)
             .anyMatch(e -> Objects.equals(element, e));
@@ -117,12 +117,12 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
   }
 
   @Override
-  public Optional<V> valueOf(K key) {
+  public Optional<V> valueOf(Object key) {
     return Optional.ofNullable(javaMap.get(key));
   }
 
   @Override
-  public Set<K> keysOf(V value) {
+  public Set<K> keysOf(Object value) {
     return javaMap.entrySet()
         .stream()
         .filter(e -> Objects.equals(e.getValue(), value))

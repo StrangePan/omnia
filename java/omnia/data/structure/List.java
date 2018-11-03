@@ -45,7 +45,7 @@ public interface List<E> extends Collection<E>, Indexable<E> {
       }
 
       @Override
-      public boolean contains(E element) {
+      public boolean contains(Object element) {
         return javaList.contains(element);
       }
 

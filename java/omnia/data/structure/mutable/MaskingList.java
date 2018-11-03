@@ -59,7 +59,7 @@ class MaskingList<E> implements MutableList<E> {
   }
 
   @Override
-  public boolean contains(E element) {
+  public boolean contains(Object element) {
     return javaList.contains(element);
   }
 

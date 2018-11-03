@@ -51,7 +51,7 @@ public final class ImmutableGraph<E> implements Graph<E> {
   }
 
   @Override
-  public boolean contains(E element) {
+  public boolean contains(Object element) {
     return elements.contains(element);
   }
 

@@ -5,7 +5,7 @@ import omnia.contract.Countable;
 
 import java.util.Optional;
 
-public interface Graph<E> extends Container<E>, Countable {
+public interface Graph<E> extends Container, Countable {
 
   interface Node<E> {
 

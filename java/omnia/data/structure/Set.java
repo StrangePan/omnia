@@ -18,7 +18,7 @@ public interface Set<E> extends Collection<E> {
       }
 
       @Override
-      public boolean contains(E element) {
+      public boolean contains(Object element) {
         return javaSet.contains(element);
       }
 
