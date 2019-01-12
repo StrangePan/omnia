@@ -9,7 +9,7 @@ import java.util.OptionalInt;
  * <p>Examples of such data structures include —— but are not limited to —— arrays, lists, queues,
  * and stacks.
  *
- * @param E the type of object retrieved by index
+ * @param <E> the type of object retrieved by index
  */
 public interface Indexable<E> {
 
