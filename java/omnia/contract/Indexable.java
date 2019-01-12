@@ -31,5 +31,5 @@ public interface Indexable<E> {
    * @return the index of the given item if it exists within this structure and the empty {@link
    *     OptionalInt} if not
    */
-  OptionalInt indexOf(E item);
+  OptionalInt indexOf(Object item);
 }

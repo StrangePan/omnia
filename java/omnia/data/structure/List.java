@@ -60,7 +60,7 @@ public interface List<E> extends Collection<E>, Indexable<E> {
       }
 
       @Override
-      public OptionalInt indexOf(E element) {
+      public OptionalInt indexOf(Object element) {
         int index = javaList.indexOf(element);
         return index < 0 ? OptionalInt.empty() : OptionalInt.of(index);
       }

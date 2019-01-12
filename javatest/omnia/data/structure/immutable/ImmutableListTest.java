@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -106,6 +107,26 @@ public class ImmutableListTest {
     assertSame(TEST_ITEM_1, contents[0]);
     assertSame(TEST_ITEM_2, contents[1]);
     assertSame(TEST_ITEM_3, contents[2]);
+  }
+
+  @Test
+  public void equals_whenEmpty_didEqual() {
+    assertEquals(ImmutableList.builder().build(), ImmutableList.builder().build());
+  }
+
+  @Test
+  public void equals_whenEqual_areEqual() {
+    assertEquals(createTestSubject(), createTestSubject());
+  }
+
+  @Test
+  public void equals_whenUnequal_areNotEqual() {
+    assertNotEquals(ImmutableList.<String>builder().add("hi there").build(), createTestSubject());
+  }
+
+  @Test
+  public void hashCode_whenEqual_areEqual() {
+    assertEquals(createTestSubject().hashCode(), createTestSubject().hashCode());
   }
 
   private static ImmutableList<String> createTestSubject() {

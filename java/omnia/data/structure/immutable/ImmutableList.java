@@ -1,5 +1,9 @@
 package omnia.data.structure.immutable;
 
+import static omnia.data.cache.MemoizedInt.memoize;
+
+import java.util.Arrays;
+import omnia.data.cache.MemoizedInt;
 import omnia.data.iterate.ArrayIterator;
 import omnia.data.structure.List;
 
@@ -31,7 +35,7 @@ public final class ImmutableList<E> implements List<E> {
   }
 
   @Override
-  public OptionalInt indexOf(E element) {
+  public OptionalInt indexOf(Object element) {
     for (int i = 0; i <  elements.length; i++) {
       if (Objects.equals(element, elements[i])) {
         return OptionalInt.of(i);
@@ -63,6 +67,29 @@ public final class ImmutableList<E> implements List<E> {
   @Override
   public Stream<E> stream() {
     return Stream.of(elements);
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof ImmutableList)) {
+      return false;
+    }
+    ImmutableList<?> otherList = (ImmutableList<?>) other;
+    int n = count();
+    if (n != otherList.count()) {
+      return false;
+    }
+    for (int i = 0; i < n; i++) {
+      if (!Objects.equals(itemAt(i), otherList.itemAt(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(elements);
   }
 
   public static <E> Builder<E> builder() {
