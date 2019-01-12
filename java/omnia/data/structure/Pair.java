@@ -32,6 +32,11 @@ public interface Pair<E1, E2> extends Countable {
   static <E1, E2> Pair<E1, E2> of(E1 first, E2 second) {
     return new Pair<>() {
       @Override
+      public boolean isPopulated() {
+        return true;
+      }
+
+      @Override
       public E1 first() {
         return first;
       }

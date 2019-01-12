@@ -120,6 +120,11 @@ public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V>
     }
 
     @Override
+    public boolean isPopulated() {
+      return keyMap.entries().isPopulated();
+    }
+
+    @Override
     public Stream<Entry<K, V>> stream() {
       return keyMap.entries().stream().map(Entry::value);
     }
@@ -167,6 +172,11 @@ public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V>
         @Override
         public int count() {
           return baseSet.count();
+        }
+
+        @Override
+        public boolean isPopulated() {
+          return baseSet.isPopulated();
         }
 
         @Override

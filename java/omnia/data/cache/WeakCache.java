@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import omnia.contract.Container;
 
 /**
- * A cache implementation that stores items using {@link WeakReferences} as a form of lazy,
+ * A cache implementation that stores items using {@link WeakReference}s as a form of lazy,
  * optional caching.
  *
  * @param <K> the key type
@@ -20,8 +20,7 @@ public class WeakCache<K, V> implements Container {
   /** Creates a new, empty cache. */
   public WeakCache() {}
 
-  /** Checks if the cache contains the given key.
-   * @param key*/
+  /** Checks if the cache contains the given key. */
   @Override
   public boolean contains(Object key) {
     WeakReference<V> ref = cache.get(key);

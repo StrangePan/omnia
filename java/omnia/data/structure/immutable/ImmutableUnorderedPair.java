@@ -23,7 +23,7 @@ import static java.util.Objects.requireNonNull;
  * <p>This class does not support null values. Passing in {@code null} into any constructors will
  * result in a {@link NullPointerException} being thrown.
  *
- * @param E the type of item contained in this pair
+ * @param <E> the type of item contained in this pair
  */
 public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
 

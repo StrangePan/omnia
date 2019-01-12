@@ -1,5 +1,10 @@
 package omnia.data.structure.immutable;
 
+import static omnia.data.cache.MemoizedInt.memoize;
+
+import java.util.Arrays;
+import java.util.Objects;
+import omnia.data.cache.MemoizedInt;
 import omnia.data.iterate.ReadOnlyIterator;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;

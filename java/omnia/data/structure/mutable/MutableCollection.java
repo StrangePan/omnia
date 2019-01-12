@@ -60,6 +60,11 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
       }
 
       @Override
+      public boolean isPopulated() {
+        return !javaCollection.isEmpty();
+      }
+
+      @Override
       public boolean contains(Object element) {
         return javaCollection.contains(element);
       }
