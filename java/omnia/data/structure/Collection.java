@@ -13,7 +13,7 @@ import omnia.data.iterate.ReadOnlyIterator;
  *
  * @param <E> the type contained in the collection
  */
-public interface Collection<E> extends Container<E>, Countable, Iterable<E>, Streamable<E> {
+public interface Collection<E> extends Container, Countable, Iterable<E>, Streamable<E> {
 
   /**
    * Creates a {@link Collection} view of the given {@link java.util.Collection}.
@@ -47,7 +47,7 @@ public interface Collection<E> extends Container<E>, Countable, Iterable<E>, Str
       }
 
       @Override
-      public boolean contains(E element) {
+      public boolean contains(Object element) {
         return javaCollection.contains(element);
       }
 

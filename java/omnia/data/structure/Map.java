@@ -19,13 +19,13 @@ public interface Map<K, V> {
   Set<Entry<K, V>> entries();
 
   /** Retrieves the value associated with the given key if it is contained in the map. */
-  Optional<V> valueOf(K key);
+  Optional<V> valueOf(Object key);
 
   /**
    * Retrieves the one or more keys associated with the given value. This reverse lookup is likely
    * to be far slower than the {@link #valueOf(K)} counterpart.
    */
-  Set<K> keysOf(V value);
+  Set<K> keysOf(Object value);
 
   /** An {@link Entry} is read-only representing of a single key-value mapping.  */
   interface Entry<K, V> {
@@ -62,6 +62,35 @@ public interface Map<K, V> {
 
       return new MaskedEntry();
     }
+
+    static <K, V> Entry<K, V> of(K key, V value) {
+      class PairEntry implements Entry<K, V> {
+        private final Pair<K, V> pair = Pair.of(key, value);
+
+        @Override
+        public K key() {
+          return pair.first();
+        }
+
+        @Override
+        public V value() {
+          return pair.second();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+          return other == this
+              || other instanceof PairEntry && ((PairEntry) other).pair.equals(pair);
+        }
+
+        @Override
+        public int hashCode() {
+          return Objects.hash(pair);
+        }
+      }
+
+      return new PairEntry();
+    }
   }
 
   /** Creates a read-only, Omnia-compatible view of the given {@link java.util.Map}. */
@@ -79,12 +108,12 @@ public interface Map<K, V> {
       }
 
       @Override
-      public Optional<V> valueOf(K key) {
+      public Optional<V> valueOf(Object key) {
         return javaMap.containsKey(key) ? Optional.of(javaMap.get(key)) : Optional.empty();
       }
 
       @Override
-      public Set<K> keysOf(V value) {
+      public Set<K> keysOf(Object value) {
         return javaMap.entrySet()
             .stream()
             .filter(e -> Objects.equals(e.getValue(), value))

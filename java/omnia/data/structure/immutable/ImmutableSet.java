@@ -1,11 +1,12 @@
 package omnia.data.structure.immutable;
 
-import java.util.Iterator;
-import java.util.stream.Stream;
 import omnia.data.iterate.ReadOnlyIterator;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableSet;
+
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 public final class ImmutableSet<E> implements Set<E> {
   private final Set<E> elements;
@@ -24,7 +25,7 @@ public final class ImmutableSet<E> implements Set<E> {
   }
 
   @Override
-  public boolean contains(E element) {
+  public boolean contains(Object element) {
     return elements.contains(element);
   }
 
@@ -41,6 +42,40 @@ public final class ImmutableSet<E> implements Set<E> {
   @Override
   public Stream<E> stream() {
     return elements.stream();
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof ImmutableSet)) {
+      return false;
+    }
+    ImmutableSet<?> otherSet = (ImmutableSet<?>) other;
+    if (otherSet.count() != count()) {
+      return false;
+    }
+    for (Object element : elements) {
+      if (!otherSet.contains(element)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return hashCode.value();
+  }
+
+  private final MemoizedInt hashCode = memoize(this::computeHash);
+
+  private int computeHash() {
+    int[] elementCodes = new int[count()];
+    int i = 0;
+    for (E element : elements) {
+      elementCodes[i++] = element.hashCode();
+    }
+    Arrays.sort(elementCodes);
+    return Objects.hash(Arrays.hashCode(elementCodes));
   }
 
   public static <E> Builder<E> builder() {

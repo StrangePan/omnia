@@ -49,7 +49,7 @@ public interface List<E> extends Collection<E>, Indexable<E> {
       }
 
       @Override
-      public boolean contains(E element) {
+      public boolean contains(Object element) {
         return javaList.contains(element);
       }
 
@@ -64,7 +64,7 @@ public interface List<E> extends Collection<E>, Indexable<E> {
       }
 
       @Override
-      public OptionalInt indexOf(E element) {
+      public OptionalInt indexOf(Object element) {
         int index = javaList.indexOf(element);
         return index < 0 ? OptionalInt.empty() : OptionalInt.of(index);
       }

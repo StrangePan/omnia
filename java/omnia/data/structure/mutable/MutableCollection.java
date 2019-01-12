@@ -1,5 +1,7 @@
 package omnia.data.structure.mutable;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
 import omnia.contract.Clearable;
 import omnia.data.structure.Collection;
 
@@ -28,4 +30,44 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
 
   /** Atomically removes all items from this {@link Collection}. */
   @Override void clear();
+
+  static <E> MutableCollection<E> masking(java.util.Collection<E> javaCollection) {
+    return new MutableCollection<>() {
+
+      @Override
+      public void add(E element) {
+        javaCollection.add(element);
+      }
+
+      @Override
+      public boolean remove(E element) {
+        return javaCollection.remove(element);
+      }
+
+      @Override
+      public void clear() {
+        javaCollection.clear();
+      }
+
+      @Override
+      public Stream<E> stream() {
+        return javaCollection.stream();
+      }
+
+      @Override
+      public int count() {
+        return javaCollection.size();
+      }
+
+      @Override
+      public boolean contains(Object element) {
+        return javaCollection.contains(element);
+      }
+
+      @Override
+      public Iterator<E> iterator() {
+        return javaCollection.iterator();
+      }
+    };
+  }
 }

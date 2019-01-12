@@ -1,5 +1,6 @@
 package omnia.data.structure;
 
+import java.util.Objects;
 import omnia.contract.Countable;
 
 /**
@@ -22,4 +23,36 @@ public interface Pair<E1, E2> extends Countable {
    * return the same value.
    */
   E2 second();
+
+  @Override
+  default int count() {
+    return 2;
+  }
+
+  static <E1, E2> Pair<E1, E2> of(E1 first, E2 second) {
+    return new Pair<>() {
+      @Override
+      public E1 first() {
+        return first;
+      }
+
+      @Override
+      public E2 second() {
+        return second;
+      }
+
+      @Override
+      public boolean equals(Object other) {
+        return other == this
+            || other instanceof Pair
+                && Objects.equals(((Pair) other).first(), first())
+                && Objects.equals(((Pair) other).second(), second());
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(first(), second());
+      }
+    };
+  }
 }

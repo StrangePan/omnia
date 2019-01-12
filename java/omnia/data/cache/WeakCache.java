@@ -14,15 +14,16 @@ import omnia.contract.Container;
  * @param <K> the key type
  * @param <V> the value type
  */
-public class WeakCache<K, V> implements Container<K> {
+public class WeakCache<K, V> implements Container {
   private final Map<K, WeakReference<V>> cache = new HashMap<>();
 
   /** Creates a new, empty cache. */
   public WeakCache() {}
 
-  /** Checks if the cache contains the given key. */
+  /** Checks if the cache contains the given key.
+   * @param key*/
   @Override
-  public boolean contains(K key) {
+  public boolean contains(Object key) {
     WeakReference<V> ref = cache.get(key);
     return ref != null && ref.get() != null;
   }

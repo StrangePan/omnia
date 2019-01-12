@@ -1,10 +1,11 @@
 package omnia.data.structure;
 
-import java.util.Optional;
 import omnia.contract.Container;
 import omnia.contract.Countable;
 
-public interface Graph<E> extends Container<E>, Countable {
+import java.util.Optional;
+
+public interface Graph<E> extends Container, Countable {
 
   interface Node<E> {
 
