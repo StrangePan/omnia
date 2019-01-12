@@ -7,36 +7,36 @@ public interface DirectedGraph<E> extends Graph<E> {
   interface Node<E> extends Graph.Node<E> {
 
     @Override
-    Set<? extends Edge<E>> edges();
+    Set<? extends DirectedGraph.Edge<E>> edges();
 
-    Set<? extends Edge<E>> outgoingEdges();
+    Set<? extends DirectedGraph.Edge<E>> outgoingEdges();
 
-    Set<? extends Edge<E>> incomingEdges();
+    Set<? extends DirectedGraph.Edge<E>> incomingEdges();
 
     @Override
-    Set<? extends Node<E>> neighbors();
+    Set<? extends DirectedGraph.Node<E>> neighbors();
 
-    Set<? extends Node<E>> successors();
+    Set<? extends DirectedGraph.Node<E>> successors();
 
-    Set<? extends Node<E>> predecessors();
+    Set<? extends DirectedGraph.Node<E>> predecessors();
   }
 
   interface Edge<E> extends Graph.Edge<E> {
 
-    Node<E> start();
+    DirectedGraph.Node<E> start();
 
-    Node<E> end();
+    DirectedGraph.Node<E> end();
 
     @Override
-    Collection<? extends Node<E>> endpoints();
+    Collection<? extends DirectedGraph.Node<E>> endpoints();
   }
 
   @Override
-  Optional<? extends Node<E>> nodeOf(E element);
+  Optional<? extends DirectedGraph.Node<E>> nodeOf(E element);
 
   @Override
-  Set<? extends Node<E>> nodes();
+  Set<? extends DirectedGraph.Node<E>> nodes();
 
   @Override
-  Set<? extends Edge<E>> edges();
+  Set<? extends DirectedGraph.Edge<E>> edges();
 }
