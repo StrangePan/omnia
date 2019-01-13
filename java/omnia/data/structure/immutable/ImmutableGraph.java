@@ -133,14 +133,14 @@ public final class ImmutableGraph<E> implements Graph<E> {
     return this::getOrCreateNode;
   }
 
-  private Function<? super ImmutableUnorderedPair<E>, ? extends Edge> toEdge() {
-    return this::getOrCreateEdge;
-  }
-
   private final WeakCache<E, Node> nodeCache = new WeakCache<>();
 
   private Node getOrCreateNode(E element) {
     return nodeCache.getOrCache(element, () -> new Node(element));
+  }
+
+  private Function<? super ImmutableUnorderedPair<E>, ? extends Edge> toEdge() {
+    return this::getOrCreateEdge;
   }
 
   private WeakCache<ImmutableUnorderedPair<E>, Edge> edgeCache = new WeakCache<>();

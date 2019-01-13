@@ -98,7 +98,10 @@ public final class Collectors {
 
     @Override
     public java.util.Set<Characteristics> characteristics() {
-      return maskedCollector.characteristics();
+      java.util.Set<Characteristics> characteristics =
+          new java.util.HashSet<>(maskedCollector.characteristics());
+      characteristics.remove(Characteristics.IDENTITY_FINISH);
+      return characteristics;
     }
   }
 
