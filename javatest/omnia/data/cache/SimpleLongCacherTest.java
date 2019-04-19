@@ -1,6 +1,8 @@
 package omnia.data.cache;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -20,7 +22,7 @@ public class SimpleLongCacherTest {
     long testValue = 132L;
     CachedLong testSubject = new SimpleLongCacher(() -> testValue);
 
-    assertEquals(testValue, testSubject.value());
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -30,7 +32,7 @@ public class SimpleLongCacherTest {
 
     testSubject.value();
 
-    assertEquals(testValue, testSubject.value());
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -84,9 +86,9 @@ public class SimpleLongCacherTest {
     verify(supplier, times(2)).getAsLong();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void new_withNullSupplier_didThrowException() {
-    new SimpleLongCacher(null);
+    assertThrows(NullPointerException.class, () -> new SimpleLongCacher(null));
   }
 
   private static LongSupplier setUpMockSupplier() {

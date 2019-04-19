@@ -1,6 +1,8 @@
 package omnia.data.cache;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -20,7 +22,7 @@ public class SimpleIntMemoizerTest {
     int testValue = 132;
     MemoizedInt testSubject = new SimpleIntMemoizer(() -> testValue);
 
-    assertEquals(testValue, testSubject.value());
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -62,9 +64,9 @@ public class SimpleIntMemoizerTest {
     verify(supplier, times(1)).getAsInt();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void new_withNullSupplier_didThrowException() {
-    new SimpleIntMemoizer(null);
+    assertThrows(NullPointerException.class, () -> new SimpleIntMemoizer(null));
   }
 
   private static IntSupplier setUpSupplier() {

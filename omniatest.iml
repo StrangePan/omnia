@@ -8,9 +8,13 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="omnia" />
-    <orderEntry type="module" module-name="mockito" />
-    <orderEntry type="module" module-name="mockito_main" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-commons:1.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.0.0" level="project" />
+    <orderEntry type="library" name="com.google.truth:truth:0.44" level="application" />
+    <orderEntry type="library" name="com.google.truth.extensions:truth-java8-extension:0.44" level="project" />
+    <orderEntry type="library" scope="TEST" name="org.mockito:mockito-all:2.0.2-beta" level="application" />
   </component>
 </module>

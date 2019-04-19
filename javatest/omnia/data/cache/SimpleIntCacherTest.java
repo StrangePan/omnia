@@ -1,6 +1,7 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -14,13 +15,12 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class SimpleIntCacherTest {
-
   @Test
   public void value_didReturnSuppliedValue() {
     int testValue = 132;
     CachedInt testSubject = new SimpleIntCacher(() -> testValue);
 
-    assertEquals(testValue, testSubject.value());
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -30,7 +30,7 @@ public class SimpleIntCacherTest {
 
     testSubject.value();
 
-    assertEquals(testValue, testSubject.value());
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -84,9 +84,9 @@ public class SimpleIntCacherTest {
     verify(supplier, times(2)).getAsInt();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void new_withNullSupplier_didThrowException() {
-    new SimpleIntCacher(null);
+    assertThrows(NullPointerException.class, () -> new SimpleIntCacher(null));
   }
 
   private static IntSupplier setUpMockSupplier() {

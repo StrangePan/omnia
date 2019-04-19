@@ -1,6 +1,7 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertSame;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -20,7 +21,7 @@ public class SimpleCacherTest {
     Object testValue = new Object();
     Cached<Object> testSubject = new SimpleCacher<>(() -> testValue);
 
-    assertSame(testValue, testSubject.value());
+    assertThat(testSubject.value()).isSameInstanceAs(testValue);
   }
 
   @Test
@@ -30,7 +31,7 @@ public class SimpleCacherTest {
 
     testSubject.value();
 
-    assertSame(testValue, testSubject.value());
+    assertThat(testSubject.value()).isSameInstanceAs(testValue);
   }
 
   @Test
@@ -42,7 +43,7 @@ public class SimpleCacherTest {
   }
 
   @Test
-  public void invalidate_didNotSupplier() {
+  public void invalidate_didNotInvokeSupplier() {
     Supplier<Object> supplier = setUpMockSupplier();
     Cached<Object> testSubject = new SimpleCacher<>(supplier);
 
@@ -62,7 +63,7 @@ public class SimpleCacherTest {
   }
 
   @Test
-  public void value_didInvokeSupplierOnce() {
+  public void value_twice_didInvokeSupplierOnce() {
     Supplier<Object> supplier = setUpMockSupplier();
     Cached<Object> testSubject = new SimpleCacher<>(supplier);
 
@@ -84,16 +85,16 @@ public class SimpleCacherTest {
     verify(supplier, times(2)).get();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void new_withNullSupplier_didThrowException() {
-    new SimpleCacher<>(null);
+    assertThrows(NullPointerException.class, () -> new SimpleCacher<>(null));
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void value_whenSupplierReturnsNull_didThrowException() {
     Cached<Object> testSubject = new SimpleCacher<>(() -> null);
 
-    testSubject.value();
+    assertThrows(NullPointerException.class, testSubject::value);
   }
 
   private static Supplier<Object> setUpMockSupplier() {

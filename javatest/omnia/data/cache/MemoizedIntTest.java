@@ -1,6 +1,6 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +11,6 @@ public class MemoizedIntTest {
 
   @Test
   public void memoize_didReturnSimpleIntMemoizer() {
-    assertTrue(MemoizedInt.memoize(() -> 132) instanceof SimpleIntMemoizer);
+    assertThat(MemoizedInt.memoize(() -> 132)).isInstanceOf(SimpleIntMemoizer.class);
   }
 }

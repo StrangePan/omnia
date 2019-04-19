@@ -1,6 +1,6 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +11,6 @@ public class CachedIntTest {
 
   @Test
   public void cache_didReturnSimpleIntCache() {
-    assertTrue(CachedInt.cache(() -> 132) instanceof SimpleIntCacher);
+    assertThat(CachedInt.cache(() -> 132)).isInstanceOf(SimpleIntCacher.class);
   }
 }

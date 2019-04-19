@@ -1,6 +1,7 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -20,7 +21,7 @@ public class SimpleDoubleCacherTest {
     double testValue = 132.0;
     CachedDouble testSubject = new SimpleDoubleCacher(() -> testValue);
 
-    assertEquals(testValue, testSubject.value(),  /* delta= */ 0);
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -30,7 +31,7 @@ public class SimpleDoubleCacherTest {
 
     testSubject.value();
 
-    assertEquals(testValue, testSubject.value(), /* delta= */ 0);
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -84,9 +85,9 @@ public class SimpleDoubleCacherTest {
     verify(supplier, times(2)).getAsDouble();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void new_withNullSupplier_didThrowException() {
-    new SimpleDoubleCacher(null);
+    assertThrows(NullPointerException.class, () -> new SimpleDoubleCacher(null));
   }
 
   private static DoubleSupplier setUpMockSupplier() {

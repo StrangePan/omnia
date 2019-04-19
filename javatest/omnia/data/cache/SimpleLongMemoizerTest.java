@@ -1,6 +1,7 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -20,7 +21,7 @@ public class SimpleLongMemoizerTest {
     long testValue = 132L;
     MemoizedLong testSubject = new SimpleLongMemoizer(() -> testValue);
 
-    assertEquals(testValue, testSubject.value());
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -30,7 +31,7 @@ public class SimpleLongMemoizerTest {
 
     testSubject.value();
 
-    assertEquals(testValue, testSubject.value());
+    assertThat(testSubject.value()).isEqualTo(testValue);
   }
 
   @Test
@@ -62,9 +63,9 @@ public class SimpleLongMemoizerTest {
     verify(supplier, times(1)).getAsLong();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void new_withNullSupplier_didThrowException() {
-    new SimpleLongMemoizer(null);
+    assertThrows(NullPointerException.class, () -> new SimpleLongMemoizer(null));
   }
 
   private static LongSupplier setUpSupplier() {

@@ -1,6 +1,7 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertSame;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -20,7 +21,7 @@ public class SimpleMemoizerTest {
     Object testValue = new Object();
     Memoized<Object> testSubject = new SimpleMemoizer<>(() -> testValue);
 
-    assertSame(testValue, testSubject.value());
+    assertThat(testSubject.value()).isSameInstanceAs(testValue);
   }
 
   @Test
@@ -30,7 +31,7 @@ public class SimpleMemoizerTest {
 
     testSubject.value();
 
-    assertSame(testValue, testSubject.value());
+    assertThat(testSubject.value()).isSameInstanceAs(testValue);
   }
 
   @Test
@@ -62,16 +63,16 @@ public class SimpleMemoizerTest {
     verify(supplier, times(1)).get();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void new_withNullSupplier_didThrowException() {
-    new SimpleMemoizer<>(null);
+    assertThrows(NullPointerException.class, () -> new SimpleMemoizer<>(null));
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void value_whenSupplierReturnsNull_didThrowException() {
     Memoized<Object> testSubject = new SimpleMemoizer<>(() -> null);
 
-    testSubject.value();
+    assertThrows(NullPointerException.class, testSubject::value);
   }
 
   private static Supplier<Object> setUpSupplier() {

@@ -1,27 +1,19 @@
 package omnia.data.cache;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth8.assertThat;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class WeakCacheTest {
-
-  private WeakCache<String, String> testSubject;
-
-  @Before
-  public void setUpTestSubject() {
-    testSubject = new WeakCache<>();
-  }
+  private final WeakCache<String, String> testSubject = new WeakCache<>();
 
   @Test
   public void contains_whenNotContained_returnsFalse() {
-    assertFalse(testSubject.contains("unknown"));
+    assertThat(testSubject.contains("unknown")).isFalse();
   }
 
   @Test
@@ -30,14 +22,14 @@ public class WeakCacheTest {
 
     testSubject.getOrCache("key", () -> value);
 
-    assertTrue(testSubject.contains("key"));
+    assertThat(testSubject.contains("key")).isTrue();
   }
 
   @Test
   public void getOrCache_whenNotContained_returnsSuppliedInstance() {
     String value = "value";
 
-    assertSame(value, testSubject.getOrCache("key", () -> value));
+    assertThat(testSubject.getOrCache("key", () -> value)).isSameInstanceAs(value);
   }
 
   @Test
@@ -49,12 +41,12 @@ public class WeakCacheTest {
 
     testSubject.getOrCache("key", () -> cachedValue);
 
-    assertSame(cachedValue, testSubject.getOrCache("key", () -> suppliedValue));
+    assertThat(testSubject.getOrCache("key", () -> suppliedValue)).isSameInstanceAs(cachedValue);
   }
 
   @Test
   public void get_whenNotCached_isNotPresent() {
-    assertFalse(testSubject.get("key").isPresent());
+    assertThat(testSubject.get("key")).isEmpty();
   }
 
   @Test
@@ -63,7 +55,7 @@ public class WeakCacheTest {
 
     testSubject.getOrCache("key", () -> value);
 
-    assertTrue(value, testSubject.get("key").isPresent());
-    assertSame(value, testSubject.get("key").get());
+    assertThat(testSubject.get("key")).isPresent();
+    assertThat(testSubject.get("key")).hasValue(value);
   }
 }
