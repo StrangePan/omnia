@@ -19,6 +19,14 @@ abstract class AbstractBuilder<E, B extends AbstractBuilder<E, B, R>, R> {
     return getSelf();
   }
 
+  @SafeVarargs
+  public final B addAll(E... elements) {
+    for (E element : elements) {
+      this.elements.add(element);
+    }
+    return getSelf();
+  }
+
   public abstract R build();
 
   protected abstract B getSelf();

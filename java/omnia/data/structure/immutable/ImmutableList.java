@@ -94,6 +94,11 @@ public final class ImmutableList<E> implements List<E> {
     return Arrays.hashCode(elements);
   }
 
+  @SafeVarargs
+  public static <E> ImmutableList<E> of(E...items) {
+    return ImmutableList.<E>builder().addAll(items).build();
+  }
+
   public static <E> Builder<E> builder() {
     return new Builder<>();
   }
