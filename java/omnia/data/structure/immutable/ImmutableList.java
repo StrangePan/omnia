@@ -99,6 +99,10 @@ public final class ImmutableList<E> implements List<E> {
     return ImmutableList.<E>builder().addAll(items).build();
   }
 
+  public static <E> ImmutableList<E> copyOf(List<E> otherList) {
+    return ImmutableList.<E>builder().addAll(otherList).build();
+  }
+
   public static <E> Builder<E> builder() {
     return new Builder<>();
   }
