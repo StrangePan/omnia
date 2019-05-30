@@ -7,8 +7,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import omnia.data.structure.Collection;
+import omnia.data.structure.List;
 import omnia.data.structure.Set;
+import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.immutable.ImmutableSet;
+import omnia.data.structure.mutable.ArrayList;
 
 /** Collection of collectors for Omnia data structures that can be used with Java streams. */
 public final class Collectors {
@@ -50,6 +53,49 @@ public final class Collectors {
       @Override
       public java.util.Set<Characteristics> characteristics() {
         return java.util.Set.of(Characteristics.UNORDERED);
+      }
+    };
+  }
+
+  public static <E> Collector<E, ?, List<E>> toList() {
+    return new MaskingCollector<>(java.util.stream.Collectors.toList(), List::masking);
+  }
+
+  public static <E> Collector<E, ?, ImmutableList<E>> toImmutableList() {
+    return new Collector<E, ArrayList<E>, ImmutableList<E>> () {
+
+      @Override
+      public Supplier<ArrayList<E>> supplier() {
+        return ArrayList::new;
+      }
+
+      @Override
+      public BiConsumer<ArrayList<E>, E> accumulator() {
+        return ArrayList::add;
+      }
+
+      @Override
+      public BinaryOperator<ArrayList<E>> combiner() {
+        return (list1, list2) -> {
+          ArrayList<E> list3 = new ArrayList<>();
+          for (E o : list1) {
+            list3.add(o);
+          }
+          for(E o : list2) {
+            list3.add(o);
+          }
+          return list3;
+        };
+      }
+
+      @Override
+      public Function<ArrayList<E>, ImmutableList<E>> finisher() {
+        return ImmutableList::copyOf;
+      }
+
+      @Override
+      public java.util.Set<Characteristics> characteristics() {
+        return java.util.Set.of();
       }
     };
   }
