@@ -109,36 +109,39 @@ public interface Map<K, V> {
         this.javaMap = requireNonNull(javaMap);
         this.keys = memoize(() -> Set.masking(this.javaMap.keySet()));
         this.values = memoize(() -> Collection.masking(this.javaMap.values()));
-        this.entries = memoize(() -> new Set<>() {
-          private final java.util.Set<java.util.Map.Entry<K, V>> javaSet =
-              MaskingMap.this.javaMap.entrySet();
+        this.entries = memoize(() -> {
+          class MaskingSet implements Set<Entry<K, V>> {
+            private final java.util.Set<java.util.Map.Entry<K, V>> javaSet =
+                MaskingMap.this.javaMap.entrySet();
 
-          @Override
-          public Stream<Entry<K, V>> stream() {
-            return javaSet.stream().map(Entry::masking);
-          }
+            @Override
+            public Stream<Entry<K, V>> stream() {
+              return javaSet.stream().map(Entry::masking);
+            }
 
-          @Override
-          public int count() {
-            return javaSet.size();
-          }
+            @Override
+            public int count() {
+              return javaSet.size();
+            }
 
-          @Override
-          public boolean isPopulated() {
-            return !javaSet.isEmpty();
-          }
+            @Override
+            public boolean isPopulated() {
+              return !javaSet.isEmpty();
+            }
 
-          @Override
-          public boolean contains(Object element) {
-            return element instanceof Entry
-                && ((Entry<?, ?>) element).value().equals(
-                javaMap.get(((Entry<?, ?>) element).key()));
-          }
+            @Override
+            public boolean contains(Object element) {
+              return element instanceof Entry
+                  && ((Entry<?, ?>) element).value().equals(
+                  javaMap.get(((Entry<?, ?>) element).key()));
+            }
 
-          @Override
-          public Iterator<Entry<K, V>> iterator() {
-            return new MappingIterator<>(javaSet.iterator(), Entry::masking);
+            @Override
+            public Iterator<Entry<K, V>> iterator() {
+              return new MappingIterator<>(javaSet.iterator(), Entry::masking);
+            }
           }
+          return new MaskingSet();
         });
       }
 
