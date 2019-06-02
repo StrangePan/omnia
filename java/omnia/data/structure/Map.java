@@ -1,13 +1,13 @@
 package omnia.data.structure;
 
 import static java.util.Objects.requireNonNull;
-import static omnia.data.cache.Cached.cache;
+import static omnia.data.cache.Memoized.memoize;
 
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-import omnia.data.cache.Cached;
+import omnia.data.cache.Memoized;
 import omnia.data.iterate.MappingIterator;
 
 /** A {@link Map} is a data structure that associates unique keys to corresponding values. */
@@ -101,15 +101,15 @@ public interface Map<K, V> {
   static <K, V> Map<K, V> masking(java.util.Map<K, V> javaMap) {
     class MaskingMap implements Map<K, V> {
       private final java.util.Map<K, V> javaMap;
-      private final Cached<Set<K>> keys;
-      private final Cached<Collection<V>> values;
-      private final Cached<Set<Entry<K, V>>> entries;
+      private final Memoized<Set<K>> keys;
+      private final Memoized<Collection<V>> values;
+      private final Memoized<Set<Entry<K, V>>> entries;
 
       private MaskingMap(java.util.Map<K, V> javaMap) {
         this.javaMap = requireNonNull(javaMap);
-        this.keys = cache(() -> Set.masking(this.javaMap.keySet()));
-        this.values = cache(() -> Collection.masking(this.javaMap.values()));
-        this.entries = cache(() -> new Set<>() {
+        this.keys = memoize(() -> Set.masking(this.javaMap.keySet()));
+        this.values = memoize(() -> Collection.masking(this.javaMap.values()));
+        this.entries = memoize(() -> new Set<>() {
           private final java.util.Set<java.util.Map.Entry<K, V>> javaSet =
               MaskingMap.this.javaMap.entrySet();
 

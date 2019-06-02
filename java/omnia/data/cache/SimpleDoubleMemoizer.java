@@ -6,15 +6,15 @@ import java.util.function.DoubleSupplier;
 
 /**
  * A {@link MemoizedDouble} implementation that uses a client-given {@link DoubleSupplier} to
- * lazily compute the memoized value. This class is not thread-safe.
+ * lazily compute the memoized value. This class is thread-safe.
  *
  * Once computed and memoized, the {@link DoubleSupplier} reference is forgotten and never invoked
  * ever again. The given {@link DoubleSupplier#getAsDouble()} method is never invoked more than
  * once.
  */
 final class SimpleDoubleMemoizer implements MemoizedDouble {
-    private DoubleSupplier supplier;
-    private double value;
+    private volatile DoubleSupplier supplier;
+    private volatile double value;
 
     SimpleDoubleMemoizer(DoubleSupplier supplier) {
       this.supplier = requireNonNull(supplier);
@@ -23,8 +23,12 @@ final class SimpleDoubleMemoizer implements MemoizedDouble {
     @Override
     public double value() {
       if (supplier != null) {
-        value = supplier.getAsDouble();
-        supplier = null;
+        synchronized (this) {
+          if (supplier != null) {
+            value = supplier.getAsDouble();
+            supplier = null;
+          }
+        }
       }
       return value;
     }
