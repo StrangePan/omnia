@@ -1,10 +1,14 @@
 package omnia.data.structure;
 
 import static java.util.Objects.requireNonNull;
-import static omnia.data.stream.Collectors.toImmutableSet;
+import static omnia.data.cache.Cached.cache;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
+import omnia.data.cache.Cached;
+import omnia.data.iterate.MappingIterator;
 
 /** A {@link Map} is a data structure that associates unique keys to corresponding values. */
 public interface Map<K, V> {
@@ -95,36 +99,105 @@ public interface Map<K, V> {
 
   /** Creates a read-only, Omnia-compatible view of the given {@link java.util.Map}. */
   static <K, V> Map<K, V> masking(java.util.Map<K, V> javaMap) {
-    return new Map<>() {
+    class MaskingMap implements Map<K, V> {
+      private final java.util.Map<K, V> javaMap;
+      private final Cached<Set<K>> keys;
+      private final Cached<Collection<V>> values;
+      private final Cached<Set<Entry<K, V>>> entries;
+
+      private MaskingMap(java.util.Map<K, V> javaMap) {
+        this.javaMap = requireNonNull(javaMap);
+        this.keys = cache(() -> Set.masking(this.javaMap.keySet()));
+        this.values = cache(() -> Collection.masking(this.javaMap.values()));
+        this.entries = cache(() -> new Set<>() {
+          private final java.util.Set<java.util.Map.Entry<K, V>> javaSet =
+              MaskingMap.this.javaMap.entrySet();
+
+          @Override
+          public Stream<Entry<K, V>> stream() {
+            return javaSet.stream().map(Entry::masking);
+          }
+
+          @Override
+          public int count() {
+            return javaSet.size();
+          }
+
+          @Override
+          public boolean isPopulated() {
+            return !javaSet.isEmpty();
+          }
+
+          @Override
+          public boolean contains(Object element) {
+            return element instanceof Entry
+                && ((Entry<?, ?>) element).value().equals(
+                javaMap.get(((Entry<?, ?>) element).key()));
+          }
+
+          @Override
+          public Iterator<Entry<K, V>> iterator() {
+            return new MappingIterator<>(javaSet.iterator(), Entry::masking);
+          }
+        });
+      }
 
       @Override
       public Set<K> keys() {
-        return Set.masking(javaMap.keySet());
+        return keys.value();
       }
 
       @Override
       public Collection<V> values() {
-        return Collection.masking(javaMap.values());
-      }
-
-      @Override
-      public Optional<V> valueOf(Object key) {
-        return javaMap.containsKey(key) ? Optional.of(javaMap.get(key)) : Optional.empty();
-      }
-
-      @Override
-      public Set<K> keysOf(Object value) {
-        return javaMap.entrySet()
-            .stream()
-            .filter(e -> Objects.equals(e.getValue(), value))
-            .map(java.util.Map.Entry::getKey)
-            .collect(toImmutableSet());
+        return values.value();
       }
 
       @Override
       public Set<Entry<K, V>> entries() {
-        return javaMap.entrySet().stream().map(Entry::masking).collect(toImmutableSet());
+        return entries.value();
       }
-    };
+
+      @Override
+      public Optional<V> valueOf(Object key) {
+        return Optional.ofNullable(javaMap.get(key));
+      }
+
+      @Override
+      public Set<K> keysOf(Object value) {
+        // Can't really cache this since one is created per value. The overhead of caching would cost
+        // more than the allocation of this view.
+        return new Set<>() {
+
+          @Override
+          public Stream<K> stream() {
+            return javaMap.entrySet().stream()
+                .filter(e -> e.getValue().equals(value))
+                .map(java.util.Map.Entry::getKey);
+          }
+
+          @Override
+          public int count() {
+            return (int) stream().count();
+          }
+
+          @Override
+          public boolean isPopulated() {
+            return javaMap.containsValue(value);
+          }
+
+          @Override
+          public boolean contains(Object element) {
+            return isPopulated() && stream().anyMatch(k -> k.equals(element));
+          }
+
+          @Override
+          public Iterator<K> iterator() {
+            return stream().iterator();
+          }
+        };
+      }
+    }
+
+    return new MaskingMap(javaMap);
   }
 }
