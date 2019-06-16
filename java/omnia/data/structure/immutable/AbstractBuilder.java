@@ -12,7 +12,7 @@ abstract class AbstractBuilder<E, B extends AbstractBuilder<E, B, R>, R> {
     return getSelf();
   }
 
-  public B addAll(Collection<E> elements) {
+  public B addAll(Collection<? extends E> elements) {
     for (E element : elements) {
       this.elements.add(element);
     }
