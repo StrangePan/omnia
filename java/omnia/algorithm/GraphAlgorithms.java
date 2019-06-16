@@ -1,10 +1,15 @@
 package omnia.algorithm;
 
 import static omnia.data.stream.Collectors.toImmutableSet;
+import static omnia.data.stream.Collectors.toSet;
 
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Graph;
 import omnia.data.structure.immutable.ImmutableSet;
+import omnia.data.structure.mutable.ArrayQueue;
+import omnia.data.structure.mutable.HashSet;
+import omnia.data.structure.mutable.MutableSet;
+import omnia.data.structure.mutable.Queue;
 
 public final class GraphAlgorithms {
 
@@ -32,6 +37,34 @@ public final class GraphAlgorithms {
         .filter(GraphAlgorithms::hasNoNeighbors)
         .map(DirectedGraph.Node::element)
         .collect(toImmutableSet());
+  }
+
+  public static <E> boolean isCyclical(DirectedGraph<E> graph) {
+    MutableSet<DirectedGraph.Node<E>> seenNodes = new HashSet<>();
+
+    for (DirectedGraph.Node<E> node : graph.nodes()) {
+      if (seenNodes.contains(node)) {
+        continue;
+      }
+      Queue<DirectedGraph.Node<E>> queue = new ArrayQueue<>();
+      queue.enqueue(node);
+      while (queue.isPopulated()) {
+        for (DirectedGraph.Node<E> n :
+            queue.dequeue().get().outgoingEdges().stream()
+                .map(DirectedGraph.Edge::end)
+                .collect(toSet())) {
+          if (seenNodes.contains(n)) {
+            return true;
+          }
+          seenNodes.add(n);
+        }
+      }
+    }
+    return false;
+  }
+
+  public static <E> boolean isAcyclical(DirectedGraph<E> graph) {
+    return !isCyclical(graph);
   }
 
   private static boolean hasNeighbors(Graph.Node<?> node) {
