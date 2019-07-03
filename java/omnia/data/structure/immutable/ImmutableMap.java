@@ -3,6 +3,7 @@ package omnia.data.structure.immutable;
 import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
 
+import java.util.Collections;
 import java.util.Optional;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Map;
@@ -11,8 +12,14 @@ import omnia.data.structure.Set;
 public final class ImmutableMap<K, V> implements Map<K, V> {
   private java.util.Map<K, V> javaMap = new java.util.TreeMap<>();
 
+  private ImmutableMap() {}
+
+  private ImmutableMap(java.util.Map<K, V> javaMap) {
+    this.javaMap.putAll(javaMap);
+  }
+
   private ImmutableMap(Builder<K, V> builder) {
-    javaMap.putAll(builder.javaMap);
+    this(builder.javaMap);
   }
 
   @Override
@@ -60,6 +67,14 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
         .filter(e -> e.getValue().equals(value))
         .map(java.util.Map.Entry::getKey)
         .collect(toImmutableSet());
+  }
+
+  public static <K, V> ImmutableMap<K, V> of() {
+    return new ImmutableMap<>();
+  }
+
+  public static <K, V> ImmutableMap<K, V> of(K key, V value) {
+    return new ImmutableMap<>(Collections.singletonMap(key, value));
   }
 
   public static <K, V> Builder<K, V> builder() {
