@@ -4,11 +4,13 @@ import static omnia.data.cache.MemoizedInt.memoize;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.BiPredicate;
+import java.util.function.ToIntFunction;
 import omnia.data.cache.MemoizedInt;
 import omnia.data.iterate.ReadOnlyIterator;
+import omnia.data.structure.Collection;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;
-import omnia.data.structure.mutable.MutableSet;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -17,11 +19,7 @@ public final class ImmutableSet<E> implements Set<E> {
   private final Set<E> elements;
 
   private ImmutableSet(Builder<E> builder) {
-    MutableSet<E> tempSet = new HashSet<>();
-    for (E element : builder.elements) {
-      tempSet.add(element);
-    }
-    this.elements = tempSet;
+    this.elements = new HashSet<>(builder.elements, builder.equalsFunction, builder.hashFunction);
   }
 
   @Override
@@ -88,6 +86,18 @@ public final class ImmutableSet<E> implements Set<E> {
   }
 
   public static class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableSet<E>> {
+    private BiPredicate<Object, Object> equalsFunction = null;
+    private ToIntFunction<Object> hashFunction = null;
+
+    public Builder<E> equalsFunction(BiPredicate<Object, Object> equalsFunction) {
+      this.equalsFunction = equalsFunction;
+      return getSelf();
+    }
+
+    public Builder<E> hashFunction(ToIntFunction<Object> hashFunction) {
+      this.hashFunction = hashFunction;
+      return getSelf();
+    }
 
     @Override
     public ImmutableSet<E> build() {
@@ -98,5 +108,14 @@ public final class ImmutableSet<E> implements Set<E> {
     protected Builder<E> getSelf() {
       return this;
     }
+  }
+
+  public static <E> ImmutableSet<E> copyOf(Collection<? extends E> collection) {
+    if (collection instanceof ImmutableSet) {
+      @SuppressWarnings("unchecked")
+      ImmutableSet<E> s = (ImmutableSet<E>) collection;
+      return s;
+    }
+    return ImmutableSet.<E>builder().addAll(collection).build();
   }
 }

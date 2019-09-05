@@ -48,4 +48,22 @@ public interface Set<E> extends Collection<E> {
   static <E> Set<E> empty() {
     return (Set<E>) EMPTY_SET;
   }
+
+  static boolean areEqual(Set<?> a, Set<?> b) {
+    if (a == b) {
+      return true;
+    }
+    if (a == null || b == null) {
+      return false;
+    }
+    if (a.count() != b.count()) {
+      return false;
+    }
+    for (Object element : a) {
+      if (!b.contains(element)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

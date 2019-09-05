@@ -1,15 +1,14 @@
 package omnia.data.structure.immutable;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.cache.WeakCache;
-import omnia.data.stream.Collectors;
 import omnia.data.structure.Collection;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.HomogeneousPair;
@@ -33,7 +32,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   }
 
   @Override
-  public Optional<? extends Node> nodeOf(E element) {
+  public Optional<? extends Node<E>> nodeOf(E element) {
     return elements.contains(element) ? Optional.of(getOrCreateNode(element)) : Optional.empty();
   }
 
@@ -43,12 +42,12 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   }
 
   @Override
-  public Set<? extends Node> nodes() {
+  public Set<? extends Node<E>> nodes() {
     return elements.stream().map(toNode()).collect(toSet());
   }
 
   @Override
-  public Set<? extends Edge> edges() {
+  public Set<? extends Edge<E>> edges() {
     return directedEdges.stream().map(toEdge()).collect(toSet());
   }
 
@@ -71,11 +70,13 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     return new Builder<>(this.elements, this.directedEdges);
   }
 
-  private final class Node implements DirectedGraph.Node<E> {
+  private static final class Node<E> implements DirectedGraph.Node<E> {
     private final E element;
+    private final ImmutableDirectedGraph<E> graph;
 
-    private Node(E element) {
+    private Node(E element, ImmutableDirectedGraph<E> graph) {
       this.element = element;
+      this.graph = graph;
     }
 
     @Override
@@ -84,77 +85,93 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     }
 
     @Override
-    public Set<? extends Edge> edges() {
-      return directedEdges.stream()
+    public Set<? extends Edge<E>> edges() {
+      return graph.directedEdges.stream()
           .filter(p -> p.contains(element))
-          .map(toEdge())
+          .map(graph.toEdge())
           .collect(toSet());
     }
 
     @Override
-    public Set<? extends Edge> outgoingEdges() {
-      return directedEdges.stream()
+    public Set<? extends Edge<E>> outgoingEdges() {
+      return graph.directedEdges.stream()
           .filter(pair -> pair.first().equals(element))
-          .map(toEdge())
+          .map(graph.toEdge())
           .collect(toSet());
     }
 
     @Override
-    public Set<? extends Edge> incomingEdges() {
-      return directedEdges.stream()
+    public Set<? extends Edge<E>> incomingEdges() {
+      return graph.directedEdges.stream()
           .filter(pair -> pair.second().equals(element))
-          .map(toEdge())
+          .map(graph.toEdge())
           .collect(toSet());
     }
 
     @Override
     public Set<? extends DirectedGraph.Node<E>> neighbors() {
-      return directedEdges.stream()
+      return graph.directedEdges.stream()
           .filter(p -> p.contains(element))
           .map(p -> p.first().equals(element) ? p.second() : p.first())
-          .map(toNode())
+          .map(graph.toNode())
           .collect(toSet());
     }
 
     @Override
     public Set<? extends DirectedGraph.Node<E>> successors() {
-      return directedEdges.stream()
+      return graph.directedEdges.stream()
           .filter(pair -> pair.first().equals(element))
           .map(Pair::second)
-          .map(toNode())
+          .map(graph.toNode())
           .collect(toSet());
     }
 
     @Override
     public Set<? extends DirectedGraph.Node<E>> predecessors() {
-      return directedEdges.stream()
+      return graph.directedEdges.stream()
           .filter(pair -> pair.second().equals(element))
           .map(Pair::first)
-          .map(toNode())
+          .map(graph.toNode())
           .collect(toSet());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      return other instanceof Node
+          && Objects.equals(element, ((Node<?>) other).element);
     }
   }
 
-  private final class Edge implements DirectedGraph.Edge<E> {
+  private static final class Edge<E> implements DirectedGraph.Edge<E> {
     private final HomogeneousPair<E> endpoints;
+    private final ImmutableDirectedGraph<E> graph;
 
-    private Edge(HomogeneousPair<E> endpoints) {
+    private Edge(HomogeneousPair<E> endpoints, ImmutableDirectedGraph<E> graph) {
       this.endpoints = endpoints;
+      this.graph = graph;
     }
 
     @Override
     public DirectedGraph.Node<E> start() {
-      return getOrCreateNode(endpoints.first());
+      return graph.getOrCreateNode(endpoints.first());
     }
 
     @Override
     public DirectedGraph.Node<E> end() {
-      return getOrCreateNode(endpoints.second());
+      return graph.getOrCreateNode(endpoints.second());
     }
 
     @Override
     public Collection<? extends DirectedGraph.Node<E>> endpoints() {
-      return Collection.masking(endpoints.stream().map(toNode()).collect(toList()));
+      return HomogeneousPair.of(
+          graph.getOrCreateNode(endpoints.first()),
+          graph.getOrCreateNode(endpoints.second()));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      return other instanceof Edge
+          && Objects.equals(endpoints, ((Edge<?>) other).endpoints);
     }
   }
 
@@ -215,23 +232,23 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     }
   }
 
-  private Function<? super E, ? extends Node> toNode() {
+  private Function<? super E, ? extends Node<E>> toNode() {
     return this::getOrCreateNode;
   }
 
-  private WeakCache<E, Node> nodeCache = new WeakCache<>();
+  private WeakCache<E, Node<E>> nodeCache = new WeakCache<>();
 
-  private Node getOrCreateNode(E element) {
-    return nodeCache.getOrCache(element, () -> new Node(element));
+  private Node<E> getOrCreateNode(E element) {
+    return nodeCache.getOrCache(element, () -> new Node<>(element, this));
   }
 
-  private Function<? super HomogeneousPair<E>, ? extends Edge> toEdge() {
+  private Function<? super HomogeneousPair<E>, ? extends Edge<E>> toEdge() {
     return this::getOrCreateEdge;
   }
 
-  private WeakCache<HomogeneousPair<E>, Edge> edgeCache = new WeakCache<>();
+  private WeakCache<HomogeneousPair<E>, Edge<E>> edgeCache = new WeakCache<>();
 
-  private Edge getOrCreateEdge(HomogeneousPair<E> endpoints) {
-    return edgeCache.getOrCache(endpoints, () -> new Edge(endpoints));
+  private Edge<E> getOrCreateEdge(HomogeneousPair<E> endpoints) {
+    return edgeCache.getOrCache(endpoints, () -> new Edge<>(endpoints, this));
   }
 }

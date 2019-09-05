@@ -57,17 +57,9 @@ public interface HomogeneousPair<E> extends Pair<E, E>, Collection<E> {
 
       @Override
       public boolean equals(Object other) {
-        if (!(other instanceof HomogeneousPairImpl)) {
-          return false;
-        }
-        if (this == other) {
-          return true;
-        }
-
-        HomogeneousPairImpl otherHomogeneousPair = (HomogeneousPairImpl) other;
-
-        return this.first.equals(otherHomogeneousPair.first)
-            && this.second.equals(otherHomogeneousPair.second);
+        return other instanceof HomogeneousPair
+            && Objects.equals(first, ((HomogeneousPair<?>) other).first())
+            && Objects.equals(second, ((HomogeneousPair<?>) other).second());
       }
 
       @Override
