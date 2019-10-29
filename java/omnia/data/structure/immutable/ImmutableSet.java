@@ -118,4 +118,10 @@ public final class ImmutableSet<E> implements Set<E> {
     }
     return ImmutableSet.<E>builder().addAll(collection).build();
   }
+
+  public static <T> ImmutableSet<T> of() {
+    @SuppressWarnings("unchecked")
+    ImmutableSet<T> set = (ImmutableSet<T>) EMPTY_SET;
+    return set;
+  }
 }

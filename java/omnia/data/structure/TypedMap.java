@@ -17,7 +17,7 @@ public final class TypedMap {
   }
 
   public static class Builder {
-    private final MutableMap<Key<?>, Object> map = new HashMap<>();
+    private final MutableMap<Key<?>, Object> map = HashMap.create();
 
     public <V> Builder putMapping(Key<V> key, V value) {
       requireNonNull(key);

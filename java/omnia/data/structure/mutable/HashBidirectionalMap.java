@@ -10,8 +10,8 @@ import omnia.data.structure.BidirectionalMap;
 import omnia.data.structure.Set;
 
 public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V> {
-  private final HashMap<K, Entry<K, V>> keyMap = new HashMap<>();
-  private final HashMap<V, Entry<K, V>> valueMap = new HashMap<>();
+  private final HashMap<K, Entry<K, V>> keyMap = HashMap.create();
+  private final HashMap<V, Entry<K, V>> valueMap = HashMap.create();
   private final InverseMap inverseMap = new InverseMap();
 
   @Override

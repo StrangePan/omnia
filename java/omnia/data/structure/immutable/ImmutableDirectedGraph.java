@@ -28,7 +28,11 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
                 builder.nodes.stream(),
                 builder.directedEdges.stream().flatMap(HomogeneousPair::stream))
             .collect(toImmutableSet());
-    directedEdges = builder.directedEdges.stream().collect(toImmutableSet());
+    directedEdges =
+        builder.directedEdges.stream()
+            .filter(pair -> elements.contains(pair.first()))
+            .filter(pair -> elements.contains(pair.second()))
+            .collect(toImmutableSet());
   }
 
   @Override
@@ -173,6 +177,10 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       return other instanceof Edge
           && Objects.equals(endpoints, ((Edge<?>) other).endpoints);
     }
+  }
+
+  public static <E> ImmutableDirectedGraph<E> empty() {
+    return ImmutableDirectedGraph.<E>builder().build();
   }
 
   public static <E> Builder<E> builder() {
