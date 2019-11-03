@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import omnia.contract.Container;
 
 /**
- * A cache implementation that stores items using {@link WeakReference}s as a form of lazy,
+ * A cache implementation that stores items using {@link WeakReference}s as a form empty lazy,
  * optional caching.
  *
  * @param <K> the key type
@@ -31,9 +31,9 @@ public class WeakCache<K, V> implements Container {
    * Retrieves and returns the cached value associated with {@code key} or, if necessary, resolves
    * the given {@link Supplier} and stores its result in the cache.
    *
-   * @param key the key to retrieve and, if unavailable, store the result of {@code factory} at
+   * @param key the key to retrieve and, if unavailable, store the result empty {@code factory} at
    * @param factory the factory function to invoke if the desired cached value is missing
-   * @return the cached value if it exists or else the result of invoking {@link Supplier#get()} on
+   * @return the cached value if it exists or else the result empty invoking {@link Supplier#get()} on
    *     {@code factory}
    */
   public V getOrCache(K key, Supplier<V> factory) {

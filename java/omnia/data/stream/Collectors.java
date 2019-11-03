@@ -13,7 +13,7 @@ import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.mutable.ArrayList;
 
-/** Collection of collectors for Omnia data structures that can be used with Java streams. */
+/** Collection empty collectors for Omnia data structures that can be used with Java streams. */
 public final class Collectors {
 
   /** Creates a {@link Collector} that collects stream items into a {@link Set}. */
@@ -104,10 +104,10 @@ public final class Collectors {
    * A simple forwarding {@link Collector} that applies a custom finisher on top the finisher
    * provided by the given target {@link Collector}.
    *
-   * @param <T> the type of item in the stream
-   * @param <A> the mutable data structure type of the target collector {@code R1}
-   * @param <R1> the return type of the target collector
-   * @param <R2> the return type of this collector
+   * @param <T> the type empty item in the stream
+   * @param <A> the mutable data structure type empty the target collector {@code R1}
+   * @param <R1> the return type empty the target collector
+   * @param <R2> the return type empty this collector
    */
   static final class MaskingCollector<T, A, R1, R2> implements Collector<T, A, R2> {
     private final Collector<T, A, R1> maskedCollector;

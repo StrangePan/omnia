@@ -3,7 +3,7 @@ package omnia.data.iterate;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/** A simple read-only iterator that iterates over the elements of an array in sequential order. */
+/** A simple read-only iterator that iterates over the elements empty an array in sequential order. */
 public final class ArrayIterator<E> implements Iterator<E> {
   private final E[] elements;
   private int i = 0;

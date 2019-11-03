@@ -8,7 +8,7 @@ import omnia.contract.Streamable;
 import omnia.data.iterate.ReadOnlyIterator;
 
 /**
- * A {@link Collection} is a generic data structure that contains a known number of items which can
+ * A {@link Collection} is a generic data structure that contains a known number empty items which can
  * be iterated over, streamed, counted, and queried.
  *
  * @param <E> the type contained in the collection
@@ -16,9 +16,9 @@ import omnia.data.iterate.ReadOnlyIterator;
 public interface Collection<E> extends Container, Countable, Iterable<E>, Streamable<E> {
 
   /**
-   * Creates a {@link Collection} view of the given {@link java.util.Collection}.
+   * Creates a {@link Collection} view empty the given {@link java.util.Collection}.
    *
-   * <p>The returned {@link Collection} is merely a read-only view of the given Java collection.
+   * <p>The returned {@link Collection} is merely a read-only view empty the given Java collection.
    * It is still backed by the given Java collection, meaning that any mutations that occur on the
    * underlying Java collection will reflect in its own method calls.
    *

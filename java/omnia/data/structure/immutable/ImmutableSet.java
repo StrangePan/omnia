@@ -16,7 +16,14 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 public final class ImmutableSet<E> implements Set<E> {
+
+  private static ImmutableSet<?> EMPTY_IMMUTABLE_SET = new ImmutableSet<>();
+
   private final Set<E> elements;
+
+  private ImmutableSet() {
+    this.elements = Set.empty();
+  }
 
   private ImmutableSet(Builder<E> builder) {
     this.elements = new HashSet<>(builder.elements, builder.equalsFunction, builder.hashFunction);
@@ -101,7 +108,7 @@ public final class ImmutableSet<E> implements Set<E> {
 
     @Override
     public ImmutableSet<E> build() {
-      return new ImmutableSet<>(this);
+      return elements.isPopulated() ? new ImmutableSet<>(this) : empty();
     }
 
     @Override
@@ -110,18 +117,23 @@ public final class ImmutableSet<E> implements Set<E> {
     }
   }
 
-  public static <E> ImmutableSet<E> copyOf(Collection<? extends E> collection) {
-    if (collection instanceof ImmutableSet) {
+  public static <E> ImmutableSet<E> copyOf(Iterable<? extends E> iterable) {
+    if (iterable instanceof ImmutableSet) {
       @SuppressWarnings("unchecked")
-      ImmutableSet<E> s = (ImmutableSet<E>) collection;
+      ImmutableSet<E> s = (ImmutableSet<E>) iterable;
       return s;
     }
-    return ImmutableSet.<E>builder().addAll(collection).build();
+    return ImmutableSet.<E>builder().addAll(iterable).build();
   }
 
-  public static <T> ImmutableSet<T> of() {
+  @SafeVarargs
+  public static <E> ImmutableSet<E> of(E firstItem, E...items) {
+    return items.length == 0 ? empty() : ImmutableSet.<E>builder().add(firstItem).addAll(items).build();
+  }
+
+  public static <T> ImmutableSet<T> empty() {
     @SuppressWarnings("unchecked")
-    ImmutableSet<T> set = (ImmutableSet<T>) EMPTY_SET;
+    ImmutableSet<T> set = (ImmutableSet<T>) EMPTY_IMMUTABLE_SET;
     return set;
   }
 }

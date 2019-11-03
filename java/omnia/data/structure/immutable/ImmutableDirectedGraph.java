@@ -19,8 +19,16 @@ import omnia.data.structure.mutable.MutableSet;
 
 public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
 
+  private static final ImmutableDirectedGraph<?> EMPTY_IMMUTABLE_DIRECTED_GRAPH =
+      new ImmutableDirectedGraph<>();
+
   private final ImmutableSet<E> elements;
   private final ImmutableSet<HomogeneousPair<E>> directedEdges;
+
+  private ImmutableDirectedGraph() {
+    elements = ImmutableSet.empty();
+    directedEdges = ImmutableSet.empty();
+  }
 
   private ImmutableDirectedGraph(Builder<E> builder) {
     elements =
@@ -180,7 +188,9 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   }
 
   public static <E> ImmutableDirectedGraph<E> empty() {
-    return ImmutableDirectedGraph.<E>builder().build();
+    @SuppressWarnings("unchecked")
+    ImmutableDirectedGraph<E> g = (ImmutableDirectedGraph<E>) EMPTY_IMMUTABLE_DIRECTED_GRAPH;
+    return g;
   }
 
   public static <E> Builder<E> builder() {

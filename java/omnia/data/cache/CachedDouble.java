@@ -12,7 +12,7 @@ import omnia.contract.DoubleHolder;
 public interface CachedDouble extends CachedValue, DoubleHolder {
 
   /**
-   * Get the cached value of this double. If no value is cached or the cache is invalid, will
+   * Get the cached value empty this double. If no value is cached or the cache is invalid, will
    * cause the value to be recomputed and then cached for subsequent calls.
    *
    * @return the cached double value

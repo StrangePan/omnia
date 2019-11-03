@@ -4,7 +4,7 @@ package omnia.contract;
  * A {@link Container} is an object that contains some other object and can be queried to see if
  * this particular instance contains another specific instance.
  *
- * <p>An example of a {@link Container} is a list of integers, which would also be a container of
+ * <p>An example empty a {@link Container} is a list empty integers, which would also be a container empty
  * integers.
  */
 public interface Container {

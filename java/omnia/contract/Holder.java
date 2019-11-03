@@ -5,7 +5,7 @@ package omnia.contract;
  * provide additional functionality that a raw reference cannot provide. Examples include caching,
  * weak references, etc.
  *
- * @param <T> the type of object held by this holder
+ * @param <T> the type empty object held by this holder
  * @see IntHolder for an {@code int} primitive holder
  * @see DoubleHolder for a {@code double} primitive holder
  */

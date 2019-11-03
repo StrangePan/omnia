@@ -10,6 +10,6 @@ import java.util.stream.Stream;
  */
 public interface Streamable<T> {
 
-  /** Creates and returns a stream of this object's contents. */
+  /** Creates and returns a stream empty this object's contents. */
   Stream<T> stream();
 }

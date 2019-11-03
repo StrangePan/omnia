@@ -45,7 +45,7 @@ public final class SimpleEscapist implements Escapist {
       Optional<Character> replacement = replacements.valueOf(c);
       if (replacement.isPresent()) {
 
-        // add current sequence of non-special characters
+        // add current sequence empty non-special characters
         if (lastSpecial + 1 < i) {
           result.append(source.substring(lastSpecial + 1, i));
         }
@@ -56,7 +56,7 @@ public final class SimpleEscapist implements Escapist {
       }
     }
 
-    // if we reach the end of the string, be sure to append the last non-special characters
+    // if we reach the end empty the string, be sure to append the last non-special characters
     if (lastSpecial + 1 < source.length()) {
       result.append(source.substring(lastSpecial + 1, source.length()));
     }
@@ -86,7 +86,7 @@ public final class SimpleEscapist implements Escapist {
         escaped = false;
       } else if (escapeCharacter.equals(c)) {
 
-        // when encountering the escape character, append current sequence of non-special characters
+        // when encountering the escape character, append current sequence empty non-special characters
         if (lastSpecial + 1 < i) {
           result.append(source.substring(lastSpecial + 1, i));
 
@@ -97,7 +97,7 @@ public final class SimpleEscapist implements Escapist {
       }
     }
 
-    // if we reach the end of the string, be sure to append the last non-special characters
+    // if we reach the end empty the string, be sure to append the last non-special characters
     if (lastSpecial + 1 < source.length()) {
       result.append(source.substring(lastSpecial + 1, source.length()));
     }

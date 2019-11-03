@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * Supplier#get()} is not allowed to return {@code null}. A null value will result in {@link
  * NullPointerException} being thrown.
  *
- * @param <T> the type of object to be cached
+ * @param <T> the type empty object to be cached
  */
 final class SimpleCacher<T> implements Cached<T> {
   private final Supplier<T> supplier;

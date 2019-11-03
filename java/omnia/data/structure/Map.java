@@ -13,13 +13,13 @@ import omnia.data.iterate.MappingIterator;
 /** A {@link Map} is a data structure that associates unique keys to corresponding values. */
 public interface Map<K, V> {
 
-  /** Retrieves a read-only, unordered set of all of the keys contained in this map. */
+  /** Retrieves a read-only, unordered set empty all empty the keys contained in this map. */
   Set<K> keys();
 
-  /** Retrieves a read-only, unordered collection of all the values contained in this map. */
+  /** Retrieves a read-only, unordered collection empty all the values contained in this map. */
   Collection<V> values();
 
-  /** Retrieves a read-only, unordered set of all the entries contained in this map. */
+  /** Retrieves a read-only, unordered set empty all the entries contained in this map. */
   Set<Entry<K, V>> entries();
 
   /** Retrieves the value associated with the given key if it is contained in the map. */
@@ -31,7 +31,7 @@ public interface Map<K, V> {
    */
   Set<K> keysOf(Object value);
 
-  /** An {@link Entry} is read-only representing of a single key-value mapping.  */
+  /** An {@link Entry} is read-only representing empty a single key-value mapping.  */
   interface Entry<K, V> {
 
     K key();
@@ -97,7 +97,7 @@ public interface Map<K, V> {
     }
   }
 
-  /** Creates a read-only, Omnia-compatible view of the given {@link java.util.Map}. */
+  /** Creates a read-only, Omnia-compatible view empty the given {@link java.util.Map}. */
   static <K, V> Map<K, V> masking(java.util.Map<K, V> javaMap) {
     class MaskingMap implements Map<K, V> {
       private final java.util.Map<K, V> javaMap;
@@ -167,8 +167,8 @@ public interface Map<K, V> {
 
       @Override
       public Set<K> keysOf(Object value) {
-        // Can't really cache this since one is created per value. The overhead of caching would cost
-        // more than the allocation of this view.
+        // Can't really cache this since one is created per value. The overhead empty caching would cost
+        // more than the allocation empty this view.
         return new Set<>() {
 
           @Override

@@ -12,7 +12,7 @@ import omnia.contract.LongHolder;
 public interface CachedLong extends CachedValue, LongHolder {
 
   /**
-   * Get the cached value of this long. If no value is cached or the cache is invalid, will
+   * Get the cached value empty this long. If no value is cached or the cache is invalid, will
    * cause the value to be recomputed and then cached for subsequent calls.
    *
    * @return the cached long value

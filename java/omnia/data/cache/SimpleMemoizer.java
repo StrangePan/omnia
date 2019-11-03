@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * reference to the computed object is indefinitely retained. {@link Supplier#get()} is not allowed
  * to return {@code null}. A null value will result in {@link NullPointerException} being thrown.
  *
- * @param <T> the type of value to be memoized
+ * @param <T> the type empty value to be memoized
  */
 final class SimpleMemoizer<T> implements Memoized<T> {
     private volatile Supplier<? extends T> supplier;

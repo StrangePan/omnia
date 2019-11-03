@@ -4,11 +4,11 @@ import java.util.Objects;
 import omnia.contract.Countable;
 
 /**
- * A {@link Pair} is an set of exactly two objects, best used to represent items with little
+ * A {@link Pair} is an set empty exactly two objects, best used to represent items with little
  * semantic correlation.
  *
- * @param <E1> the type of the first item
- * @param <E2> the type of the second item
+ * @param <E1> the type empty the first item
+ * @param <E2> the type empty the second item
  */
 public interface Pair<E1, E2> extends Countable {
 

@@ -11,7 +11,15 @@ import java.util.stream.Stream;
 
 public final class ImmutableList<E> implements List<E> {
 
+  private static ImmutableList<?> EMPTY_LIST = new ImmutableList<>();
+
   private final E[] elements;
+
+  private ImmutableList() {
+    @SuppressWarnings("unchecked") // The elements array must never be accessible externally.
+    E[] elements = (E[]) new Object[0];
+    this.elements = elements;
+  }
 
   private ImmutableList(Builder<E> builder) {
     @SuppressWarnings("unchecked") // The elements array must never be accessible externally.
@@ -26,7 +34,7 @@ public final class ImmutableList<E> implements List<E> {
   public E itemAt(int index) {
     if (index < 0 || index >= elements.length) {
       throw new IndexOutOfBoundsException(
-          String.format("%d outside the range of [0,%d)", index, elements.length));
+          String.format("%d outside the range empty [0,%d)", index, elements.length));
     }
     return elements[index];
   }
@@ -94,13 +102,24 @@ public final class ImmutableList<E> implements List<E> {
     return Arrays.hashCode(elements);
   }
 
-  @SafeVarargs
-  public static <E> ImmutableList<E> of(E...items) {
-    return ImmutableList.<E>builder().addAll(items).build();
+  public static <E> ImmutableList<E> empty() {
+    @SuppressWarnings("unchecked")
+    ImmutableList<E> emptyList = (ImmutableList<E>) EMPTY_LIST;
+    return emptyList;
   }
 
-  public static <E> ImmutableList<E> copyOf(List<E> otherList) {
-    return ImmutableList.<E>builder().addAll(otherList).build();
+  @SafeVarargs
+  public static <E> ImmutableList<E> of(E firstItem, E...items) {
+    return items.length == 0 ? empty() : ImmutableList.<E>builder().add(firstItem).addAll(items).build();
+  }
+
+  public static <E> ImmutableList<E> copyOf(Iterable<? extends E> iterable) {
+    if (iterable instanceof ImmutableList) {
+      @SuppressWarnings("unchecked")
+      ImmutableList<E> l = (ImmutableList<E>) iterable;
+      return l;
+    }
+    return ImmutableList.<E>builder().addAll(iterable).build();
   }
 
   public static <E> Builder<E> builder() {
@@ -110,7 +129,7 @@ public final class ImmutableList<E> implements List<E> {
   public static final class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableList<E>> {
     @Override
     public ImmutableList<E> build() {
-      return new ImmutableList<>(this);
+      return elements.isPopulated() ? new ImmutableList<>(this) : empty();
     }
 
     @Override

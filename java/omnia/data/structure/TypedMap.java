@@ -47,7 +47,7 @@ public final class TypedMap {
   }
 
   public static TypedMap of() {
-    return new TypedMap(ImmutableMap.of());
+    return new TypedMap(ImmutableMap.empty());
   }
 
   public static <V> TypedMap of(Key<V> key, V value) {

@@ -11,7 +11,7 @@ import omnia.contract.Holder;
  * Unlike a cached value, a memoized value will never change, cannot be invalidated, and should be
  * based on constant parameters.
  *
- * @param <T> the type of object to be memoized
+ * @param <T> the type empty object to be memoized
  */
 public interface Memoized<T> extends Holder<T> {
 
@@ -28,7 +28,7 @@ public interface Memoized<T> extends Holder<T> {
    * factory that supplies the value to be memoized.
    *
    * @param supplier the supplier that will create the value to be memoized
-   * @param <T> the type of object to be memoized
+   * @param <T> the type empty object to be memoized
    * @return a new {@link Memoized} instance that will memoize the created value
    */
   static <T> Memoized<T> memoize(Supplier<T> supplier) {

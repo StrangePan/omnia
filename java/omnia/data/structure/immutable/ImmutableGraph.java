@@ -17,8 +17,21 @@ import omnia.data.structure.mutable.MutableSet;
 
 public final class ImmutableGraph<E> implements Graph<E> {
 
+  private static final ImmutableGraph<?> EMPTY_IMMUTABLE_GRAPH = new ImmutableGraph<>();
+
   private final ImmutableSet<E> elements;
   private final ImmutableSet<ImmutableUnorderedPair<E>> edges;
+
+  public static <E> ImmutableGraph<E> empty() {
+    @SuppressWarnings("unchecked")
+    ImmutableGraph<E> g = (ImmutableGraph<E>) EMPTY_IMMUTABLE_GRAPH;
+    return g;
+  }
+
+  private ImmutableGraph() {
+    elements = ImmutableSet.empty();
+    edges = ImmutableSet.empty();
+  }
 
   private ImmutableGraph(Builder<E> builder) {
     elements =
@@ -123,7 +136,7 @@ public final class ImmutableGraph<E> implements Graph<E> {
     }
 
     public ImmutableGraph<E> build() {
-      return new ImmutableGraph<>(this);
+      return nodes.isPopulated() || edges.isPopulated() ? new ImmutableGraph<>(this) : empty();
     }
 
     private Builder() {}

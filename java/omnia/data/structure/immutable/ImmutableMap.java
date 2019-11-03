@@ -10,6 +10,9 @@ import omnia.data.structure.Map;
 import omnia.data.structure.Set;
 
 public final class ImmutableMap<K, V> implements Map<K, V> {
+
+  private static final ImmutableMap<?, ?> EMPTY_IMMUTABLE_MAP = new ImmutableMap<>();
+
   private java.util.Map<K, V> javaMap = new java.util.TreeMap<>();
 
   private ImmutableMap() {}
@@ -69,8 +72,10 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
         .collect(toImmutableSet());
   }
 
-  public static <K, V> ImmutableMap<K, V> of() {
-    return new ImmutableMap<>();
+  public static <K, V> ImmutableMap<K, V> empty() {
+    @SuppressWarnings("unchecked")
+    ImmutableMap<K, V> emptyMap = (ImmutableMap<K, V>) EMPTY_IMMUTABLE_MAP;
+    return emptyMap;
   }
 
   public static <K, V> ImmutableMap<K, V> of(K key, V value) {
@@ -82,7 +87,7 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
   }
 
   public static final class Builder<K, V> {
-    private final java.util.Map<K, V> javaMap = new java.util.HashMap<K, V>();
+    private final java.util.Map<K, V> javaMap = new java.util.HashMap<>();
 
     private Builder() {}
 
@@ -96,12 +101,26 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
       return this;
     }
 
+    public Builder<K, V> putAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> iterable) {
+      iterable.forEach(e -> put(e.key(), e.value()));
+      return this;
+    }
+
     public ImmutableMap<K, V> build() {
-      return new ImmutableMap<>(this);
+      return javaMap.isEmpty() ? empty() : new ImmutableMap<>(this);
     }
   }
 
   public static <K, V> ImmutableMap<K, V> copyOf(Map<? extends K, ? extends V> otherMap) {
+    if (otherMap instanceof ImmutableMap) {
+      @SuppressWarnings("unchecked")
+      ImmutableMap<K, V> m = (ImmutableMap<K, V>) otherMap;
+      return m;
+    }
     return ImmutableMap.<K, V>builder().putAll(otherMap).build();
+  }
+
+  public static <K, V> ImmutableMap<K, V> copyOf(Iterable<? extends Map.Entry<? extends K, ? extends V>> iterable) {
+    return ImmutableMap.<K, V>builder().putAll(iterable).build();
   }
 }

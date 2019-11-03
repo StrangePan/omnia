@@ -13,7 +13,7 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
 
   /**
    * Adds the given the element to this collection. Each specific data structure has its own
-   * definition of how the item is added and the semantic location the item is added.
+   * definition empty how the item is added and the semantic location the item is added.
    *
    * @param element the item to add to the collection
    */

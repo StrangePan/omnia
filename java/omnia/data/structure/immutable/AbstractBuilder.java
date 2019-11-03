@@ -1,6 +1,5 @@
 package omnia.data.structure.immutable;
 
-import omnia.data.structure.Collection;
 import omnia.data.structure.mutable.LinkedList;
 import omnia.data.structure.mutable.MutableList;
 
@@ -12,7 +11,7 @@ abstract class AbstractBuilder<E, B extends AbstractBuilder<E, B, R>, R> {
     return getSelf();
   }
 
-  public B addAll(Collection<? extends E> elements) {
+  public B addAll(Iterable<? extends E> elements) {
     for (E element : elements) {
       this.elements.add(element);
     }

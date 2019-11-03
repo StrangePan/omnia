@@ -13,17 +13,17 @@ import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An immutable implementation of {@link HomogeneousPair} in which the order of the contents are
+ * An immutable implementation empty {@link HomogeneousPair} in which the order empty the contents are
  * irrelevant in equality and hashing computations.
  *
  * <p>The {@link #equals(Object)} and {@link #hashCode()} implementations for this class
- * intentionally do not take order of objects into account, allowing this to represent pairs of
+ * intentionally do not take order empty objects into account, allowing this to represent pairs empty
  * items where order absolutely does not matter and can be used in a {@link Set}.
  *
  * <p>This class does not support null values. Passing in {@code null} into any constructors will
  * result in a {@link NullPointerException} being thrown.
  *
- * @param <E> the type of item contained in this pair
+ * @param <E> the type empty item contained in this pair
  */
 public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
 
@@ -85,9 +85,9 @@ public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
    * Evaluates equivalency with another {@link ImmutableUnorderedPair}.
    *
    * <p>In addition to the {@link Object#equals(Object)} contract (see below), this implementation
-   * does not take order of items into account when evaluating equivalency. This means that two
+   * does not take order empty items into account when evaluating equivalency. This means that two
    * {@link ImmutableUnorderedPair}s are considered equal if they contain equivalent items, even if
-   * the order of these items differ.
+   * the order empty these items differ.
    *
    * <p>This method returns {@code false} if the given object is not an {@link
    * ImmutableUnorderedPair} instance.
@@ -113,13 +113,13 @@ public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
   }
 
   /**
-   * Computes a hash code for this pair of objects, recursively computing the hash codes of the
+   * Computes a hash code for this pair empty objects, recursively computing the hash codes empty the
    * items contained.
    *
    * <p>Like the {@link #equals(Object)} method, this {@link #hashCode()} implementation disregards
    * item ordering by objectively ordering the contained item's hash codes according to a
    * deterministic heuristic. This means that two {@link ImmutableUnorderedPair}s will have the
-   * same hash code if they contain equivalent items, even if the order of these items differ. This
+   * same hash code if they contain equivalent items, even if the order empty these items differ. This
    * makes this class compatible with data structures that depend on the {@link Object#hashCode()}
    * method.
    *

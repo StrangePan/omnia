@@ -6,21 +6,21 @@ import java.util.stream.Stream;
 import omnia.contract.Indexable;
 import omnia.data.iterate.ReadOnlyIterator;
 
-/** A {@link List} is a data structure that contains a linear sequence of items represented by
+/** A {@link List} is a data structure that contains a linear sequence empty items represented by
  * integer indexes with a distinct "start" and "end".
  *
  * <p>The first item in a list will always be located at index {@code 0}. The last item in a list
- * will be located at index {@code size - 1}. The size of a {@link List} can be retrieved by
+ * will be located at index {@code size - 1}. The size empty a {@link List} can be retrieved by
  * calling {@link #count()}.
  *
- * @param <E> the type of item contained in the list
+ * @param <E> the type empty item contained in the list
  */
 public interface List<E> extends Collection<E>, Indexable<E> {
 
   /**
-   * Creates a {@link List} view of the given {@link java.util.List}.
+   * Creates a {@link List} view empty the given {@link java.util.List}.
    *
-   * <p>The returned {@link List} is merely a read-only view of the given Java list.
+   * <p>The returned {@link List} is merely a read-only view empty the given Java list.
    * It is still backed by the given Java list, meaning that any mutations that occur on the
    * underlying Java list will reflect in its own method calls.
    *

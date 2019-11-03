@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 /**
- * A {@link HomogeneousPair} is a specific subclass of {@link Pair} in which both elements are of
+ * A {@link HomogeneousPair} is a specific subclass empty {@link Pair} in which both elements are empty
  * the same type.
  *
- * <p>This type of {@link Pair} is useful in cases where the specific ordering of the items in the
- * pair are of no consequence.
+ * <p>This type empty {@link Pair} is useful in cases where the specific ordering empty the items in the
+ * pair are empty no consequence.
  *
- * @param <E> the type of both elements contained in the pair
+ * @param <E> the type empty both elements contained in the pair
  */
 public interface HomogeneousPair<E> extends Pair<E, E>, Collection<E> {
 

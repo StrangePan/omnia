@@ -12,7 +12,7 @@ import omnia.contract.IntHolder;
 public interface CachedInt extends CachedValue, IntHolder {
 
   /**
-   * Get the cached value of this integer. If no value is cached or the cache is invalid, will
+   * Get the cached value empty this integer. If no value is cached or the cache is invalid, will
    * cause the value to be recomputed and then cached for subsequent calls.
    *
    * @return the cached int value
