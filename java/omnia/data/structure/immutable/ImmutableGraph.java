@@ -28,6 +28,31 @@ public final class ImmutableGraph<E> implements Graph<E> {
     return g;
   }
 
+  public static <E> Builder<E> builder() {
+    return new Builder<>();
+  }
+
+  public static class Builder<E> {
+    MutableSet<E> nodes = new HashSet<>();
+    MutableSet<ImmutableUnorderedPair<E>> edges = new HashSet<>();
+
+    public Builder<E> addNode(E element) {
+      nodes.add(requireNonNull(element));
+      return this;
+    }
+
+    public Builder<E> addEdge(E element1, E element2) {
+      edges.add(ImmutableUnorderedPair.of(element1, element2));
+      return this;
+    }
+
+    public ImmutableGraph<E> build() {
+      return nodes.isPopulated() || edges.isPopulated() ? new ImmutableGraph<>(this) : empty();
+    }
+
+    private Builder() {}
+  }
+
   private ImmutableGraph() {
     elements = ImmutableSet.empty();
     edges = ImmutableSet.empty();
@@ -115,31 +140,6 @@ public final class ImmutableGraph<E> implements Graph<E> {
     public Collection<? extends Node> endpoints() {
       return Collection.masking(endpoints.stream().map(toNode()).collect(toList()));
     }
-  }
-
-  public static <E> Builder<E> builder() {
-    return new Builder<>();
-  }
-
-  public static class Builder<E> {
-    MutableSet<E> nodes = new HashSet<>();
-    MutableSet<ImmutableUnorderedPair<E>> edges = new HashSet<>();
-
-    public Builder<E> addNode(E element) {
-      nodes.add(requireNonNull(element));
-      return this;
-    }
-
-    public Builder<E> addEdge(E element1, E element2) {
-      edges.add(ImmutableUnorderedPair.of(element1, element2));
-      return this;
-    }
-
-    public ImmutableGraph<E> build() {
-      return nodes.isPopulated() || edges.isPopulated() ? new ImmutableGraph<>(this) : empty();
-    }
-
-    private Builder() {}
   }
 
   private Function<? super E, ? extends Node> toNode() {

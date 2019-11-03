@@ -15,6 +15,42 @@ public final class ImmutableList<E> implements List<E> {
 
   private final E[] elements;
 
+  public static <E> ImmutableList<E> empty() {
+    @SuppressWarnings("unchecked")
+    ImmutableList<E> emptyList = (ImmutableList<E>) EMPTY_LIST;
+    return emptyList;
+  }
+
+  @SafeVarargs
+  public static <E> ImmutableList<E> of(E firstItem, E...items) {
+    return items.length == 0 ? empty() : ImmutableList.<E>builder().add(firstItem).addAll(items).build();
+  }
+
+  public static <E> ImmutableList<E> copyOf(Iterable<? extends E> iterable) {
+    if (iterable instanceof ImmutableList) {
+      @SuppressWarnings("unchecked")
+      ImmutableList<E> l = (ImmutableList<E>) iterable;
+      return l;
+    }
+    return ImmutableList.<E>builder().addAll(iterable).build();
+  }
+
+  public static <E> Builder<E> builder() {
+    return new Builder<>();
+  }
+
+  public static final class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableList<E>> {
+    @Override
+    public ImmutableList<E> build() {
+      return elements.isPopulated() ? new ImmutableList<>(this) : empty();
+    }
+
+    @Override
+    protected Builder<E> getSelf() {
+      return this;
+    }
+  }
+
   private ImmutableList() {
     @SuppressWarnings("unchecked") // The elements array must never be accessible externally.
     E[] elements = (E[]) new Object[0];
@@ -100,41 +136,5 @@ public final class ImmutableList<E> implements List<E> {
   @Override
   public int hashCode() {
     return Arrays.hashCode(elements);
-  }
-
-  public static <E> ImmutableList<E> empty() {
-    @SuppressWarnings("unchecked")
-    ImmutableList<E> emptyList = (ImmutableList<E>) EMPTY_LIST;
-    return emptyList;
-  }
-
-  @SafeVarargs
-  public static <E> ImmutableList<E> of(E firstItem, E...items) {
-    return items.length == 0 ? empty() : ImmutableList.<E>builder().add(firstItem).addAll(items).build();
-  }
-
-  public static <E> ImmutableList<E> copyOf(Iterable<? extends E> iterable) {
-    if (iterable instanceof ImmutableList) {
-      @SuppressWarnings("unchecked")
-      ImmutableList<E> l = (ImmutableList<E>) iterable;
-      return l;
-    }
-    return ImmutableList.<E>builder().addAll(iterable).build();
-  }
-
-  public static <E> Builder<E> builder() {
-    return new Builder<>();
-  }
-
-  public static final class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableList<E>> {
-    @Override
-    public ImmutableList<E> build() {
-      return elements.isPopulated() ? new ImmutableList<>(this) : empty();
-    }
-
-    @Override
-    protected Builder<E> getSelf() {
-      return this;
-    }
   }
 }

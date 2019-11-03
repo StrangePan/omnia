@@ -21,6 +21,55 @@ public final class ImmutableSet<E> implements Set<E> {
 
   private final Set<E> elements;
 
+  public static <T> ImmutableSet<T> empty() {
+    @SuppressWarnings("unchecked")
+    ImmutableSet<T> set = (ImmutableSet<T>) EMPTY_IMMUTABLE_SET;
+    return set;
+  }
+
+  @SafeVarargs
+  public static <E> ImmutableSet<E> of(E firstItem, E...items) {
+    return items.length == 0 ? empty() : ImmutableSet.<E>builder().add(firstItem).addAll(items).build();
+  }
+
+  public static <E> ImmutableSet<E> copyOf(Iterable<? extends E> iterable) {
+    if (iterable instanceof ImmutableSet) {
+      @SuppressWarnings("unchecked")
+      ImmutableSet<E> s = (ImmutableSet<E>) iterable;
+      return s;
+    }
+    return ImmutableSet.<E>builder().addAll(iterable).build();
+  }
+
+  public static <E> Builder<E> builder() {
+    return new Builder<>();
+  }
+
+  public static class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableSet<E>> {
+    private BiPredicate<Object, Object> equalsFunction = null;
+    private ToIntFunction<Object> hashFunction = null;
+
+    public Builder<E> equalsFunction(BiPredicate<Object, Object> equalsFunction) {
+      this.equalsFunction = equalsFunction;
+      return getSelf();
+    }
+
+    public Builder<E> hashFunction(ToIntFunction<Object> hashFunction) {
+      this.hashFunction = hashFunction;
+      return getSelf();
+    }
+
+    @Override
+    public ImmutableSet<E> build() {
+      return elements.isPopulated() ? new ImmutableSet<>(this) : empty();
+    }
+
+    @Override
+    protected Builder<E> getSelf() {
+      return this;
+    }
+  }
+
   private ImmutableSet() {
     this.elements = Set.empty();
   }
@@ -86,54 +135,5 @@ public final class ImmutableSet<E> implements Set<E> {
     }
     Arrays.sort(elementCodes);
     return Objects.hash(Arrays.hashCode(elementCodes));
-  }
-
-  public static <E> Builder<E> builder() {
-    return new Builder<>();
-  }
-
-  public static class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableSet<E>> {
-    private BiPredicate<Object, Object> equalsFunction = null;
-    private ToIntFunction<Object> hashFunction = null;
-
-    public Builder<E> equalsFunction(BiPredicate<Object, Object> equalsFunction) {
-      this.equalsFunction = equalsFunction;
-      return getSelf();
-    }
-
-    public Builder<E> hashFunction(ToIntFunction<Object> hashFunction) {
-      this.hashFunction = hashFunction;
-      return getSelf();
-    }
-
-    @Override
-    public ImmutableSet<E> build() {
-      return elements.isPopulated() ? new ImmutableSet<>(this) : empty();
-    }
-
-    @Override
-    protected Builder<E> getSelf() {
-      return this;
-    }
-  }
-
-  public static <E> ImmutableSet<E> copyOf(Iterable<? extends E> iterable) {
-    if (iterable instanceof ImmutableSet) {
-      @SuppressWarnings("unchecked")
-      ImmutableSet<E> s = (ImmutableSet<E>) iterable;
-      return s;
-    }
-    return ImmutableSet.<E>builder().addAll(iterable).build();
-  }
-
-  @SafeVarargs
-  public static <E> ImmutableSet<E> of(E firstItem, E...items) {
-    return items.length == 0 ? empty() : ImmutableSet.<E>builder().add(firstItem).addAll(items).build();
-  }
-
-  public static <T> ImmutableSet<T> empty() {
-    @SuppressWarnings("unchecked")
-    ImmutableSet<T> set = (ImmutableSet<T>) EMPTY_IMMUTABLE_SET;
-    return set;
   }
 }

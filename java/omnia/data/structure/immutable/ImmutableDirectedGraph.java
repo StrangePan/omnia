@@ -25,6 +25,69 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   private final ImmutableSet<E> elements;
   private final ImmutableSet<HomogeneousPair<E>> directedEdges;
 
+  public static <E> ImmutableDirectedGraph<E> empty() {
+    @SuppressWarnings("unchecked")
+    ImmutableDirectedGraph<E> g = (ImmutableDirectedGraph<E>) EMPTY_IMMUTABLE_DIRECTED_GRAPH;
+    return g;
+  }
+
+  public static <E> Builder<E> builder() {
+    return new Builder<>();
+  }
+
+  public static <E> Builder<E> buildUpon(DirectedGraph<E> original) {
+    if (original instanceof ImmutableDirectedGraph) {
+      return ((ImmutableDirectedGraph<E>) original).toBuilder();
+    }
+    return new Builder<>(
+        original.nodes().stream().map(DirectedGraph.Node::element).collect(toSet()),
+        original.edges().stream()
+            .map(edge -> HomogeneousPair.of(edge.start().element(), edge.end().element()))
+            .collect(toSet()));
+  }
+
+  public static final class Builder<E> {
+    private final MutableSet<E> nodes;
+    private final MutableSet<HomogeneousPair<E>> directedEdges;
+
+    private Builder() {
+      nodes = new HashSet<>();
+      directedEdges = new HashSet<>();
+    }
+
+    private Builder(Set<E> nodes, Set<HomogeneousPair<E>> directedEdges) {
+      this.nodes = nodes instanceof MutableSet ? (MutableSet<E>) nodes : HashSet.copyOf(nodes);
+      this.directedEdges =
+          directedEdges instanceof MutableSet
+              ? (MutableSet<HomogeneousPair<E>>) directedEdges
+              : HashSet.copyOf(directedEdges);
+    }
+
+    public Builder<E> addNode(E element) {
+      nodes.add(requireNonNull(element));
+      return this;
+    }
+
+    public Builder<E> removeNode(E element) {
+      nodes.remove(requireNonNull(element));
+      return this;
+    }
+
+    public Builder<E> addEdge(E from, E to) {
+      directedEdges.add(HomogeneousPair.of(from, to));
+      return this;
+    }
+
+    public Builder<E> removeEdge(E from, E to) {
+      directedEdges.remove(HomogeneousPair.of(from, to));
+      return this;
+    }
+
+    public ImmutableDirectedGraph<E> build() {
+      return new ImmutableDirectedGraph<>(this);
+    }
+  }
+
   private ImmutableDirectedGraph() {
     elements = ImmutableSet.empty();
     directedEdges = ImmutableSet.empty();
@@ -184,69 +247,6 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     public boolean equals(Object other) {
       return other instanceof Edge
           && Objects.equals(endpoints, ((Edge<?>) other).endpoints);
-    }
-  }
-
-  public static <E> ImmutableDirectedGraph<E> empty() {
-    @SuppressWarnings("unchecked")
-    ImmutableDirectedGraph<E> g = (ImmutableDirectedGraph<E>) EMPTY_IMMUTABLE_DIRECTED_GRAPH;
-    return g;
-  }
-
-  public static <E> Builder<E> builder() {
-    return new Builder<>();
-  }
-
-  public static <E> Builder<E> buildUpon(DirectedGraph<E> original) {
-    if (original instanceof ImmutableDirectedGraph) {
-      return ((ImmutableDirectedGraph<E>) original).toBuilder();
-    }
-    return new Builder<>(
-        original.nodes().stream().map(DirectedGraph.Node::element).collect(toSet()),
-        original.edges().stream()
-            .map(edge -> HomogeneousPair.of(edge.start().element(), edge.end().element()))
-            .collect(toSet()));
-  }
-
-  public static final class Builder<E> {
-    private final MutableSet<E> nodes;
-    private final MutableSet<HomogeneousPair<E>> directedEdges;
-
-    private Builder() {
-      nodes = new HashSet<>();
-      directedEdges = new HashSet<>();
-    }
-
-    private Builder(Set<E> nodes, Set<HomogeneousPair<E>> directedEdges) {
-      this.nodes = nodes instanceof MutableSet ? (MutableSet<E>) nodes : HashSet.copyOf(nodes);
-      this.directedEdges =
-          directedEdges instanceof MutableSet
-              ? (MutableSet<HomogeneousPair<E>>) directedEdges
-              : HashSet.copyOf(directedEdges);
-    }
-
-    public Builder<E> addNode(E element) {
-      nodes.add(requireNonNull(element));
-      return this;
-    }
-
-    public Builder<E> removeNode(E element) {
-      nodes.remove(requireNonNull(element));
-      return this;
-    }
-
-    public Builder<E> addEdge(E from, E to) {
-      directedEdges.add(HomogeneousPair.of(from, to));
-      return this;
-    }
-
-    public Builder<E> removeEdge(E from, E to) {
-      directedEdges.remove(HomogeneousPair.of(from, to));
-      return this;
-    }
-
-    public ImmutableDirectedGraph<E> build() {
-      return new ImmutableDirectedGraph<>(this);
     }
   }
 
