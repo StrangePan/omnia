@@ -15,17 +15,17 @@ import io.reactivex.Flowable;
 public interface ObservableDataStructure<StateType, MutationType> {
 
   /**
-   * Returns an {@link ObservableChannel} with which observers can choose which channel to
+   * Returns an {@link ObservableChannels} with which observers can choose which channel to
    * subscribe to.
    */
-  ObservableChannel<StateType, MutationType> observe();
+  ObservableChannels<StateType, MutationType> observe();
 
   /**
    * A condense view of the types of observable channels available to subscribers. This encapsulates
    * the Rx-related methods into a contained interface so as not to pollute the namespace of the
    * data structure.
    */
-  interface ObservableChannel<StateType, MutationType> {
+  interface ObservableChannels<StateType, MutationType> {
 
     /**
      * Emits an immutable copy of the data structure whenever its state changes.
@@ -34,7 +34,7 @@ public interface ObservableDataStructure<StateType, MutationType> {
      * data structure. New subscribers should ignore this first emission if they wish to only be
      * notified of changes.
      */
-    Flowable<StateType> states();
+    Flowable<? extends StateType> states();
 
     /**
      * Emits both an immutable copy of the data structure whenever its state changes, as well
@@ -45,7 +45,7 @@ public interface ObservableDataStructure<StateType, MutationType> {
      * structure, as well as a mutation equivalent of populating an empty data structure with the
      * contents of current state.
      */
-    Flowable<MutationEvent<StateType, MutationType>> mutations();
+    Flowable<? extends MutationEvent<? extends StateType, ? extends MutationType>> mutations();
   }
 
   /**

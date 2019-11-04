@@ -22,6 +22,10 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
   /**
    * Removes the given item from this {@link Collection} if contained within.
    *
+   * For collections that contain duplicates of an item, this method removes at most one duplicate
+   * of that item. Callers wishing to remove all such items will need to call this function multiple
+   * times.
+   *
    * @param element the element to remove from the {@link Collection}
    * @return {@code true} if the collection contained {@code element} and the element was removed,
    *     {@code false} if the collection did not contain the item and thus was not removed

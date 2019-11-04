@@ -1,6 +1,8 @@
 package omnia.data.structure.immutable;
 
 import omnia.data.iterate.ArrayIterator;
+import omnia.data.iterate.IntegerRangeIterator;
+import omnia.data.iterate.MappingIterator;
 import omnia.data.structure.List;
 
 import java.util.Arrays;
@@ -39,7 +41,26 @@ public final class ImmutableList<E> implements List<E> {
     return new Builder<>();
   }
 
+  public Builder<E> toBuilder() {
+    return ImmutableList.<E>builder().addAll(this);
+  }
+
   public static final class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableList<E>> {
+    public Builder<E> insertAt(int index, E item) {
+      elements.insertAt(index, item);
+      return getSelf();
+    }
+
+    public Builder<E> removeAt(int index) {
+      elements.removeAt(index);
+      return getSelf();
+    }
+
+    public Builder<E> replaceAt(int index, E item) {
+      elements.replaceAt(index, item);
+      return getSelf();
+    }
+
     @Override
     public ImmutableList<E> build() {
       return elements.isPopulated() ? new ImmutableList<>(this) : empty();
@@ -136,5 +157,34 @@ public final class ImmutableList<E> implements List<E> {
   @Override
   public int hashCode() {
     return Arrays.hashCode(elements);
+  }
+
+  public SublistBuilder sublistStartingAt(int startingIndex) {
+    return new SublistBuilder(startingIndex);
+  }
+
+  public final class SublistBuilder {
+    private final int startingIndex;
+
+    private SublistBuilder(int startingIndex) {
+      this.startingIndex = startingIndex;
+    }
+
+    public ImmutableList<E> to(int endingIndex) {
+      if (endingIndex < startingIndex) {
+        throw new IllegalArgumentException(
+            "endingIndex must be greater than or equal to startingIndex. startingIndex="
+                + startingIndex
+                + " endingIndex="
+                + endingIndex);
+      }
+      return ImmutableList.<E>builder()
+          .addAll(
+              () ->
+                  new MappingIterator<>(
+                      IntegerRangeIterator.create(startingIndex, endingIndex),
+                      ImmutableList.this::itemAt))
+          .build();
+    }
   }
 }

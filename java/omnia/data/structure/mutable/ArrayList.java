@@ -1,6 +1,7 @@
 package omnia.data.structure.mutable;
 
 import java.util.Arrays;
+
 public final class ArrayList<E> extends MaskingList<E> {
 
   public ArrayList() {

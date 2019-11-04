@@ -3,10 +3,23 @@ package omnia.data.structure.rx;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import omnia.contract.Countable;
+import omnia.contract.Streamable;
 import omnia.data.structure.List;
 import omnia.data.structure.mutable.MutableList;
 
-public interface ObservableList<E> extends MutableList<E>, ObservableDataStructure<List<E>, List<ObservableList.ListMutation<E>>> {
+public interface ObservableList<E> extends MutableList<E>, ObservableDataStructure<List<E>, ObservableList.ListMutations<E>> {
+
+  /**
+   * Represents a set of mutations that describes the diff between two distinct list states.
+   * Supports iterating over the individual list mutations, streaming them, or viewing them as an
+   * ordered list. Whatever method used to read the individual mutations, they will always be
+   * iterated, streamed, or viewed in the order in which they were applied to the previous state.
+   */
+  interface ListMutations<E> extends Countable, Iterable<ListMutation<E>>, Streamable<ListMutation<E>> {
+
+    /** Views the individual {@link ListMutation} items as a list data structure. */
+    List<ListMutation<E>> asList();
+  }
 
   /**
    * Represents a mutation to a list data structure. Can be cast to a specific subtype using one
@@ -72,14 +85,14 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
    * the middle or beginning of the list.
    */
   interface MoveInList<E> extends ListMutation<E> {
+    /** The items that were moved within the list. */
+    List<E> items();
+
     /** The range of indices at which the items resided in the previous state of the list. */
     IndexRange previousIndicies();
 
     /** The range of indices at which the items now reside in the current state of the list. */
     IndexRange currentIndicies();
-
-    /** The items that were moved within the list. */
-    List<E> items();
   }
 
   /** Represents one or more items being removed from the list. */
@@ -97,9 +110,6 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
    * list.
    */
   interface ReplaceInList<E> extends ListMutation<E> {
-    /** The range of indices within the list whose values were replaced in this operation. */
-    IndexRange indices();
-
     /**
      * The items that were replaced by {@link #newItems()}. These items may still be located in
      * other positions within the list.
@@ -108,6 +118,9 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
 
     /** The items that replaced {@link #replacedItems()}. */
     List<E> newItems();
+
+    /** The range of indices within the list whose values were replaced in this operation. */
+    IndexRange indices();
   }
 
   interface IndexRange extends Countable, Iterable<Integer> {
