@@ -186,15 +186,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private MutationEvent<E> generateMutationEventForNewSubscription() {
-    List<E> state = getState();
-    return new MutationEvent<>(
-        state,
-        ImmutableList.of(
-            new AddToList<>(state, new IndexRange(0, state.count()))));
-  }
-
-  private final static class MutationEvent<E>
+  private static final class MutationEvent<E>
       implements ObservableDataStructure.MutationEvent<List<E>, ListMutations<E>> {
     private final List<E> state;
     private final ListMutations<E> mutations;
@@ -215,7 +207,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private final static class ListMutations<E> implements ObservableList.ListMutations<E> {
+  private static final class ListMutations<E> implements ObservableList.ListMutations<E> {
     private final List<ListMutation<E>> mutations;
 
     private ListMutations(List<ListMutation<E>> mutations) {
@@ -248,7 +240,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private final static class AddToList<E> implements ObservableList.AddToList<E> {
+  private static final class AddToList<E> implements ObservableList.AddToList<E> {
     private final List<E> items;
     private final IndexRange indices;
 
@@ -268,7 +260,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private final static class MoveInList<E> implements ObservableList.MoveInList<E> {
+  private static final class MoveInList<E> implements ObservableList.MoveInList<E> {
     private final List<E> items;
     private final IndexRange previousIndices;
     private final IndexRange currentIndices;
@@ -295,7 +287,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private final static class RemoveFromList<E> implements ObservableList.RemoveFromList<E> {
+  private static final class RemoveFromList<E> implements ObservableList.RemoveFromList<E> {
     private final List<E> items;
     private final IndexRange indices;
 
@@ -315,7 +307,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private final static class ReplaceInList<E> implements ObservableList.ReplaceInList<E> {
+  private static final class ReplaceInList<E> implements ObservableList.ReplaceInList<E> {
     private final List<E> replacedItems;
     private final List<E> newItems;
     private final IndexRange indices;
@@ -342,7 +334,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private final static class IndexRange implements ObservableList.IndexRange {
+  private static final class IndexRange implements ObservableList.IndexRange {
     private final int start;
     private final int end;
 
@@ -421,5 +413,13 @@ final class ObservableListImpl<E> implements ObservableList<E> {
             ? extends ObservableList.ListMutations<E>>> mutations() {
       return mutations;
     }
+  }
+
+  private MutationEvent<E> generateMutationEventForNewSubscription() {
+    List<E> state = getState();
+    return new MutationEvent<>(
+        state,
+        ImmutableList.of(
+            new AddToList<>(state, new IndexRange(0, state.count()))));
   }
 }
