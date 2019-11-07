@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import omnia.contract.Container;
 import omnia.contract.Countable;
 import omnia.contract.Streamable;
+import omnia.data.iterate.EmptyIterator;
 import omnia.data.iterate.ReadOnlyIterator;
 
 /**
@@ -14,6 +15,39 @@ import omnia.data.iterate.ReadOnlyIterator;
  * @param <E> the type contained in the collection
  */
 public interface Collection<E> extends Container, Countable, Iterable<E>, Streamable<E> {
+
+  Collection<?> EMPTY_COLLECTION = new Collection<>() {
+    @Override
+    public Iterator<Object> iterator() {
+      return EmptyIterator.create();
+    }
+
+    @Override
+    public boolean contains(Object element) {
+      return false;
+    }
+
+    @Override
+    public int count() {
+      return 0;
+    }
+
+    @Override
+    public boolean isPopulated() {
+      return false;
+    }
+
+    @Override
+    public Stream<Object> stream() {
+      return Stream.empty();
+    }
+  };
+
+  static <E> Collection<E> empty() {
+    @SuppressWarnings("unchecked")
+    Collection<E> collection = (Collection<E>) EMPTY_COLLECTION;
+    return collection;
+  }
 
   /**
    * Creates a {@link Collection} view empty the given {@link java.util.Collection}.

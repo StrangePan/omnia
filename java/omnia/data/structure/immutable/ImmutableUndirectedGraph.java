@@ -15,16 +15,17 @@ import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableSet;
 
-public final class ImmutableGraph<E> implements Graph<E> {
+public final class ImmutableUndirectedGraph<E> implements Graph<E> {
 
-  private static final ImmutableGraph<?> EMPTY_IMMUTABLE_GRAPH = new ImmutableGraph<>();
+  private static final ImmutableUndirectedGraph<?> EMPTY_IMMUTABLE_UNDIRECTED_GRAPH =
+      new ImmutableUndirectedGraph<>();
 
   private final ImmutableSet<E> elements;
   private final ImmutableSet<ImmutableUnorderedPair<E>> edges;
 
-  public static <E> ImmutableGraph<E> empty() {
+  public static <E> ImmutableUndirectedGraph<E> empty() {
     @SuppressWarnings("unchecked")
-    ImmutableGraph<E> g = (ImmutableGraph<E>) EMPTY_IMMUTABLE_GRAPH;
+    ImmutableUndirectedGraph<E> g = (ImmutableUndirectedGraph<E>) EMPTY_IMMUTABLE_UNDIRECTED_GRAPH;
     return g;
   }
 
@@ -46,19 +47,21 @@ public final class ImmutableGraph<E> implements Graph<E> {
       return this;
     }
 
-    public ImmutableGraph<E> build() {
-      return nodes.isPopulated() || edges.isPopulated() ? new ImmutableGraph<>(this) : empty();
+    public ImmutableUndirectedGraph<E> build() {
+      return nodes.isPopulated() || edges.isPopulated()
+          ? new ImmutableUndirectedGraph<>(this)
+          : empty();
     }
 
     private Builder() {}
   }
 
-  private ImmutableGraph() {
+  private ImmutableUndirectedGraph() {
     elements = ImmutableSet.empty();
     edges = ImmutableSet.empty();
   }
 
-  private ImmutableGraph(Builder<E> builder) {
+  private ImmutableUndirectedGraph(Builder<E> builder) {
     elements =
         Stream.concat(
                 builder.nodes.stream(),
