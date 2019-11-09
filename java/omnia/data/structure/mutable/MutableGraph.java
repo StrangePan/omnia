@@ -6,12 +6,6 @@ import omnia.data.structure.Graph;
 
 public interface MutableGraph<E> extends Graph<E>, MutableCollection<E> {
 
-  void replace(E original, E replacement);
-
-  void addEdge(E first, E second);
-
-  boolean removeEdge(E first, E second);
-
   interface MutableNode<E> extends Graph.Node<E> {
 
     void replaceValue(E element);
@@ -32,6 +26,12 @@ public interface MutableGraph<E> extends Graph<E>, MutableCollection<E> {
     @Override
     Collection<? extends MutableNode<E>> endpoints();
   }
+
+  void replace(E original, E replacement);
+
+  void addEdge(E first, E second);
+
+  boolean removeEdge(E first, E second);
 
   @Override
   Optional<? extends MutableNode<E>> nodeOf(E element);

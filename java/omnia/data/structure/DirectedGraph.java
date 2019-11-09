@@ -11,18 +11,18 @@ public interface DirectedGraph<E> extends Graph<E> {
   interface Node<E> extends Graph.Node<E> {
 
     @Override
-    Set<? extends DirectedGraph.Edge<E>> edges();
+    Set<? extends Edge<E>> edges();
 
-    Set<? extends DirectedGraph.Edge<E>> outgoingEdges();
+    Set<? extends Edge<E>> outgoingEdges();
 
-    Set<? extends DirectedGraph.Edge<E>> incomingEdges();
+    Set<? extends Edge<E>> incomingEdges();
 
     @Override
-    Set<? extends DirectedGraph.Node<E>> neighbors();
+    Set<? extends Node<E>> neighbors();
 
-    Set<? extends DirectedGraph.Node<E>> successors();
+    Set<? extends Node<E>> successors();
 
-    Set<? extends DirectedGraph.Node<E>> predecessors();
+    Set<? extends Node<E>> predecessors();
 
     static boolean areEqual(Node<?> a, Node<?> b) {
       if (a == b) {
@@ -37,12 +37,12 @@ public interface DirectedGraph<E> extends Graph<E> {
 
   interface Edge<E> extends Graph.Edge<E> {
 
-    DirectedGraph.Node<E> start();
+    Node<E> start();
 
-    DirectedGraph.Node<E> end();
+    Node<E> end();
 
     @Override
-    Collection<? extends DirectedGraph.Node<E>> endpoints();
+    Collection<? extends Node<E>> endpoints();
 
     static boolean areEqual(Edge<?> a, Edge<?> b) {
       if (a == b) {
@@ -57,13 +57,13 @@ public interface DirectedGraph<E> extends Graph<E> {
   }
 
   @Override
-  Optional<? extends DirectedGraph.Node<E>> nodeOf(E element);
+  Optional<? extends Node<E>> nodeOf(E element);
 
   @Override
-  Set<? extends DirectedGraph.Node<E>> nodes();
+  Set<? extends Node<E>> nodes();
 
   @Override
-  Set<? extends DirectedGraph.Edge<E>> edges();
+  Set<? extends Edge<E>> edges();
 
   static <E> boolean areEqual(DirectedGraph<E> first, DirectedGraph<E> second) {
     if (first == second) {
