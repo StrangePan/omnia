@@ -2,7 +2,6 @@ package omnia.data.structure.rx;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
-import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Graph;
 import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
@@ -38,10 +37,10 @@ public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStruc
           : Flowable.empty();
     }
 
-    static <E> Function<GraphMutation<E>, Flowable<RemoveEdgeToGraph<E>>>
+    static <E> Function<GraphMutation<E>, Flowable<RemoveEdgeFromGraph<E>>>
         justRemoveEdgeFromGraphMutations() {
-      return mutation -> mutation instanceof RemoveEdgeToGraph<?>
-          ? Flowable.just((RemoveEdgeToGraph<E>) mutation)
+      return mutation -> mutation instanceof ObservableGraph.RemoveEdgeFromGraph<?>
+          ? Flowable.just((RemoveEdgeFromGraph<E>) mutation)
           : Flowable.empty();
     }
   }
@@ -60,8 +59,8 @@ public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStruc
 
   interface AddEdgeToGraph<E> extends GraphEdgeMutation<E> {}
 
-  interface RemoveEdgeToGraph<E> extends GraphEdgeMutation<E> {}
+  interface RemoveEdgeFromGraph<E> extends GraphEdgeMutation<E> {}
 
   @Override
-  ObservableChannels<? extends Graph<E>, ? extends ObservableGraph.GraphMutations<E>> observe();
+  ObservableChannels<? extends Graph<E>, ? extends GraphMutations<E>> observe();
 }
