@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -44,6 +45,16 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
         original.edges().stream()
             .map(edge -> HomogeneousPair.of(edge.start().element(), edge.end().element()))
             .collect(toSet()));
+  }
+
+  @Override
+  public Iterator<E> iterator() {
+    return elements.iterator();
+  }
+
+  @Override
+  public Stream<E> stream() {
+    return elements.stream();
   }
 
   public static final class Builder<E> {

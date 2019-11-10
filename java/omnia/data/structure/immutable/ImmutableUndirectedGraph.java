@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -31,6 +32,16 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
 
   public static <E> Builder<E> builder() {
     return new Builder<>();
+  }
+
+  @Override
+  public Iterator<E> iterator() {
+    return elements.iterator();
+  }
+
+  @Override
+  public Stream<E> stream() {
+    return elements.stream();
   }
 
   public static final class Builder<E> {
