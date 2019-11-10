@@ -51,6 +51,11 @@ public interface HomogeneousPair<E> extends Pair<E, E>, Collection<E> {
       }
 
       @Override
+      public int count() {
+        return 2;
+      }
+
+      @Override
       public boolean isPopulated() {
         return true;
       }

@@ -13,7 +13,7 @@ import omnia.data.iterate.WrapperIterator;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableUnorderedPair;
 
-public final class HashGraph<E> implements MutableGraph<E> {
+public final class HashUndirectedGraph<E> implements MutableUndirectedGraph<E> {
 
   private final MutableSet<E> elements = new HashSet<>();
   private final MutableSet<ImmutableUnorderedPair<E>> edges = new HashSet<>();
@@ -71,12 +71,12 @@ public final class HashGraph<E> implements MutableGraph<E> {
         .map(pair -> pair.first().equals(element) ? pair.second() : pair.first());
   }
 
-  private MutableNode<E> getOrCreateNode(E element) {
-    return new MutableNode<>(this, element);
+  private MutableUndirectedNode<E> getOrCreateNode(E element) {
+    return new MutableUndirectedNode<>(this, element);
   }
 
-  private MutableEdge<E> getOrCreateEdge(ImmutableUnorderedPair<E> pair) {
-    return new MutableEdge<>(this, pair);
+  private MutableUndirectedEdge<E> getOrCreateEdge(ImmutableUnorderedPair<E> pair) {
+    return new MutableUndirectedEdge<>(this, pair);
   }
 
   @Override
@@ -105,7 +105,7 @@ public final class HashGraph<E> implements MutableGraph<E> {
   }
 
   @Override
-  public Optional<MutableNode<E>> nodeOf(E element) {
+  public Optional<MutableUndirectedGraph.MutableUndirectedNode<E>> nodeOf(E element) {
     requireNonNull(element);
     return elements.contains(element) ? Optional.of(getOrCreateNode(element)) : Optional.empty();
   }
@@ -136,7 +136,7 @@ public final class HashGraph<E> implements MutableGraph<E> {
 
       @Override
       public Iterator<E> iterator() {
-        return HashGraph.this.iterator();
+        return HashUndirectedGraph.this.iterator();
       }
 
       @Override
@@ -151,48 +151,48 @@ public final class HashGraph<E> implements MutableGraph<E> {
 
       @Override
       public void clear() {
-        HashGraph.this.clear();
+        HashUndirectedGraph.this.clear();
       }
     };
   }
 
   @Override
-  public MutableSet<MutableNode<E>> nodes() {
+  public MutableSet<MutableUndirectedNode<E>> nodes() {
     return new MutableSet<>() {
       @Override
-      public Stream<MutableNode<E>> stream() {
-        return elements.stream().map(HashGraph.this::getOrCreateNode);
+      public Stream<MutableUndirectedNode<E>> stream() {
+        return elements.stream().map(HashUndirectedGraph.this::getOrCreateNode);
       }
 
       @Override
-      public void add(MutableNode<E> element) {
+      public void add(MutableUndirectedNode<E> element) {
         requireNonNull(element);
-        requireSameGraph(HashGraph.this, element.graph);
-        HashGraph.this.add(element.element());
+        requireSameGraph(HashUndirectedGraph.this, element.graph);
+        HashUndirectedGraph.this.add(element.element());
       }
 
       @Override
-      public boolean remove(MutableNode<E> element) {
+      public boolean remove(MutableUndirectedNode<E> element) {
         requireNonNull(element);
-        requireSameGraph(HashGraph.this, element.graph);
-        return HashGraph.this.remove(element.element());
+        requireSameGraph(HashUndirectedGraph.this, element.graph);
+        return HashUndirectedGraph.this.remove(element.element());
       }
 
       @Override
       public void clear() {
-        HashGraph.this.clear();
+        HashUndirectedGraph.this.clear();
       }
 
       @Override
-      public Iterator<MutableNode<E>> iterator() {
-        return new MappingIterator<>(HashGraph.this.iterator(), HashGraph.this::getOrCreateNode);
+      public Iterator<MutableUndirectedNode<E>> iterator() {
+        return new MappingIterator<>(HashUndirectedGraph.this.iterator(), HashUndirectedGraph.this::getOrCreateNode);
       }
 
       @Override
       public boolean contains(Object node) {
-        return node instanceof MutableNode<?>
-            && ((MutableNode<?>) node).graph == HashGraph.this
-            && elements.contains(((MutableNode<?>) node).element);
+        return node instanceof HashUndirectedGraph.MutableUndirectedNode<?>
+            && ((MutableUndirectedNode<?>) node).graph == HashUndirectedGraph.this
+            && elements.contains(((MutableUndirectedNode<?>) node).element);
       }
 
       @Override
@@ -208,12 +208,12 @@ public final class HashGraph<E> implements MutableGraph<E> {
   }
 
   @Override
-  public MutableSet<MutableEdge<E>> edges() {
+  public MutableSet<MutableUndirectedEdge<E>> edges() {
     return new MutableSet<>() {
 
       @Override
-      public Stream<MutableEdge<E>> stream() {
-        return edges.stream().map(HashGraph.this::getOrCreateEdge);
+      public Stream<MutableUndirectedEdge<E>> stream() {
+        return edges.stream().map(HashUndirectedGraph.this::getOrCreateEdge);
       }
 
       @Override
@@ -228,26 +228,26 @@ public final class HashGraph<E> implements MutableGraph<E> {
 
       @Override
       public boolean contains(Object edge) {
-        return edge instanceof MutableEdge<?>
-            && ((MutableEdge<?>) edge).graph == HashGraph.this
-            && edges.contains(((MutableEdge<?>) edge).pair);
+        return edge instanceof HashUndirectedGraph.MutableUndirectedEdge<?>
+            && ((MutableUndirectedEdge<?>) edge).graph == HashUndirectedGraph.this
+            && edges.contains(((MutableUndirectedEdge<?>) edge).pair);
       }
 
       @Override
-      public Iterator<MutableEdge<E>> iterator() {
-        return new MappingIterator<>(edges.iterator(), HashGraph.this::getOrCreateEdge);
+      public Iterator<MutableUndirectedEdge<E>> iterator() {
+        return new MappingIterator<>(edges.iterator(), HashUndirectedGraph.this::getOrCreateEdge);
       }
 
       @Override
-      public void add(MutableEdge<E> edge) {
+      public void add(MutableUndirectedEdge<E> edge) {
         requireNonNull(edge);
-        requireSameGraph(HashGraph.this, edge.graph);
+        requireSameGraph(HashUndirectedGraph.this, edge.graph);
         addEdge(edge.pair.first(), edge.pair.second());
       }
 
       @Override
-      public boolean remove(MutableEdge<E> edge) {
-        return edge.graph == HashGraph.this
+      public boolean remove(MutableUndirectedEdge<E> edge) {
+        return edge.graph == HashUndirectedGraph.this
             && edges.remove(
                 new ImmutableUnorderedPair<>(edge.pair.first(), edge.pair.second()));
       }
@@ -290,12 +290,12 @@ public final class HashGraph<E> implements MutableGraph<E> {
     return elements.stream();
   }
 
-  public static final class MutableNode<E> implements MutableGraph.MutableNode<E> {
+  public static final class MutableUndirectedNode<E> implements MutableUndirectedGraph.MutableUndirectedNode<E> {
 
-    private final HashGraph<E> graph;
+    private final HashUndirectedGraph<E> graph;
     private final E element;
 
-    private MutableNode(HashGraph<E> graph, E element) {
+    private MutableUndirectedNode(HashUndirectedGraph<E> graph, E element) {
       this.graph = graph;
       this.element = element;
     }
@@ -316,11 +316,11 @@ public final class HashGraph<E> implements MutableGraph<E> {
     }
 
     @Override
-    public MutableSet<MutableEdge<E>> edges() {
+    public MutableSet<MutableUndirectedEdge<E>> edges() {
       return new MutableSet<>() {
 
         @Override
-        public void add(MutableEdge<E> edge) {
+        public void add(MutableUndirectedEdge<E> edge) {
           requireNonNull(edge);
           requireSameGraph(edge);
           {
@@ -337,19 +337,19 @@ public final class HashGraph<E> implements MutableGraph<E> {
         }
 
         @Override
-        public boolean remove(MutableEdge<E> edge) {
+        public boolean remove(MutableUndirectedEdge<E> edge) {
           requireNonNull(edge);
           requireSameGraph(edge);
           // remove the edge from the graph IFF the edge is related to the associated node
           return edge.pair.contains(element) && graph.removeEdge(edge.pair.first(), edge.pair.second());
         }
 
-        private MutableNode node() {
-          return MutableNode.this;
+        private MutableUndirectedNode node() {
+          return MutableUndirectedNode.this;
         }
 
-        private void requireSameGraph(MutableEdge<E> other) {
-          HashGraph.requireSameGraph(graph, other.graph);
+        private void requireSameGraph(MutableUndirectedEdge<E> other) {
+          HashUndirectedGraph.requireSameGraph(graph, other.graph);
         }
 
         @Override
@@ -358,7 +358,7 @@ public final class HashGraph<E> implements MutableGraph<E> {
         }
 
         @Override
-        public Iterator<MutableEdge<E>> iterator() {
+        public Iterator<MutableUndirectedEdge<E>> iterator() {
           return new MappingIterator<>(
               new FilterIterator<>(graph.edges.iterator(), pair -> pair.contains(element)),
               graph::getOrCreateEdge);
@@ -366,10 +366,10 @@ public final class HashGraph<E> implements MutableGraph<E> {
 
         @Override
         public boolean contains(Object otherObject) {
-          return otherObject instanceof MutableEdge<?>
-              && ((MutableEdge<?>) otherObject).graph == graph
-              && ((MutableEdge<?>) otherObject).pair.contains(element)
-              && graph.edges.contains(((MutableEdge<?>) otherObject).pair);
+          return otherObject instanceof HashUndirectedGraph.MutableUndirectedEdge<?>
+              && ((MutableUndirectedEdge<?>) otherObject).graph == graph
+              && ((MutableUndirectedEdge<?>) otherObject).pair.contains(element)
+              && graph.edges.contains(((MutableUndirectedEdge<?>) otherObject).pair);
         }
 
         @Override
@@ -383,7 +383,7 @@ public final class HashGraph<E> implements MutableGraph<E> {
         }
 
         @Override
-        public Stream<MutableEdge<E>> stream() {
+        public Stream<MutableUndirectedEdge<E>> stream() {
           return graph.edges.stream()
               .filter(pair -> pair.contains(element))
               .map(graph::getOrCreateEdge);
@@ -392,20 +392,20 @@ public final class HashGraph<E> implements MutableGraph<E> {
     }
 
     @Override
-    public MutableSet<MutableNode<E>> neighbors() {
+    public MutableSet<MutableUndirectedNode<E>> neighbors() {
       return new MutableSet<>() {
         @Override
-        public void add(MutableNode<E> node) {
+        public void add(MutableUndirectedNode<E> node) {
           requireSameGraph(node);
           graph.add(node.element);
         }
 
-        private void requireSameGraph(MutableNode<E> other) {
-          HashGraph.requireSameGraph(graph, other.graph);
+        private void requireSameGraph(MutableUndirectedNode<E> other) {
+          HashUndirectedGraph.requireSameGraph(graph, other.graph);
         }
 
         @Override
-        public boolean remove(MutableNode<E> node) {
+        public boolean remove(MutableUndirectedNode<E> node) {
           requireSameGraph(node);
           return graph.edges.remove(new ImmutableUnorderedPair<>(node.element, element));
         }
@@ -416,7 +416,7 @@ public final class HashGraph<E> implements MutableGraph<E> {
         }
 
         @Override
-        public Iterator<MutableNode<E>> iterator() {
+        public Iterator<MutableUndirectedNode<E>> iterator() {
           return new MappingIterator<>(
               new MappingIterator<>(
                   new FilterIterator<>(graph.edges.iterator(), pair -> pair.contains(element)),
@@ -426,10 +426,10 @@ public final class HashGraph<E> implements MutableGraph<E> {
 
         @Override
         public boolean contains(Object otherNode) {
-          return otherNode instanceof MutableNode
-              && ((MutableNode<?>) otherNode).graph == graph
+          return otherNode instanceof HashUndirectedGraph.MutableUndirectedNode
+              && ((MutableUndirectedNode<?>) otherNode).graph == graph
               && graph.edges.contains(
-                  new ImmutableUnorderedPair<>(element, ((MutableNode<?>) otherNode).element));
+                  new ImmutableUnorderedPair<>(element, ((MutableUndirectedNode<?>) otherNode).element));
         }
 
         @Override
@@ -443,7 +443,7 @@ public final class HashGraph<E> implements MutableGraph<E> {
         }
 
         @Override
-        public Stream<MutableNode<E>> stream() {
+        public Stream<MutableUndirectedNode<E>> stream() {
           return graph.edges.stream()
               .filter(pair -> pair.contains(element))
               .map(pair -> Objects.equals(pair.first(), element) ? pair.second() : pair.first())
@@ -454,9 +454,9 @@ public final class HashGraph<E> implements MutableGraph<E> {
 
     @Override
     public boolean equals(Object other) {
-      return other instanceof MutableNode
-          && Objects.equals(((MutableNode<?>) other).graph, graph)
-          && Objects.equals(((MutableNode<?>) other).element, element);
+      return other instanceof HashUndirectedGraph.MutableUndirectedNode
+          && Objects.equals(((MutableUndirectedNode<?>) other).graph, graph)
+          && Objects.equals(((MutableUndirectedNode<?>) other).element, element);
     }
 
     @Override
@@ -465,12 +465,12 @@ public final class HashGraph<E> implements MutableGraph<E> {
     }
   }
 
-  public static final class MutableEdge<E> implements MutableGraph.MutableEdge<E> {
+  public static final class MutableUndirectedEdge<E> implements MutableUndirectedGraph.MutableUndirectedEdge<E> {
 
-    private final HashGraph<E> graph;
+    private final HashUndirectedGraph<E> graph;
     private final ImmutableUnorderedPair<E> pair;
 
-    private MutableEdge(HashGraph<E> graph, ImmutableUnorderedPair<E> pair) {
+    private MutableUndirectedEdge(HashUndirectedGraph<E> graph, ImmutableUnorderedPair<E> pair) {
       this.graph = graph;
       this.pair = pair;
     }
@@ -481,13 +481,13 @@ public final class HashGraph<E> implements MutableGraph<E> {
     }
 
     @Override
-    public ImmutableUnorderedPair<MutableNode<E>> endpoints() {
+    public ImmutableUnorderedPair<MutableUndirectedNode<E>> endpoints() {
       return ImmutableUnorderedPair.of(
               graph.getOrCreateNode(pair.first()), graph.getOrCreateNode(pair.second()));
     }
   }
 
-  private static void requireSameGraph(HashGraph<?> expected, HashGraph<?> actual) {
+  private static void requireSameGraph(HashUndirectedGraph<?> expected, HashUndirectedGraph<?> actual) {
     if (expected != actual) {
       throw new IllegalArgumentException(
           "item does not belong to this graph. this=" + expected + " other=" + actual);

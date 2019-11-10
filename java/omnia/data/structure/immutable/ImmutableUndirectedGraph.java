@@ -1,7 +1,6 @@
 package omnia.data.structure.immutable;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
@@ -9,13 +8,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.cache.WeakCache;
-import omnia.data.structure.Collection;
-import omnia.data.structure.Graph;
 import omnia.data.structure.Set;
+import omnia.data.structure.UndirectedGraph;
+import omnia.data.structure.UnorderedPair;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableSet;
 
-public final class ImmutableUndirectedGraph<E> implements Graph<E> {
+public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
 
   private static final ImmutableUndirectedGraph<?> EMPTY_IMMUTABLE_UNDIRECTED_GRAPH =
       new ImmutableUndirectedGraph<>();
@@ -105,7 +104,7 @@ public final class ImmutableUndirectedGraph<E> implements Graph<E> {
     return elements.isPopulated();
   }
 
-  private class Node implements Graph.Node<E> {
+  private class Node implements UndirectedGraph.UndirectedNode<E> {
     private final E element;
 
     private Node(E element) {
@@ -132,7 +131,7 @@ public final class ImmutableUndirectedGraph<E> implements Graph<E> {
     }
   }
 
-  private class Edge implements Graph.Edge<E> {
+  private class Edge implements UndirectedGraph.UndirectedEdge<E> {
     private final ImmutableUnorderedPair<E> endpoints;
 
     private Edge(ImmutableUnorderedPair<E> endpoints) {
@@ -140,8 +139,9 @@ public final class ImmutableUndirectedGraph<E> implements Graph<E> {
     }
 
     @Override
-    public Collection<? extends Node> endpoints() {
-      return Collection.masking(endpoints.stream().map(toNode()).collect(toList()));
+    public UnorderedPair<? extends Node> endpoints() {
+      return UnorderedPair.of(
+          getOrCreateNode(endpoints.first()), getOrCreateNode(endpoints.second()));
     }
   }
 

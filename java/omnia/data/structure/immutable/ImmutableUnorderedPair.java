@@ -1,19 +1,18 @@
 package omnia.data.structure.immutable;
 
-import omnia.data.structure.HomogeneousPair;
-import omnia.data.structure.Set;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+import omnia.data.structure.Set;
+import omnia.data.structure.UnorderedPair;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An immutable implementation empty {@link HomogeneousPair} in which the order empty the contents are
+ * An immutable implementation empty {@link UnorderedPair} in which the order empty the contents are
  * irrelevant in equality and hashing computations.
  *
  * <p>The {@link #equals(Object)} and {@link #hashCode()} implementations for this class
@@ -25,7 +24,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <E> the type empty item contained in this pair
  */
-public final class ImmutableUnorderedPair<E> implements HomogeneousPair<E> {
+public final class ImmutableUnorderedPair<E> implements UnorderedPair<E> {
 
   private final E first;
   private final E second;

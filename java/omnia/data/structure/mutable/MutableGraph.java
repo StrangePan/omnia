@@ -6,7 +6,7 @@ import omnia.data.structure.Graph;
 
 public interface MutableGraph<E> extends Graph<E>, MutableCollection<E> {
 
-  interface MutableNode<E> extends Graph.Node<E> {
+  interface MutableNode<E> extends Node<E> {
 
     void replaceValue(E element);
 
@@ -19,7 +19,7 @@ public interface MutableGraph<E> extends Graph<E>, MutableCollection<E> {
     MutableSet<? extends MutableNode<E>> neighbors();
   }
 
-  interface MutableEdge<E> extends Graph.Edge<E> {
+  interface MutableEdge<E> extends Edge<E> {
 
     void remove();
 
