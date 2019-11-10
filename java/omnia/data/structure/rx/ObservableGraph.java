@@ -2,17 +2,16 @@ package omnia.data.structure.rx;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
-import omnia.contract.Countable;
-import omnia.contract.Streamable;
+import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Graph;
 import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.MutableGraph;
 
-public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStructure<Graph<E>, ObservableGraph.GraphMutations<E>> {
+public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStructure {
 
-  interface GraphMutations<E> extends Iterable<GraphMutation<E>>, Streamable<GraphMutation<E>>, Countable {
-    Set<GraphMutation<E>> asSet();
+  interface GraphMutations<E> {
+    Set<? extends GraphMutation<E>> asSet();
   }
 
   @SuppressWarnings("unused")
@@ -62,4 +61,7 @@ public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStruc
   interface AddEdgeToGraph<E> extends GraphEdgeMutation<E> {}
 
   interface RemoveEdgeToGraph<E> extends GraphEdgeMutation<E> {}
+
+  @Override
+  ObservableChannels<? extends Graph<E>, ? extends ObservableGraph.GraphMutations<E>> observe();
 }

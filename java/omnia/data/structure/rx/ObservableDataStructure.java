@@ -6,24 +6,24 @@ import io.reactivex.Flowable;
  * A mutable data structure whose state changes can be observed using RxJava. Observers can
  * subscribe to state changes and can subscribe to receive summaries of the mutations that occured
  * between state changes, allowing subscribers to process "diffs" between states.
- *
- * @param <StateType> The type representing each distinct state of the data structure. This is often
- *     an immutable copy of the data structure.
- * @param <MutationType> The type representing mutations for this data structure. This is typically
- *     an empty interface with multiple subclasses containing mutation-specific parameters.
  */
-public interface ObservableDataStructure<StateType, MutationType> {
+public interface ObservableDataStructure {
 
   /**
    * Returns an {@link ObservableChannels} with which observers can choose which channel to
    * subscribe to.
    */
-  ObservableChannels<StateType, MutationType> observe();
+  ObservableChannels<?, ?> observe();
 
   /**
    * A condense view of the types of observable channels available to subscribers. This encapsulates
    * the Rx-related methods into a contained interface so as not to pollute the namespace of the
    * data structure.
+   *
+   * @param <StateType> The type representing each distinct state of the data structure. This is often
+   *     an immutable copy of the data structure.
+   * @param <MutationType> The type representing mutations for this data structure. This is typically
+   *     an empty interface with multiple subclasses containing mutation-specific parameters.
    */
   interface ObservableChannels<StateType, MutationType> {
 
@@ -45,7 +45,7 @@ public interface ObservableDataStructure<StateType, MutationType> {
      * structure, as well as a mutation equivalent of populating an empty data structure with the
      * contents of current state.
      */
-    Flowable<? extends MutationEvent<? extends StateType, ? extends MutationType>> mutations();
+    Flowable<MutationEvent<? extends StateType, ? extends MutationType>> mutations();
   }
 
   /**
@@ -55,6 +55,11 @@ public interface ObservableDataStructure<StateType, MutationType> {
    *
    * <p>The semantics of each specific mutation type is governed by the semantics of the data
    * structure and valid operations available to it.
+   *
+   * @param <StateType> The type representing each distinct state of the data structure. This is often
+   *     an immutable copy of the data structure.
+   * @param <MutationType> The type representing mutations for this data structure. This is typically
+   *     an empty interface with multiple subclasses containing mutation-specific parameters.
    */
   interface MutationEvent<StateType, MutationType> {
 

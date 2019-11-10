@@ -7,7 +7,7 @@ import omnia.contract.Streamable;
 import omnia.data.structure.List;
 import omnia.data.structure.mutable.MutableList;
 
-public interface ObservableList<E> extends MutableList<E>, ObservableDataStructure<List<E>, ObservableList.ListMutations<E>> {
+public interface ObservableList<E> extends MutableList<E>, ObservableDataStructure {
 
   /**
    * Represents a set of mutations that describes the diff between two distinct list states.
@@ -15,10 +15,10 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
    * ordered list. Whatever method used to read the individual mutations, they will always be
    * iterated, streamed, or viewed in the order in which they were applied to the previous state.
    */
-  interface ListMutations<E> extends Countable, Iterable<ListMutation<E>>, Streamable<ListMutation<E>> {
+  interface ListMutations<E> {
 
     /** Views the individual {@link ListMutation} items as a list data structure. */
-    List<ListMutation<E>> asList();
+    List<? extends ListMutation<E>> asList();
   }
 
   /**
@@ -148,4 +148,7 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      */
     int count();
   }
+
+  @Override
+  ObservableChannels<? extends List<E>, ? extends ListMutations<E>> observe();
 }

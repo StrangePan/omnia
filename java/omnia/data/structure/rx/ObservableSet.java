@@ -2,15 +2,13 @@ package omnia.data.structure.rx;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
-import omnia.contract.Countable;
-import omnia.contract.Streamable;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.MutableSet;
 
-public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure<Set<E>, ObservableSet.SetMutations<E>> {
+public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure {
 
-  interface SetMutations<E> extends Iterable<SetMutation<E>>, Streamable<SetMutation<E>>, Countable {
-    Set<SetMutation<E>> asSet();
+  interface SetMutations<E> {
+    Set<? extends SetMutation<E>> asSet();
   }
 
   @SuppressWarnings("unused")
@@ -36,4 +34,7 @@ public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure
   interface RemoveFromSet<E> extends SetMutation<E> {
     E item();
   }
+
+  @Override
+  ObservableChannels<? extends Set<E>, ? extends SetMutations<E>> observe();
 }
