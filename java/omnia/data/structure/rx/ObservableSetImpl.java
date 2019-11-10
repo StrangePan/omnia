@@ -100,7 +100,6 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
     }
   }
 
-
   private static final class AddToSet<E> implements ObservableSet.AddToSet<E> {
     private final E item;
 

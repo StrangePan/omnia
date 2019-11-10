@@ -6,27 +6,27 @@ import omnia.data.structure.UnorderedPair;
 
 public interface MutableUndirectedGraph<E> extends MutableGraph<E>, UndirectedGraph<E> {
 
-  interface MutableUndirectedNode<E> extends MutableNode<E>, UndirectedNode<E> {
+  interface Node<E> extends MutableGraph.Node<E>, UndirectedGraph.Node<E> {
 
     @Override
-    MutableSet<? extends MutableUndirectedEdge<E>> edges();
+    MutableSet<? extends Edge<E>> edges();
 
     @Override
-    MutableSet<? extends MutableUndirectedNode<E>> neighbors();
+    MutableSet<? extends Node<E>> neighbors();
   }
 
-  interface MutableUndirectedEdge<E> extends MutableEdge<E>, UndirectedEdge<E> {
+  interface Edge<E> extends MutableGraph.Edge<E>, UndirectedGraph.Edge<E> {
 
     @Override
-    UnorderedPair<? extends MutableUndirectedNode<E>> endpoints();
+    UnorderedPair<? extends Node<E>> endpoints();
   }
 
   @Override
-  Optional<? extends MutableUndirectedNode<E>> nodeOf(E element);
+  Optional<? extends Node<E>> nodeOf(E element);
 
   @Override
-  MutableSet<? extends MutableUndirectedNode<E>> nodes();
+  MutableSet<? extends Node<E>> nodes();
 
   @Override
-  MutableSet<? extends MutableUndirectedEdge<E>> edges();
+  MutableSet<? extends Edge<E>> edges();
 }

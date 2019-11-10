@@ -3,6 +3,7 @@ package omnia.data.structure.rx;
 import io.reactivex.Flowable;
 import omnia.data.structure.Set;
 import omnia.data.structure.UndirectedGraph;
+import omnia.data.structure.UnorderedPair;
 import omnia.data.structure.mutable.MutableUndirectedGraph;
 
 public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, MutableUndirectedGraph<E> {
@@ -24,20 +25,24 @@ public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, Mutabl
     UndirectedGraph<E> state();
 
     @Override
-    Set<? extends UndirectedGraphOperation<E>> operations();
+    Set<? extends GraphOperation<E>> operations();
   }
 
-  interface UndirectedGraphOperation<E> extends GraphOperation<E> {}
+  interface GraphOperation<E> extends ObservableGraph.GraphOperation<E> {}
 
-  interface UndirectedGraphNodeOperation<E> extends UndirectedGraphOperation<E>, GraphNodeOperation<E> {}
+  interface NodeOperation<E> extends ObservableGraph.NodeOperation<E>, GraphOperation<E> {}
 
-  interface UndirectedGraphEdgeOperation<E> extends UndirectedGraphOperation<E>, GraphEdgeOperation<E> {}
+  interface EdgeOperation<E> extends ObservableGraph.EdgeOperation<E>, GraphOperation<E> {
 
-  interface AddNodeToUndirectedGraph<E> extends UndirectedGraphNodeOperation<E>, AddNodeToGraph<E> {}
+    @Override
+    UnorderedPair<E> endpoints();
+  }
 
-  interface RemoveNodeFromUndirectedGraph<E> extends UndirectedGraphNodeOperation<E>, RemoveNodeFromGraph<E> {}
+  interface AddNodeToGraph<E> extends ObservableGraph.AddNodeToGraph<E>, NodeOperation<E> {}
 
-  interface AddEdgeToUndirectedGraph<E> extends UndirectedGraphEdgeOperation<E>, AddEdgeToGraph<E> {}
+  interface RemoveNodeFromGraph<E> extends ObservableGraph.RemoveNodeFromGraph<E>, NodeOperation<E> {}
 
-  interface RemoveEdgeFromUndirectedGraph<E> extends UndirectedGraphEdgeOperation<E>, RemoveEdgeFromGraph<E> {}
+  interface AddEdgeToGraph<E> extends ObservableGraph.AddEdgeToGraph<E>, EdgeOperation<E> {}
+
+  interface RemoveEdgeFromGraph<E> extends ObservableGraph.RemoveEdgeFromGraph<E>, EdgeOperation<E> {}
 }

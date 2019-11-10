@@ -164,7 +164,7 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
     return elements.isPopulated();
   }
 
-  private class Node implements UndirectedGraph.UndirectedNode<E> {
+  private class Node implements UndirectedGraph.Node<E> {
     private final E element;
 
     private Node(E element) {
@@ -191,7 +191,7 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
     }
   }
 
-  private class Edge implements UndirectedGraph.UndirectedEdge<E> {
+  private class Edge implements UndirectedGraph.Edge<E> {
     private final ImmutableUnorderedPair<E> endpoints;
 
     private Edge(ImmutableUnorderedPair<E> endpoints) {

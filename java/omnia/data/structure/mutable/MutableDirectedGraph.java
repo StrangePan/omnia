@@ -5,45 +5,45 @@ import omnia.data.structure.DirectedGraph;
 
 public interface MutableDirectedGraph<E> extends MutableGraph<E>, DirectedGraph<E> {
 
-  interface MutableNode<E> extends MutableGraph.MutableNode<E>, DirectedGraph.Node<E> {
+  interface Node<E> extends MutableGraph.Node<E>, DirectedGraph.Node<E> {
 
     @Override
-    MutableSet<? extends MutableEdge<E>> edges();
+    MutableSet<? extends Edge<E>> edges();
 
     @Override
-    MutableSet<? extends MutableEdge<E>> outgoingEdges();
+    MutableSet<? extends Edge<E>> outgoingEdges();
 
     @Override
-    MutableSet<? extends MutableEdge<E>> incomingEdges();
+    MutableSet<? extends Edge<E>> incomingEdges();
 
     @Override
-    MutableSet<? extends MutableNode<E>> neighbors();
+    MutableSet<? extends Node<E>> neighbors();
 
     @Override
-    MutableSet<? extends MutableNode<E>> successors();
+    MutableSet<? extends Node<E>> successors();
 
     @Override
-    MutableSet<? extends MutableNode<E>> predecessors();
+    MutableSet<? extends Node<E>> predecessors();
   }
 
-  interface MutableEdge<E> extends MutableGraph.MutableEdge<E>, DirectedGraph.Edge<E> {
+  interface Edge<E> extends MutableGraph.Edge<E>, DirectedGraph.Edge<E> {
 
     @Override
-    MutableNode<E> start();
+    Node<E> start();
 
     @Override
-    MutableNode<E> end();
+    Node<E> end();
 
     @Override
-    MutableCollection<? extends MutableNode<E>> endpoints();
+    MutableCollection<? extends Node<E>> endpoints();
   }
 
   @Override
-  Optional<? extends MutableNode<E>> nodeOf(E element);
+  Optional<? extends Node<E>> nodeOf(E element);
 
   @Override
-  MutableSet<? extends MutableNode<E>> nodes();
+  MutableSet<? extends Node<E>> nodes();
 
   @Override
-  MutableSet<? extends MutableEdge<E>> edges();
+  MutableSet<? extends Edge<E>> edges();
 }

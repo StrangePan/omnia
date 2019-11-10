@@ -25,25 +25,25 @@ public interface ObservableDirectedGraph<E> extends MutableDirectedGraph<E>, Obs
     DirectedGraph<E> state();
 
     @Override
-    Set<? extends DirectedGraphOperation<E>> operations();
+    Set<? extends GraphOperation<E>> operations();
   }
 
-  interface DirectedGraphOperation<E> extends GraphOperation<E> {}
+  interface GraphOperation<E> extends ObservableGraph.GraphOperation<E> {}
 
-  interface DirectedGraphNodeOperation<E> extends GraphNodeOperation<E> {}
+  interface NodeOperation<E> extends ObservableGraph.NodeOperation<E>, GraphOperation<E> {}
 
-  interface DirectedGraphEdgeOperation<E> extends GraphEdgeOperation<E> {
+  interface EdgeOperation<E> extends ObservableGraph.EdgeOperation<E>, GraphOperation<E> {
 
     E start();
 
     E end();
   }
 
-  interface AddNodeToDirectedGraph<E> extends AddNodeToGraph<E>, DirectedGraphNodeOperation<E> {}
+  interface AddNodeToGraph<E> extends ObservableGraph.AddNodeToGraph<E>, NodeOperation<E> {}
 
-  interface RemoveNodeFromDirectedGraph<E> extends RemoveNodeFromGraph<E>, DirectedGraphNodeOperation<E> {}
+  interface RemoveNodeFromGraph<E> extends ObservableGraph.RemoveNodeFromGraph<E>, NodeOperation<E> {}
 
-  interface AddEdgeToDirectedGraph<E> extends AddEdgeToGraph<E>, DirectedGraphEdgeOperation<E> {}
+  interface AddEdgeToGraph<E> extends ObservableGraph.AddEdgeToGraph<E>, EdgeOperation<E> {}
 
-  interface RemoveEdgeFromDirectedGraph<E> extends RemoveNodeFromGraph<E>, DirectedGraphEdgeOperation<E> {}
+  interface RemoveEdgeFromGraph<E> extends ObservableGraph.RemoveNodeFromGraph<E>, EdgeOperation<E> {}
 }

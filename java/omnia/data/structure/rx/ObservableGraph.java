@@ -35,21 +35,21 @@ public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStruc
 
     static <E> Function<GraphOperation<E>, Flowable<AddNodeToGraph<E>>>
         justAddNodeToGraphMutations() {
-      return mutation -> mutation instanceof AddNodeToGraph<?>
+      return mutation -> mutation instanceof ObservableGraph.AddNodeToGraph<?>
           ? Flowable.just((AddNodeToGraph<E>) mutation)
           : Flowable.empty();
     }
 
     static <E> Function<GraphOperation<E>, Flowable<RemoveNodeFromGraph<E>>>
         justRemoveNodeFromGraphMutations() {
-      return mutation -> mutation instanceof RemoveNodeFromGraph<?>
+      return mutation -> mutation instanceof ObservableGraph.RemoveNodeFromGraph<?>
           ? Flowable.just((RemoveNodeFromGraph<E>) mutation)
           : Flowable.empty();
     }
 
     static <E> Function<GraphOperation<E>, Flowable<AddEdgeToGraph<E>>>
         justAddEdgeToGraphMutations() {
-      return mutation -> mutation instanceof AddEdgeToGraph<?>
+      return mutation -> mutation instanceof ObservableGraph.AddEdgeToGraph<?>
           ? Flowable.just((AddEdgeToGraph<E>) mutation)
           : Flowable.empty();
     }
@@ -62,19 +62,19 @@ public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStruc
     }
   }
 
-  interface GraphNodeOperation<E> extends GraphOperation<E> {
+  interface NodeOperation<E> extends GraphOperation<E> {
     E item();
   }
 
-  interface GraphEdgeOperation<E> extends GraphOperation<E> {
+  interface EdgeOperation<E> extends GraphOperation<E> {
     HomogeneousPair<E> endpoints();
   }
 
-  interface AddNodeToGraph<E> extends GraphNodeOperation<E> {}
+  interface AddNodeToGraph<E> extends NodeOperation<E> {}
 
-  interface RemoveNodeFromGraph<E> extends GraphNodeOperation<E> {}
+  interface RemoveNodeFromGraph<E> extends NodeOperation<E> {}
 
-  interface AddEdgeToGraph<E> extends GraphEdgeOperation<E> {}
+  interface AddEdgeToGraph<E> extends EdgeOperation<E> {}
 
-  interface RemoveEdgeFromGraph<E> extends GraphEdgeOperation<E> {}
+  interface RemoveEdgeFromGraph<E> extends EdgeOperation<E> {}
 }
