@@ -15,8 +15,9 @@ import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
 
 final class ObservableListImpl<E> implements ObservableList<E> {
+
   private volatile ImmutableList<E> currentState = ImmutableList.empty();
-  private final Subject<MutationEvent<E>> subject = PublishSubject.create();
+  private final Subject<MutationEvent> mutationEventSubject = PublishSubject.create();
   private final ObservableChannels observableChannels = new ObservableChannels();
 
   @Override
@@ -84,7 +85,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
   private boolean mutateState(
       Predicate<ImmutableList<E>> shouldMutate,
       Function<ImmutableList<E>, ImmutableList<E>> mutator,
-      BiFunction<ImmutableList<E>, ImmutableList<E>, List<ListMutation<E>>> mutationsGenerator) {
+      BiFunction<ImmutableList<E>, ImmutableList<E>, List<ListOperation<E>>> mutationsGenerator) {
     synchronized(this) {
       ImmutableList<E> previousState = currentState;
       if (!shouldMutate.test(previousState)) {
@@ -92,15 +93,14 @@ final class ObservableListImpl<E> implements ObservableList<E> {
       }
       ImmutableList<E> newState = mutator.apply(previousState);
       currentState = newState;
-      subject.onNext(
-          new MutationEvent<>(newState, mutationsGenerator.apply(previousState, newState)));
+      mutationEventSubject.onNext(new MutationEvent(newState, mutationsGenerator.apply(previousState, newState)));
       return true;
     }
   }
 
-  private static <E> ImmutableList<ListMutation<E>> generateInsertAtMutations(
+  private static <E> ImmutableList<ListOperation<E>> generateInsertAtMutations(
       ImmutableList<E> state, IndexRange range) {
-    ImmutableList.Builder<ListMutation<E>> builder = ImmutableList.builder();
+    ImmutableList.Builder<ListOperation<E>> builder = ImmutableList.builder();
 
     // Move must be done before insert to make way for new items
     if (range.end() < state.count()) {
@@ -115,9 +115,9 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     return builder.build();
   }
 
-  private static <E> ImmutableList<ListMutation<E>> generateRemoveAtMutations(
+  private static <E> ImmutableList<ListOperation<E>> generateRemoveAtMutations(
       ImmutableList<E> previousState, IndexRange range) {
-    ImmutableList.Builder<ListMutation<E>> builder = ImmutableList.builder();
+    ImmutableList.Builder<ListOperation<E>> builder = ImmutableList.builder();
 
     /// Removal must be done BEFORE move to make space for moved items
     builder.add(new RemoveFromList<>(range.asSublistOf(previousState), range));
@@ -133,7 +133,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     return builder.build();
   }
 
-  private static <E> ImmutableList<ListMutation<E>> generateReplaceAtMutations(
+  private static <E> ImmutableList<ListOperation<E>> generateReplaceAtMutations(
       ImmutableList<E> previousState, ImmutableList<E> currentState, IndexRange range) {
     return ImmutableList.of(
         new ReplaceInList<>(
@@ -183,60 +183,6 @@ final class ObservableListImpl<E> implements ObservableList<E> {
   private ImmutableList<E> getState() {
     synchronized(this) {
       return currentState;
-    }
-  }
-
-  private static final class MutationEvent<E>
-      implements ObservableDataStructure.MutationEvent<List<E>, ListMutations<E>> {
-    private final List<E> state;
-    private final ListMutations<E> mutations;
-
-    private MutationEvent(List<E> state, List<ListMutation<E>> mutations) {
-      this.state = state;
-      this.mutations = new ListMutations<>(mutations);
-    }
-
-    @Override
-    public List<E> state() {
-      return state;
-    }
-
-    @Override
-    public ListMutations<E> mutations() {
-      return mutations;
-    }
-  }
-
-  private static final class ListMutations<E> implements ObservableList.ListMutations<E> {
-    private final List<ListMutation<E>> mutations;
-
-    private ListMutations(List<ListMutation<E>> mutations) {
-      this.mutations = mutations;
-    }
-
-    @Override
-    public List<ListMutation<E>> asList() {
-      return mutations;
-    }
-
-    @Override
-    public Iterator<ListMutation<E>> iterator() {
-      return mutations.iterator();
-    }
-
-    @Override
-    public int count() {
-      return mutations.count();
-    }
-
-    @Override
-    public boolean isPopulated() {
-      return mutations.isPopulated();
-    }
-
-    @Override
-    public Stream<ListMutation<E>> stream() {
-      return mutations.stream();
     }
   }
 
@@ -386,40 +332,42 @@ final class ObservableListImpl<E> implements ObservableList<E> {
     }
   }
 
-  private class ObservableChannels
-      implements ObservableDataStructure.ObservableChannels<
-              List<E>, ObservableList.ListMutations<E>> {
+  private class ObservableChannels extends GenericObservableChannels<List<E>, MutationEvent>
+      implements ObservableList.ObservableChannels<E> {
 
-    // When something subscribes, in what order do the subscriptions occur?
-    private final Flowable<MutationEvent<E>> mutations =
-        Flowable.<MutationEvent<E>>create(
-            flowableEmitter -> {
-              flowableEmitter.onNext(generateMutationEventForNewSubscription());
-              flowableEmitter.onComplete();
-            },
-            BackpressureStrategy.BUFFER)
-        .concatWith(subject.toFlowable(BackpressureStrategy.BUFFER));
 
-    private final Flowable<List<E>> states = mutations.map(MutationEvent::state);
-
-    @Override
-    public Flowable<List<E>> states() {
-      return states;
-    }
-
-    @Override
-    public Flowable<
-            ? extends ObservableDataStructure.MutationEvent<? extends List<E>,
-            ? extends ObservableList.ListMutations<E>>> mutations() {
-      return mutations;
+    protected ObservableChannels() {
+      super(
+          Flowable.<List<E>>create(
+                  flowableEmitter -> {
+                    flowableEmitter.onNext(getState());
+                    flowableEmitter.onComplete();
+                  },
+                  BackpressureStrategy.BUFFER)
+              .concatWith(
+                  mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)
+                      .map(MutationEvent::state)),
+          Flowable.<MutationEvent>create(
+                  flowableEmitter -> {
+                    flowableEmitter.onNext(generateMutationEventForNewSubscription());
+                    flowableEmitter.onComplete();
+                  },
+                  BackpressureStrategy.BUFFER)
+              .concatWith(mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)));
     }
   }
 
-  private MutationEvent<E> generateMutationEventForNewSubscription() {
+  private class MutationEvent
+      extends GenericMutationEvent<List<E>, List<ObservableList.ListOperation<E>>>
+      implements ObservableList.MutationEvent<E> {
+    private MutationEvent(List<E> state, List<ListOperation<E>> operations) {
+      super(state, operations);
+    }
+  }
+
+  private MutationEvent generateMutationEventForNewSubscription() {
     List<E> state = getState();
-    return new MutationEvent<>(
-        state,
-        ImmutableList.of(
-            new AddToList<>(state, new IndexRange(0, state.count()))));
+    return new MutationEvent(
+        state, ImmutableList.of(new AddToList<>(state, new IndexRange(0, state.count()))));
   }
 }

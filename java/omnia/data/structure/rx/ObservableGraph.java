@@ -9,35 +9,52 @@ import omnia.data.structure.mutable.MutableGraph;
 
 public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStructure {
 
-  interface GraphMutations<E> {
-    Set<? extends GraphMutation<E>> asSet();
+  @Override
+  ObservableChannels<E> observe();
+
+  interface ObservableChannels<E> extends ObservableDataStructure.ObservableChannels {
+
+    @Override
+    Flowable<? extends Graph<E>> states();
+
+    @Override
+    Flowable<? extends MutationEvent<E>> mutations();
+  }
+
+  interface MutationEvent<E> extends ObservableDataStructure.MutationEvent {
+
+    @Override
+    Graph<E> state();
+
+    @Override
+    Set<? extends GraphOperation<E>> operations();
   }
 
   @SuppressWarnings("unused")
-  interface GraphMutation<E> {
+  interface GraphOperation<E> {
 
-    static <E> Function<GraphMutation<E>, Flowable<AddNodeToGraph<E>>>
+    static <E> Function<GraphOperation<E>, Flowable<AddNodeToGraph<E>>>
         justAddNodeToGraphMutations() {
       return mutation -> mutation instanceof AddNodeToGraph<?>
           ? Flowable.just((AddNodeToGraph<E>) mutation)
           : Flowable.empty();
     }
 
-    static <E> Function<GraphMutation<E>, Flowable<RemoveNodeFromGraph<E>>>
+    static <E> Function<GraphOperation<E>, Flowable<RemoveNodeFromGraph<E>>>
         justRemoveNodeFromGraphMutations() {
       return mutation -> mutation instanceof RemoveNodeFromGraph<?>
           ? Flowable.just((RemoveNodeFromGraph<E>) mutation)
           : Flowable.empty();
     }
 
-    static <E> Function<GraphMutation<E>, Flowable<AddEdgeToGraph<E>>>
+    static <E> Function<GraphOperation<E>, Flowable<AddEdgeToGraph<E>>>
         justAddEdgeToGraphMutations() {
       return mutation -> mutation instanceof AddEdgeToGraph<?>
           ? Flowable.just((AddEdgeToGraph<E>) mutation)
           : Flowable.empty();
     }
 
-    static <E> Function<GraphMutation<E>, Flowable<RemoveEdgeFromGraph<E>>>
+    static <E> Function<GraphOperation<E>, Flowable<RemoveEdgeFromGraph<E>>>
         justRemoveEdgeFromGraphMutations() {
       return mutation -> mutation instanceof ObservableGraph.RemoveEdgeFromGraph<?>
           ? Flowable.just((RemoveEdgeFromGraph<E>) mutation)
@@ -45,22 +62,19 @@ public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStruc
     }
   }
 
-  interface GraphNodeMutation<E> extends GraphMutation<E> {
+  interface GraphNodeOperation<E> extends GraphOperation<E> {
     E item();
   }
 
-  interface GraphEdgeMutation<E> extends GraphMutation<E> {
+  interface GraphEdgeOperation<E> extends GraphOperation<E> {
     HomogeneousPair<E> endpoints();
   }
 
-  interface AddNodeToGraph<E> extends GraphNodeMutation<E> {}
+  interface AddNodeToGraph<E> extends GraphNodeOperation<E> {}
 
-  interface RemoveNodeFromGraph<E> extends GraphNodeMutation<E> {}
+  interface RemoveNodeFromGraph<E> extends GraphNodeOperation<E> {}
 
-  interface AddEdgeToGraph<E> extends GraphEdgeMutation<E> {}
+  interface AddEdgeToGraph<E> extends GraphEdgeOperation<E> {}
 
-  interface RemoveEdgeFromGraph<E> extends GraphEdgeMutation<E> {}
-
-  @Override
-  ObservableChannels<? extends Graph<E>, ? extends GraphMutations<E>> observe();
+  interface RemoveEdgeFromGraph<E> extends GraphEdgeOperation<E> {}
 }

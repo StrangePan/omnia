@@ -1,10 +1,11 @@
 package omnia.data.structure.rx;
 
 import io.reactivex.Flowable;
+import omnia.data.structure.Collection;
 
 /**
  * A mutable data structure whose state changes can be observed using RxJava. Observers can
- * subscribe to state changes and can subscribe to receive summaries of the mutations that occured
+ * subscribe to state changes and can subscribe to receive summaries of the operations that occurred
  * between state changes, allowing subscribers to process "diffs" between states.
  */
 public interface ObservableDataStructure {
@@ -13,19 +14,14 @@ public interface ObservableDataStructure {
    * Returns an {@link ObservableChannels} with which observers can choose which channel to
    * subscribe to.
    */
-  ObservableChannels<?, ?> observe();
+  ObservableChannels observe();
 
   /**
    * A condense view of the types of observable channels available to subscribers. This encapsulates
    * the Rx-related methods into a contained interface so as not to pollute the namespace of the
    * data structure.
-   *
-   * @param <StateType> The type representing each distinct state of the data structure. This is often
-   *     an immutable copy of the data structure.
-   * @param <MutationType> The type representing mutations for this data structure. This is typically
-   *     an empty interface with multiple subclasses containing mutation-specific parameters.
    */
-  interface ObservableChannels<StateType, MutationType> {
+  interface ObservableChannels {
 
     /**
      * Emits an immutable copy of the data structure whenever its state changes.
@@ -34,43 +30,41 @@ public interface ObservableDataStructure {
      * data structure. New subscribers should ignore this first emission if they wish to only be
      * notified of changes.
      */
-    Flowable<? extends StateType> states();
+    Flowable<?> states();
 
     /**
      * Emits both an immutable copy of the data structure whenever its state changes, as well
-     * as a description of the mutation or mutations that describe the changes between the data
+     * as a description of the mutation or operations that describe the changes between the data
      * structure's previously emitted state and the current state.
      *
      * <p>At time of subscription, each new subscriber receives the last known state of the data
      * structure, as well as a mutation equivalent of populating an empty data structure with the
      * contents of current state.
      */
-    Flowable<MutationEvent<? extends StateType, ? extends MutationType>> mutations();
+    Flowable<? extends MutationEvent> mutations();
   }
 
   /**
    * An event representing a mutation in the data structure. Mutation events contain the new state
-   * of the data structure as well as a list of mutations that, when applied <b>in order</b> to the
-   * previous known state of the data structure will, result in the current state.
+   * of the data structure as well as a collections of operations that, when applied to the previous
+   * known state of the data structure, will result in the state contained in this event.
    *
-   * <p>The semantics of each specific mutation type is governed by the semantics of the data
-   * structure and valid operations available to it.
-   *
-   * @param <StateType> The type representing each distinct state of the data structure. This is often
-   *     an immutable copy of the data structure.
-   * @param <MutationType> The type representing mutations for this data structure. This is typically
-   *     an empty interface with multiple subclasses containing mutation-specific parameters.
+   * <p>The semantics of each specific operation type is defined by the data structure withi which
+   * it is associated.
    */
-  interface MutationEvent<StateType, MutationType> {
+  interface MutationEvent {
 
     /** The state of the data structure after this mutation event. */
-    StateType state();
+    Object state();
 
     /**
-     * The mutation that triggered this mutation event. This mutation describes the
-     * changes between the data structure's previous state state and current state. Applying this
-     * mutation to the previous state will result in the current state.
+     * The collection of operations that this mutation event comprises. These operations describe
+     * the changes between the data structure's previous state state and the state associated with
+     * this event. Applying these operations to the previous state will result in the current state.
+     *
+     * <p>See the specific data structure's documentation for the semantics of how each operation
+     * is to be applied.
      */
-    MutationType mutations();
+    Collection<?> operations();
   }
 }

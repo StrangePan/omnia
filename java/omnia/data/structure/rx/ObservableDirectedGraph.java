@@ -1,36 +1,49 @@
 package omnia.data.structure.rx;
 
+import io.reactivex.Flowable;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.MutableDirectedGraph;
 
 public interface ObservableDirectedGraph<E> extends MutableDirectedGraph<E>, ObservableGraph<E> {
 
-  interface DirectedGraphMutations<E> extends GraphMutations<E> {
+  @Override
+  ObservableChannels<E> observe();
+
+  interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
 
     @Override
-    Set<? extends DirectedGraphMutation<E>> asSet();
+    Flowable<? extends DirectedGraph<E>> states();
+
+    @Override
+    Flowable<? extends MutationEvent<E>> mutations();
   }
 
-  interface DirectedGraphMutation<E> extends GraphMutation<E> {}
+  interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {
 
-  interface DirectedGraphNodeMutation<E> extends GraphNodeMutation<E> {}
+    @Override
+    DirectedGraph<E> state();
 
-  interface DirectedGraphEdgeMutation<E> extends GraphEdgeMutation<E> {
+    @Override
+    Set<? extends DirectedGraphOperation<E>> operations();
+  }
+
+  interface DirectedGraphOperation<E> extends GraphOperation<E> {}
+
+  interface DirectedGraphNodeOperation<E> extends GraphNodeOperation<E> {}
+
+  interface DirectedGraphEdgeOperation<E> extends GraphEdgeOperation<E> {
 
     E start();
 
     E end();
   }
 
-  interface AddNodeToDirectedGraph<E> extends AddNodeToGraph<E>, DirectedGraphNodeMutation<E> {}
+  interface AddNodeToDirectedGraph<E> extends AddNodeToGraph<E>, DirectedGraphNodeOperation<E> {}
 
-  interface RemoveNodeFromDirectedGraph<E> extends RemoveNodeFromGraph<E>, DirectedGraphNodeMutation<E> {}
+  interface RemoveNodeFromDirectedGraph<E> extends RemoveNodeFromGraph<E>, DirectedGraphNodeOperation<E> {}
 
-  interface AddEdgeToDirectedGraph<E> extends AddEdgeToGraph<E>, DirectedGraphEdgeMutation<E> {}
+  interface AddEdgeToDirectedGraph<E> extends AddEdgeToGraph<E>, DirectedGraphEdgeOperation<E> {}
 
-  interface RemoveEdgeFromDirectedGraph<E> extends RemoveNodeFromGraph<E>, DirectedGraphEdgeMutation<E> {}
-
-  @Override
-  ObservableChannels<? extends DirectedGraph<E>, ? extends DirectedGraphMutations<E>> observe();
+  interface RemoveEdgeFromDirectedGraph<E> extends RemoveNodeFromGraph<E>, DirectedGraphEdgeOperation<E> {}
 }

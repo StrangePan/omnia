@@ -1,30 +1,43 @@
 package omnia.data.structure.rx;
 
+import io.reactivex.Flowable;
 import omnia.data.structure.Set;
 import omnia.data.structure.UndirectedGraph;
 import omnia.data.structure.mutable.MutableUndirectedGraph;
 
 public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, MutableUndirectedGraph<E> {
 
-  interface UndirectedGraphMutations<E> extends GraphMutations<E> {
+  ObservableChannels<E> observe();
+
+  interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
+
     @Override
-    Set<? extends UndirectedGraphMutation<E>> asSet();
+    Flowable<? extends UndirectedGraph<E>> states();
+
+    @Override
+    Flowable<? extends MutationEvent<E>> mutations();
   }
 
-  interface UndirectedGraphMutation<E> extends GraphMutation<E> {}
+  interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {
 
-  interface UndirectedGraphNodeMutation<E> extends UndirectedGraphMutation<E>, GraphNodeMutation<E> {}
+    @Override
+    UndirectedGraph<E> state();
 
-  interface UndirectedGraphEdgeMutation<E> extends UndirectedGraphMutation<E>, GraphEdgeMutation<E> {}
+    @Override
+    Set<? extends UndirectedGraphOperation<E>> operations();
+  }
 
-  interface AddNodeToUndirectedGraph<E> extends UndirectedGraphNodeMutation<E>, AddNodeToGraph<E> {}
+  interface UndirectedGraphOperation<E> extends GraphOperation<E> {}
 
-  interface RemoveNodeFromUndirectedGraph<E> extends UndirectedGraphNodeMutation<E>, RemoveNodeFromGraph<E> {}
+  interface UndirectedGraphNodeOperation<E> extends UndirectedGraphOperation<E>, GraphNodeOperation<E> {}
 
-  interface AddEdgeToUndirectedGraph<E> extends UndirectedGraphEdgeMutation<E>, AddEdgeToGraph<E> {}
+  interface UndirectedGraphEdgeOperation<E> extends UndirectedGraphOperation<E>, GraphEdgeOperation<E> {}
 
-  interface RemoveEdgeFromUndirectedGraph<E> extends UndirectedGraphEdgeMutation<E>, RemoveEdgeFromGraph<E> {}
+  interface AddNodeToUndirectedGraph<E> extends UndirectedGraphNodeOperation<E>, AddNodeToGraph<E> {}
 
-  @Override
-  ObservableChannels<? extends UndirectedGraph<E>, ? extends UndirectedGraphMutations<E>> observe();
+  interface RemoveNodeFromUndirectedGraph<E> extends UndirectedGraphNodeOperation<E>, RemoveNodeFromGraph<E> {}
+
+  interface AddEdgeToUndirectedGraph<E> extends UndirectedGraphEdgeOperation<E>, AddEdgeToGraph<E> {}
+
+  interface RemoveEdgeFromUndirectedGraph<E> extends UndirectedGraphEdgeOperation<E>, RemoveEdgeFromGraph<E> {}
 }

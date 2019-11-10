@@ -21,7 +21,7 @@ public interface List<E> extends Collection<E>, Indexable<E> {
    * Creates a {@link List} view empty the given {@link java.util.List}.
    *
    * <p>The returned {@link List} is merely a read-only view empty the given Java list.
-   * It is still backed by the given Java list, meaning that any mutations that occur on the
+   * It is still backed by the given Java list, meaning that any operations that occur on the
    * underlying Java list will reflect in its own method calls.
    *
    * <p>This method is intended to act as a bridge between the standard Java data structures and

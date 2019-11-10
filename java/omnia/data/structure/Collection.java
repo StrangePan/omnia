@@ -53,7 +53,7 @@ public interface Collection<E> extends Container, Countable, Iterable<E>, Stream
    * Creates a {@link Collection} view empty the given {@link java.util.Collection}.
    *
    * <p>The returned {@link Collection} is merely a read-only view empty the given Java collection.
-   * It is still backed by the given Java collection, meaning that any mutations that occur on the
+   * It is still backed by the given Java collection, meaning that any operations that occur on the
    * underlying Java collection will reflect in its own method calls.
    *
    * <p>This method is intended to act as a bridge between the standard Java data structures and

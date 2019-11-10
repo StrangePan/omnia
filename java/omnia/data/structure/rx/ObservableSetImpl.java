@@ -17,7 +17,8 @@ import omnia.data.structure.immutable.ImmutableSet;
 
 final class ObservableSetImpl<E> implements ObservableSet<E> {
   private volatile ImmutableSet<E> currentState = ImmutableSet.empty();
-  private final Subject<MutationEvent<E>> subject = PublishSubject.create();
+  private final Subject<MutationEvent> mutationEventSubject =
+      PublishSubject.create();
   private final ObservableChannels observableChannels = new ObservableChannels();
 
   @Override
@@ -49,16 +50,16 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
   private boolean mutateState(
       Predicate<ImmutableSet<E>> shouldMutate,
       Function<ImmutableSet<E>, ImmutableSet<E>> mutator,
-      BiFunction<ImmutableSet<E>, ImmutableSet<E>, Set<SetMutation<E>>> mutationsGenerator) {
-    synchronized (this) {
+      BiFunction<ImmutableSet<E>, ImmutableSet<E>, Set<SetOperation<E>>> mutationsGenerator) {
+    synchronized(this) {
       ImmutableSet<E> previousState = currentState;
       if (!shouldMutate.test(previousState)) {
         return false;
       }
       ImmutableSet<E> newState = mutator.apply(previousState);
       currentState = newState;
-      subject.onNext(
-          new MutationEvent<>(newState, mutationsGenerator.apply(previousState, newState)));
+      mutationEventSubject.onNext(
+          new MutationEvent(newState, mutationsGenerator.apply(previousState, newState)));
       return true;
     }
   }
@@ -89,8 +90,7 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
   }
 
   @Override
-  public
-  ObservableDataStructure.ObservableChannels<Set<E>, ObservableSet.SetMutations<E>> observe() {
+  public ObservableChannels observe() {
     return observableChannels;
   }
 
@@ -100,59 +100,6 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
     }
   }
 
-  private static final class MutationEvent<E>
-      implements ObservableDataStructure.MutationEvent<Set<E>, SetMutations<E>> {
-    private final Set<E> state;
-    private final SetMutations<E> mutations;
-
-    private MutationEvent(Set<E> state, Set<SetMutation<E>> mutations) {
-      this.state = state;
-      this.mutations = new SetMutations<>(mutations);
-    }
-
-    @Override
-    public Set<E> state() {
-      return state;
-    }
-
-    @Override
-    public SetMutations<E> mutations() {
-      return mutations;
-    }
-  }
-
-  private static final class SetMutations<E> implements ObservableSet.SetMutations<E> {
-    private final Set<SetMutation<E>> mutations;
-
-    private SetMutations(Set<SetMutation<E>> mutations) {
-      this.mutations = mutations;
-    }
-
-    @Override
-    public Set<SetMutation<E>> asSet() {
-      return mutations;
-    }
-
-    @Override
-    public Iterator<SetMutation<E>> iterator() {
-      return mutations.iterator();
-    }
-
-    @Override
-    public int count() {
-      return mutations.count();
-    }
-
-    @Override
-    public boolean isPopulated() {
-      return mutations.isPopulated();
-    }
-
-    @Override
-    public Stream<SetMutation<E>> stream() {
-      return mutations.stream();
-    }
-  }
 
   private static final class AddToSet<E> implements ObservableSet.AddToSet<E> {
     private final E item;
@@ -180,38 +127,39 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
     }
   }
 
-  private class ObservableChannels
-      implements ObservableDataStructure.ObservableChannels<Set<E>, ObservableSet.SetMutations<E>> {
+  private class ObservableChannels extends GenericObservableChannels<Set<E>, MutationEvent>
+      implements ObservableSet.ObservableChannels<E> {
 
-    // When something subscribes, in what order do the subscriptions occur?
-    private final Flowable<MutationEvent<E>> mutations =
-        Flowable.<MutationEvent<E>>create(
-            flowableEmitter -> {
-              flowableEmitter.onNext(generateMutationEventForNewSubscription());
-              flowableEmitter.onComplete();
-            },
-            BackpressureStrategy.BUFFER)
-            .concatWith(subject.toFlowable(BackpressureStrategy.BUFFER));
-
-    private final Flowable<Set<E>> states = mutations.map(MutationEvent::state);
-
-    @Override
-    public Flowable<? extends Set<E>> states() {
-      return states;
-    }
-
-    @Override
-    public Flowable<
-            ? extends ObservableDataStructure.MutationEvent<? extends Set<E>,
-            ? extends ObservableSet.SetMutations<E>>> mutations() {
-      return mutations;
+    protected ObservableChannels() {
+      super(
+          Flowable.<Set<E>>create(
+              flowableEmitter -> {
+                flowableEmitter.onNext(getState());
+                flowableEmitter.onComplete();
+              },
+              BackpressureStrategy.BUFFER)
+              .concatWith(
+                  mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)
+                      .map(MutationEvent::state)),
+          Flowable.<MutationEvent>create(
+              flowableEmitter -> {
+                flowableEmitter.onNext(generateMutationEventForNewSubscription());
+                flowableEmitter.onComplete();
+              },
+              BackpressureStrategy.BUFFER)
+              .concatWith(mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)));
     }
   }
 
-  private MutationEvent<E> generateMutationEventForNewSubscription() {
+  private class MutationEvent extends GenericMutationEvent<Set<E>, Set<SetOperation<E>>>
+      implements ObservableSet.MutationEvent<E> {
+    private MutationEvent(Set<E> state, Set<SetOperation<E>> operations) {
+      super(state, operations);
+    }
+  }
+
+  private MutationEvent generateMutationEventForNewSubscription() {
     Set<E> state = getState();
-    return new MutationEvent<>(
-        state,
-        state.stream().map(AddToSet::new).collect(toSet()));
+    return new MutationEvent(state, state.stream().map(AddToSet::new).collect(toSet()));
   }
 }

@@ -7,34 +7,48 @@ import omnia.data.structure.mutable.MutableSet;
 
 public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure {
 
-  interface SetMutations<E> {
-    Set<? extends SetMutation<E>> asSet();
+  @Override
+  ObservableChannels<E> observe();
+
+  interface ObservableChannels<E> extends ObservableDataStructure.ObservableChannels {
+
+    @Override
+    Flowable<? extends Set<E>> states();
+
+    @Override
+    Flowable<? extends MutationEvent<E>> mutations();
+  }
+
+  interface MutationEvent<E> extends ObservableDataStructure.MutationEvent {
+
+    @Override
+    Set<E> state();
+
+    @Override
+    Set<? extends SetOperation<E>> operations();
   }
 
   @SuppressWarnings("unused")
-  interface SetMutation<E> {
+  interface SetOperation<E> {
 
-    static <E> Function<SetMutation<E>, Flowable<AddToSet<E>>> justAddToSetMutations() {
+    static <E> Function<SetOperation<E>, Flowable<AddToSet<E>>> justAddToSetOperations() {
       return mutation -> mutation instanceof AddToSet<?>
           ? Flowable.just((AddToSet<E>) mutation)
           : Flowable.empty();
     }
 
-    static <E> Function<SetMutation<E>, Flowable<RemoveFromSet<E>>> justRemoveFromSetMutations() {
+    static <E> Function<SetOperation<E>, Flowable<RemoveFromSet<E>>> justRemoveFromSetOperations() {
       return mutation -> mutation instanceof RemoveFromSet<?>
           ? Flowable.just((RemoveFromSet<E>) mutation)
           : Flowable.empty();
     }
   }
 
-  interface AddToSet<E> extends SetMutation<E> {
+  interface AddToSet<E> extends SetOperation<E> {
     E item();
   }
 
-  interface RemoveFromSet<E> extends SetMutation<E> {
+  interface RemoveFromSet<E> extends SetOperation<E> {
     E item();
   }
-
-  @Override
-  ObservableChannels<? extends Set<E>, ? extends SetMutations<E>> observe();
 }
