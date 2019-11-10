@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -32,7 +33,7 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
     return new Builder<>();
   }
 
-  public static class Builder<E> {
+  public static final class Builder<E> {
     MutableSet<E> nodes = new HashSet<>();
     MutableSet<ImmutableUnorderedPair<E>> edges = new HashSet<>();
 
@@ -41,13 +42,61 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
       return this;
     }
 
+    public Builder<E> removeNode(E element) {
+      nodes.remove(requireNonNull(element));
+      edges.stream().filter(pair -> pair.contains(element)).forEach(edges::remove);
+      return this;
+    }
+
+    public Builder<E> replaceNode(E original, E replacement) {
+      requireNonNull(original);
+      requireNonNull(replacement);
+      if (!nodes.contains(original)) {
+        throw new IllegalStateException("cannot replace a node that does not exist. node=" + original);
+      }
+      if (nodes.contains(replacement)) {
+        throw new IllegalStateException("element already contained as node in graph. node=" + replacement);
+      }
+      nodes.remove(original);
+      nodes.add(replacement);
+      Set<ImmutableUnorderedPair<E>> edgesToRemove =
+          edges.stream().filter(pair -> pair.contains(original)).collect(toSet());
+      Function<E, E> replaceOriginalWithReplacement =
+          element -> Objects.equals(element, original) ? replacement : element;
+      Set<ImmutableUnorderedPair<E>> edgesToAdd =
+          edgesToRemove.stream()
+              .map(
+                  pair -> ImmutableUnorderedPair.of(
+                      replaceOriginalWithReplacement.apply(pair.first()),
+                      replaceOriginalWithReplacement.apply(pair.second())))
+              .collect(toSet());
+      edgesToRemove.forEach(edges::remove);
+      edgesToAdd.forEach(edges::add);
+      return this;
+    }
+
     public Builder<E> addEdge(E element1, E element2) {
+      requireNonNull(element1);
+      requireNonNull(element2);
+      if (!nodes.contains(element1)) {
+        throw new IllegalStateException("cannot add edge for nonexistent edge");
+      }
+      if (!nodes.contains(element2)) {
+        throw new IllegalStateException("cannot add edge for nonexistent edge");
+      }
       edges.add(ImmutableUnorderedPair.of(element1, element2));
       return this;
     }
 
+    public Builder<E> removeEdge(E element1, E element2) {
+      requireNonNull(element1);
+      requireNonNull(element2);
+      edges.remove(ImmutableUnorderedPair.of(element1, element2));
+      return this;
+    }
+
     public ImmutableUndirectedGraph<E> build() {
-      return nodes.isPopulated() || edges.isPopulated()
+      return nodes.isPopulated()
           ? new ImmutableUndirectedGraph<>(this)
           : empty();
     }

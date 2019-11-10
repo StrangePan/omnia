@@ -64,21 +64,60 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     }
 
     public Builder<E> addNode(E element) {
-      nodes.add(requireNonNull(element));
+      requireNonNull(element);
+      nodes.add(element);
       return this;
     }
 
     public Builder<E> removeNode(E element) {
-      nodes.remove(requireNonNull(element));
+      requireNonNull(element);
+      nodes.remove(element);
+      directedEdges.stream().filter(pair -> pair.contains(element)).forEach(directedEdges::remove);
+      return this;
+    }
+
+    public Builder<E> replaceNode(E original, E replacement) {
+      requireNonNull(original);
+      requireNonNull(replacement);
+      if (!nodes.contains(original)) {
+        throw new IllegalStateException("cannot replace a non-existent node. original=" + original);
+      }
+      if (nodes.contains(replacement)) {
+        throw new IllegalStateException(
+            "cannot replace a node with an already existing node. replacement=" + replacement);
+      }
+      Set<HomogeneousPair<E>> edgesToRemove =
+          directedEdges.stream().filter(pair -> pair.contains(original)).collect(toSet());
+      Function<E, E> replaceOriginalWithReplacement =
+          element -> Objects.equals(element, original) ? replacement : element;
+      Set<HomogeneousPair<E>> edgesToAdd =
+          edgesToRemove.stream()
+              .map(
+                  pair -> HomogeneousPair.of(
+                      replaceOriginalWithReplacement.apply(pair.first()),
+                      replaceOriginalWithReplacement.apply(pair.second())))
+              .collect(toSet());
+      edgesToRemove.forEach(directedEdges::remove);
+      edgesToAdd.forEach(directedEdges::add);
       return this;
     }
 
     public Builder<E> addEdge(E from, E to) {
+      requireNonNull(from);
+      requireNonNull(to);
+      if (!nodes.contains(from)) {
+        throw new IllegalStateException("cannot add an edge for a nonexistent node");
+      }
+      if (!nodes.contains(to)) {
+        throw new IllegalStateException("cannot add an edge for a nonexistent node");
+      }
       directedEdges.add(HomogeneousPair.of(from, to));
       return this;
     }
 
     public Builder<E> removeEdge(E from, E to) {
+      requireNonNull(from);
+      requireNonNull(to);
       directedEdges.remove(HomogeneousPair.of(from, to));
       return this;
     }
