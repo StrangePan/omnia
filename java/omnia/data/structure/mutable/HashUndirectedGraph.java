@@ -48,7 +48,7 @@ public final class HashUndirectedGraph<E> implements MutableUndirectedGraph<E> {
     edges.forEach(this.edges::remove);
     elements.add(replacement);
     neighbors.stream()
-        .map(neighbor -> new ImmutableUnorderedPair<>(neighbor, replacement))
+        .map(neighbor -> ImmutableUnorderedPair.of(neighbor, replacement))
         .forEach(this.edges::add);
   }
 
@@ -94,14 +94,14 @@ public final class HashUndirectedGraph<E> implements MutableUndirectedGraph<E> {
                 + second + "(" + (containsSecond ? "exists" : "does not exist") + ")");
       }
     }
-    edges.add(new ImmutableUnorderedPair<>(first, second));
+    edges.add(ImmutableUnorderedPair.of(first, second));
   }
 
   @Override
   public boolean removeEdge(E first, E second) {
     requireNonNull(first);
     requireNonNull(second);
-    return edges.remove(new ImmutableUnorderedPair<>(first, second));
+    return edges.remove(ImmutableUnorderedPair.of(first, second));
   }
 
   @Override
@@ -249,7 +249,7 @@ public final class HashUndirectedGraph<E> implements MutableUndirectedGraph<E> {
       public boolean remove(Edge<E> edge) {
         return edge.graph == HashUndirectedGraph.this
             && edges.remove(
-                new ImmutableUnorderedPair<>(edge.pair.first(), edge.pair.second()));
+                ImmutableUnorderedPair.of(edge.pair.first(), edge.pair.second()));
       }
 
       @Override
@@ -407,7 +407,7 @@ public final class HashUndirectedGraph<E> implements MutableUndirectedGraph<E> {
         @Override
         public boolean remove(Node<E> node) {
           requireSameGraph(node);
-          return graph.edges.remove(new ImmutableUnorderedPair<>(node.element, element));
+          return graph.edges.remove(ImmutableUnorderedPair.of(node.element, element));
         }
 
         @Override
@@ -429,7 +429,7 @@ public final class HashUndirectedGraph<E> implements MutableUndirectedGraph<E> {
           return otherNode instanceof HashUndirectedGraph.Node
               && ((Node<?>) otherNode).graph == graph
               && graph.edges.contains(
-                  new ImmutableUnorderedPair<>(element, ((Node<?>) otherNode).element));
+                  ImmutableUnorderedPair.of(element, ((Node<?>) otherNode).element));
         }
 
         @Override

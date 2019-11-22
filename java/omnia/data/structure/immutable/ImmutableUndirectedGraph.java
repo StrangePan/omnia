@@ -137,7 +137,7 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
   }
 
   @Override
-  public Optional<? extends Node> nodeOf(E element) {
+  public Optional<? extends UndirectedGraph.Node<E>> nodeOf(E element) {
     return elements.contains(element) ? Optional.of(getOrCreateNode(element)) : Optional.empty();
   }
 
@@ -147,12 +147,12 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
   }
 
   @Override
-  public Set<? extends Node> nodes() {
+  public Set<? extends UndirectedGraph.Node<E>> nodes() {
     return elements.stream().map(toNode()).collect(toSet());
   }
 
   @Override
-  public Set<? extends Edge> edges() {
+  public Set<? extends UndirectedGraph.Edge<E>> edges() {
     return edges.stream().map(toEdge()).collect(toSet());
   }
 

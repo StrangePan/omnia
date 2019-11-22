@@ -15,6 +15,6 @@
     <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.0.0" level="project" />
     <orderEntry type="library" name="com.google.truth:truth:0.44" level="application" />
     <orderEntry type="library" name="com.google.truth.extensions:truth-java8-extension:0.44" level="application" />
-    <orderEntry type="library" scope="TEST" name="org.mockito:mockito-all:2.0.2-beta" level="application" />
+    <orderEntry type="library" name="org.mockito:mockito-core:3.1.0" level="application" />
   </component>
 </module>
