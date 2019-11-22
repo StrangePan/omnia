@@ -4,9 +4,25 @@ import io.reactivex.Flowable;
 import omnia.data.structure.Set;
 import omnia.data.structure.UndirectedGraph;
 import omnia.data.structure.UnorderedPair;
+import omnia.data.structure.mutable.MutableSet;
 import omnia.data.structure.mutable.MutableUndirectedGraph;
 
 public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, MutableUndirectedGraph<E> {
+
+  interface Node<E> extends MutableUndirectedGraph.Node<E> {
+
+    @Override
+    MutableSet<? extends Edge<E>> edges();
+
+    @Override
+    MutableSet<? extends Node<E>> neighbors();
+  }
+
+  interface Edge<E> extends MutableUndirectedGraph.Edge<E> {
+
+    @Override
+    UnorderedPair<? extends Node<E>> endpoints();
+  }
 
   ObservableChannels<E> observe();
 

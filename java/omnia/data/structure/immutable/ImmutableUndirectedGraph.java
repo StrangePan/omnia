@@ -44,6 +44,13 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
     return elements.stream();
   }
 
+  public Builder<E> toBuilder() {
+    Builder<E> builder = builder();
+    elements.forEach(builder::addNode);
+    edges.forEach(pair -> builder.addEdge(pair.first(), pair.second()));
+    return builder;
+  }
+
   public static final class Builder<E> {
     MutableSet<E> nodes = new HashSet<>();
     MutableSet<ImmutableUnorderedPair<E>> edges = new HashSet<>();
