@@ -129,6 +129,17 @@ public class FilterIteratorTest {
     assertThat(list.itemAt(4)).isEqualTo(9);
   }
 
+  @Test
+  public void remove_afterHasNext_throwsIllegalStateException() {
+    MutableList<Integer> list = ArrayList.copyOf(TEST_DATA);
+    Iterator<Integer> underTest = new FilterIterator<>(list.iterator(), isEven());
+
+    underTest.next(); // 0
+    underTest.hasNext();
+    
+    assertThrows(IllegalStateException.class, underTest::remove);
+  }
+
   private static Predicate<Integer> isEven() {
     return number -> number % 2 == 0;
   }
