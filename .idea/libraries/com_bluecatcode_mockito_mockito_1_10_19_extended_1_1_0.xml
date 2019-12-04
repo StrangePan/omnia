@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="com.bluecatcode.mockito:mockito-1.10.19-extended:1.1.0" type="repository">
+    <properties maven-id="com.bluecatcode.mockito:mockito-1.10.19-extended:1.1.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/bluecatcode/mockito/mockito-1.10.19-extended/1.1.0/mockito-1.10.19-extended-1.1.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/bluecatcode/mockito/mockito-1.10.19-extended/1.1.0/mockito-1.10.19-extended-1.1.0-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
