@@ -36,12 +36,12 @@ public final class HashSet<E> implements MutableSet<E> {
       Collection<? extends E> original,
       BiPredicate<Object, Object> equalsFunction,
       ToIntFunction<Object> hashFunction) {
+    this.equalsFunction = equalsFunction != null ? equalsFunction : DEFAULT_EQUALS_FUNCTION;
+    this.hashFunction = hashFunction != null ? hashFunction : DEFAULT_HASH_FUNCTION;
     this.javaSet = original != null
         ? new java.util.HashSet<>(
             original.stream().map(this::<E>wrap).collect(java.util.stream.Collectors.toSet()))
         : new java.util.HashSet<>();
-    this.equalsFunction = equalsFunction != null ? equalsFunction : DEFAULT_EQUALS_FUNCTION;
-    this.hashFunction = hashFunction != null ? hashFunction : DEFAULT_HASH_FUNCTION;
   }
 
   private static final class Wrapper<E> {
