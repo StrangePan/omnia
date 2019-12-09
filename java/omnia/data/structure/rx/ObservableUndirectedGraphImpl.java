@@ -12,10 +12,12 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import omnia.data.iterate.MappingIterator;
+import omnia.data.iterate.WrapperIterator;
 import omnia.data.structure.Set;
 import omnia.data.structure.UndirectedGraph;
 import omnia.data.structure.UnorderedPair;
@@ -180,7 +182,13 @@ public final class ObservableUndirectedGraphImpl<E> implements ObservableUndirec
 
   @Override
   public Iterator<E> iterator() {
-    throw new UnsupportedOperationException();
+    return new WrapperIterator<E>(getState().iterator()) {
+      @Override
+      public void remove() {
+        ObservableUndirectedGraphImpl.this.remove(current());
+        onRemove();
+      }
+    };
   }
 
   @Override
@@ -353,7 +361,7 @@ public final class ObservableUndirectedGraphImpl<E> implements ObservableUndirec
       return new MutableSet<>() {
         @Override
         public void add(ObservableUndirectedGraph.Node<E> element) {
-          throw new UnsupportedOperationException();
+          graph.addEdge(Node.this.element(), element.element());
         }
 
         @Override

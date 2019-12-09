@@ -41,6 +41,10 @@ public abstract class WrapperIterator<E> implements Iterator<E> {
   @Override
   public void remove() {
     baseIterator.remove();
+    onRemove();
+  }
+
+  protected void onRemove() {
     current = null;
     hasCurrent = false;
   }
