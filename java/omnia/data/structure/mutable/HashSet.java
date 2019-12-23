@@ -13,7 +13,7 @@ import omnia.data.structure.Collection;
 public final class HashSet<E> implements MutableSet<E> {
   private static final BiPredicate<Object, Object> DEFAULT_EQUALS_FUNCTION = Object::equals;
   private static final ToIntFunction<Object> DEFAULT_HASH_FUNCTION = Object::hashCode;
-  private static final Function UNWRAPPER_FUNCTION =
+  private static final Function<?, ?> UNWRAPPER_FUNCTION =
       (Function<Wrapper<Object>, Object>) Wrapper::element;
 
   private final java.util.HashSet<Wrapper<E>> javaSet;
