@@ -101,12 +101,101 @@ public final class ObservableUndirectedGraphImpl<E> implements ObservableUndirec
 
   @Override
   public MutableSet<E> contents() {
-    throw new UnsupportedOperationException();
+    return new MutableSet<E>() {
+      @Override
+      public void add(E element) {
+        ObservableUndirectedGraphImpl.this.add(element);
+      }
+
+      @Override
+      public boolean remove(E element) {
+        return ObservableUndirectedGraphImpl.this.remove(element);
+      }
+
+      @Override
+      public void clear() {
+        ObservableUndirectedGraphImpl.this.clear();
+      }
+
+      @Override
+      public Iterator<E> iterator() {
+        return ObservableUndirectedGraphImpl.this.iterator();
+      }
+
+      @Override
+      public boolean contains(Object element) {
+        return ObservableUndirectedGraphImpl.this.contains(element);
+      }
+
+      @Override
+      public int count() {
+        return ObservableUndirectedGraphImpl.this.count();
+      }
+
+      @Override
+      public boolean isPopulated() {
+        return ObservableUndirectedGraphImpl.this.isPopulated();
+      }
+
+      @Override
+      public Stream<E> stream() {
+        return ObservableUndirectedGraphImpl.this.stream();
+      }
+    };
   }
 
   @Override
   public MutableSet<Node<E>> nodes() {
-    throw new UnsupportedOperationException();
+    return new MutableSet<>() {
+      @Override
+      public void add(Node<E> element) {
+        if (element.graph != ObservableUndirectedGraphImpl.this) {
+          throw new IllegalArgumentException("tried to add a node from another graph");
+        }
+        ObservableUndirectedGraphImpl.this.add(element.element);
+      }
+
+      @Override
+      public boolean remove(Node<E> element) {
+        return element.graph == ObservableUndirectedGraphImpl.this
+            && ObservableUndirectedGraphImpl.this.remove(element.element);
+      }
+
+      @Override
+      public void clear() {
+        ObservableUndirectedGraphImpl.this.clear();
+      }
+
+      @Override
+      public Iterator<Node<E>> iterator() {
+        return new MappingIterator<>(
+            ObservableUndirectedGraphImpl.this.iterator(),
+            ObservableUndirectedGraphImpl.this::getOrCreateNode);
+      }
+
+      @Override
+      public boolean contains(Object element) {
+        return element instanceof ObservableUndirectedGraphImpl.Node
+            && ((ObservableUndirectedGraphImpl.Node<?>) element).graph == ObservableUndirectedGraphImpl.this
+            && ObservableUndirectedGraphImpl.this.contains(((ObservableUndirectedGraphImpl.Node<?>) element).element);
+      }
+
+      @Override
+      public int count() {
+        return ObservableUndirectedGraphImpl.this.count();
+      }
+
+      @Override
+      public boolean isPopulated() {
+        return ObservableUndirectedGraphImpl.this.isPopulated();
+      }
+
+      @Override
+      public Stream<Node<E>> stream() {
+        return ObservableUndirectedGraphImpl.this.stream()
+            .map(ObservableUndirectedGraphImpl.this::getOrCreateNode);
+      }
+    };
   }
 
   @Override
