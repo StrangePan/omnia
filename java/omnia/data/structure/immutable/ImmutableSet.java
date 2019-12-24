@@ -29,7 +29,7 @@ public final class ImmutableSet<E> implements Set<E> {
 
   @SafeVarargs
   public static <E> ImmutableSet<E> of(E firstItem, E...items) {
-    return items.length == 0 ? empty() : ImmutableSet.<E>builder().add(firstItem).addAll(items).build();
+    return ImmutableSet.<E>builder().add(firstItem).addAll(items).build();
   }
 
   public static <E> ImmutableSet<E> copyOf(Iterable<? extends E> iterable) {

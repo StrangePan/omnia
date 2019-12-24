@@ -51,4 +51,8 @@ public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure
   interface RemoveFromSet<E> extends SetOperation<E> {
     E item();
   }
+
+  static <E> ObservableSet<E> create() {
+    return new ObservableSetImpl<>();
+  }
 }
