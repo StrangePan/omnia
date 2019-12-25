@@ -3,6 +3,7 @@ package omnia.data.structure.immutable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.structure.Set;
 import omnia.data.structure.UnorderedPair;
@@ -46,21 +47,6 @@ public final class ImmutableUnorderedPair<E> implements UnorderedPair<E> {
   }
 
   @Override
-  public Iterator<E> iterator() {
-    return List.of(first, second).iterator();
-  }
-
-  @Override
-  public boolean contains(Object element) {
-    return first.equals(element) || second.equals(element);
-  }
-
-  @Override
-  public Stream<E> stream() {
-    return Stream.of(first, second);
-  }
-
-  @Override
   public E first() {
     return first;
   }
@@ -71,13 +57,9 @@ public final class ImmutableUnorderedPair<E> implements UnorderedPair<E> {
   }
 
   @Override
-  public boolean isPopulated() {
-    return true;
-  }
-
-  @Override
-  public int count() {
-    return 2;
+  public <R> ImmutableUnorderedPair<R> map(Function<? super E, ? extends R> mappingFunction) {
+    return ImmutableUnorderedPair.of(
+        mappingFunction.apply(first()), mappingFunction.apply(second()));
   }
 
   /**

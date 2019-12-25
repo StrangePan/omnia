@@ -2,42 +2,26 @@ package omnia.data.structure;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.List;
 
 public interface UnorderedPair<E> extends HomogeneousPair<E> {
 
+  @Override
+  default <R> UnorderedPair<R> map(Function<? super E, ? extends R> mappingFunction) {
+    return UnorderedPair.of(mappingFunction.apply(first()), mappingFunction.apply(second()));
+  }
+
   static <E> UnorderedPair<E> of(E first, E second) {
-    Objects.requireNonNull(first);
-    Objects.requireNonNull(second);
+    requireNonNull(first);
+    requireNonNull(second);
 
-    class UnorderedPairImpl implements UnorderedPair<E> {
-      private final E first;
-      private final E second;
-
-      private UnorderedPairImpl(E first, E second) {
-        this.first = first;
-        this.second = second;
-      }
-
-      @Override
-      public Iterator<E> iterator() {
-        return List.of(first, second).iterator();
-      }
-
-      @Override
-      public boolean contains(Object element) {
-        return Objects.equals(element, second) || Objects.equals(element, second);
-      }
-
-      @Override
-      public Stream<E> stream() {
-        return Stream.of(first, second);
-      }
-
+    return new UnorderedPair<>() {
       @Override
       public E first() {
         return first;
@@ -49,31 +33,13 @@ public interface UnorderedPair<E> extends HomogeneousPair<E> {
       }
 
       @Override
-      public int count() {
-        return 2;
-      }
-
-      @Override
-      public boolean isPopulated() {
-        return true;
-      }
-
-      @Override
       public boolean equals(Object other) {
-        if (!(other instanceof UnorderedPair<?>)) {
-          return false;
-        }
-        if (this == other) {
-          return true;
-        }
-
-        UnorderedPair<?> otherUnorderedPair = (UnorderedPair<?>) other;
-
-        if (Objects.equals(this.first, otherUnorderedPair.first())) {
-          return Objects.equals(this.second, otherUnorderedPair.second());
-        }
-        return Objects.equals(this.first, otherUnorderedPair.second())
-            && Objects.equals(this.second, otherUnorderedPair.first());
+        return this == other
+            || other instanceof UnorderedPair<?>
+            && (Objects.equals(first(), ((UnorderedPair<?>) other).first())
+            && Objects.equals(second(), ((UnorderedPair<?>) other).second())
+            || Objects.equals(first(), ((UnorderedPair<?>) other).second())
+            && Objects.equals(second(), ((UnorderedPair<?>) other).first()));
       }
 
       @Override
@@ -83,8 +49,6 @@ public interface UnorderedPair<E> extends HomogeneousPair<E> {
         int secondHash = Objects.hashCode(second);
         return 31 * min(firstHash, secondHash) + max(firstHash, secondHash);
       }
-    }
-
-    return new UnorderedPairImpl(first, second);
+    };
   }
 }

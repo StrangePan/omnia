@@ -3,6 +3,7 @@ package omnia.data.structure.mutable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import omnia.data.iterate.MappingIterator;
 import omnia.data.iterate.WrapperIterator;
@@ -31,9 +32,12 @@ public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V>
 
   @Override
   public void putMapping(K key, V value) {
-    Entry<K, V> entry = Entry.of(key, value);
-    keyMap.putMapping(key, entry);
-    valueMap.putMapping(value, entry);
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public V putMappingIfAbsent(K key, Supplier<V> value) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -150,6 +154,11 @@ public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V>
     @Override
     public void putMapping(V key, K value) {
       HashBidirectionalMap.this.putMapping(value, key);
+    }
+
+    @Override
+    public K putMappingIfAbsent(V key, Supplier<K> value) {
+      throw new UnsupportedOperationException();
     }
 
     @Override

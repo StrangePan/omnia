@@ -27,23 +27,4 @@ public interface ObservableDirectedGraph<E> extends MutableDirectedGraph<E>, Obs
     @Override
     Set<? extends GraphOperation<E>> operations();
   }
-
-  interface GraphOperation<E> extends ObservableGraph.GraphOperation<E> {}
-
-  interface NodeOperation<E> extends ObservableGraph.NodeOperation<E>, GraphOperation<E> {}
-
-  interface EdgeOperation<E> extends ObservableGraph.EdgeOperation<E>, GraphOperation<E> {
-
-    E start();
-
-    E end();
-  }
-
-  interface AddNodeToGraph<E> extends ObservableGraph.AddNodeToGraph<E>, NodeOperation<E> {}
-
-  interface RemoveNodeFromGraph<E> extends ObservableGraph.RemoveNodeFromGraph<E>, NodeOperation<E> {}
-
-  interface AddEdgeToGraph<E> extends ObservableGraph.AddEdgeToGraph<E>, EdgeOperation<E> {}
-
-  interface RemoveEdgeFromGraph<E> extends ObservableGraph.RemoveNodeFromGraph<E>, EdgeOperation<E> {}
 }

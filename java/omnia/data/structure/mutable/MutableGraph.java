@@ -1,47 +1,14 @@
 package omnia.data.structure.mutable;
 
-import java.util.Optional;
-import omnia.data.structure.Collection;
 import omnia.data.structure.Graph;
 
-public interface MutableGraph<E> extends Graph<E>, MutableCollection<E> {
+public interface MutableGraph<E> extends Graph<E> {
 
-  interface Node<E> extends Graph.Node<E> {
+  Node<E> addNode(E item);
 
-    void replaceValue(E element);
+  Node<E> addNodeIfAbsent(E item);
 
-    void remove();
+  void replaceNode(E original, E replacement);
 
-    @Override
-    MutableSet<? extends Edge<E>> edges();
-
-    @Override
-    MutableSet<? extends Node<E>> neighbors();
-  }
-
-  interface Edge<E> extends Graph.Edge<E> {
-
-    void remove();
-
-    @Override
-    Collection<? extends Node<E>> endpoints();
-  }
-
-  void replace(E original, E replacement);
-
-  void addEdge(E first, E second);
-
-  boolean removeEdge(E first, E second);
-
-  @Override
-  Optional<? extends Node<E>> nodeOf(E element);
-
-  @Override
-  MutableSet<E> contents();
-
-  @Override
-  MutableSet<? extends Node<E>> nodes();
-
-  @Override
-  MutableSet<? extends Edge<E>> edges();
+  boolean removeNode(Object item);
 }

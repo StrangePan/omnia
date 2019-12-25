@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -32,16 +31,6 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
 
   public static <E> Builder<E> builder() {
     return new Builder<>();
-  }
-
-  @Override
-  public Iterator<E> iterator() {
-    return elements.iterator();
-  }
-
-  @Override
-  public Stream<E> stream() {
-    return elements.stream();
   }
 
   public Builder<E> toBuilder() {
@@ -83,10 +72,7 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
           element -> Objects.equals(element, original) ? replacement : element;
       Set<ImmutableUnorderedPair<E>> edgesToAdd =
           edgesToRemove.stream()
-              .map(
-                  pair -> ImmutableUnorderedPair.of(
-                      replaceOriginalWithReplacement.apply(pair.first()),
-                      replaceOriginalWithReplacement.apply(pair.second())))
+              .map(pair -> pair.map(replaceOriginalWithReplacement))
               .collect(toSet());
       edgesToRemove.forEach(edges::remove);
       edgesToAdd.forEach(edges::add);
@@ -114,9 +100,7 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
     }
 
     public ImmutableUndirectedGraph<E> build() {
-      return nodes.isPopulated()
-          ? new ImmutableUndirectedGraph<>(this)
-          : empty();
+      return nodes.isPopulated() ? new ImmutableUndirectedGraph<>(this) : empty();
     }
 
     private Builder() {}
@@ -137,8 +121,11 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
   }
 
   @Override
-  public Optional<? extends UndirectedGraph.Node<E>> nodeOf(E element) {
-    return elements.contains(element) ? Optional.of(getOrCreateNode(element)) : Optional.empty();
+  public Optional<? extends UndirectedNode> nodeOf(Object item) {
+    @SuppressWarnings("unchecked")
+    Optional<? extends UndirectedNode> node =
+        elements.contains(item) ? Optional.of(getOrCreateNode((E) item)) : Optional.empty();
+    return node;
   }
 
   @Override
@@ -147,88 +134,106 @@ public final class ImmutableUndirectedGraph<E> implements UndirectedGraph<E> {
   }
 
   @Override
-  public Set<? extends UndirectedGraph.Node<E>> nodes() {
+  public Set<? extends UndirectedGraph.UndirectedNode<E>> nodes() {
     return elements.stream().map(toNode()).collect(toSet());
   }
 
   @Override
-  public Set<? extends UndirectedGraph.Edge<E>> edges() {
+  public Set<? extends UndirectedGraph.UndirectedEdge<E>> edges() {
     return edges.stream().map(toEdge()).collect(toSet());
   }
 
-  @Override
-  public boolean contains(Object element) {
-    return elements.contains(element);
-  }
+  private class UndirectedNode implements UndirectedGraph.UndirectedNode<E> {
+    private final E item;
 
-  @Override
-  public int count() {
-    return elements.count();
-  }
-
-  @Override
-  public boolean isPopulated() {
-    return elements.isPopulated();
-  }
-
-  private class Node implements UndirectedGraph.Node<E> {
-    private final E element;
-
-    private Node(E element) {
-      this.element = element;
+    private UndirectedNode(E item) {
+      this.item = requireNonNull(item);
     }
 
     @Override
-    public E element() {
-      return element;
+    public E item() {
+      return item;
     }
 
     @Override
-    public Set<? extends Edge> edges() {
-      return edges.stream().filter(p -> p.contains(element)).map(toEdge()).collect(toSet());
+    public Set<? extends UndirectedEdge> edges() {
+      return edges.stream().filter(p -> p.contains(item)).map(toEdge()).collect(toSet());
     }
 
     @Override
-    public Set<? extends Node> neighbors() {
+    public Set<? extends UndirectedNode> neighbors() {
       return edges.stream()
-          .filter(p -> p.contains(element))
-          .map(p -> p.first().equals(element) ? p.second() : p.first())
+          .filter(p -> p.contains(item))
+          .map(p -> p.first().equals(item) ? p.second() : p.first())
           .map(toNode())
           .collect(toSet());
     }
+
+    @Override
+    public boolean equals(Object other) {
+      return other instanceof ImmutableUndirectedGraph.UndirectedNode
+          && ((ImmutableUndirectedGraph<?>.UndirectedNode) other).graph() == graph()
+          && Objects.equals(((ImmutableUndirectedGraph<?>.UndirectedNode) other).item, item);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(item);
+    }
+
+    private ImmutableUndirectedGraph<E> graph() {
+      return ImmutableUndirectedGraph.this;
+    }
   }
 
-  private class Edge implements UndirectedGraph.Edge<E> {
+  private class UndirectedEdge implements UndirectedGraph.UndirectedEdge<E> {
     private final ImmutableUnorderedPair<E> endpoints;
 
-    private Edge(ImmutableUnorderedPair<E> endpoints) {
+    private UndirectedEdge(ImmutableUnorderedPair<E> endpoints) {
       this.endpoints = endpoints;
     }
 
     @Override
-    public UnorderedPair<? extends Node> endpoints() {
+    public UnorderedPair<? extends UndirectedNode> endpoints() {
       return UnorderedPair.of(
           getOrCreateNode(endpoints.first()), getOrCreateNode(endpoints.second()));
     }
+
+    @Override
+    public boolean equals(Object other) {
+      return other instanceof ImmutableUndirectedGraph<?>.UndirectedEdge
+          && ((ImmutableUndirectedGraph<?>.UndirectedEdge) other).graph() == graph()
+          && Objects.equals(
+              ((ImmutableUndirectedGraph<?>.UndirectedEdge) other).endpoints, endpoints);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(endpoints);
+    }
+
+    private ImmutableUndirectedGraph<E> graph() {
+      return ImmutableUndirectedGraph.this;
+    }
   }
 
-  private Function<? super E, ? extends Node> toNode() {
+  private Function<? super E, ? extends UndirectedNode> toNode() {
     return this::getOrCreateNode;
   }
 
-  private final WeakCache<E, Node> nodeCache = new WeakCache<>();
+  private final WeakCache<E, UndirectedNode> nodeCache = new WeakCache<>();
 
-  private Node getOrCreateNode(E element) {
-    return nodeCache.getOrCache(element, () -> new Node(element));
+  private UndirectedNode getOrCreateNode(E element) {
+    return nodeCache.getOrCache(element, () -> new UndirectedNode(element));
   }
 
-  private Function<? super ImmutableUnorderedPair<E>, ? extends Edge> toEdge() {
+  private Function<? super ImmutableUnorderedPair<E>, ? extends UndirectedEdge> toEdge() {
     return this::getOrCreateEdge;
   }
 
-  private WeakCache<ImmutableUnorderedPair<E>, Edge> edgeCache = new WeakCache<>();
+  private WeakCache<ImmutableUnorderedPair<E>, UndirectedEdge> edgeCache = new WeakCache<>();
 
-  private Edge getOrCreateEdge(ImmutableUnorderedPair<E> endpoints) {
-    return edgeCache.getOrCache(endpoints, () -> new Edge(endpoints));
+  private UndirectedEdge getOrCreateEdge(ImmutableUnorderedPair<E> endpoints) {
+    return edgeCache.getOrCache(endpoints, () -> new UndirectedEdge(endpoints));
   }
 }

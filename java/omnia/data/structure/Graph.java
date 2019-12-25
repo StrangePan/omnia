@@ -2,11 +2,11 @@ package omnia.data.structure;
 
 import java.util.Optional;
 
-public interface Graph<E> extends Collection<E> {
+public interface Graph<E> {
 
   interface Node<E> {
 
-    E element();
+    E item();
 
     Set<? extends Edge<E>> edges();
 
@@ -18,7 +18,7 @@ public interface Graph<E> extends Collection<E> {
     Collection<? extends Node<E>> endpoints();
   }
 
-  Optional<? extends Node<E>> nodeOf(E element);
+  Optional<? extends Node<E>> nodeOf(Object item);
 
   Set<E> contents();
 

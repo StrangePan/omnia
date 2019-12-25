@@ -20,6 +20,10 @@ public final class HashSet<E> implements MutableSet<E> {
   private final BiPredicate<Object, Object> equalsFunction;
   private final ToIntFunction<Object> hashFunction;
 
+  public static <E> HashSet<E> create() {
+    return new HashSet<>();
+  }
+
   public HashSet() {
     this(null, null, null);
   }

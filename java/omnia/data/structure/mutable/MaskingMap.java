@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Set;
@@ -22,6 +23,11 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
   @Override
   public void putMapping(K key, V value) {
     javaMap.put(key, value);
+  }
+
+  @Override
+  public V putMappingIfAbsent(K key, Supplier<V> value) {
+    return javaMap.computeIfAbsent(key, unused -> value.get());
   }
 
   @Override
