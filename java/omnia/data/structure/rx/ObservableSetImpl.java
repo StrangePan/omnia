@@ -29,13 +29,14 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
         (previousState, currentState) -> ImmutableSet.of(new AddToSet<>(element)));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public boolean remove(E element) {
+  public boolean remove(Object element) {
     return mutateState(
         state -> state.contains(element),
-        state -> ImmutableSet.copyOf(
-            SetAlgorithms.differenceBetween(state, ImmutableSet.of(element))),
-        (previousState, currentState) -> ImmutableSet.of(new RemoveFromSet<>(element)));
+        state ->
+            ImmutableSet.copyOf(SetAlgorithms.differenceBetween(state, ImmutableSet.of(element))),
+        (previousState, currentState) -> ImmutableSet.of(new RemoveFromSet<>((E) element)));
   }
 
   @Override

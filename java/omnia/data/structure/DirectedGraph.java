@@ -34,6 +34,8 @@ public interface DirectedGraph<E> extends Graph<E> {
   @Override
   Optional<? extends DirectedNode<E>> nodeOf(Object item);
 
+  Optional<? extends DirectedEdge<E>> edgeOf(E from, E to);
+
   @Override
   Set<? extends DirectedNode<E>> nodes();
 

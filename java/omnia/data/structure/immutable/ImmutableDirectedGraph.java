@@ -68,7 +68,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       return this;
     }
 
-    public Builder<E> removeNode(E element) {
+    public Builder<E> removeNode(Object element) {
       requireNonNull(element);
       nodes.remove(element);
       directedEdges.stream().filter(pair -> pair.contains(element)).forEach(directedEdges::remove);
@@ -114,7 +114,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       return this;
     }
 
-    public Builder<E> removeEdge(E from, E to) {
+    public Builder<E> removeEdge(Object from, Object to) {
       requireNonNull(from);
       requireNonNull(to);
       directedEdges.remove(HomogeneousPair.of(from, to));
@@ -150,6 +150,18 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     Optional<? extends DirectedNode> node =
         elements.contains(item) ? Optional.of(getOrCreateNode((E) item)) : Optional.empty();
     return node;
+  }
+
+  @Override
+  public Optional<? extends DirectedEdge> edgeOf(Object from, Object to) {
+    @SuppressWarnings("unchecked")
+    Optional<? extends DirectedEdge> edge =
+        Stream.of(HomogeneousPair.of(from, to))
+            .filter(directedEdges::contains)
+            .map(p -> (HomogeneousPair<E>) p)
+            .findFirst()
+            .map(this::getOrCreateEdge);
+    return edge;
   }
 
   @Override

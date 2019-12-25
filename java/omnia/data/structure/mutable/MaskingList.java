@@ -44,7 +44,7 @@ class MaskingList<E> implements MutableList<E> {
   }
 
   @Override
-  public boolean remove(E element) {
+  public boolean remove(Object element) {
     return javaList.remove(element);
   }
 

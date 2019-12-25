@@ -80,14 +80,8 @@ public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V>
     }
 
     @Override
-    public boolean remove(Entry<K, V> element) {
-      Entry<K, V> entry = Entry.of(element.key(), element.value());
-      if (!contains(entry)) {
-        return false;
-      }
-      keyMap.removeKey(entry.key());
-      valueMap.removeKey(entry.value());
-      return true;
+    public boolean remove(Object element) {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -204,8 +198,8 @@ public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V>
         }
 
         @Override
-        public boolean remove(Entry<V, K> element) {
-          return baseSet.remove(invert(element));
+        public boolean remove(Object element) {
+          throw new UnsupportedOperationException();
         }
 
         @Override

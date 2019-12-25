@@ -22,6 +22,8 @@ public interface UndirectedGraph<E> extends Graph<E> {
   @Override
   Optional<? extends UndirectedNode<E>> nodeOf(Object item);
 
+  Optional<? extends UndirectedEdge<E>> edgeOf(E first, E second);
+
   @Override
   Set<? extends UndirectedNode<E>> nodes();
 

@@ -114,9 +114,10 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
       }
 
       @Override
-      public boolean remove(Entry<K, V> element) {
+      public boolean remove(Object element) {
         requireNonNull(element);
-        return javaMap.remove(element.key(), element.value());
+        return element instanceof Entry<?, ?>
+            && javaMap.remove(((Entry<?, ?>) element).key(), ((Entry<?, ?>) element).value());
       }
 
       @Override

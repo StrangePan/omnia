@@ -18,7 +18,7 @@ public final class SetAlgorithms {
     return min.stream().filter(max::contains).collect(toSet());
   }
 
-  public static <T> Set<T> differenceBetween(Set<? extends T> a, Set<? extends T> b) {
+  public static <T> Set<T> differenceBetween(Set<? extends T> a, Set<?> b) {
     return a.stream().filter(item -> !b.contains(item)).collect(toSet());
   }
 

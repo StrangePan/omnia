@@ -7,6 +7,10 @@ import omnia.data.structure.mutable.MutableDirectedGraph;
 
 public interface ObservableDirectedGraph<E> extends MutableDirectedGraph<E>, ObservableGraph<E> {
 
+  static <E> ObservableDirectedGraph<E> create() {
+    return new ObservableDirectedGraphImpl<>();
+  }
+
   @Override
   ObservableChannels<E> observe();
 

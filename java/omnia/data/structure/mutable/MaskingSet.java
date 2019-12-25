@@ -17,7 +17,7 @@ class MaskingSet<E> implements MutableSet<E> {
   }
 
   @Override
-  public boolean remove(E element) {
+  public boolean remove(Object element) {
     return javaSet.remove(element);
   }
 
