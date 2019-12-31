@@ -18,7 +18,7 @@ public final class GraphAlgorithms {
         .stream()
         .filter(GraphAlgorithms::hasNoOutgoingEdges)
         .filter(GraphAlgorithms::hasIncomingEdges)
-        .map(DirectedGraph.Node::element)
+        .map(DirectedGraph.DirectedNode::item)
         .collect(toImmutableSet());
   }
 
@@ -27,7 +27,7 @@ public final class GraphAlgorithms {
         .stream()
         .filter(GraphAlgorithms::hasNoIncomingEdges)
         .filter(GraphAlgorithms::hasOutgoingEdges)
-        .map(DirectedGraph.Node::element)
+        .map(DirectedGraph.DirectedNode::item)
         .collect(toImmutableSet());
   }
 
@@ -35,23 +35,23 @@ public final class GraphAlgorithms {
     return graph.nodes()
         .stream()
         .filter(GraphAlgorithms::hasNoNeighbors)
-        .map(DirectedGraph.Node::element)
+        .map(DirectedGraph.DirectedNode::item)
         .collect(toImmutableSet());
   }
 
   public static <E> boolean isCyclical(DirectedGraph<E> graph) {
-    MutableSet<DirectedGraph.Node<E>> seenNodes = new HashSet<>();
+    MutableSet<DirectedGraph.DirectedNode<E>> seenNodes = new HashSet<>();
 
-    for (DirectedGraph.Node<E> node : graph.nodes()) {
-      if (seenNodes.contains(node)) {
+    for (DirectedGraph.DirectedNode<E> directedNode : graph.nodes()) {
+      if (seenNodes.contains(directedNode)) {
         continue;
       }
-      Queue<DirectedGraph.Node<E>> queue = new ArrayQueue<>();
-      queue.enqueue(node);
+      Queue<DirectedGraph.DirectedNode<E>> queue = new ArrayQueue<>();
+      queue.enqueue(directedNode);
       while (queue.isPopulated()) {
-        for (DirectedGraph.Node<E> n :
+        for (DirectedGraph.DirectedNode<E> n :
             queue.dequeue().get().outgoingEdges().stream()
-                .map(DirectedGraph.Edge::end)
+                .map(DirectedGraph.DirectedEdge::end)
                 .collect(toSet())) {
           if (seenNodes.contains(n)) {
             return true;
@@ -75,20 +75,20 @@ public final class GraphAlgorithms {
     return !hasNeighbors(node);
   }
 
-  private static boolean hasOutgoingEdges(DirectedGraph.Node<?> node) {
-    return node.outgoingEdges().isPopulated();
+  private static boolean hasOutgoingEdges(DirectedGraph.DirectedNode<?> directedNode) {
+    return directedNode.outgoingEdges().isPopulated();
   }
 
-  private static boolean hasNoOutgoingEdges(DirectedGraph.Node<?> node) {
-    return !hasOutgoingEdges(node);
+  private static boolean hasNoOutgoingEdges(DirectedGraph.DirectedNode<?> directedNode) {
+    return !hasOutgoingEdges(directedNode);
   }
 
-  private static boolean hasIncomingEdges(DirectedGraph.Node<?> node) {
-    return node.incomingEdges().isPopulated();
+  private static boolean hasIncomingEdges(DirectedGraph.DirectedNode<?> directedNode) {
+    return directedNode.incomingEdges().isPopulated();
   }
 
-  private static boolean hasNoIncomingEdges(DirectedGraph.Node<?> node) {
-    return !hasIncomingEdges(node);
+  private static boolean hasNoIncomingEdges(DirectedGraph.DirectedNode<?> directedNode) {
+    return !hasIncomingEdges(directedNode);
   }
 
   private GraphAlgorithms() {}

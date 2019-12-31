@@ -4,27 +4,29 @@ import java.util.Optional;
 
 public interface UndirectedGraph<E> extends Graph<E> {
 
-  interface Node<E> extends Graph.Node<E> {
+  interface UndirectedNode<E> extends Graph.Node<E> {
 
     @Override
-    Set<? extends Edge<E>> edges();
+    Set<? extends UndirectedEdge<E>> edges();
 
     @Override
-    Set<? extends Node<E>> neighbors();
+    Set<? extends UndirectedNode<E>> neighbors();
   }
 
-  interface Edge<E> extends Graph.Edge<E> {
+  interface UndirectedEdge<E> extends Graph.Edge<E> {
 
     @Override
-    UnorderedPair<? extends Node<E>> endpoints();
+    UnorderedPair<? extends UndirectedNode<E>> endpoints();
   }
 
   @Override
-  Optional<? extends Node<E>> nodeOf(E element);
+  Optional<? extends UndirectedNode<E>> nodeOf(Object item);
+
+  Optional<? extends UndirectedEdge<E>> edgeOf(E first, E second);
 
   @Override
-  Set<? extends Node<E>> nodes();
+  Set<? extends UndirectedNode<E>> nodes();
 
   @Override
-  Set<? extends Edge<E>> edges();
+  Set<? extends UndirectedEdge<E>> edges();
 }

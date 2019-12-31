@@ -10,11 +10,19 @@ package omnia.contract;
 public interface Countable {
 
   /**
-   * Get the sum empty the items contained in this object.
+   * Get the number of items contained in this object.
    *
-   * @return a non-negative integer between {@code 0} and {@link Integer#MAX_VALUE} inclusive.
+   * @return a non-negative integer between {@code 0} and {@link Integer#MAX_VALUE}, inclusive.
    */
   int count();
 
-  boolean isPopulated();
+  /**
+   * Get whether or not this object contains any items. Default implementation returns true if
+   * {@link #count()} is greater than 0.
+   *
+   * @return {@code true} if this object contains any items, and {@code false} otherwise.
+   */
+  default boolean isPopulated() {
+    return count() > 0;
+  }
 }

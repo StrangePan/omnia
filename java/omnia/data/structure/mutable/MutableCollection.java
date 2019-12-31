@@ -30,7 +30,7 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
    * @return {@code true} if the collection contained {@code element} and the element was removed,
    *     {@code false} if the collection did not contain the item and thus was not removed
    */
-  boolean remove(E element);
+  boolean remove(Object element);
 
   /** Atomically removes all items from this {@link Collection}. */
   @Override void clear();
@@ -44,7 +44,7 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
       }
 
       @Override
-      public boolean remove(E element) {
+      public boolean remove(Object element) {
         return javaCollection.remove(element);
       }
 

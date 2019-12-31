@@ -1,11 +1,14 @@
 package omnia.data.structure.mutable;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 import omnia.data.structure.Map;
 
 public interface MutableMap<K, V> extends Map<K, V> {
 
   void putMapping(K key, V value);
+
+  V putMappingIfAbsent(K key, Supplier<V> value);
 
   Optional<V> removeKey(K key);
 

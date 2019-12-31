@@ -58,7 +58,7 @@ final class ObservableListImpl<E> implements ObservableList<E> {
   }
 
   @Override
-  public boolean remove(E item) {
+  public boolean remove(Object item) {
     synchronized(this) {
       OptionalInt index = getState().indexOf(item);
       return mutateState(
