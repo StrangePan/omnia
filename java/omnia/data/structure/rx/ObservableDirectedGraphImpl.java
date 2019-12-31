@@ -37,7 +37,17 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
   @Override
   public void replaceNode(E original, E replacement) {
     mutateState(
-        currentState -> currentState.contents().contains(original),
+        currentState -> {
+          if (!currentState.contents().contains(original)) {
+            throw new IllegalArgumentException(
+                "cannot replace a non-existent node. original=" + original);
+          }
+          if (currentState.contents().contains(replacement)) {
+            throw new IllegalArgumentException(
+                "cannot replace a node with an already existing node. replacement=" + replacement);
+          }
+          return true;
+        },
         currentState -> currentState.toBuilder().replaceNode(original, replacement).build(),
         (previousState, newState) ->
             Streams.concat(

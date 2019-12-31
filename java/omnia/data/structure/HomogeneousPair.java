@@ -67,6 +67,11 @@ public interface HomogeneousPair<E> extends Pair<E, E>, Collection<E> {
       public int hashCode() {
         return Objects.hash(first(), second());
       }
+
+      @Override
+      public final String toString() {
+        return "HomogeneousPair{" + first + "," + second + "}";
+      }
     };
   }
 }
