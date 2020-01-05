@@ -1,5 +1,7 @@
 package omnia.data.structure;
 
+import static omnia.data.stream.Collectors.toSet;
+
 import java.util.Optional;
 
 public interface DirectedGraph<E> extends Graph<E> {
@@ -41,4 +43,20 @@ public interface DirectedGraph<E> extends Graph<E> {
 
   @Override
   Set<? extends DirectedEdge<E>> edges();
+
+  static boolean areEqual(DirectedGraph<?> a, DirectedGraph<?> b) {
+    return a == b
+        || a != null
+        && b != null
+        && Set.areEqual(a.contents(), b.contents())
+        && Set.areEqual(
+            a.edges().stream()
+                .map(DirectedEdge::endpoints)
+                .map(pair -> pair.map(DirectedNode::item))
+                .collect(toSet()),
+            b.edges().stream()
+                .map(DirectedEdge::endpoints)
+                .map(pair -> pair.map(DirectedNode::item))
+                .collect(toSet()));
+  }
 }
