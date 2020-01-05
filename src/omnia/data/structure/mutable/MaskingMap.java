@@ -31,7 +31,7 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
   }
 
   @Override
-  public Optional<V> removeKey(K key) {
+  public Optional<V> removeKey(Object key) {
     return Optional.ofNullable(javaMap.remove(key));
   }
 

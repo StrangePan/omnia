@@ -9,7 +9,7 @@ import omnia.data.structure.mutable.MutableBidirectionalMap;
 public final class SimpleEscapist implements Escapist {
 
   private final Character escapeCharacter;
-  private final BidirectionalMap<Character, Character> replacements;
+  private final BidirectionalMap<Character> replacements;
 
   private SimpleEscapist(Builder builder) {
     if (builder.escapeCharacter == null) {
@@ -18,7 +18,7 @@ public final class SimpleEscapist implements Escapist {
     escapeCharacter = builder.escapeCharacter;
 
     // Copy builder map (still-mutable) into new one
-    MutableBidirectionalMap<Character, Character> escapeMap =
+    MutableBidirectionalMap<Character> escapeMap =
         HashBidirectionalMap.copyOf(builder.replacements);
 
     // Add escape entry for escape character if it isn't already present
@@ -71,7 +71,7 @@ public final class SimpleEscapist implements Escapist {
       return source;
     }
 
-    BidirectionalMap<Character, Character> replacements = this.replacements.inverse();
+    BidirectionalMap<Character> replacements = this.replacements;
     StringBuilder result = new StringBuilder();
     int lastSpecial = -1;
     boolean escaped = false;
@@ -110,7 +110,7 @@ public final class SimpleEscapist implements Escapist {
   }
 
   public static final class Builder {
-    private final MutableBidirectionalMap<Character, Character> replacements = new HashBidirectionalMap<>();
+    private final MutableBidirectionalMap<Character> replacements = new HashBidirectionalMap<>();
     private Character escapeCharacter = null;
 
     public Builder escapeCharacter(Character character) {

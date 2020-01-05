@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -9,96 +8,94 @@ import omnia.data.iterate.MappingIterator;
 import omnia.data.iterate.WrapperIterator;
 import omnia.data.structure.BidirectionalMap;
 import omnia.data.structure.Set;
+import omnia.data.structure.UnorderedPair;
+import omnia.data.structure.immutable.ImmutableSet;
 
-public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V> {
-  private final HashMap<K, Entry<K, V>> keyMap = HashMap.create();
-  private final HashMap<V, Entry<K, V>> valueMap = HashMap.create();
-  private final InverseMap inverseMap = new InverseMap();
+public class HashBidirectionalMap<E> implements MutableBidirectionalMap<E> {
+  private final HashMap<E, E> map = HashMap.create();
 
   @Override
-  public MutableBidirectionalMap<V, K> inverse() {
-    return inverseMap;
+  public Set<E> keys() {
+    return map.keys();
   }
 
   @Override
-  public Set<K> keys() {
-    return keyMap.keys();
+  public Set<E> values() {
+    return map.keys();
   }
 
   @Override
-  public Set<V> values() {
-    return valueMap.keys();
+  public void putMapping(E key, E value) {
+    Stream.of(key, value)
+        .flatMap(k -> Stream.concat(map.valueOf(k).stream(), Stream.of(k)))
+        .forEach(map::removeKey);
+
+    map.putMapping(key, value);
+    map.putMapping(value, key);
   }
 
   @Override
-  public void putMapping(K key, V value) {
-    throw new UnsupportedOperationException();
+  public E putMappingIfAbsent(E key, Supplier<E> value) {
+    Optional<E> existingValue = map.valueOf(key);
+    if (existingValue.isEmpty()) {
+      E newValue = value.get();
+      putMapping(key, newValue);
+      return newValue;
+    } else {
+      return existingValue.get();
+    }
   }
 
   @Override
-  public V putMappingIfAbsent(K key, Supplier<V> value) {
-    throw new UnsupportedOperationException();
+  public Optional<E> removeKey(Object key) {
+    Optional<E> value = map.removeKey(key);
+    value.ifPresent(map::removeKey);
+    return value;
   }
 
   @Override
-  public Optional<V> removeKey(K key) {
-    Optional<Entry<K, V>> entry = keyMap.removeKey(key);
-    entry.ifPresent(kvEntry -> valueMap.removeKey(kvEntry.value()));
-    return entry.map(Entry::value);
-  }
-
-  @Override
-  public MutableSet<Entry<K, V>> entries() {
+  public MutableSet<Entry<E, E>> entries() {
     return new BidirectionalMapSet();
   }
 
   @Override
-  public Optional<V> valueOf(Object key) {
-    return keyMap.valueOf(key).map(Entry::value);
+  public Optional<E> valueOf(Object key) {
+    return map.valueOf(key);
   }
 
   @Override
-  public Set<K> keysOf(Object value) {
-    return Set.masking(
-        valueMap.valueOf(value)
-            .map(Entry::key)
-            .map(Collections::singleton)
-            .orElse(Collections.emptySet()));
+  public Set<E> keysOf(Object value) {
+    return valueOf(value).map(ImmutableSet::of).orElse(ImmutableSet.empty());
   }
 
-  private class BidirectionalMapSet implements MutableSet<Entry<K, V>> {
+  private class BidirectionalMapSet implements MutableSet<Entry<E, E>> {
+
     @Override
-    public void add(Entry<K, V> element) {
-      Entry<K, V> entry = Entry.of(element.key(), element.value());
-      if (contains(entry)) {
-        return;
-      }
-      keyMap.removeKey(entry.key());
-      valueMap.removeKey(entry.value());
-      keyMap.putMapping(entry.key(), entry);
-      valueMap.putMapping(entry.value(), entry);
+    public void add(Entry<E, E> item) {
+      HashBidirectionalMap.this.putMapping(item.key(), item.value());
     }
 
     @Override
-    public boolean remove(Object element) {
-      throw new UnsupportedOperationException();
+    public boolean remove(Object item) {
+      return item instanceof Entry
+          && (HashBidirectionalMap.this.removeKey(((Entry<?, ?>) item).key()).isPresent()
+              || HashBidirectionalMap.this.removeKey(((Entry<?, ?>) item).value()).isPresent());
     }
 
     @Override
     public void clear() {
-      keyMap.entries().clear();
-      valueMap.entries().clear();
+      map.entries().clear();
     }
 
     @Override
-    public Iterator<Entry<K, V>> iterator() {
-      return new WrapperIterator<>(
-          new MappingIterator<>(keyMap.entries().iterator(), Entry::value)) {
+    public Iterator<Entry<E, E>> iterator() {
+      return new WrapperIterator<>(new MappingIterator<>(map.entries().iterator(), e -> e)) {
 
         @Override
         public void remove() {
-          valueMap.removeKey(current().value());
-          super.remove();
+          // removing one entry from this iterator would remove two entries from the set. need to
+          // figure out how to do that without the base map throwing a CME
+          throw new UnsupportedOperationException();
         }
       };
     }
@@ -108,129 +105,32 @@ public class HashBidirectionalMap<K, V> implements MutableBidirectionalMap<K, V>
       if (!(element instanceof Entry)) {
         return false;
       }
-      Entry<?, ?> entry = Entry.of(((Entry) element).key(), ((Entry) element).value());
-      return keyMap.valueOf(entry.key()).map(entry::equals).orElse(false);
+      Entry<?, ?> entry = Entry.of(((Entry<?, ?>) element).key(), ((Entry<?, ?>) element).value());
+      return map.valueOf(entry.key()).map(entry::equals).orElse(false);
     }
 
     @Override
     public int count() {
-      return keyMap.entries().count();
+      return map.entries().count();
     }
 
     @Override
     public boolean isPopulated() {
-      return keyMap.entries().isPopulated();
+      return map.entries().isPopulated();
     }
 
     @Override
-    public Stream<Entry<K, V>> stream() {
-      return keyMap.entries().stream().map(Entry::value);
+    public Stream<Entry<E, E>> stream() {
+      return map.entries().stream();
     }
   }
 
-  private class InverseMap implements MutableBidirectionalMap<V, K> {
-
-    @Override
-    public MutableBidirectionalMap<K, V> inverse() {
-      return HashBidirectionalMap.this;
-    }
-
-    @Override
-    public Set<V> keys() {
-      return HashBidirectionalMap.this.values();
-    }
-
-    @Override
-    public Set<K> values() {
-      return HashBidirectionalMap.this.keys();
-    }
-
-    @Override
-    public void putMapping(V key, K value) {
-      HashBidirectionalMap.this.putMapping(value, key);
-    }
-
-    @Override
-    public K putMappingIfAbsent(V key, Supplier<K> value) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Optional<K> removeKey(V key) {
-      Optional<K> realKey = HashBidirectionalMap.this.valueMap.valueOf(key).map(Entry::key);
-      realKey.ifPresent(HashBidirectionalMap.this::removeKey);
-      return realKey;
-    }
-
-    @Override
-    public MutableSet<Entry<V, K>> entries() {
-      MutableSet<Entry<K, V>> baseSet = HashBidirectionalMap.this.entries();
-      return new MutableSet<>() {
-
-        @Override
-        public Stream<Entry<V, K>> stream() {
-          return baseSet.stream().map(HashBidirectionalMap::invert);
-        }
-
-        @Override
-        public int count() {
-          return baseSet.count();
-        }
-
-        @Override
-        public boolean isPopulated() {
-          return baseSet.isPopulated();
-        }
-
-        @Override
-        public boolean contains(Object element) {
-          return element instanceof Entry && baseSet.contains(invert((Entry<?,?>) element));
-        }
-
-        @Override
-        public Iterator<Entry<V, K>> iterator() {
-          return new MappingIterator<>(baseSet.iterator(), HashBidirectionalMap::invert);
-        }
-
-        @Override
-        public void add(Entry<V, K> element) {
-          baseSet.add(invert(element));
-        }
-
-        @Override
-        public boolean remove(Object element) {
-          throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear() {
-          baseSet.clear();
-        }
-      };
-    }
-
-    @Override
-    public Optional<K> valueOf(Object key) {
-      return HashBidirectionalMap.this.valueMap.valueOf(key).map(Entry::key);
-    }
-
-    @Override
-    public Set<V> keysOf(Object value) {
-      return Set.masking(
-          HashBidirectionalMap.this
-              .valueOf(value)
-              .map(Collections::singleton)
-              .orElse(Collections.emptySet()));
-    }
-  }
-
-  private static <K, V> Entry<V, K> invert(Entry<K, V> e) {
-    return Entry.of(e.value(), e.key());
-  }
-
-  public static <K, V> HashBidirectionalMap<K, V> copyOf(BidirectionalMap<K, V> original) {
-    HashBidirectionalMap<K, V> copy = new HashBidirectionalMap<>();
-    original.entries().forEach(copy.entries()::add);
+  public static <E> HashBidirectionalMap<E> copyOf(BidirectionalMap<? extends E> original) {
+    HashBidirectionalMap<E> copy = new HashBidirectionalMap<>();
+    original.entries().stream()
+        .map(entry -> UnorderedPair.of(entry.key(), entry.value()))
+        .distinct()
+        .forEach(pair -> copy.putMapping(pair.first(), pair.second()));
     return copy;
   }
 }
