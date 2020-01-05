@@ -9,10 +9,10 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="java" />
     <orderEntry type="library" name="com.google.truth:truth:1.0" level="project" />
-    <orderEntry type="library" name="io.reactivex.rxjava2:rxjava:2.2.15" level="project" />
     <orderEntry type="library" name="org.junit.jupiter:junit-jupiter:5.5.2" level="project" />
     <orderEntry type="library" name="com.google.truth.extensions:truth-java8-extension:1.0" level="project" />
     <orderEntry type="library" name="org.mockito:mockito-core:3.2.0" level="project" />
     <orderEntry type="library" name="junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="io.reactivex.rxjava2:rxjava:2.2.15" level="application" />
   </component>
 </module>
