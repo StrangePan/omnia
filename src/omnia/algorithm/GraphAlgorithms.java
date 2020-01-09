@@ -3,13 +3,18 @@ package omnia.algorithm;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
+import java.lang.reflect.Array;
+import java.util.Iterator;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Graph;
 import omnia.data.structure.immutable.ImmutableSet;
+import omnia.data.structure.mutable.ArrayList;
 import omnia.data.structure.mutable.ArrayQueue;
 import omnia.data.structure.mutable.HashSet;
+import omnia.data.structure.mutable.MutableList;
 import omnia.data.structure.mutable.MutableSet;
 import omnia.data.structure.mutable.Queue;
+import omnia.data.structure.mutable.Stack;
 
 public final class GraphAlgorithms {
 
@@ -40,23 +45,46 @@ public final class GraphAlgorithms {
   }
 
   public static <E> boolean isCyclical(DirectedGraph<E> graph) {
-    MutableSet<DirectedGraph.DirectedNode<E>> seenNodes = new HashSet<>();
+    MutableSet<E> visitedItems = HashSet.create();
 
     for (DirectedGraph.DirectedNode<E> directedNode : graph.nodes()) {
-      if (seenNodes.contains(directedNode)) {
+      if (visitedItems.contains(directedNode.item())) {
         continue;
       }
-      Queue<DirectedGraph.DirectedNode<E>> queue = new ArrayQueue<>();
-      queue.enqueue(directedNode);
-      while (queue.isPopulated()) {
-        for (DirectedGraph.DirectedNode<E> n :
-            queue.dequeue().get().outgoingEdges().stream()
-                .map(DirectedGraph.DirectedEdge::end)
-                .collect(toSet())) {
-          if (seenNodes.contains(n)) {
+
+      MutableSet<E> itemsInStack = HashSet.create();
+      MutableList<E> itemStack = new ArrayList<>();
+      MutableList<Iterator<? extends DirectedGraph.DirectedNode<E>>> iteratorStack =
+          new ArrayList<>();
+
+      itemStack.add(directedNode.item());
+      itemsInStack.add(directedNode.item());
+      iteratorStack.add(directedNode.successors().iterator());
+
+      while (iteratorStack.isPopulated()) {
+        E item = itemStack.itemAt(itemStack.count() - 1);
+        Iterator<? extends DirectedGraph.DirectedNode<E>> iterator =
+            iteratorStack.itemAt(iteratorStack.count() - 1);
+
+        if (iterator.hasNext()) {
+          DirectedGraph.DirectedNode<E> nextNode = iterator.next();
+          E nextItem = nextNode.item();
+
+          if (itemsInStack.contains(nextItem)) {
             return true;
           }
-          seenNodes.add(n);
+          if (visitedItems.contains(nextItem)) {
+            continue;
+          }
+
+          itemStack.add(nextItem);
+          itemsInStack.add(nextItem);
+          iteratorStack.add(nextNode.successors().iterator());
+        } else {
+          visitedItems.add(item);
+          itemStack.removeAt(itemStack.count() - 1);
+          itemsInStack.remove(item);
+          iteratorStack.removeAt(iteratorStack.count() - 1);
         }
       }
     }
