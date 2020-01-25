@@ -17,16 +17,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public final class ObservableSetTest {
+public final class WritableObservableSetTest {
 
   @Test
   public void isPopulated_whenInit_isEmpty() {
-    assertThat(ObservableSet.create().isPopulated()).isFalse();
+    assertThat(WritableObservableSet.create().isPopulated()).isFalse();
   }
 
   @Test
   public void isPopulated_whenItemsAdded_isPopulated() {
-    MutableSet<Object> set = ObservableSet.create();
+    MutableSet<Object> set = WritableObservableSet.create();
 
     set.add(new Object());
 
@@ -35,7 +35,7 @@ public final class ObservableSetTest {
 
   @Test
   public void isPopulated_whenItemsAddedThenRemoved_isEmpty() {
-    MutableSet<Object> set = ObservableSet.create();
+    MutableSet<Object> set = WritableObservableSet.create();
     Object object = new Object();
 
     set.add(object);
@@ -47,7 +47,7 @@ public final class ObservableSetTest {
   @Test
   public void isPopulated_whenItemsAddedThenCleared_isEmpty() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object());
-    MutableSet<Object> set = ObservableSet.create();
+    MutableSet<Object> set = WritableObservableSet.create();
 
     contents.forEach(set::add);
     set.clear();
@@ -57,13 +57,13 @@ public final class ObservableSetTest {
 
   @Test
   public void count_whenInit_isZero() {
-    assertThat(ObservableSet.create().count()).isEqualTo(0);
+    assertThat(WritableObservableSet.create().count()).isEqualTo(0);
   }
 
   @Test
   public void count_whenItemsAdded_isEqualToItemsAdded() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object());
-    MutableSet<Object> set = ObservableSet.create();
+    MutableSet<Object> set = WritableObservableSet.create();
 
     contents.forEach(set::add);
 
@@ -73,7 +73,7 @@ public final class ObservableSetTest {
   @Test
   public void count_whenItemsAddedThenRemoved_isZero() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object());
-    MutableSet<Object> set = ObservableSet.create();
+    MutableSet<Object> set = WritableObservableSet.create();
 
     contents.forEach(set::add);
     contents.forEach(set::remove);
@@ -84,7 +84,7 @@ public final class ObservableSetTest {
   @Test
   public void count_whenItemsAddedThenCleared_isZero() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object());
-    MutableSet<Object> set = ObservableSet.create();
+    MutableSet<Object> set = WritableObservableSet.create();
 
     contents.forEach(set::add);
     set.clear();
@@ -94,14 +94,14 @@ public final class ObservableSetTest {
 
   @Test
   public void observeStates_whenEmpty_emitsEmpty() {
-    ObservableSet<Object> set = ObservableSet.create();
+    ObservableSet<Object> set = WritableObservableSet.create();
 
     set.observe().states().test().assertValue(state -> !state.isPopulated());
   }
 
   @Test
   public void observeMutations_whenEmpty_emitsEmpty() {
-    ObservableSet<Object> set = ObservableSet.create();
+    ObservableSet<Object> set = WritableObservableSet.create();
 
     TestSubscriber<? extends MutationEvent<Object>> subscriber =
         set.observe().mutations().test();
@@ -112,7 +112,7 @@ public final class ObservableSetTest {
   @Test
   public void observeStates_whenPopulated_emitsValues() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object(), new Object());
-    ObservableSet<Object> set = ObservableSet.create();
+    WritableObservableSet<Object> set = WritableObservableSet.create();
     contents.forEach(set::add);
 
     set.observe().states().test().assertValue(state -> Set.areEqual(state, contents));
@@ -121,7 +121,7 @@ public final class ObservableSetTest {
   @Test
   public void observeMutations_whenPopulated_emitsValues() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object(), new Object());
-    ObservableSet<Object> set = ObservableSet.create();
+    WritableObservableSet<Object> set = WritableObservableSet.create();
     contents.forEach(set::add);
 
     TestSubscriber<Set<Object>> testSubscriber =
@@ -133,7 +133,7 @@ public final class ObservableSetTest {
   @Test
   public void observeMutations_whenPopulated_emitsMutations() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object(), new Object());
-    ObservableSet<Object> set = ObservableSet.create();
+    WritableObservableSet<Object> set = WritableObservableSet.create();
     contents.forEach(set::add);
 
     TestSubscriber<? extends SetOperation<Object>> testSubscriber =
@@ -154,7 +154,7 @@ public final class ObservableSetTest {
     Set<Object> originalContents = ImmutableSet.of(new Object(), new Object());
     Set<Object> addedContents = ImmutableSet.of(new Object(), new Object());
     Set<Object> finalContents = SetAlgorithms.unionOf(originalContents, addedContents);
-    ObservableSet<Object> set = ObservableSet.create();
+    WritableObservableSet<Object> set = WritableObservableSet.create();
 
     originalContents.forEach(set::add);
 
@@ -176,7 +176,7 @@ public final class ObservableSetTest {
     Set<Object> finalContents = ImmutableSet.of(new Object(), new Object());
     Set<Object> removedContents = ImmutableSet.of(new Object(), new Object());
     Set<Object> originalContents = SetAlgorithms.unionOf(finalContents, removedContents);
-    ObservableSet<Object> set = ObservableSet.create();
+    WritableObservableSet<Object> set = WritableObservableSet.create();
 
     originalContents.forEach(set::add);
 
@@ -205,7 +205,7 @@ public final class ObservableSetTest {
   @Test
   public void observeMutations_whenPopulated_thenCleared_emitsMutation() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object());
-    ObservableSet<Object> set = ObservableSet.create();
+    WritableObservableSet<Object> set = WritableObservableSet.create();
 
     contents.forEach(set::add);
 
@@ -234,7 +234,7 @@ public final class ObservableSetTest {
   @Test
   public void observeStates_whenPopulated_thenCleared_emitsState() {
     Set<Object> contents = ImmutableSet.of(new Object(), new Object());
-    ObservableSet<Object> set = ObservableSet.create();
+    WritableObservableSet<Object> set = WritableObservableSet.create();
 
     contents.forEach(set::add);
 

@@ -3,10 +3,8 @@ package omnia.data.structure.rx;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import omnia.data.structure.Set;
-import omnia.data.structure.mutable.MutableSet;
 
-public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure {
-
+public interface ObservableSet<E> extends ObservableDataStructure {
   @Override
   ObservableChannels<E> observe();
 
@@ -16,7 +14,7 @@ public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure
     Flowable<? extends Set<E>> states();
 
     @Override
-    Flowable<? extends MutationEvent<E>> mutations();
+    Flowable<? extends ObservableSet.MutationEvent<E>> mutations();
   }
 
   interface MutationEvent<E> extends ObservableDataStructure.MutationEvent {
@@ -25,19 +23,21 @@ public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure
     Set<E> state();
 
     @Override
-    Set<? extends SetOperation<E>> operations();
+    Set<? extends ObservableSet.SetOperation<E>> operations();
   }
 
   @SuppressWarnings("unused")
   interface SetOperation<E> {
 
-    static <E> Function<SetOperation<E>, Flowable<AddToSet<E>>> justAddToSetOperations() {
+    static <E> Function<ObservableSet.SetOperation<E>, Flowable<ObservableSet.AddToSet<E>>>
+        justAddToSetOperations() {
       return mutation -> mutation instanceof AddToSet<?>
           ? Flowable.just((AddToSet<E>) mutation)
           : Flowable.empty();
     }
 
-    static <E> Function<SetOperation<E>, Flowable<RemoveFromSet<E>>> justRemoveFromSetOperations() {
+    static <E> Function<ObservableSet.SetOperation<E>, Flowable<ObservableSet.RemoveFromSet<E>>>
+        justRemoveFromSetOperations() {
       return mutation -> mutation instanceof RemoveFromSet<?>
           ? Flowable.just((RemoveFromSet<E>) mutation)
           : Flowable.empty();
@@ -50,9 +50,5 @@ public interface ObservableSet<E> extends MutableSet<E>, ObservableDataStructure
 
   interface RemoveFromSet<E> extends SetOperation<E> {
     E item();
-  }
-
-  static <E> ObservableSet<E> create() {
-    return new ObservableSetImpl<>();
   }
 }
