@@ -4,29 +4,26 @@ import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import omnia.contract.Countable;
 import omnia.data.structure.List;
-import omnia.data.structure.mutable.MutableList;
-
-public interface ObservableList<E> extends MutableList<E>, ObservableDataStructure {
-
+public interface ObservableList<E> extends ObservableDataStructure {
   @Override
   ObservableChannels<E> observe();
 
-  interface ObservableChannels<E> extends ObservableDataStructure.ObservableChannels {
+  interface ObservableChannels<E2> extends ObservableDataStructure.ObservableChannels {
 
     @Override
-    Flowable<? extends List<E>> states();
+    Flowable<? extends List<E2>> states();
 
     @Override
-    Flowable<? extends MutationEvent<E>> mutations();
+    Flowable<? extends WritableObservableList.MutationEvent<E2>> mutations();
   }
 
-  interface MutationEvent<E> extends ObservableDataStructure.MutationEvent {
+  interface MutationEvent<E2> extends ObservableDataStructure.MutationEvent {
 
     @Override
-    List<E> state();
+    List<E2> state();
 
     @Override
-    List<? extends ListOperation<E>> operations();
+    List<? extends ObservableList.ListOperation<E2>> operations();
   }
 
   /**
@@ -34,15 +31,15 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
    * of the available static functions.
    */
   @SuppressWarnings("unused") // E unused, but required for type safety when upcasting
-  interface ListOperation<E> {
+  interface ListOperation<E2> {
 
     /**
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link AddToList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<AddToList<E>>> justAddToListMutations() {
-      return mutation -> mutation instanceof AddToList<?>
-          ? Flowable.just((AddToList<E>) mutation)
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.AddToList<E>>> justAddToListMutations() {
+      return mutation -> mutation instanceof AddToList
+          ? Flowable.just((AddToList) mutation)
           : Flowable.empty();
     }
 
@@ -50,9 +47,9 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link MoveInList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<MoveInList<E>>> justMoveInListMutations() {
-      return mutation -> mutation instanceof MoveInList<?>
-          ? Flowable.just((MoveInList<E>) mutation)
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.MoveInList<E>>> justMoveInListMutations() {
+      return mutation -> mutation instanceof MoveInList
+          ? Flowable.just((MoveInList) mutation)
           : Flowable.empty();
     }
 
@@ -60,9 +57,9 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link RemoveFromList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<RemoveFromList<E>>> justRemoveFromListMutations() {
-      return mutation -> mutation instanceof RemoveFromList<?>
-          ? Flowable.just((RemoveFromList<E>) mutation)
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.RemoveFromList<E>>> justRemoveFromListMutations() {
+      return mutation -> mutation instanceof RemoveFromList
+          ? Flowable.just((RemoveFromList) mutation)
           : Flowable.empty();
     }
 
@@ -70,18 +67,18 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link ReplaceInList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<ReplaceInList<E>>> justReplaceInListMutations() {
-      return mutation -> mutation instanceof ReplaceInList<?>
-          ? Flowable.just((ReplaceInList<E>) mutation)
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.ReplaceInList<E>>> justReplaceInListMutations() {
+      return mutation -> mutation instanceof ReplaceInList
+          ? Flowable.just((ReplaceInList) mutation)
           : Flowable.empty();
     }
   }
 
   /** Represents one or more items being added to the list. */
-  interface AddToList<E> extends ListOperation<E> {
+  interface AddToList<E2> extends ListOperation {
 
     /** The item or items that were added to the list. */
-    List<E> items();
+    List<E2> items();
 
     /** The index range at which the items were added. */
     IndexRange indices();
@@ -92,9 +89,9 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
    * explicit request of the list user, or a side-effect of an item being inserted or removed from
    * the middle or beginning of the list.
    */
-  interface MoveInList<E> extends ListOperation<E> {
+  interface MoveInList<E2> extends ListOperation {
     /** The items that were moved within the list. */
-    List<E> items();
+    List<E2> items();
 
     /** The range of indices at which the items resided in the previous state of the list. */
     IndexRange previousIndicies();
@@ -104,10 +101,10 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
   }
 
   /** Represents one or more items being removed from the list. */
-  interface RemoveFromList<E> extends ListOperation<E> {
+  interface RemoveFromList<E2> extends ListOperation {
 
     /** The items that were removed from the list.*/
-    List<E> items();
+    List<E2> items();
 
     /** The indices of the items in the previous state of the list. */
     IndexRange indices();
@@ -117,15 +114,15 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
    * Represents one or more items being replaced with new items at the same indices within the
    * list.
    */
-  interface ReplaceInList<E> extends ListOperation<E> {
+  interface ReplaceInList<E2> extends ListOperation {
     /**
      * The items that were replaced by {@link #newItems()}. These items may still be located in
      * other positions within the list.
      */
-    List<E> replacedItems();
+    List<E2> replacedItems();
 
     /** The items that replaced {@link #replacedItems()}. */
-    List<E> newItems();
+    List<E2> newItems();
 
     /** The range of indices within the list whose values were replaced in this operation. */
     IndexRange indices();

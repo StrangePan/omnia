@@ -14,7 +14,7 @@ import omnia.data.iterate.IntegerRangeIterator;
 import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
 
-final class ObservableListImpl<E> implements ObservableList<E> {
+final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   private volatile ImmutableList<E> currentState = ImmutableList.empty();
   private final Subject<MutationEvent> mutationEventSubject = PublishSubject.create();
