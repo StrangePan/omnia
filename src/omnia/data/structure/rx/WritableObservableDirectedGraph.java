@@ -5,16 +5,16 @@ import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.MutableDirectedGraph;
 
-public interface ObservableDirectedGraph<E> extends MutableDirectedGraph<E>, ObservableGraph<E> {
+public interface WritableObservableDirectedGraph<E> extends MutableDirectedGraph<E>, WritableObservableGraph<E> {
 
-  static <E> ObservableDirectedGraph<E> create() {
-    return new ObservableDirectedGraphImpl<>();
+  static <E> WritableObservableDirectedGraph<E> create() {
+    return new WritableObservableDirectedGraphImpl<>();
   }
 
   @Override
   ObservableChannels<E> observe();
 
-  interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
+  interface ObservableChannels<E> extends WritableObservableGraph.ObservableChannels<E> {
 
     @Override
     Flowable<? extends DirectedGraph<E>> states();
@@ -23,7 +23,7 @@ public interface ObservableDirectedGraph<E> extends MutableDirectedGraph<E>, Obs
     Flowable<? extends MutationEvent<E>> mutations();
   }
 
-  interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {
+  interface MutationEvent<E> extends WritableObservableGraph.MutationEvent<E> {
 
     @Override
     DirectedGraph<E> state();

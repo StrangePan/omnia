@@ -5,12 +5,12 @@ import omnia.data.structure.Set;
 import omnia.data.structure.UndirectedGraph;
 import omnia.data.structure.mutable.MutableUndirectedGraph;
 
-public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, MutableUndirectedGraph<E> {
+public interface WritableObservableUndirectedGraph<E> extends WritableObservableGraph<E>, MutableUndirectedGraph<E> {
 
   @Override
   ObservableChannels<E> observe();
 
-  interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
+  interface ObservableChannels<E> extends WritableObservableGraph.ObservableChannels<E> {
 
     @Override
     Flowable<? extends UndirectedGraph<E>> states();
@@ -19,7 +19,7 @@ public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, Mutabl
     Flowable<? extends MutationEvent<E>> mutations();
   }
 
-  interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {
+  interface MutationEvent<E> extends WritableObservableGraph.MutationEvent<E> {
 
     @Override
     UndirectedGraph<E> state();

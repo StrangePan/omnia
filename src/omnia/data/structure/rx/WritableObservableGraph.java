@@ -7,7 +7,7 @@ import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.MutableGraph;
 
-public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStructure {
+public interface WritableObservableGraph<E> extends MutableGraph<E>, ObservableDataStructure {
 
   @Override
   ObservableChannels<E> observe();
@@ -35,28 +35,28 @@ public interface ObservableGraph<E> extends MutableGraph<E>, ObservableDataStruc
 
     static <E> Function<GraphOperation<E>, Flowable<AddNodeToGraph<E>>>
         justAddNodeToGraphMutations() {
-      return mutation -> mutation instanceof ObservableGraph.AddNodeToGraph<?>
+      return mutation -> mutation instanceof WritableObservableGraph.AddNodeToGraph<?>
           ? Flowable.just((AddNodeToGraph<E>) mutation)
           : Flowable.empty();
     }
 
     static <E> Function<GraphOperation<E>, Flowable<RemoveNodeFromGraph<E>>>
         justRemoveNodeFromGraphMutations() {
-      return mutation -> mutation instanceof ObservableGraph.RemoveNodeFromGraph<?>
+      return mutation -> mutation instanceof WritableObservableGraph.RemoveNodeFromGraph<?>
           ? Flowable.just((RemoveNodeFromGraph<E>) mutation)
           : Flowable.empty();
     }
 
     static <E> Function<GraphOperation<E>, Flowable<AddEdgeToGraph<E>>>
         justAddEdgeToGraphMutations() {
-      return mutation -> mutation instanceof ObservableGraph.AddEdgeToGraph<?>
+      return mutation -> mutation instanceof WritableObservableGraph.AddEdgeToGraph<?>
           ? Flowable.just((AddEdgeToGraph<E>) mutation)
           : Flowable.empty();
     }
 
     static <E> Function<GraphOperation<E>, Flowable<RemoveEdgeFromGraph<E>>>
         justRemoveEdgeFromGraphMutations() {
-      return mutation -> mutation instanceof ObservableGraph.RemoveEdgeFromGraph<?>
+      return mutation -> mutation instanceof WritableObservableGraph.RemoveEdgeFromGraph<?>
           ? Flowable.just((RemoveEdgeFromGraph<E>) mutation)
           : Flowable.empty();
     }

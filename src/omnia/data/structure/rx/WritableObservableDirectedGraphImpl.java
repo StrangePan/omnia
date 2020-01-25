@@ -19,7 +19,7 @@ import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableDirectedGraph;
 import omnia.data.structure.immutable.ImmutableSet;
 
-final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E> {
+final class WritableObservableDirectedGraphImpl<E> implements WritableObservableDirectedGraph<E> {
 
   private final Subject<MutationEvent<E>> subject =
       PublishSubject.<MutationEvent<E>>create().toSerialized();
@@ -237,7 +237,7 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
     }
   }
 
-  interface MutationEvent<E> extends ObservableDirectedGraph.MutationEvent<E> {
+  interface MutationEvent<E> extends WritableObservableDirectedGraph.MutationEvent<E> {
 
     @Override
     DirectedGraph<E> state();
@@ -246,7 +246,7 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
     Set<GraphOperation<E>> operations();
   }
 
-  private static abstract class NodeOperation<E> implements ObservableDirectedGraph.NodeOperation<E> {
+  private static abstract class NodeOperation<E> implements WritableObservableDirectedGraph.NodeOperation<E> {
 
     private final E item;
 
@@ -260,7 +260,7 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
     }
   }
 
-  private static final class AddNodeToGraph<E> extends NodeOperation<E> implements ObservableDirectedGraph.AddNodeToGraph<E> {
+  private static final class AddNodeToGraph<E> extends NodeOperation<E> implements WritableObservableDirectedGraph.AddNodeToGraph<E> {
     private AddNodeToGraph(E item) {
       super(item);
     }
@@ -270,7 +270,7 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
     }
   }
 
-  private static final class RemoveNodeFromGraph<E> extends NodeOperation<E> implements ObservableDirectedGraph.RemoveNodeFromGraph<E> {
+  private static final class RemoveNodeFromGraph<E> extends NodeOperation<E> implements WritableObservableDirectedGraph.RemoveNodeFromGraph<E> {
     private RemoveNodeFromGraph(E item) {
       super(item);
     }
@@ -280,7 +280,7 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
     }
   }
 
-  private static abstract class EdgeOperation<E> implements ObservableDirectedGraph.EdgeOperation<E> {
+  private static abstract class EdgeOperation<E> implements WritableObservableDirectedGraph.EdgeOperation<E> {
     private final HomogeneousPair<E> endpoints;
 
     private EdgeOperation(HomogeneousPair<E> endpoints) {
@@ -293,7 +293,7 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
     }
   }
 
-  private static final class AddEdgeToGraph<E> extends EdgeOperation<E> implements ObservableDirectedGraph.AddEdgeToGraph<E> {
+  private static final class AddEdgeToGraph<E> extends EdgeOperation<E> implements WritableObservableDirectedGraph.AddEdgeToGraph<E> {
     private AddEdgeToGraph(HomogeneousPair<E> endpoints) {
       super(endpoints);
     }
@@ -303,7 +303,7 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
     }
   }
 
-  private static final class RemoveEdgeFromGraph<E> extends EdgeOperation<E> implements ObservableDirectedGraph.RemoveEdgeFromGraph<E> {
+  private static final class RemoveEdgeFromGraph<E> extends EdgeOperation<E> implements WritableObservableDirectedGraph.RemoveEdgeFromGraph<E> {
     private RemoveEdgeFromGraph(HomogeneousPair<E> endpoints) {
       super(endpoints);
     }
