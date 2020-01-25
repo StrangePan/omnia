@@ -176,6 +176,11 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
   }
 
   @Override
+  public ObservableList<E> toReadOnly() {
+    return this::observe;
+  }
+
+  @Override
   public ObservableChannels observe() {
     return observableChannels;
   }
