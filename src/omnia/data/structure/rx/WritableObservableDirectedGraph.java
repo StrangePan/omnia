@@ -8,4 +8,7 @@ public interface WritableObservableDirectedGraph<E>
   static <E> WritableObservableDirectedGraph<E> create() {
     return new WritableObservableDirectedGraphImpl<>();
   }
+
+  @Override
+  ObservableDirectedGraph<E> toReadOnly();
 }

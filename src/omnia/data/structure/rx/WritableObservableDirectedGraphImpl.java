@@ -177,6 +177,41 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
   }
 
   @Override
+  public ObservableDirectedGraph<E> toReadOnly() {
+    return new ObservableDirectedGraph<>() {
+      @Override
+      public ObservableChannels<E> observe() {
+        return WritableObservableDirectedGraphImpl.this.observe();
+      }
+
+      @Override
+      public Optional<? extends DirectedNode<E>> nodeOf(Object item) {
+        return WritableObservableDirectedGraphImpl.this.nodeOf(item);
+      }
+
+      @Override
+      public Optional<? extends DirectedEdge<E>> edgeOf(E from, E to) {
+        return WritableObservableDirectedGraphImpl.this.edgeOf(from, to);
+      }
+
+      @Override
+      public Set<? extends DirectedNode<E>> nodes() {
+        return WritableObservableDirectedGraphImpl.this.nodes();
+      }
+
+      @Override
+      public Set<? extends DirectedEdge<E>> edges() {
+        return WritableObservableDirectedGraphImpl.this.edges();
+      }
+
+      @Override
+      public Set<E> contents() {
+        return WritableObservableDirectedGraphImpl.this.contents();
+      }
+    };
+  }
+
+  @Override
   public ObservableDirectedGraph.ObservableChannels<E> observe() {
     return new ObservableDirectedGraph.ObservableChannels<>() {
       @Override
