@@ -5,7 +5,8 @@ import io.reactivex.functions.Function;
 import omnia.contract.Countable;
 import omnia.data.structure.List;
 
-public interface ObservableList<E> extends ObservableDataStructure {
+public interface ObservableList<E> extends List<E>, ObservableDataStructure {
+
   @Override
   ObservableChannels<E> observe();
 

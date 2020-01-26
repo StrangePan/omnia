@@ -177,7 +177,42 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   @Override
   public ObservableList<E> toReadOnly() {
-    return this::observe;
+    return new ObservableList<>() {
+      @Override
+      public ObservableChannels<E> observe() {
+        return WritableObservableListImpl.this.observe();
+      }
+
+      @Override
+      public Iterator<E> iterator() {
+        return WritableObservableListImpl.this.iterator();
+      }
+
+      @Override
+      public boolean contains(Object element) {
+        return WritableObservableListImpl.this.contains(element);
+      }
+
+      @Override
+      public int count() {
+        return WritableObservableListImpl.this.count();
+      }
+
+      @Override
+      public E itemAt(int index) {
+        return WritableObservableListImpl.this.itemAt(index);
+      }
+
+      @Override
+      public OptionalInt indexOf(Object item) {
+        return WritableObservableListImpl.this.indexOf(item);
+      }
+
+      @Override
+      public Stream<E> stream() {
+        return WritableObservableListImpl.this.stream();
+      }
+    };
   }
 
   @Override
