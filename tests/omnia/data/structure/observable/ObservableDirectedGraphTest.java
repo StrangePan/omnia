@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
@@ -10,11 +10,12 @@ import omnia.data.structure.DirectedGraph.DirectedEdge;
 import omnia.data.structure.DirectedGraph.DirectedNode;
 import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.immutable.ImmutableSet;
-import omnia.data.structure.rx.ObservableDirectedGraph.MutationEvent;
-import omnia.data.structure.rx.ObservableGraph.AddEdgeToGraph;
-import omnia.data.structure.rx.ObservableGraph.AddNodeToGraph;
-import omnia.data.structure.rx.ObservableGraph.RemoveEdgeFromGraph;
-import omnia.data.structure.rx.ObservableGraph.RemoveNodeFromGraph;
+import omnia.data.structure.observable.ObservableDirectedGraph.MutationEvent;
+import omnia.data.structure.observable.ObservableGraph.AddEdgeToGraph;
+import omnia.data.structure.observable.ObservableGraph.AddNodeToGraph;
+import omnia.data.structure.observable.ObservableGraph.RemoveEdgeFromGraph;
+import omnia.data.structure.observable.ObservableGraph.RemoveNodeFromGraph;
+import omnia.data.structure.observable.writable.WritableObservableDirectedGraph;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -24,28 +25,28 @@ public final class ObservableDirectedGraphTest {
 
   @Test
   public void contents_whenInit_areEmpty() {
-    assertThat(ObservableDirectedGraph.create().contents().isPopulated()).isFalse();
+    assertThat(WritableObservableDirectedGraph.create().contents().isPopulated()).isFalse();
   }
 
   @Test
   public void nodes_whenInit_areEmpty() {
-    assertThat(ObservableDirectedGraph.create().nodes().isPopulated()).isFalse();
+    assertThat(WritableObservableDirectedGraph.create().nodes().isPopulated()).isFalse();
   }
 
   @Test
   public void edges_whenInit_areEmpty() {
-    assertThat(ObservableDirectedGraph.create().edges().isPopulated()).isFalse();
+    assertThat(WritableObservableDirectedGraph.create().edges().isPopulated()).isFalse();
   }
 
   @Test
   public void addNode_whenNull_throwsException() {
-    assertThrows(NullPointerException.class, () -> ObservableDirectedGraph.create().addNode(null));
+    assertThrows(NullPointerException.class, () -> WritableObservableDirectedGraph.create().addNode(null));
   }
 
   @Test
   public void addNode_whenInit_contentsHasOneItem() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
 
@@ -55,7 +56,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void addNode_isInContents() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
 
@@ -65,7 +66,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void addNode_whenInit_nodesHasOneNode() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
 
@@ -75,7 +76,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void addNode_isInNodes() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
 
@@ -86,14 +87,14 @@ public final class ObservableDirectedGraphTest {
   public void addEdge_unrecognizedEdges_throwsException() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> ObservableDirectedGraph.create().addEdge(new Object(), new Object()));
+        () -> WritableObservableDirectedGraph.create().addEdge(new Object(), new Object()));
   }
 
   @Test
   public void addEdges_edgesContainsNewEdge() {
     Object item1 = new Object();
     Object item2 = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item1);
     graph.addNode(item2);
@@ -108,7 +109,7 @@ public final class ObservableDirectedGraphTest {
   public void replaceNode_whenDoesNotContainOriginal_throwsException() {
     Object original = new Object();
     Object replacement = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     assertThrows(IllegalArgumentException.class, () -> graph.replaceNode(original, replacement));
   }
@@ -117,7 +118,7 @@ public final class ObservableDirectedGraphTest {
   public void replaceNode_whenContainsReplacement_throwsException() {
     Object original = new Object();
     Object replacement = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(original);
     graph.addNode(replacement);
@@ -129,7 +130,7 @@ public final class ObservableDirectedGraphTest {
   public void replaceNode_contentsContainsReplacementOnly() {
     Object original = new Object();
     Object replacement = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(original);
     graph.replaceNode(original, replacement);
@@ -141,7 +142,7 @@ public final class ObservableDirectedGraphTest {
   public void replaceNode_withEdges_edgesContainsReplacementEdgesOnly() {
     Object original = new Object();
     Object replacement = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(original);
     graph.addEdge(original, original);
@@ -156,26 +157,26 @@ public final class ObservableDirectedGraphTest {
 
   @Test
   public void observeStates_whenInit_emitsEmpty() {
-    ObservableDirectedGraph.create().observe().states().test()
+    WritableObservableDirectedGraph.create().observe().states().test()
         .assertValue(state -> !state.contents().isPopulated());
   }
 
   @Test
   public void observeMutations_whenInit_emitsEmptyState() {
-    ObservableDirectedGraph.create().observe().mutations().map(MutationEvent::state).test()
+    WritableObservableDirectedGraph.create().observe().mutations().map(MutationEvent::state).test()
         .assertValue(state -> !state.contents().isPopulated());
   }
 
   @Test
   public void observeMutations_whenInit_emitsNoOperations() {
-    ObservableDirectedGraph.create().observe().mutations().map(MutationEvent::operations).test()
+    WritableObservableDirectedGraph.create().observe().mutations().map(MutationEvent::operations).test()
         .assertValue(operations -> !operations.isPopulated());
   }
 
   @Test
   public void observeMutations_whenHasNode_emitsStateWithNode() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
 
@@ -186,7 +187,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void observeMutations_whenHasNode_emitsAddNodeOperation() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
     TestSubscriber<? extends MutationEvent<Object>> subscriber = graph.observe().mutations().test();
@@ -207,7 +208,7 @@ public final class ObservableDirectedGraphTest {
   public void observeMutations_whenHasEdge_emitsStateWithEdge() {
     Object item = new Object();
     HomogeneousPair<Object> edge = HomogeneousPair.of(item, item);
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
     graph.addEdge(edge.first(), edge.second());
@@ -229,7 +230,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void observeMutations_whenHasNode_thenRemoveNode_emitsRemoveNodeOperation() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
     TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
@@ -250,7 +251,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void observeMutations_whenHasEdge_thenRemoveEdge_emitsRemoveEdgeOperation() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
     graph.addEdge(item, item);
@@ -273,7 +274,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void observeMutations_whenHasEdge_thenRemoveNode_emitsRemoveEdgeOperation() {
     Object item = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
     graph.addEdge(item, item);
@@ -300,7 +301,7 @@ public final class ObservableDirectedGraphTest {
   public void observeMutations_whenHasNode_thenReplaceNode_emitsRemoveAndAddNodeOperations() {
     Object original = new Object();
     Object replacement = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(original);
     TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
@@ -338,7 +339,7 @@ public final class ObservableDirectedGraphTest {
   public void observeMutations_whenHasEdge_thenReplaceNode_emitsRemoveAndAddEdgeOperations() {
     Object original = new Object();
     Object replacement = new Object();
-    ObservableDirectedGraph<Object> graph = ObservableDirectedGraph.create();
+    WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(original);
     graph.addEdge(original, original);

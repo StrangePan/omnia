@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable.writable;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -13,8 +13,9 @@ import java.util.stream.Stream;
 import omnia.data.iterate.IntegerRangeIterator;
 import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
+import omnia.data.structure.observable.ObservableList;
 
-final class ObservableListImpl<E> implements ObservableList<E> {
+final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   private volatile ImmutableList<E> currentState = ImmutableList.empty();
   private final Subject<MutationEvent> mutationEventSubject = PublishSubject.create();
@@ -173,6 +174,46 @@ final class ObservableListImpl<E> implements ObservableList<E> {
   @Override
   public Stream<E> stream() {
     return getState().stream();
+  }
+
+  @Override
+  public ObservableList<E> toReadOnly() {
+    return new ObservableList<>() {
+      @Override
+      public ObservableChannels<E> observe() {
+        return WritableObservableListImpl.this.observe();
+      }
+
+      @Override
+      public Iterator<E> iterator() {
+        return WritableObservableListImpl.this.iterator();
+      }
+
+      @Override
+      public boolean contains(Object element) {
+        return WritableObservableListImpl.this.contains(element);
+      }
+
+      @Override
+      public int count() {
+        return WritableObservableListImpl.this.count();
+      }
+
+      @Override
+      public E itemAt(int index) {
+        return WritableObservableListImpl.this.itemAt(index);
+      }
+
+      @Override
+      public OptionalInt indexOf(Object item) {
+        return WritableObservableListImpl.this.indexOf(item);
+      }
+
+      @Override
+      public Stream<E> stream() {
+        return WritableObservableListImpl.this.stream();
+      }
+    };
   }
 
   @Override

@@ -1,32 +1,31 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import omnia.contract.Countable;
 import omnia.data.structure.List;
-import omnia.data.structure.mutable.MutableList;
 
-public interface ObservableList<E> extends MutableList<E>, ObservableDataStructure {
+public interface ObservableList<E> extends List<E>, ObservableDataStructure {
 
   @Override
   ObservableChannels<E> observe();
 
-  interface ObservableChannels<E> extends ObservableDataStructure.ObservableChannels {
+  interface ObservableChannels<E2> extends ObservableDataStructure.ObservableChannels {
 
     @Override
-    Flowable<? extends List<E>> states();
+    Flowable<? extends List<E2>> states();
 
     @Override
-    Flowable<? extends MutationEvent<E>> mutations();
+    Flowable<? extends ObservableList.MutationEvent<E2>> mutations();
   }
 
-  interface MutationEvent<E> extends ObservableDataStructure.MutationEvent {
+  interface MutationEvent<E2> extends ObservableDataStructure.MutationEvent {
 
     @Override
-    List<E> state();
+    List<E2> state();
 
     @Override
-    List<? extends ListOperation<E>> operations();
+    List<? extends ObservableList.ListOperation<E2>> operations();
   }
 
   /**
@@ -40,7 +39,8 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link AddToList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<AddToList<E>>> justAddToListMutations() {
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.AddToList<E>>>
+        justAddToListMutations() {
       return mutation -> mutation instanceof AddToList<?>
           ? Flowable.just((AddToList<E>) mutation)
           : Flowable.empty();
@@ -50,7 +50,8 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link MoveInList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<MoveInList<E>>> justMoveInListMutations() {
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.MoveInList<E>>>
+        justMoveInListMutations() {
       return mutation -> mutation instanceof MoveInList<?>
           ? Flowable.just((MoveInList<E>) mutation)
           : Flowable.empty();
@@ -60,7 +61,8 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link RemoveFromList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<RemoveFromList<E>>> justRemoveFromListMutations() {
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.RemoveFromList<E>>>
+        justRemoveFromListMutations() {
       return mutation -> mutation instanceof RemoveFromList<?>
           ? Flowable.just((RemoveFromList<E>) mutation)
           : Flowable.empty();
@@ -70,7 +72,8 @@ public interface ObservableList<E> extends MutableList<E>, ObservableDataStructu
      * Returns a mapping function for use in {@link Flowable#flatMap(Function)} operations that
      * reduces a {@link ListOperation} stream to only the {@link ReplaceInList} operations.
      */
-    static <E> Function<ListOperation<E>, Flowable<ReplaceInList<E>>> justReplaceInListMutations() {
+    static <E> Function<ObservableList.ListOperation<E>, Flowable<ObservableList.ReplaceInList<E>>>
+        justReplaceInListMutations() {
       return mutation -> mutation instanceof ReplaceInList<?>
           ? Flowable.just((ReplaceInList<E>) mutation)
           : Flowable.empty();

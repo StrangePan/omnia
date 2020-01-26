@@ -1,6 +1,7 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable.writable;
 
 import io.reactivex.Flowable;
+import omnia.data.structure.observable.ObservableDataStructure;
 
 class GenericObservableChannels<
         StateType, MutationEventType extends ObservableDataStructure.MutationEvent>

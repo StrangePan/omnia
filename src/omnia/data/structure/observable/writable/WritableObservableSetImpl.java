@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable.writable;
 
 import static omnia.data.stream.Collectors.toSet;
 
@@ -14,8 +14,9 @@ import java.util.stream.Stream;
 import omnia.algorithm.SetAlgorithms;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableSet;
+import omnia.data.structure.observable.ObservableSet;
 
-final class ObservableSetImpl<E> implements ObservableSet<E> {
+final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
   private volatile ImmutableSet<E> currentState = ImmutableSet.empty();
   private final Subject<MutationEvent> mutationEventSubject =
       PublishSubject.create();
@@ -86,6 +87,36 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
   }
 
   @Override
+  public ObservableSet<E> toReadOnly() {
+    return new ObservableSet<>() {
+      @Override
+      public ObservableChannels<E> observe() {
+        return WritableObservableSetImpl.this.observe();
+      }
+
+      @Override
+      public Iterator<E> iterator() {
+        return WritableObservableSetImpl.this.iterator();
+      }
+
+      @Override
+      public boolean contains(Object element) {
+        return WritableObservableSetImpl.this.contains(element);
+      }
+
+      @Override
+      public int count() {
+        return WritableObservableSetImpl.this.count();
+      }
+
+      @Override
+      public Stream<E> stream() {
+        return WritableObservableSetImpl.this.stream();
+      }
+    };
+  }
+
+  @Override
   public Stream<E> stream() {
     return getState().stream();
   }
@@ -101,7 +132,7 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
     }
   }
 
-  private static final class AddToSet<E> implements ObservableSet.AddToSet<E> {
+  private static final class AddToSet<E> implements WritableObservableSet.AddToSet<E> {
     private final E item;
 
     private AddToSet(E item) {
@@ -114,7 +145,7 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
     }
   }
 
-  private static final class RemoveFromSet<E> implements ObservableSet.RemoveFromSet<E> {
+  private static final class RemoveFromSet<E> implements WritableObservableSet.RemoveFromSet<E> {
     private final E item;
 
     private RemoveFromSet(E item) {
@@ -128,7 +159,7 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
   }
 
   private class ObservableChannels extends GenericObservableChannels<Set<E>, MutationEvent>
-      implements ObservableSet.ObservableChannels<E> {
+      implements WritableObservableSet.ObservableChannels<E> {
 
     protected ObservableChannels() {
       super(
@@ -152,7 +183,7 @@ final class ObservableSetImpl<E> implements ObservableSet<E> {
   }
 
   private class MutationEvent extends GenericMutationEvent<Set<E>, Set<SetOperation<E>>>
-      implements ObservableSet.MutationEvent<E> {
+      implements WritableObservableSet.MutationEvent<E> {
     private MutationEvent(Set<E> state, Set<SetOperation<E>> operations) {
       super(state, operations);
     }

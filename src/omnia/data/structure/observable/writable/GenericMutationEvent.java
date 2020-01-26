@@ -1,6 +1,7 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable.writable;
 
 import omnia.data.structure.Collection;
+import omnia.data.structure.observable.ObservableDataStructure;
 
 class GenericMutationEvent<StateType, OperationsType extends Collection<?>>
     implements ObservableDataStructure.MutationEvent {

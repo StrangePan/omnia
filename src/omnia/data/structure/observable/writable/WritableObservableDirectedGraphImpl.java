@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable.writable;
 
 import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
@@ -18,8 +18,9 @@ import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableDirectedGraph;
 import omnia.data.structure.immutable.ImmutableSet;
+import omnia.data.structure.observable.ObservableDirectedGraph;
 
-final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E> {
+final class WritableObservableDirectedGraphImpl<E> implements WritableObservableDirectedGraph<E> {
 
   private final Subject<MutationEvent<E>> subject =
       PublishSubject.<MutationEvent<E>>create().toSerialized();
@@ -177,8 +178,43 @@ final class ObservableDirectedGraphImpl<E> implements ObservableDirectedGraph<E>
   }
 
   @Override
-  public ObservableChannels<E> observe() {
-    return new ObservableChannels<>() {
+  public ObservableDirectedGraph<E> toReadOnly() {
+    return new ObservableDirectedGraph<>() {
+      @Override
+      public ObservableChannels<E> observe() {
+        return WritableObservableDirectedGraphImpl.this.observe();
+      }
+
+      @Override
+      public Optional<? extends DirectedNode<E>> nodeOf(Object item) {
+        return WritableObservableDirectedGraphImpl.this.nodeOf(item);
+      }
+
+      @Override
+      public Optional<? extends DirectedEdge<E>> edgeOf(E from, E to) {
+        return WritableObservableDirectedGraphImpl.this.edgeOf(from, to);
+      }
+
+      @Override
+      public Set<? extends DirectedNode<E>> nodes() {
+        return WritableObservableDirectedGraphImpl.this.nodes();
+      }
+
+      @Override
+      public Set<? extends DirectedEdge<E>> edges() {
+        return WritableObservableDirectedGraphImpl.this.edges();
+      }
+
+      @Override
+      public Set<E> contents() {
+        return WritableObservableDirectedGraphImpl.this.contents();
+      }
+    };
+  }
+
+  @Override
+  public ObservableDirectedGraph.ObservableChannels<E> observe() {
+    return new ObservableDirectedGraph.ObservableChannels<>() {
       @Override
       public Flowable<DirectedGraph<E>> states() {
         return Flowable.create(
