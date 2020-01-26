@@ -4,7 +4,8 @@ import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import omnia.data.structure.Set;
 
-public interface ObservableSet<E> extends ObservableDataStructure {
+public interface ObservableSet<E> extends ObservableDataStructure, Set<E> {
+
   @Override
   ObservableChannels<E> observe();
 

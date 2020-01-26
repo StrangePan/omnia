@@ -87,7 +87,32 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
 
   @Override
   public ObservableSet<E> toReadOnly() {
-    return WritableObservableSetImpl.this::observe;
+    return new ObservableSet<>() {
+      @Override
+      public ObservableChannels<E> observe() {
+        return WritableObservableSetImpl.this.observe();
+      }
+
+      @Override
+      public Iterator<E> iterator() {
+        return WritableObservableSetImpl.this.iterator();
+      }
+
+      @Override
+      public boolean contains(Object element) {
+        return WritableObservableSetImpl.this.contains(element);
+      }
+
+      @Override
+      public int count() {
+        return WritableObservableSetImpl.this.count();
+      }
+
+      @Override
+      public Stream<E> stream() {
+        return WritableObservableSetImpl.this.stream();
+      }
+    };
   }
 
   @Override
