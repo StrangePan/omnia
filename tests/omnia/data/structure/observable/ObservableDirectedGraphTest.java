@@ -15,6 +15,7 @@ import omnia.data.structure.observable.ObservableGraph.AddEdgeToGraph;
 import omnia.data.structure.observable.ObservableGraph.AddNodeToGraph;
 import omnia.data.structure.observable.ObservableGraph.RemoveEdgeFromGraph;
 import omnia.data.structure.observable.ObservableGraph.RemoveNodeFromGraph;
+import omnia.data.structure.observable.writable.WritableObservableDirectedGraph;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

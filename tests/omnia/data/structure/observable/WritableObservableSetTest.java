@@ -12,6 +12,7 @@ import omnia.data.structure.observable.ObservableSet.AddToSet;
 import omnia.data.structure.observable.ObservableSet.MutationEvent;
 import omnia.data.structure.observable.ObservableSet.RemoveFromSet;
 import omnia.data.structure.observable.ObservableSet.SetOperation;
+import omnia.data.structure.observable.writable.WritableObservableSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

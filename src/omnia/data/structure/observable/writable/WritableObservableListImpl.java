@@ -1,4 +1,4 @@
-package omnia.data.structure.observable;
+package omnia.data.structure.observable.writable;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import omnia.data.iterate.IntegerRangeIterator;
 import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
+import omnia.data.structure.observable.ObservableList;
 
 final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 

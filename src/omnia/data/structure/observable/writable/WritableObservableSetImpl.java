@@ -1,4 +1,4 @@
-package omnia.data.structure.observable;
+package omnia.data.structure.observable.writable;
 
 import static omnia.data.stream.Collectors.toSet;
 
@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import omnia.algorithm.SetAlgorithms;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableSet;
+import omnia.data.structure.observable.ObservableSet;
 
 final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
   private volatile ImmutableSet<E> currentState = ImmutableSet.empty();

@@ -1,4 +1,4 @@
-package omnia.data.structure.observable;
+package omnia.data.structure.observable.writable;
 
 import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toImmutableSet;
@@ -18,6 +18,7 @@ import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableDirectedGraph;
 import omnia.data.structure.immutable.ImmutableSet;
+import omnia.data.structure.observable.ObservableDirectedGraph;
 
 final class WritableObservableDirectedGraphImpl<E> implements WritableObservableDirectedGraph<E> {
 
