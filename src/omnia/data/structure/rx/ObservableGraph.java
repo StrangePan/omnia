@@ -5,7 +5,9 @@ import io.reactivex.functions.Function;
 import omnia.data.structure.Graph;
 import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
-public interface ObservableGraph<E> extends ObservableDataStructure {
+
+public interface ObservableGraph<E> extends Graph<E>, ObservableDataStructure {
+
   @Override
   ObservableChannels<E> observe();
 
