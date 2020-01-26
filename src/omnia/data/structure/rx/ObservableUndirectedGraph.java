@@ -4,8 +4,9 @@ import io.reactivex.Flowable;
 import omnia.data.structure.Set;
 import omnia.data.structure.UndirectedGraph;
 
-public interface ObservableUndirectedGraph<E> {
+public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, UndirectedGraph<E> {
 
+  @Override
   ObservableChannels<E> observe();
 
   interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
