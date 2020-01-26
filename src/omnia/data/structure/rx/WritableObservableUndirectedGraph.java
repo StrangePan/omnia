@@ -10,7 +10,7 @@ public interface WritableObservableUndirectedGraph<E> extends WritableObservable
   @Override
   ObservableChannels<E> observe();
 
-  interface ObservableChannels<E> extends WritableObservableGraph.ObservableChannels<E> {
+  interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
 
     @Override
     Flowable<? extends UndirectedGraph<E>> states();
@@ -19,7 +19,7 @@ public interface WritableObservableUndirectedGraph<E> extends WritableObservable
     Flowable<? extends MutationEvent<E>> mutations();
   }
 
-  interface MutationEvent<E> extends WritableObservableGraph.MutationEvent<E> {
+  interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {
 
     @Override
     UndirectedGraph<E> state();

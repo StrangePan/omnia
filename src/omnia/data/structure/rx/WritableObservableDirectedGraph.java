@@ -14,7 +14,7 @@ public interface WritableObservableDirectedGraph<E> extends MutableDirectedGraph
   @Override
   ObservableChannels<E> observe();
 
-  interface ObservableChannels<E> extends WritableObservableGraph.ObservableChannels<E> {
+  interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
 
     @Override
     Flowable<? extends DirectedGraph<E>> states();
@@ -23,7 +23,7 @@ public interface WritableObservableDirectedGraph<E> extends MutableDirectedGraph
     Flowable<? extends MutationEvent<E>> mutations();
   }
 
-  interface MutationEvent<E> extends WritableObservableGraph.MutationEvent<E> {
+  interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {
 
     @Override
     DirectedGraph<E> state();
