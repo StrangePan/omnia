@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import static com.google.common.truth.Truth.assertThat;
 import static omnia.data.stream.Collectors.toImmutableSet;
@@ -8,10 +8,10 @@ import omnia.algorithm.SetAlgorithms;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.mutable.MutableSet;
-import omnia.data.structure.rx.ObservableSet.AddToSet;
-import omnia.data.structure.rx.ObservableSet.MutationEvent;
-import omnia.data.structure.rx.ObservableSet.RemoveFromSet;
-import omnia.data.structure.rx.ObservableSet.SetOperation;
+import omnia.data.structure.observable.ObservableSet.AddToSet;
+import omnia.data.structure.observable.ObservableSet.MutationEvent;
+import omnia.data.structure.observable.ObservableSet.RemoveFromSet;
+import omnia.data.structure.observable.ObservableSet.SetOperation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

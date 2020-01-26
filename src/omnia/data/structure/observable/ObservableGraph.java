@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;

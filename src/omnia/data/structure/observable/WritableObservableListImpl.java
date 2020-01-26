@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;

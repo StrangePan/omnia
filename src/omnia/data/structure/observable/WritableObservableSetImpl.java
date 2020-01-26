@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import static omnia.data.stream.Collectors.toSet;
 

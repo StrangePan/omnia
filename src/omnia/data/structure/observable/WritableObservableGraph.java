@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import omnia.data.contract.Writable;
 import omnia.data.structure.mutable.MutableGraph;

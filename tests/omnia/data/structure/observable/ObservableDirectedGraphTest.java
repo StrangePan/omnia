@@ -1,4 +1,4 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
@@ -10,11 +10,11 @@ import omnia.data.structure.DirectedGraph.DirectedEdge;
 import omnia.data.structure.DirectedGraph.DirectedNode;
 import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.immutable.ImmutableSet;
-import omnia.data.structure.rx.ObservableDirectedGraph.MutationEvent;
-import omnia.data.structure.rx.ObservableGraph.AddEdgeToGraph;
-import omnia.data.structure.rx.ObservableGraph.AddNodeToGraph;
-import omnia.data.structure.rx.ObservableGraph.RemoveEdgeFromGraph;
-import omnia.data.structure.rx.ObservableGraph.RemoveNodeFromGraph;
+import omnia.data.structure.observable.ObservableDirectedGraph.MutationEvent;
+import omnia.data.structure.observable.ObservableGraph.AddEdgeToGraph;
+import omnia.data.structure.observable.ObservableGraph.AddNodeToGraph;
+import omnia.data.structure.observable.ObservableGraph.RemoveEdgeFromGraph;
+import omnia.data.structure.observable.ObservableGraph.RemoveNodeFromGraph;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

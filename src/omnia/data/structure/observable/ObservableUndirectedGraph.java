@@ -1,18 +1,18 @@
-package omnia.data.structure.rx;
+package omnia.data.structure.observable;
 
 import io.reactivex.Flowable;
-import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Set;
+import omnia.data.structure.UndirectedGraph;
 
-public interface ObservableDirectedGraph<E> extends DirectedGraph<E>, ObservableGraph<E> {
-  
+public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, UndirectedGraph<E> {
+
   @Override
   ObservableChannels<E> observe();
 
   interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
 
     @Override
-    Flowable<? extends DirectedGraph<E>> states();
+    Flowable<? extends UndirectedGraph<E>> states();
 
     @Override
     Flowable<? extends MutationEvent<E>> mutations();
@@ -21,7 +21,7 @@ public interface ObservableDirectedGraph<E> extends DirectedGraph<E>, Observable
   interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {
 
     @Override
-    DirectedGraph<E> state();
+    UndirectedGraph<E> state();
 
     @Override
     Set<? extends ObservableGraph.GraphOperation<E>> operations();
