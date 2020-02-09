@@ -30,6 +30,10 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     return g;
   }
 
+  public static <E> ImmutableDirectedGraph<E> copyOf(DirectedGraph<E> original) {
+    return buildUpon(original).build();
+  }
+
   public static <E> Builder<E> builder() {
     return new Builder<>();
   }

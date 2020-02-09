@@ -25,7 +25,15 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
   private final Subject<MutationEvent<E>> subject =
       PublishSubject.<MutationEvent<E>>create().toSerialized();
 
-  private volatile ImmutableDirectedGraph<E> state = ImmutableDirectedGraph.empty();
+  private volatile ImmutableDirectedGraph<E> state;
+
+  WritableObservableDirectedGraphImpl() {
+    state = ImmutableDirectedGraph.empty();
+  }
+
+  WritableObservableDirectedGraphImpl(DirectedGraph<E> original) {
+    state = ImmutableDirectedGraph.copyOf(original);
+  }
 
   @Override
   public void addNode(E item) {
