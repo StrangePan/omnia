@@ -13,7 +13,7 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
 
   private static final ImmutableMap<?, ?> EMPTY_IMMUTABLE_MAP = new ImmutableMap<>();
 
-  private java.util.Map<K, V> javaMap = new java.util.TreeMap<>();
+  private final java.util.Map<K, V> javaMap = new java.util.HashMap<>();
 
   public static <K, V> ImmutableMap<K, V> empty() {
     @SuppressWarnings("unchecked")
