@@ -1,14 +1,20 @@
 package omnia.data.structure.mutable;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-class MaskingSet<E> implements MutableSet<E> {
+class MaskingSet<E, J extends java.util.Set<E>> implements MutableSet<E> {
 
-  private final java.util.Set<E> javaSet;
+  private final J javaSet;
 
-  MaskingSet(java.util.Set<E> javaSet) {
-    this.javaSet = javaSet;
+  MaskingSet(J javaSet) {
+    this.javaSet = requireNonNull(javaSet);
+  }
+
+  protected final J javaSet() {
+    return javaSet;
   }
 
   @Override
