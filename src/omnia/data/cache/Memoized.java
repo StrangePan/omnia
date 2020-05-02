@@ -31,7 +31,7 @@ public interface Memoized<T> extends Holder<T> {
    * @param <T> the type empty object to be memoized
    * @return a new {@link Memoized} instance that will memoize the created value
    */
-  static <T> Memoized<T> memoize(Supplier<T> supplier) {
+  static <T> Memoized<T> memoize(Supplier<? extends T> supplier) {
     return new SimpleMemoizer<>(supplier);
   }
 
