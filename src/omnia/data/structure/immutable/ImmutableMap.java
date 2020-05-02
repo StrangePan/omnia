@@ -25,6 +25,10 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
     return new ImmutableMap<>(Collections.singletonMap(key, value));
   }
 
+  public static <K, V> ImmutableMap<K, V> copyOf(java.util.Map<? extends K, ? extends V> otherMap) {
+    return copyOf(Map.masking(otherMap));
+  }
+
   public static <K, V> ImmutableMap<K, V> copyOf(Map<? extends K, ? extends V> otherMap) {
     if (otherMap instanceof ImmutableMap) {
       @SuppressWarnings("unchecked")
