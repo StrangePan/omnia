@@ -5,7 +5,7 @@ import omnia.data.structure.List;
 
 public final class ArrayList<E> extends MaskingList<E> {
 
-  public ArrayList() {
+  private ArrayList() {
     this(new java.util.ArrayList<>());
   }
 
@@ -19,8 +19,12 @@ public final class ArrayList<E> extends MaskingList<E> {
   }
 
   public static <E> ArrayList<E> copyOf(List<? extends E> otherList) {
-    ArrayList<E> newList = new ArrayList<>();
+    ArrayList<E> newList = create();
     otherList.iterator().forEachRemaining(newList::add);
     return newList;
+  }
+
+  public static <E> ArrayList<E> create() {
+    return new ArrayList<E>();
   }
 }

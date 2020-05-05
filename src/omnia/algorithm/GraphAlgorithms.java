@@ -3,19 +3,15 @@ package omnia.algorithm;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
-import java.lang.reflect.Array;
 import java.util.Iterator;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Graph;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.mutable.ArrayList;
-import omnia.data.structure.mutable.ArrayQueue;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableList;
 import omnia.data.structure.mutable.MutableSet;
-import omnia.data.structure.mutable.Queue;
-import omnia.data.structure.mutable.Stack;
 
 /**
  * A collection of useful algorithms for nalyzing and querying the contents of graph data
@@ -88,9 +84,9 @@ public final class GraphAlgorithms {
       }
 
       MutableSet<Object> itemsInStack = HashSet.create();
-      MutableList<Object> itemStack = new ArrayList<>();
+      MutableList<Object> itemStack = ArrayList.create();
       MutableList<Iterator<? extends DirectedGraph.DirectedNode<?>>> iteratorStack =
-          new ArrayList<>();
+          ArrayList.create();
 
       itemStack.add(directedNode.item());
       itemsInStack.add(directedNode.item());
