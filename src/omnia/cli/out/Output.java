@@ -11,6 +11,8 @@ import omnia.data.structure.mutable.ArrayList;
 import omnia.data.structure.mutable.MutableList;
 
 public final class Output {
+  private static final Output EMPTY = new Output(ImmutableList.empty());
+
   private final List<Span> spans;
 
   private Output(List<Span> spans) {
@@ -30,6 +32,16 @@ public final class Output {
 
   public static Builder builder() {
     return new Builder();
+  }
+
+  public static Output just(String message) {
+    return message.isEmpty()
+        ? empty()
+        : new Output(ImmutableList.of(new Span(message, Formatting.EMPTY)));
+  }
+
+  public static Output empty() {
+    return EMPTY;
   }
 
   public static final class Builder {
@@ -198,6 +210,17 @@ public final class Output {
   }
 
   private static final class Formatting {
+    private static final Formatting EMPTY =
+        new Formatting(
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
+
     private final Optional<Color16> color;
     private final Optional<Color16> background;
     private final Optional<Boolean> bold;
