@@ -1,5 +1,6 @@
 package omnia.cli.out;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 import java.util.Optional;
@@ -33,14 +34,14 @@ public final class Output {
 
   public static final class Builder {
     private final MutableList<Span> spans = ArrayList.create();
-    private Optional<Color16> color;
-    private Optional<Color16> background;
-    private Optional<Boolean> bold;
-    private Optional<Boolean> dim;
-    private Optional<Boolean> underlined;
-    private Optional<Boolean> blinking;
-    private Optional<Boolean> inverted;
-    private Optional<Boolean> hidden;
+    private Optional<Color16> color = Optional.empty();
+    private Optional<Color16> background = Optional.empty();
+    private Optional<Boolean> bold = Optional.empty();
+    private Optional<Boolean> dim = Optional.empty();
+    private Optional<Boolean> underlined = Optional.empty();
+    private Optional<Boolean> blinking = Optional.empty();
+    private Optional<Boolean> inverted = Optional.empty();
+    private Optional<Boolean> hidden = Optional.empty();
 
     public Builder append(String string) {
       if (!string.isEmpty()) {
@@ -215,14 +216,14 @@ public final class Output {
         Optional<Boolean> blinking,
         Optional<Boolean> inverted,
         Optional<Boolean> hidden) {
-      this.color = color;
-      this.background = background;
-      this.bold = bold;
-      this.dim = dim;
-      this.underlined = underlined;
-      this.blinking = blinking;
-      this.inverted = inverted;
-      this.hidden = hidden;
+      this.color = requireNonNull(color);
+      this.background = requireNonNull(background);
+      this.bold = requireNonNull(bold);
+      this.dim = requireNonNull(dim);
+      this.underlined = requireNonNull(underlined);
+      this.blinking = requireNonNull(blinking);
+      this.inverted = requireNonNull(inverted);
+      this.hidden = requireNonNull(hidden);
     }
 
     Formatting apply(Formatting other) {

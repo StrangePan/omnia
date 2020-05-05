@@ -65,7 +65,7 @@ public final class Collectors {
 
       @Override
       public Supplier<ArrayList<E>> supplier() {
-        return ArrayList::new;
+        return ArrayList::create;
       }
 
       @Override
