@@ -2,8 +2,10 @@ package omnia.cli.out;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
+import static omnia.data.stream.Collectors.toList;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
@@ -13,21 +15,28 @@ import omnia.data.structure.mutable.MutableList;
 public final class Output {
   private static final Output EMPTY = new Output(ImmutableList.empty());
 
-  private final List<Span> spans;
+  private final List<Span<?>> spans;
 
-  private Output(List<Span> spans) {
+  private Output(List<Span<?>> spans) {
     this.spans = ImmutableList.copyOf(spans);
   }
 
   public String render() {
-    return spans.stream()
-        .flatMap(
-            span ->
-                Stream.<String>builder()
-                    .add(span.formatting.render())
-                    .add(span.text)
-                    .build())
-        .collect(joining());
+    StringBuilder output = new StringBuilder();
+    for (int i = 0; i < spans.count(); i++) {
+      if (i > 0
+          && spans.itemAt(i - 1) instanceof InlineSpan
+          && !endsInNewLine(((InlineSpan) spans.itemAt(i - 1)).text)
+          && spans.itemAt(i) instanceof LineSpan) {
+        output.append('\n');
+      }
+      output.append(spans.itemAt(i).render());
+    }
+    return output.toString();
+  }
+
+  private static boolean endsInNewLine(String string) {
+    return string.charAt(string.length() - 1) == '\n';
   }
 
   public static Builder builder() {
@@ -37,7 +46,7 @@ public final class Output {
   public static Output just(String message) {
     return message.isEmpty()
         ? empty()
-        : new Output(ImmutableList.of(new Span(message, Formatting.EMPTY)));
+        : new Output(ImmutableList.of(new InlineSpan(message, Formatting.EMPTY)));
   }
 
   public static Output empty() {
@@ -45,7 +54,7 @@ public final class Output {
   }
 
   public static final class Builder {
-    private final MutableList<Span> spans = ArrayList.create();
+    private final MutableList<Span<?>> spans = ArrayList.create();
     private Optional<Color16> color = Optional.empty();
     private Optional<Color16> background = Optional.empty();
     private Optional<Boolean> bold = Optional.empty();
@@ -57,16 +66,81 @@ public final class Output {
 
     public Builder append(String string) {
       if (!string.isEmpty()) {
-        spans.add(new Span(string, buildFormatting()));
+        spans.add(new InlineSpan(string, buildFormatting()));
       }
       return this;
     }
 
     public Builder append(Output output) {
+      Formatting base = buildFormatting();
       output.spans.stream()
-          .map(span -> new Span(span.text, buildFormatting().apply(span.formatting)))
+          .map(span -> span.mergeFormatting(base))
           .forEachOrdered(spans::add);
       return this;
+    }
+
+    public Builder appendLine() {
+      return appendLine("");
+    }
+
+    public Builder appendLine(String string) {
+      return appendLine(string, 0);
+    }
+
+    public Builder appendLine(String string, int indentation) {
+      requireNonNegative(indentation);
+      spans.add(
+          new LineSpan(ImmutableList.of(new InlineSpan(string, buildFormatting())), indentation));
+      return this;
+    }
+
+    public Builder appendLine(Output output) {
+      return appendLine(output, 0);
+    }
+
+    public Builder appendLine(Output output, int indentation) {
+      requireNonNegative(indentation);
+      // scan through the spans, group together inline spans into line spans, and apply additional
+      // indentation to line spans. Oh, and merge formatting.
+      ImmutableList.Builder<InlineSpan> groupedInlineSpans = null;
+      Formatting baseFormatting = buildFormatting();
+      for (int i = 0; i < output.spans.count(); i++) {
+        Span<?> span = output.spans.itemAt(i);
+        if (span instanceof InlineSpan) {
+          if (groupedInlineSpans == null) {
+            groupedInlineSpans = ImmutableList.builder();
+            if (indentation > 0) {
+              groupedInlineSpans.add(new InlineSpan(" ".repeat(indentation), baseFormatting));
+            }
+          }
+          groupedInlineSpans.add(((InlineSpan) span).mergeFormatting(baseFormatting));
+        } else if (span instanceof LineSpan) {
+          if (groupedInlineSpans != null) {
+            this.spans.add(new LineSpan(groupedInlineSpans.build(), indentation));
+            groupedInlineSpans = null;
+          }
+          this.spans.add(
+              new LineSpan(
+                  ((LineSpan) span).spans.stream()
+                      .map(mergeFormatting(baseFormatting))
+                      .collect(toList()),
+                  ((LineSpan) span).indentation + indentation));
+        }
+      }
+      if (groupedInlineSpans != null) {
+        this.spans.add(new LineSpan(groupedInlineSpans.build(), indentation));
+      }
+      return this;
+    }
+
+    private static <T extends Span<T>> Function<T, T> mergeFormatting(Formatting base) {
+      return span -> span.mergeFormatting(base);
+    }
+
+    private static void requireNonNegative(int indentation) {
+      if (indentation < 0) {
+        throw new IllegalArgumentException("indentation cannot be negative: " + indentation);
+      }
     }
 
     public Builder color(Color16 color16) {
@@ -199,13 +273,59 @@ public final class Output {
     }
   }
 
-  private static class Span {
+  private interface Span<T extends Span<T>> {
+
+    StringBuilder render();
+
+    T mergeFormatting(Formatting base);
+  }
+
+  private static class InlineSpan implements Span<InlineSpan> {
     private final String text;
     private final Formatting formatting;
 
-    private Span(String text, Formatting formatting) {
+    private InlineSpan(String text, Formatting formatting) {
       this.text = text;
       this.formatting = formatting;
+    }
+
+    @Override
+    public StringBuilder render() {
+      return formatting.render().append(text);
+    }
+
+    @Override
+    public InlineSpan mergeFormatting(Formatting base) {
+      return new InlineSpan(text, base.apply(formatting));
+    }
+  }
+
+  private static class LineSpan implements Span<LineSpan> {
+    private final List<InlineSpan> spans;
+    private final int indentation;
+
+    private  LineSpan(List<InlineSpan> spans, int indentation) {
+      this.spans = ImmutableList.copyOf(spans);
+      this.indentation = indentation;
+    }
+
+    @Override
+    public StringBuilder render() {
+      String indentation = " ".repeat(this.indentation);
+      return new StringBuilder(indentation)
+          .append(spans.stream()
+              .map(Span::render)
+              .map(Object::toString)
+              .map(rendering -> rendering.replaceAll("\n", "\n" + indentation))
+              .<StringBuilder>collect(
+                  StringBuilder::new, StringBuilder::append, StringBuilder::append));
+    }
+
+    @Override
+    public LineSpan mergeFormatting(Formatting base) {
+      return new LineSpan(
+          spans.stream().map(inlineSpan -> inlineSpan.mergeFormatting(base)).collect(toList()),
+          indentation);
     }
   }
 
@@ -261,7 +381,7 @@ public final class Output {
           other.hidden.or(() -> this.hidden));
     }
 
-    String render() {
+    StringBuilder render() {
       return new StringBuilder("\033[")
           .append(
               Stream.<Optional<String>>builder()
@@ -277,8 +397,7 @@ public final class Output {
                   .build()
                   .flatMap(Optional::stream)
                   .collect(joining(";")))
-          .append('m')
-          .toString();
+          .append('m');
     }
   }
 
