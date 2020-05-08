@@ -21,16 +21,21 @@ public final class Output {
     this.spans = ImmutableList.copyOf(spans);
   }
 
-  public String render() {
+  public String toString() {
+    return renderForTerminal();
+  }
+
+  public String renderForTerminal() {
     StringBuilder output = new StringBuilder();
     for (int i = 0; i < spans.count(); i++) {
+      Span<?> span = spans.itemAt(i);
       if (i > 0
           && spans.itemAt(i - 1) instanceof InlineSpan
-          && !endsInNewLine(((InlineSpan) spans.itemAt(i - 1)).text)
-          && spans.itemAt(i) instanceof LineSpan) {
+          && endsInNewLine(((InlineSpan) spans.itemAt(i - 1)).text)
+          && span instanceof LineSpan) {
         output.append('\n');
       }
-      output.append(spans.itemAt(i).render());
+      output.append(span.render());
     }
     return output.toString();
   }
@@ -80,7 +85,8 @@ public final class Output {
     }
 
     public Builder appendLine() {
-      return appendLine("");
+      spans.add(new LineSpan(ImmutableList.empty(), 0));
+      return this;
     }
 
     public Builder appendLine(String string) {
@@ -104,14 +110,10 @@ public final class Output {
       // indentation to line spans. Oh, and merge formatting.
       ImmutableList.Builder<InlineSpan> groupedInlineSpans = null;
       Formatting baseFormatting = buildFormatting();
-      for (int i = 0; i < output.spans.count(); i++) {
-        Span<?> span = output.spans.itemAt(i);
+      for (Span<?> span : output.spans) {
         if (span instanceof InlineSpan) {
           if (groupedInlineSpans == null) {
             groupedInlineSpans = ImmutableList.builder();
-            if (indentation > 0) {
-              groupedInlineSpans.add(new InlineSpan(" ".repeat(indentation), baseFormatting));
-            }
           }
           groupedInlineSpans.add(((InlineSpan) span).mergeFormatting(baseFormatting));
         } else if (span instanceof LineSpan) {
@@ -304,21 +306,25 @@ public final class Output {
     private final List<InlineSpan> spans;
     private final int indentation;
 
-    private  LineSpan(List<InlineSpan> spans, int indentation) {
+    private LineSpan(List<InlineSpan> spans, int indentation) {
       this.spans = ImmutableList.copyOf(spans);
       this.indentation = indentation;
     }
 
     @Override
     public StringBuilder render() {
+      if (!spans.isPopulated()) {
+        return new StringBuilder("\n");
+      }
       String indentation = " ".repeat(this.indentation);
       return new StringBuilder(indentation)
           .append(spans.stream()
               .map(Span::render)
               .map(Object::toString)
-              .map(rendering -> rendering.replaceAll("\n", "\n" + indentation))
+              .map(rendering -> rendering.replaceAll("\\n", "\n" + indentation))
               .<StringBuilder>collect(
-                  StringBuilder::new, StringBuilder::append, StringBuilder::append));
+                  StringBuilder::new, StringBuilder::append, StringBuilder::append))
+          .append("\n");
     }
 
     @Override
@@ -397,7 +403,7 @@ public final class Output {
                   .build()
                   .flatMap(Optional::stream)
                   .collect(joining(";")))
-          .append('m');
+          .append("m");
     }
   }
 

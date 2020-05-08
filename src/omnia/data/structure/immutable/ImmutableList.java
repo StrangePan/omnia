@@ -25,7 +25,7 @@ public final class ImmutableList<E> implements List<E> {
 
   @SafeVarargs
   public static <E> ImmutableList<E> of(E firstItem, E...items) {
-    return items.length == 0 ? empty() : ImmutableList.<E>builder().add(firstItem).addAll(items).build();
+    return ImmutableList.<E>builder().add(firstItem).addAll(items).build();
   }
 
   public static <E> ImmutableList<E> copyOf(Iterable<? extends E> iterable) {
