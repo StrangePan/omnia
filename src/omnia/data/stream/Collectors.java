@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import omnia.data.structure.List;
+import omnia.data.structure.Pair;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.immutable.ImmutableMap;
@@ -91,6 +92,43 @@ public final class Collectors {
     };
   }
 
+  /**
+   * Collects a stream of {@link Pair}s into an {@link ImmutableMap} where the keys are derived
+   * from {@link Pair#first()} and the values are derived from {@link Pair#second()}. It is
+   * undefined how duplicate keys are handled.
+   *
+   * @param <K> the first type of the pair and the key type for the map
+   * @param <V> the second type of the pair and the value type for the map
+   */
+  public static <K, V>
+  Collector<Pair<? extends K, ? extends V>, ?, ImmutableMap<K, V>> toImmutableMap() {
+    return toImmutableMap(Pair::first, Pair::second);
+  }
+
+  /**
+   * Collects a stream's contents into an ImmutableMap using the provided function to derive a key
+   * for each stream item. It is undefined how duplicate keys are handled. Each stream item is its
+   * value.
+   *
+   * @param keyExtractor mapping function that produces a key for each entry
+   * @param <E> the item type of the stream and the value type of the produced map
+   * @param <K> the key type for the map
+   */
+  public static <E, K> Collector<E, ?, ImmutableMap<K, E>> toImmutableMap(
+      Function<? super E, K> keyExtractor) {
+    return toImmutableMap(keyExtractor, Function.identity());
+  }
+
+  /**
+   * Collects the stream contents into an ImmutableMap using the provided functions to derive a key
+   * and value for each stream item. It is undefined how duplicate keys will be handled.
+   *
+   * @param keyExtractor mapping function that produces a key for each entry
+   * @param valueExtractor mapping function that produces a value for each entry
+   * @param <E> the item type of the stream
+   * @param <K> the key type for the map
+   * @param <V> the value type for the map
+   */
   public static <E, K, V> Collector<E, ?, ImmutableMap<K, V>> toImmutableMap(
       Function<? super E, K> keyExtractor, Function<? super E, V> valueExtractor) {
     return new Collector<E, MutableMap<K, V>, ImmutableMap<K, V>>() {
