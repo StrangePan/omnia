@@ -23,18 +23,32 @@ public final class ImmutableList<E> implements List<E> {
     return emptyList;
   }
 
+  /**
+   * Creates a new {@link ImmutableList} instance using the provided items as contents. At least
+   * item must be provided; use {@link #empty()} to get an {@link ImmutableList} with no contents.
+   */
   @SafeVarargs
   public static <E> ImmutableList<E> of(E firstItem, E...items) {
     return ImmutableList.<E>builder().add(firstItem).addAll(items).build();
   }
 
+  /**
+   * Copies the contents of the provided iterable into a new {@link ImmutableList} instance. If
+   * the provided iterable is already an {@link ImmutableList}, this function returns the
+   * original list without creating a copy.
+   */
   public static <E> ImmutableList<E> copyOf(Iterable<? extends E> iterable) {
-    if (iterable instanceof ImmutableList) {
+    if (iterable instanceof ImmutableList<?>) {
       @SuppressWarnings("unchecked")
       ImmutableList<E> l = (ImmutableList<E>) iterable;
       return l;
     }
     return ImmutableList.<E>builder().addAll(iterable).build();
+  }
+
+  /** Copies the items from the provided array into a new {@link ImmutableList} instance. */
+  public static <E> ImmutableList<E> copyOf(E[] items) {
+    return ImmutableList.<E>builder().addAll(items).build();
   }
 
   public static <E> Builder<E> builder() {
