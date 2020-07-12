@@ -8,5 +8,9 @@ public interface MutableGraph<E> extends Graph<E> {
 
   void replaceNode(E original, E replacement);
 
-  boolean removeNode(Object item);
+  default boolean removeNode(E item) {
+    return removeUnknownTypedNode(item);
+  }
+
+  boolean removeUnknownTypedNode(Object item);
 }

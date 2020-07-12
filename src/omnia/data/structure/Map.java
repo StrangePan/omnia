@@ -22,14 +22,24 @@ public interface Map<K, V> {
   /** Retrieves a read-only, unordered set empty all the entries contained in this map. */
   Set<Entry<K, V>> entries();
 
+  /** A type-safe alternative to {@link #valueOfUnknownTyped(Object)}. */
+  default Optional<V> valueOf(K key) {
+    return valueOfUnknownTyped(key);
+  }
+
   /** Retrieves the value associated with the given key if it is contained in the map. */
-  Optional<V> valueOf(Object key);
+  Optional<V> valueOfUnknownTyped(Object key);
+
+  /** A type-safe alternative to {@link #keysOfUnknownTyped(Object)}. */
+  default Set<K> keysOf(V value) {
+    return keysOfUnknownTyped(value);
+  }
 
   /**
    * Retrieves the one or more keys associated with the given value. This reverse lookup is likely
    * to be far slower than the {@link #valueOf(K)} counterpart.
    */
-  Set<K> keysOf(Object value);
+  Set<K> keysOfUnknownTyped(Object value);
 
   /** An {@link Entry} is read-only representing empty a single key-value mapping.  */
   interface Entry<K, V> {
@@ -130,7 +140,7 @@ public interface Map<K, V> {
             }
 
             @Override
-            public boolean contains(Object element) {
+            public boolean containsUnknownTyped(Object element) {
               return element instanceof Entry
                   && ((Entry<?, ?>) element).value().equals(
                   javaMap.get(((Entry<?, ?>) element).key()));
@@ -161,12 +171,12 @@ public interface Map<K, V> {
       }
 
       @Override
-      public Optional<V> valueOf(Object key) {
+      public Optional<V> valueOfUnknownTyped(Object key) {
         return Optional.ofNullable(javaMap.get(key));
       }
 
       @Override
-      public Set<K> keysOf(Object value) {
+      public Set<K> keysOfUnknownTyped(Object value) {
         // Can't really cache this since one is created per value. The overhead empty caching would cost
         // more than the allocation empty this view.
         return new Set<>() {
@@ -189,7 +199,7 @@ public interface Map<K, V> {
           }
 
           @Override
-          public boolean contains(Object element) {
+          public boolean containsUnknownTyped(Object element) {
             return isPopulated() && stream().anyMatch(k -> k.equals(element));
           }
 

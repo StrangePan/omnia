@@ -8,7 +8,6 @@ import java.util.function.BiPredicate;
 import java.util.function.ToIntFunction;
 import omnia.data.cache.MemoizedInt;
 import omnia.data.iterate.ReadOnlyIterator;
-import omnia.data.structure.Collection;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;
 
@@ -84,8 +83,8 @@ public final class ImmutableSet<E> implements Set<E> {
   }
 
   @Override
-  public boolean contains(Object element) {
-    return elements.contains(element);
+  public boolean containsUnknownTyped(Object element) {
+    return elements.containsUnknownTyped(element);
   }
 
   @Override
@@ -113,7 +112,7 @@ public final class ImmutableSet<E> implements Set<E> {
       return false;
     }
     for (Object element : elements) {
-      if (!otherSet.contains(element)) {
+      if (!otherSet.containsUnknownTyped(element)) {
         return false;
       }
     }

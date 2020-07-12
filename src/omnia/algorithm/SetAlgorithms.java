@@ -15,16 +15,16 @@ public final class SetAlgorithms {
   public static <T> Set<T> intersectionOf(Set<? extends T> a, Set<? extends T> b) {
     Set<? extends T> min = (a.count() < b.count() ? a : b);
     Set<? extends T> max = (min != a ? a : b);
-    return min.stream().filter(max::contains).collect(toSet());
+    return min.stream().filter(max::containsUnknownTyped).collect(toSet());
   }
 
   public static <T> Set<T> differenceBetween(Set<? extends T> a, Set<?> b) {
-    return a.stream().filter(item -> !b.contains(item)).collect(toSet());
+    return a.stream().filter(item -> !b.containsUnknownTyped(item)).collect(toSet());
   }
 
   public static boolean areDisjoint(Set<?> a, Set<?> b) {
     Set<?> min = (a.count() < b.count() ? a : b);
     Set<?> max = (min != a ? a : b);
-    return min.stream().anyMatch(max::contains);
+    return min.stream().anyMatch(max::containsUnknownTyped);
   }
 }

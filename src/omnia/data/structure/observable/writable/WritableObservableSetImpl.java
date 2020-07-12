@@ -32,9 +32,9 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public boolean remove(Object element) {
+  public boolean removeUnknownTyped(Object element) {
     return mutateState(
-        state -> state.contains(element),
+        state -> state.containsUnknownTyped(element),
         state ->
             ImmutableSet.copyOf(SetAlgorithms.differenceBetween(state, ImmutableSet.of(element))),
         (previousState, currentState) -> ImmutableSet.of(new RemoveFromSet<>((E) element)));
@@ -72,8 +72,8 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
   }
 
   @Override
-  public boolean contains(Object element) {
-    return getState().contains(element);
+  public boolean containsUnknownTyped(Object element) {
+    return getState().containsUnknownTyped(element);
   }
 
   @Override
@@ -100,8 +100,8 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
       }
 
       @Override
-      public boolean contains(Object element) {
-        return WritableObservableSetImpl.this.contains(element);
+      public boolean containsUnknownTyped(Object element) {
+        return WritableObservableSetImpl.this.containsUnknownTyped(element);
       }
 
       @Override

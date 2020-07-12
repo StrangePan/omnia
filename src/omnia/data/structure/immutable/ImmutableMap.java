@@ -116,12 +116,12 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
   }
 
   @Override
-  public Optional<V> valueOf(Object key) {
+  public Optional<V> valueOfUnknownTyped(Object key) {
     return Optional.ofNullable(javaMap.get(key));
   }
 
   @Override
-  public Set<K> keysOf(Object value) {
+  public Set<K> keysOfUnknownTyped(Object value) {
     return javaMap.entrySet()
         .stream()
         .filter(e -> e.getValue().equals(value))

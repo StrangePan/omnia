@@ -85,7 +85,7 @@ public final class HashSet<E> implements MutableSet<E> {
   }
 
   @Override
-  public boolean remove(Object element) {
+  public boolean removeUnknownTyped(Object element) {
     return javaSet.remove(wrap(requireNonNull(element)));
   }
 
@@ -100,7 +100,7 @@ public final class HashSet<E> implements MutableSet<E> {
   }
 
   @Override
-  public boolean contains(Object element) {
+  public boolean containsUnknownTyped(Object element) {
     return javaSet.contains(wrap(element));
   }
 

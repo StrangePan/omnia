@@ -1,10 +1,7 @@
 package omnia.data.structure.immutable;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
 import omnia.data.structure.Set;
 import omnia.data.structure.UnorderedPair;
 

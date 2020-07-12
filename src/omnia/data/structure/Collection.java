@@ -2,9 +2,9 @@ package omnia.data.structure;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
-import omnia.contract.Container;
 import omnia.contract.Countable;
 import omnia.contract.Streamable;
+import omnia.contract.TypedContainer;
 import omnia.data.iterate.EmptyIterator;
 import omnia.data.iterate.ReadOnlyIterator;
 
@@ -14,7 +14,7 @@ import omnia.data.iterate.ReadOnlyIterator;
  *
  * @param <E> the type contained in the collection
  */
-public interface Collection<E> extends Container, Countable, Iterable<E>, Streamable<E> {
+public interface Collection<E> extends TypedContainer<E>, Countable, Iterable<E>, Streamable<E> {
 
   Collection<?> EMPTY_COLLECTION = new Collection<>() {
     @Override
@@ -23,7 +23,7 @@ public interface Collection<E> extends Container, Countable, Iterable<E>, Stream
     }
 
     @Override
-    public boolean contains(Object element) {
+    public boolean containsUnknownTyped(Object element) {
       return false;
     }
 
@@ -81,7 +81,7 @@ public interface Collection<E> extends Container, Countable, Iterable<E>, Stream
       }
 
       @Override
-      public boolean contains(Object element) {
+      public boolean containsUnknownTyped(Object element) {
         return javaCollection.contains(element);
       }
 

@@ -22,7 +22,7 @@ public interface Set<E> extends Collection<E> {
       }
 
       @Override
-      public boolean contains(Object element) {
+      public boolean containsUnknownTyped(Object element) {
         return javaSet.contains(element);
       }
 
@@ -60,7 +60,7 @@ public interface Set<E> extends Collection<E> {
       return false;
     }
     for (Object element : a) {
-      if (!b.contains(element)) {
+      if (!b.containsUnknownTyped(element)) {
         return false;
       }
     }

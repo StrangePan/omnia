@@ -72,11 +72,15 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       return this;
     }
 
-    public Builder<E> removeNode(Object element) {
+    public Builder<E> removeNode(E element) {
+      return removeUnknownTypedNode(element);
+    }
+
+    public Builder<E> removeUnknownTypedNode(Object element) {
       requireNonNull(element);
-      nodes.remove(element);
+      nodes.removeUnknownTyped(element);
       directedEdges.stream()
-          .filter(pair -> pair.contains(element))
+          .filter(pair -> pair.containsUnknownTyped(element))
           .collect(toSet())
           .forEach(directedEdges::remove);
       return this;
@@ -124,7 +128,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     public Builder<E> removeEdge(Object from, Object to) {
       requireNonNull(from);
       requireNonNull(to);
-      directedEdges.remove(HomogeneousPair.of(from, to));
+      directedEdges.removeUnknownTyped(HomogeneousPair.of(from, to));
       return this;
     }
 
@@ -155,7 +159,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   public Optional<? extends DirectedNode> nodeOf(Object item) {
     @SuppressWarnings("unchecked")
     Optional<? extends DirectedNode> node =
-        elements.contains(item) ? Optional.of(getOrCreateNode((E) item)) : Optional.empty();
+        elements.containsUnknownTyped(item) ? Optional.of(getOrCreateNode((E) item)) : Optional.empty();
     return node;
   }
 
@@ -164,7 +168,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     @SuppressWarnings("unchecked")
     Optional<? extends DirectedEdge> edge =
         Stream.of(HomogeneousPair.of(from, to))
-            .filter(directedEdges::contains)
+            .filter(directedEdges::containsUnknownTyped)
             .map(p -> (HomogeneousPair<E>) p)
             .findFirst()
             .map(this::getOrCreateEdge);

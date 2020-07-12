@@ -86,10 +86,10 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
   }
 
   @Override
-  public boolean removeNode(Object item) {
+  public boolean removeUnknownTypedNode(Object item) {
     return mutateState(
-        currentState -> currentState.contents().contains(item),
-        currentState -> currentState.toBuilder().removeNode(item).build(),
+        currentState -> currentState.contents().containsUnknownTyped(item),
+        currentState -> currentState.toBuilder().removeUnknownTypedNode(item).build(),
         (previousState, newState) ->
             Streams.concat(
                 previousState.nodeOf(item).stream()

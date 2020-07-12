@@ -47,8 +47,8 @@ public class HashBidirectionalMap<E> implements MutableBidirectionalMap<E> {
   }
 
   @Override
-  public Optional<E> removeKey(Object key) {
-    Optional<E> value = map.removeKey(key);
+  public Optional<E> removeUnknownTypedKey(Object key) {
+    Optional<E> value = map.removeUnknownTypedKey(key);
     value.ifPresent(map::removeKey);
     return value;
   }
@@ -59,13 +59,13 @@ public class HashBidirectionalMap<E> implements MutableBidirectionalMap<E> {
   }
 
   @Override
-  public Optional<E> valueOf(Object key) {
-    return map.valueOf(key);
+  public Optional<E> valueOfUnknownTyped(Object key) {
+    return map.valueOfUnknownTyped(key);
   }
 
   @Override
-  public Set<E> keysOf(Object value) {
-    return valueOf(value).map(ImmutableSet::of).orElse(ImmutableSet.empty());
+  public Set<E> keysOfUnknownTyped(Object value) {
+    return valueOfUnknownTyped(value).map(ImmutableSet::of).orElse(ImmutableSet.empty());
   }
 
   private class BidirectionalMapSet implements MutableSet<Entry<E, E>> {
@@ -76,10 +76,10 @@ public class HashBidirectionalMap<E> implements MutableBidirectionalMap<E> {
     }
 
     @Override
-    public boolean remove(Object item) {
+    public boolean removeUnknownTyped(Object item) {
       return item instanceof Entry
-          && (HashBidirectionalMap.this.removeKey(((Entry<?, ?>) item).key()).isPresent()
-              || HashBidirectionalMap.this.removeKey(((Entry<?, ?>) item).value()).isPresent());
+          && (HashBidirectionalMap.this.removeUnknownTypedKey(((Entry<?, ?>) item).key()).isPresent()
+              || HashBidirectionalMap.this.removeUnknownTypedKey(((Entry<?, ?>) item).value()).isPresent());
     }
 
     @Override
@@ -101,12 +101,12 @@ public class HashBidirectionalMap<E> implements MutableBidirectionalMap<E> {
     }
 
     @Override
-    public boolean contains(Object element) {
+    public boolean containsUnknownTyped(Object element) {
       if (!(element instanceof Entry)) {
         return false;
       }
       Entry<?, ?> entry = Entry.of(((Entry<?, ?>) element).key(), ((Entry<?, ?>) element).value());
-      return map.valueOf(entry.key()).map(entry::equals).orElse(false);
+      return map.valueOfUnknownTyped(entry.key()).map(entry::equals).orElse(false);
     }
 
     @Override

@@ -29,8 +29,12 @@ public interface HomogeneousPair<E> extends Pair<E, E>, Collection<E> {
     return Stream.of(first(), second());
   }
 
-  default E oppositeOf(Object object) {
-    if (!contains(object)) {
+  default E oppositeOf(E object) {
+    return oppositeOfUnknownTyped(object);
+  }
+
+  default E oppositeOfUnknownTyped(Object object) {
+    if (!containsUnknownTyped(object)) {
       throw new IllegalArgumentException("object not contained in pair: " + object);
     }
     return Objects.equals(object, first()) ? second() : first();

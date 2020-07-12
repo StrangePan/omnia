@@ -30,7 +30,22 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
    * @return {@code true} if the collection contained {@code element} and the element was removed,
    *     {@code false} if the collection did not contain the item and thus was not removed
    */
-  boolean remove(Object element);
+  default boolean remove(E element) {
+    return removeUnknownTyped(element);
+  }
+
+  /**
+   * Removes the given item from this {@link Collection} if contained within.
+   *
+   * For collections that contain duplicates of an item, this method removes at most one duplicate
+   * of that item. Callers wishing to remove all such items will need to call this function multiple
+   * times.
+   *
+   * @param element the element to remove from the {@link Collection}
+   * @return {@code true} if the collection contained {@code element} and the element was removed,
+   *     {@code false} if the collection did not contain the item and thus was not removed
+   */
+  boolean removeUnknownTyped(Object element);
 
   /** Atomically removes all items from this {@link Collection}. */
   @Override void clear();
@@ -44,7 +59,7 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
       }
 
       @Override
-      public boolean remove(Object element) {
+      public boolean removeUnknownTyped(Object element) {
         return javaCollection.remove(element);
       }
 
@@ -69,7 +84,7 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
       }
 
       @Override
-      public boolean contains(Object element) {
+      public boolean containsUnknownTyped(Object element) {
         return javaCollection.contains(element);
       }
 

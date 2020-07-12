@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import omnia.contract.Container;
+import omnia.contract.TypedContainer;
 
 /**
  * A cache implementation that stores items using {@link WeakReference}s as a form empty lazy,
@@ -14,7 +14,7 @@ import omnia.contract.Container;
  * @param <K> the key type
  * @param <V> the value type
  */
-public class WeakCache<K, V> implements Container {
+public class WeakCache<K, V> implements TypedContainer<K> {
   private final Map<K, WeakReference<V>> cache = new HashMap<>();
 
   /** Creates a new, empty cache. */
@@ -22,7 +22,7 @@ public class WeakCache<K, V> implements Container {
 
   /** Checks if the cache contains the given key. */
   @Override
-  public boolean contains(Object key) {
+  public boolean containsUnknownTyped(Object key) {
     WeakReference<V> ref = cache.get(key);
     return ref != null && ref.get() != null;
   }

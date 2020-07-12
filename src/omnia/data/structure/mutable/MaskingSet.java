@@ -23,7 +23,7 @@ class MaskingSet<E, J extends java.util.Set<E>> implements MutableSet<E> {
   }
 
   @Override
-  public boolean remove(Object element) {
+  public boolean removeUnknownTyped(Object element) {
     return javaSet.remove(element);
   }
 
@@ -38,7 +38,7 @@ class MaskingSet<E, J extends java.util.Set<E>> implements MutableSet<E> {
   }
 
   @Override
-  public boolean contains(Object element) {
+  public boolean containsUnknownTyped(Object element) {
     return javaSet.contains(element);
   }
 

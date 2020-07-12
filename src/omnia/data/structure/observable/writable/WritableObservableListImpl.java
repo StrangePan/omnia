@@ -59,7 +59,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
   }
 
   @Override
-  public boolean remove(Object item) {
+  public boolean removeUnknownTyped(Object item) {
     synchronized(this) {
       OptionalInt index = getState().indexOf(item);
       return mutateState(
@@ -147,8 +147,8 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
   }
 
   @Override
-  public boolean contains(Object element) {
-    return getState().contains(element);
+  public boolean containsUnknownTyped(Object element) {
+    return getState().containsUnknownTyped(element);
   }
 
   @Override
@@ -190,8 +190,8 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
       }
 
       @Override
-      public boolean contains(Object element) {
-        return WritableObservableListImpl.this.contains(element);
+      public boolean containsUnknownTyped(Object element) {
+        return WritableObservableListImpl.this.containsUnknownTyped(element);
       }
 
       @Override

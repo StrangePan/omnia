@@ -39,7 +39,7 @@ public interface Pair<E1, E2> extends Countable, Container {
   }
 
   @Override
-  default boolean contains(Object object) {
+  default boolean containsUnknownTyped(Object object) {
     return Objects.equals(object, first()) || Objects.equals(object, second());
   }
 

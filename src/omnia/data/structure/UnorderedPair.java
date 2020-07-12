@@ -4,11 +4,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
-import java.util.List;
 
 public interface UnorderedPair<E> extends HomogeneousPair<E> {
 

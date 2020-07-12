@@ -44,7 +44,7 @@ class MaskingList<E> implements MutableList<E> {
   }
 
   @Override
-  public boolean remove(Object element) {
+  public boolean removeUnknownTyped(Object element) {
     return javaList.remove(element);
   }
 
@@ -59,7 +59,7 @@ class MaskingList<E> implements MutableList<E> {
   }
 
   @Override
-  public boolean contains(Object element) {
+  public boolean containsUnknownTyped(Object element) {
     return javaList.contains(element);
   }
 

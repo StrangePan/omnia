@@ -49,7 +49,7 @@ public interface List<E> extends Collection<E>, Indexable<E> {
       }
 
       @Override
-      public boolean contains(Object element) {
+      public boolean containsUnknownTyped(Object element) {
         return javaList.contains(element);
       }
 

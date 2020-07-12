@@ -10,7 +10,11 @@ public interface MutableMap<K, V> extends Map<K, V> {
 
   V putMappingIfAbsent(K key, Supplier<V> value);
 
-  Optional<V> removeKey(Object key);
+  default Optional<V> removeKey(K key) {
+    return removeUnknownTypedKey(key);
+  }
+
+  Optional<V> removeUnknownTypedKey(Object key);
 
   @Override MutableSet<Entry<K, V>> entries();
 
