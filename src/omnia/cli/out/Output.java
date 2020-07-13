@@ -21,6 +21,10 @@ public final class Output {
     this.spans = ImmutableList.copyOf(spans);
   }
 
+  public boolean isPopulated() {
+    return spans.isPopulated();
+  }
+
   public String toString() {
     return renderForTerminal();
   }
