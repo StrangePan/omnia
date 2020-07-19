@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="io.reactivex.rxjava2:rxjava:2.2.15" level="project" />
+    <orderEntry type="library" exported="" name="io.reactivex.rxjava2:rxjava:2.2.15" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.truth.extensions:truth-java8-extension:1.0" level="application" />
     <orderEntry type="library" scope="TEST" name="com.google.truth:truth:1.0" level="application" />
     <orderEntry type="library" scope="TEST" name="junit:junit:4.12" level="application" />
