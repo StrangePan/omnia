@@ -17,4 +17,7 @@ public interface Couple<A, B> extends Tuples.AtLeastCouple<A, B> {
 
   @Override
   Monuple<B> dropFirst();
+
+  @Override
+  Monuple<A> dropSecond();
 }

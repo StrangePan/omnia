@@ -20,4 +20,7 @@ public interface Triple<A, B, C> extends Tuples.AtLeastTriple<A, B, C> {
 
   @Override
   Couple<B, C> dropFirst();
+
+  @Override
+  Couple<A, C> dropSecond();
 }

@@ -32,4 +32,7 @@ public interface Septuple<A, B, C, D, E, F, G> extends Tuples.AtLeastSeptuple<A,
 
   @Override
   Sextuple<B, C, D, E, F, G> dropFirst();
+
+  @Override
+  Sextuple<A, C, D, E, F, G> dropSecond();
 }
