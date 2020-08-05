@@ -21,4 +21,7 @@ public interface Nonuple<A, B, C, D, E, F, G, H, I> extends Tuples.AtLeastNonupl
 
   @Override
   <R> Nonuple<A, B, C, D, E, R, G, H, I> mapSixth(Function<? super F, ? extends R> mapper);
+
+  @Override
+  <R> Nonuple<A, B, C, D, E, F, R, H, I> mapSeventh(Function<? super G, ? extends R> mapper);
 }

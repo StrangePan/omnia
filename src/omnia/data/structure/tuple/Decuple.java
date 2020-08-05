@@ -21,4 +21,7 @@ public interface Decuple<A, B, C, D, E, F, G, H, I, J> extends Tuples.AtLeastDec
 
   @Override
   <R> Decuple<A, B, C, D, E, R, G, H, I, J> mapSixth(Function<? super F, ? extends R> mapper);
+
+  @Override
+  <R> Decuple<A, B, C, D, E, F, R, H, I, J> mapSeventh(Function<? super G, ? extends R> mapper);
 }

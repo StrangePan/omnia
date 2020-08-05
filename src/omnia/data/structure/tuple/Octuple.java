@@ -21,4 +21,7 @@ public interface Octuple<A, B, C, D, E, F, G, H> extends Tuples.AtLeastOctuple<A
 
   @Override
   <R> Octuple<A, B, C, D, E, R, G, H> mapSixth(Function<? super F, ? extends R> mapper);
+
+  @Override
+  <R> Octuple<A, B, C, D, E, F, R, H> mapSeventh(Function<? super G, ? extends R> mapper);
 }
