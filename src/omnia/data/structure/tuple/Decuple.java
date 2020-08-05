@@ -44,4 +44,7 @@ public interface Decuple<A, B, C, D, E, F, G, H, I, J> extends Tuples.AtLeastDec
 
   @Override
   Nonuple<A, C, D, E, F, G, H, I, J> dropSecond();
+
+  @Override
+  Nonuple<A, B, D, E, F, G, H, I, J> dropThird();
 }

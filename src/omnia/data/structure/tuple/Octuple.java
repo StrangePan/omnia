@@ -38,4 +38,7 @@ public interface Octuple<A, B, C, D, E, F, G, H> extends Tuples.AtLeastOctuple<A
 
   @Override
   Septuple<A, C, D, E, F, G, H> dropSecond();
+
+  @Override
+  Septuple<A, B, D, E, F, G, H> dropThird();
 }

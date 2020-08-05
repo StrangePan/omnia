@@ -29,4 +29,7 @@ public interface Quintuple<A, B, C, D, E> extends Tuples.AtLeastQuintuple<A, B, 
 
   @Override
   Quadruple<A, C, D, E> dropSecond();
+
+  @Override
+  Quadruple<A, B, D, E> dropThird();
 }

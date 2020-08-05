@@ -50,6 +50,8 @@ public class Tuples {
 
     @Override
     AtLeastCouple<A, C> dropSecond();
+
+    AtLeastCouple<A, B> dropThird();
   }
 
   interface AtLeastQuadruple<A, B, C, D> extends AtLeastTriple<A, B, C> {
@@ -72,6 +74,9 @@ public class Tuples {
 
     @Override
     AtLeastTriple<A, C, D> dropSecond();
+
+    @Override
+    AtLeastTriple<A, B, D> dropThird();
   }
 
   interface AtLeastQuintuple<A, B, C, D, E> extends AtLeastQuadruple<A, B, C, D> {
@@ -97,6 +102,9 @@ public class Tuples {
 
     @Override
     AtLeastQuadruple<A, C, D, E> dropSecond();
+
+    @Override
+    AtLeastQuadruple<A, B, D, E> dropThird();
   }
 
   interface AtLeastSextuple<A, B, C, D, E, F> extends AtLeastQuintuple<A, B, C, D, E> {
@@ -125,6 +133,9 @@ public class Tuples {
 
     @Override
     AtLeastQuintuple<A, C, D, E, F> dropSecond();
+
+    @Override
+    AtLeastQuintuple<A, B, D, E, F> dropThird();
   }
 
   interface AtLeastSeptuple<A, B, C, D, E, F, G> extends AtLeastSextuple<A, B, C, D, E, F> {
@@ -156,6 +167,9 @@ public class Tuples {
 
     @Override
     AtLeastSextuple<A, C, D, E, F, G> dropSecond();
+
+    @Override
+    AtLeastSextuple<A, B, D, E, F, G> dropThird();
   }
 
   interface AtLeastOctuple<A, B, C, D, E, F, G, H> extends AtLeastSeptuple<A, B, C, D, E, F, G> {
@@ -190,6 +204,9 @@ public class Tuples {
 
     @Override
     AtLeastSeptuple<A, C, D, E, F, G, H> dropSecond();
+
+    @Override
+    AtLeastSeptuple<A, B, D, E, F, G, H> dropThird();
   }
 
   interface AtLeastNonuple<A, B, C, D, E, F, G, H, I> extends AtLeastOctuple<A, B, C, D, E, F, G, H> {
@@ -227,6 +244,9 @@ public class Tuples {
 
     @Override
     AtLeastOctuple<A, C, D, E, F, G, H, I> dropSecond();
+
+    @Override
+    AtLeastOctuple<A, B, D, E, F, G, H, I> dropThird();
   }
 
   interface AtLeastDecuple<A, B, C, D, E, F, G, H, I, J> extends AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
@@ -267,5 +287,8 @@ public class Tuples {
 
     @Override
     AtLeastNonuple<A, C, D, E, F, G, H, I, J> dropSecond();
+
+    @Override
+    AtLeastNonuple<A, B, D, E, F, G, H, I, J> dropThird();
   }
 }
