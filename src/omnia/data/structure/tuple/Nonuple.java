@@ -47,4 +47,19 @@ public interface Nonuple<A, B, C, D, E, F, G, H, I> extends Tuples.AtLeastNonupl
 
   @Override
   Octuple<A, B, C, E, F, G, H, I> dropFourth();
+
+  @Override
+  Octuple<A, B, C, D, F, G, H, I> dropFifth();
+
+  @Override
+  Octuple<A, B, C, D, E, G, H, I> dropSixth();
+
+  @Override
+  Octuple<A, B, C, D, E, F, H, I> dropSeventh();
+
+  @Override
+  Octuple<A, B, C, D, E, F, G, I> dropEighth();
+
+  @Override
+  Octuple<A, B, C, D, E, F, G, H> dropNinth();
 }

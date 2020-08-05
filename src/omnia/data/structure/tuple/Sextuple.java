@@ -38,4 +38,10 @@ public interface Sextuple<A, B, C, D, E, F> extends Tuples.AtLeastSextuple<A, B,
 
   @Override
   Quintuple<A, B, C, E, F> dropFourth();
+
+  @Override
+  Quintuple<A, B, C, D, F> dropFifth();
+
+  @Override
+  Quintuple<A, B, C, D, E> dropSixth();
 }
