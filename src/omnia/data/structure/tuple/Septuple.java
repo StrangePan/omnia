@@ -29,4 +29,7 @@ public interface Septuple<A, B, C, D, E, F, G> extends Tuples.AtLeastSeptuple<A,
 
   @Override
   <R> Septuple<A, B, C, D, E, F, R> mapSeventh(Function<? super G, ? extends R> mapper);
+
+  @Override
+  Sextuple<B, C, D, E, F, G> dropFirst();
 }

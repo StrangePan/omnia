@@ -35,4 +35,7 @@ public interface Nonuple<A, B, C, D, E, F, G, H, I> extends Tuples.AtLeastNonupl
 
   @Override
   <R> Nonuple<A, B, C, D, E, F, G, H, R> mapNinth(Function<? super I, ? extends R> mapper);
+
+  @Override
+  Octuple<B, C, D, E, F, G, H, I> dropFirst();
 }

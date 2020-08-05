@@ -11,4 +11,7 @@ public interface Monuple<A> extends Tuples.AtLeastMonuple<A> {
 
   @Override
   <R> Monuple<R> mapFirst(Function<? super A, ? extends R> mapper);
+
+  @Override
+  Tuple dropFirst();
 }

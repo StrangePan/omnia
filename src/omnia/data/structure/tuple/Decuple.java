@@ -38,4 +38,7 @@ public interface Decuple<A, B, C, D, E, F, G, H, I, J> extends Tuples.AtLeastDec
 
   @Override
   <R> Decuple<A, B, C, D, E, F, G, H, I, R> mapTenth(Function<? super J, ? extends R> mapper);
+
+  @Override
+  Nonuple<B, C, D, E, F, G, H, I, J> dropFirst();
 }
