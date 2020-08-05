@@ -62,4 +62,10 @@ public interface Octuple<A, B, C, D, E, F, G, H> extends Tuples.AtLeastOctuple<A
 
   @Override
   <T> Nonuple<A, B, C, D, E, F, G, H, T> append(T object);
+
+  @Override
+  <I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Monuple<I> other);
+
+  @Override
+  <I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Couple<I, J> other);
 }

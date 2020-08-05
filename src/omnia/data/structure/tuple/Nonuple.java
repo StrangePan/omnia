@@ -68,4 +68,7 @@ public interface Nonuple<A, B, C, D, E, F, G, H, I> extends Tuples.AtLeastNonupl
 
   @Override
   <T> Decuple<A, B, C, D, E, F, G, H, I, T> append(T object);
+
+  @Override
+  <J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Monuple<J> other);
 }

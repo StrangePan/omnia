@@ -50,4 +50,16 @@ public interface Sextuple<A, B, C, D, E, F> extends Tuples.AtLeastSextuple<A, B,
 
   @Override
   <T> Septuple<A, B, C, D, E, F, T> append(T object);
+
+  @Override
+  <G> Septuple<A, B, C, D, E, F, G> appendAll(Monuple<G> other);
+
+  @Override
+  <G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Couple<G, H> other);
+
+  @Override
+  <G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Triple<G, H, I> other);
+
+  @Override
+  <G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Quadruple<G, H, I, J> other);
 }
