@@ -77,6 +77,8 @@ public class Tuples {
 
     @Override
     AtLeastTriple<A, B, D> dropThird();
+
+    AtLeastTriple<A, B, C> dropFourth();
   }
 
   interface AtLeastQuintuple<A, B, C, D, E> extends AtLeastQuadruple<A, B, C, D> {
@@ -105,6 +107,9 @@ public class Tuples {
 
     @Override
     AtLeastQuadruple<A, B, D, E> dropThird();
+
+    @Override
+    AtLeastQuadruple<A, B, C, E> dropFourth();
   }
 
   interface AtLeastSextuple<A, B, C, D, E, F> extends AtLeastQuintuple<A, B, C, D, E> {
@@ -136,6 +141,9 @@ public class Tuples {
 
     @Override
     AtLeastQuintuple<A, B, D, E, F> dropThird();
+
+    @Override
+    AtLeastQuintuple<A, B, C, E, F> dropFourth();
   }
 
   interface AtLeastSeptuple<A, B, C, D, E, F, G> extends AtLeastSextuple<A, B, C, D, E, F> {
@@ -170,6 +178,9 @@ public class Tuples {
 
     @Override
     AtLeastSextuple<A, B, D, E, F, G> dropThird();
+
+    @Override
+    AtLeastSextuple<A, B, C, E, F, G> dropFourth();
   }
 
   interface AtLeastOctuple<A, B, C, D, E, F, G, H> extends AtLeastSeptuple<A, B, C, D, E, F, G> {
@@ -207,6 +218,9 @@ public class Tuples {
 
     @Override
     AtLeastSeptuple<A, B, D, E, F, G, H> dropThird();
+
+    @Override
+    AtLeastSeptuple<A, B, C, E, F, G, H> dropFourth();
   }
 
   interface AtLeastNonuple<A, B, C, D, E, F, G, H, I> extends AtLeastOctuple<A, B, C, D, E, F, G, H> {
@@ -247,6 +261,9 @@ public class Tuples {
 
     @Override
     AtLeastOctuple<A, B, D, E, F, G, H, I> dropThird();
+
+    @Override
+    AtLeastOctuple<A, B, C, E, F, G, H, I> dropFourth();
   }
 
   interface AtLeastDecuple<A, B, C, D, E, F, G, H, I, J> extends AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
@@ -290,5 +307,8 @@ public class Tuples {
 
     @Override
     AtLeastNonuple<A, B, D, E, F, G, H, I, J> dropThird();
+
+    @Override
+    AtLeastNonuple<A, B, C, E, F, G, H, I, J> dropFourth();
   }
 }

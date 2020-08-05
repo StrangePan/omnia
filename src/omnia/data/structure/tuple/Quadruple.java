@@ -29,4 +29,7 @@ public interface Quadruple<A, B, C, D> extends Tuples.AtLeastQuadruple<A, B, C, 
 
   @Override
   Triple<A, B, D> dropThird();
+
+  @Override
+  Triple<A, B, C> dropFourth();
 }
