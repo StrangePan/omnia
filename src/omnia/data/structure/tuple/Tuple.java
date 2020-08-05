@@ -1,21 +1,58 @@
 package omnia.data.structure.tuple;
 
-import omnia.contract.Container;
+import java.util.Objects;
 import omnia.contract.Countable;
-import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
 
-public interface Tuple extends Container, Countable {
+public interface Tuple extends Countable {
 
-  static <T> List<T> toList(Monuple<? extends T> monuple) {
+  static ImmutableList<?> toList(Tuple tuple) {
+    Objects.requireNonNull(tuple);
+    if (tuple instanceof EmptyTuple) {
+      return ImmutableList.empty();
+    }
+    if (tuple instanceof Monuple) {
+      return toList((Monuple<?>) tuple);
+    }
+    if (tuple instanceof Couple) {
+      return toList((Couple<?, ?>) tuple);
+    }
+    if (tuple instanceof Triple) {
+      return toList((Triple<?, ?, ?>) tuple);
+    }
+    if (tuple instanceof Quadruple) {
+      return toList((Quadruple<?, ?, ?, ?>) tuple);
+    }
+    if (tuple instanceof Quintuple) {
+      return toList((Quintuple<?, ?, ?, ?, ?>) tuple);
+    }
+    if (tuple instanceof Sextuple) {
+      return toList((Sextuple<?, ?, ?, ?, ?, ?>) tuple);
+    }
+    if (tuple instanceof Septuple) {
+      return toList((Septuple<?, ?, ?, ?, ?, ?, ?>) tuple);
+    }
+    if (tuple instanceof Octuple) {
+      return toList((Octuple<?, ?, ?, ?, ?, ?, ?, ?>) tuple);
+    }
+    if (tuple instanceof Nonuple) {
+      return toList((Nonuple<?, ?, ?, ?, ?, ?, ?, ?, ?>) tuple);
+    }
+    if (tuple instanceof Decuple) {
+      return toList((Decuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) tuple);
+    }
+    throw new IllegalArgumentException("unrecognized tuple " + tuple.getClass());
+  }
+
+  static <T> ImmutableList<T> toList(Monuple<? extends T> monuple) {
     return ImmutableList.of(monuple.first());
   }
 
-  static <T> List<T> toList(Couple<? extends T, ? extends T> couple) {
+  static <T> ImmutableList<T> toList(Couple<? extends T, ? extends T> couple) {
     return ImmutableList.of(couple.first(), couple.second());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Triple<
           ? extends T,
           ? extends T,
@@ -26,7 +63,7 @@ public interface Tuple extends Container, Countable {
         triple.third());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Quadruple<
           ? extends T,
           ? extends T,
@@ -39,7 +76,7 @@ public interface Tuple extends Container, Countable {
         quadruple.fourth());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Quintuple<
           ? extends T,
           ? extends T,
@@ -54,7 +91,7 @@ public interface Tuple extends Container, Countable {
         quintuple.fifth());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Sextuple<
           ? extends T,
           ? extends T,
@@ -71,7 +108,7 @@ public interface Tuple extends Container, Countable {
         sextuple.sixth());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Septuple<
           ? extends T,
           ? extends T,
@@ -90,7 +127,7 @@ public interface Tuple extends Container, Countable {
         septuple.seventh());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Octuple<
           ? extends T,
           ? extends T,
@@ -111,7 +148,7 @@ public interface Tuple extends Container, Countable {
         octuple.eighth());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Nonuple<
           ? extends T,
           ? extends T,
@@ -134,7 +171,7 @@ public interface Tuple extends Container, Countable {
         nonuple.ninth());
   }
 
-  static <T> List<T> toList(
+  static <T> ImmutableList<T> toList(
       Decuple<
           ? extends T,
           ? extends T,

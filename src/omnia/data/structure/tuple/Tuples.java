@@ -4,12 +4,9 @@ import java.util.function.Function;
 
 public class Tuples {
 
-  interface AtLeastMonuple<A> extends Tuple {
+  interface AtLeastEmptyTuple extends Tuple {}
 
-    @Override
-    default boolean isPopulated() {
-      return true;
-    }
+  interface AtLeastMonuple<A> extends AtLeastEmptyTuple {
 
     A first();
 
@@ -367,6 +364,44 @@ public class Tuples {
     AtLeastNonuple<A, B, C, D, E, F, G, H, J> dropNinth();
 
     AtLeastNonuple<A, B, C, D, E, F, G, H, I> dropTenth();
+  }
+
+  interface AtMostEmptyTuple extends AtMostMonuple {
+
+    @Override
+    <T> AtMostMonuple prepend(T object);
+
+    @Override
+    <T> AtMostMonuple append(T object);
+
+    @Override
+    <A> AtMostMonuple appendAll(Monuple<A> other);
+
+    @Override
+    <A, B> AtMostCouple appendAll(Couple<A, B> other);
+
+    @Override
+    <A, B, C> AtMostTriple appendAll(Triple<A, B, C> other);
+
+    @Override
+    <A, B, C, D> AtMostQuadruple appendAll(Quadruple<A, B, C, D> other);
+
+    @Override
+    <A, B, C, D, E> AtMostQuintuple appendAll(Quintuple<A, B, C, D, E> other);
+
+    @Override
+    <A, B, C, D, E, F> AtMostSextuple appendAll(Sextuple<A, B, C, D, E, F> other);
+
+    @Override
+    <A, B, C, D, E, F, G> AtMostSeptuple appendAll(Septuple<A, B, C, D, E, F, G> other);
+
+    @Override
+    <A, B, C, D, E, F, G, H> AtMostOctuple appendAll(Octuple<A, B, C, D, E, F, G, H> other);
+
+    @Override
+    <A, B, C, D, E, F, G, H, I> AtMostNonuple appendAll(Nonuple<A, B, C, D, E, F, G, H, I> other);
+
+    <A, B, C, D, E, F, G, H, I, J> AtMostDecuple appendAll(Decuple<A, B, C, D, E, F, G, H, I, J> other);
   }
 
   interface AtMostMonuple extends AtMostCouple {
