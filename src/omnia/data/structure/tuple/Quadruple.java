@@ -6,4 +6,7 @@ public interface Quadruple<A, B, C, D> extends Tuples.AtLeastQuadruple<A, B, C, 
 
   @Override
   <R> Quadruple<R, B, C, D> mapFirst(Function<? super A, ? extends R> mapper);
+
+  @Override
+  <R> Quadruple<A, R, C, D> mapSecond(Function<? super B, ? extends R> mapper);
 }

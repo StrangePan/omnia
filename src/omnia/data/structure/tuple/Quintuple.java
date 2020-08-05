@@ -6,4 +6,7 @@ public interface Quintuple<A, B, C, D, E> extends Tuples.AtLeastQuintuple<A, B, 
 
   @Override
   <R> Quintuple<R, B, C, D, E> mapFirst(Function<? super A, ? extends R> mapper);
+
+  @Override
+  <R> Quintuple<A, R, C, D, E> mapSecond(Function<? super B, ? extends R> mapper);
 }
