@@ -30,6 +30,8 @@ public class Tuples {
 
     @Override
     <R> AtLeastTriple<A, R, C> mapSecond(Function<? super B, ? extends R> mapper);
+
+    <R> AtLeastTriple<A, B, R> mapThird(Function<? super C, ? extends R> mapper);
   }
 
   interface AtLeastQuadruple<A, B, C, D> extends AtLeastTriple<A, B, C> {
@@ -41,6 +43,9 @@ public class Tuples {
 
     @Override
     <R> AtLeastQuadruple<A, R, C, D> mapSecond(Function<? super B, ? extends R> mapper);
+
+    @Override
+    <R> AtLeastQuadruple<A, B, R, D> mapThird(Function<? super C, ? extends R> mapper);
   }
 
   interface AtLeastQuintuple<A, B, C, D, E> extends AtLeastQuadruple<A, B, C, D> {
@@ -52,6 +57,9 @@ public class Tuples {
 
     @Override
     <R> AtLeastQuintuple<A, R, C, D, E> mapSecond(Function<? super B, ? extends R> mapper);
+
+    @Override
+    <R> AtLeastQuintuple<A, B, R, D, E> mapThird(Function<? super C, ? extends R> mapper);
   }
 
   interface AtLeastSextuple<A, B, C, D, E, F> extends AtLeastQuintuple<A, B, C, D, E> {
@@ -63,6 +71,9 @@ public class Tuples {
 
     @Override
     <R> AtLeastSextuple<A, R, C, D, E, F> mapSecond(Function<? super B, ? extends R> mapper);
+
+    @Override
+    <R> AtLeastSextuple<A, B, R, D, E, F> mapThird(Function<? super C, ? extends R> mapper);
   }
 
   interface AtLeastSeptuple<A, B, C, D, E, F, G> extends AtLeastSextuple<A, B, C, D, E, F> {
@@ -74,6 +85,9 @@ public class Tuples {
 
     @Override
     <R> AtLeastSeptuple<A, R, C, D, E, F, G> mapSecond(Function<? super B, ? extends R> mapper);
+
+    @Override
+    <R> AtLeastSeptuple<A, B, R, D, E, F, G> mapThird(Function<? super C, ? extends R> mapper);
   }
 
   interface AtLeastOctuple<A, B, C, D, E, F, G, H> extends AtLeastSeptuple<A, B, C, D, E, F, G> {
@@ -85,6 +99,9 @@ public class Tuples {
 
     @Override
     <R> AtLeastOctuple<A, R, C, D, E, F, G, H> mapSecond(Function<? super B, ? extends R> mapper);
+
+    @Override
+    <R> AtLeastOctuple<A, B, R, D, E, F, G, H> mapThird(Function<? super C, ? extends R> mapper);
   }
 
   interface AtLeastNonuple<A, B, C, D, E, F, G, H, I> extends AtLeastOctuple<A, B, C, D, E, F, G, H> {
@@ -96,6 +113,9 @@ public class Tuples {
 
     @Override
     <R> AtLeastNonuple<A, R, C, D, E, F, G, H, I> mapSecond(Function<? super B, ? extends R> mapper);
+
+    @Override
+    <R> AtLeastNonuple<A, B, R, D, E, F, G, H, I> mapThird(Function<? super C, ? extends R> mapper);
   }
 
   interface AtLeastDecuple<A, B, C, D, E, F, G, H, I, J> extends AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
@@ -107,5 +127,8 @@ public class Tuples {
 
     @Override
     <R> AtLeastDecuple<A, R, C, D, E, F, G, H, I, J> mapSecond(Function<? super B, ? extends R> mapper);
+
+    @Override
+    <R> AtLeastDecuple<A, B, R, D, E, F, G, H, I, J> mapThird(Function<? super C, ? extends R> mapper);
   }
 }

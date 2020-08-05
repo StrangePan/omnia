@@ -9,4 +9,7 @@ public interface Sextuple<A, B, C, D, E, F> extends Tuples.AtLeastSextuple<A, B,
 
   @Override
   <R> Sextuple<A, R, C, D, E, F> mapSecond(Function<? super B, ? extends R> mapper);
+
+  @Override
+  <R> Sextuple<A, B, R, D, E, F> mapThird(Function<? super C, ? extends R> mapper);
 }

@@ -9,4 +9,7 @@ public interface Triple<A, B, C> extends Tuples.AtLeastTriple<A, B, C> {
 
   @Override
   <R> Triple<A, R, C> mapSecond(Function<? super B, ? extends R> mapper);
+
+  @Override
+  <R> Triple<A, B, R> mapThird(Function<? super C, ? extends R> mapper);
 }
