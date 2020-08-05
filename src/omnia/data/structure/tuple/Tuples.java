@@ -368,4 +368,85 @@ public class Tuples {
 
     AtLeastNonuple<A, B, C, D, E, F, G, H, I> dropTenth();
   }
+
+  interface AtMostMonuple extends AtMostCouple {
+
+    @Override
+    <T> AtMostCouple append(T object);
+
+    @Override
+    <T> AtMostCouple prepend(T object);
+  }
+
+  interface AtMostCouple extends AtMostTriple {
+
+    @Override
+    <T> AtMostTriple prepend(T object);
+
+    @Override
+    <T> AtMostTriple append(T object);
+  }
+
+  interface AtMostTriple extends AtMostQuadruple {
+
+    @Override
+    <T> AtMostQuadruple prepend(T object);
+
+    @Override
+    <T> AtMostQuadruple append(T object);
+  }
+
+  interface AtMostQuadruple extends AtMostQuintuple {
+
+    @Override
+    <T> AtMostQuintuple prepend(T object);
+
+    @Override
+    <T> AtMostQuintuple append(T object);
+  }
+
+  interface AtMostQuintuple extends AtMostSextuple {
+
+    @Override
+    <T> AtMostSextuple prepend(T object);
+
+    @Override
+    <T> AtMostSextuple append(T object);
+  }
+
+  interface AtMostSextuple extends AtMostSeptuple {
+
+    @Override
+    <T> AtMostSeptuple prepend(T object);
+
+    @Override
+    <T> AtMostSeptuple append(T object);
+  }
+
+  interface AtMostSeptuple extends AtMostOctuple {
+
+    @Override
+    <T> AtMostOctuple prepend(T object);
+
+    @Override
+    <T> AtMostOctuple append(T object);
+  }
+
+  interface AtMostOctuple extends AtMostNonuple {
+
+    @Override
+    <T> AtMostNonuple prepend(T object);
+
+    @Override
+    <T> AtMostNonuple append(T object);
+  }
+
+  interface AtMostNonuple extends AtMostDecuple {
+
+    <T> AtMostDecuple prepend(T object);
+
+    <T> AtMostDecuple append(T object);
+  }
+
+  interface AtMostDecuple {}
 }

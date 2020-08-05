@@ -2,7 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.function.Function;
 
-public interface Quintuple<A, B, C, D, E> extends Tuples.AtLeastQuintuple<A, B, C, D, E> {
+public interface Quintuple<A, B, C, D, E> extends Tuples.AtLeastQuintuple<A, B, C, D, E>, Tuples.AtMostQuintuple {
 
   @Override
   default int count() {
@@ -38,4 +38,10 @@ public interface Quintuple<A, B, C, D, E> extends Tuples.AtLeastQuintuple<A, B, 
 
   @Override
   Quadruple<A, B, C, D> dropFifth();
+
+  @Override
+  <T> Sextuple<T, A, B, C, D, E> prepend(T object);
+
+  @Override
+  <T> Sextuple<A, B, C, D, E, T> append(T object);
 }

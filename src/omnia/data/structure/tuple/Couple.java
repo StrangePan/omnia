@@ -2,7 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.function.Function;
 
-public interface Couple<A, B> extends Tuples.AtLeastCouple<A, B> {
+public interface Couple<A, B> extends Tuples.AtLeastCouple<A, B>, Tuples.AtMostCouple {
 
   @Override
   default int count() {
@@ -20,4 +20,10 @@ public interface Couple<A, B> extends Tuples.AtLeastCouple<A, B> {
 
   @Override
   Monuple<A> dropSecond();
+
+  @Override
+  <T> Triple<T, A, B> prepend(T object);
+
+  @Override
+  <T> Triple<A, B, T> append(T object);
 }

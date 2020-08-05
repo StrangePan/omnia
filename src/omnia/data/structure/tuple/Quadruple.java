@@ -2,7 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.function.Function;
 
-public interface Quadruple<A, B, C, D> extends Tuples.AtLeastQuadruple<A, B, C, D> {
+public interface Quadruple<A, B, C, D> extends Tuples.AtLeastQuadruple<A, B, C, D>, Tuples.AtMostQuadruple {
 
   @Override
   default int count() {
@@ -32,4 +32,10 @@ public interface Quadruple<A, B, C, D> extends Tuples.AtLeastQuadruple<A, B, C, 
 
   @Override
   Triple<A, B, C> dropFourth();
+
+  @Override
+  <T> Quintuple<T, A, B, C, D> prepend(T object);
+
+  @Override
+  <T> Quintuple<A, B, C, D, T> append(T object);
 }

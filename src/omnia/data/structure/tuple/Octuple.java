@@ -2,7 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.function.Function;
 
-public interface Octuple<A, B, C, D, E, F, G, H> extends Tuples.AtLeastOctuple<A, B, C, D, E, F, G, H> {
+public interface Octuple<A, B, C, D, E, F, G, H> extends Tuples.AtLeastOctuple<A, B, C, D, E, F, G, H>, Tuples.AtMostOctuple {
 
   @Override
   default int count() {
@@ -56,4 +56,10 @@ public interface Octuple<A, B, C, D, E, F, G, H> extends Tuples.AtLeastOctuple<A
 
   @Override
   Septuple<A, B, C, D, E, F, G> dropEighth();
+
+  @Override
+  <T> Nonuple<T, A, B, C, D, E, F, G, H> prepend(T object);
+
+  @Override
+  <T> Nonuple<A, B, C, D, E, F, G, H, T> append(T object);
 }
