@@ -5,6 +5,11 @@ import java.util.function.Function;
 public interface Triple<A, B, C> extends Tuples.AtLeastTriple<A, B, C> {
 
   @Override
+  default int count() {
+    return 3;
+  }
+
+  @Override
   <R> Triple<R, B, C> mapFirst(Function<? super A, ? extends R> mapper);
 
   @Override

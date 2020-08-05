@@ -6,6 +6,11 @@ public class Tuples {
 
   interface AtLeastMonuple<A> extends Tuple {
 
+    @Override
+    default boolean isPopulated() {
+      return true;
+    }
+
     A first();
 
     <R> AtLeastMonuple<R> mapFirst(Function<? super A, ? extends R> mapper);

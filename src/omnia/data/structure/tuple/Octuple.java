@@ -5,6 +5,11 @@ import java.util.function.Function;
 public interface Octuple<A, B, C, D, E, F, G, H> extends Tuples.AtLeastOctuple<A, B, C, D, E, F, G, H> {
 
   @Override
+  default int count() {
+    return 8;
+  }
+
+  @Override
   <R> Octuple<R, B, C, D, E, F, G, H> mapFirst(Function<? super A, ? extends R> mapper);
 
   @Override

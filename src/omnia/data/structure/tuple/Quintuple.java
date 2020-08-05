@@ -5,6 +5,11 @@ import java.util.function.Function;
 public interface Quintuple<A, B, C, D, E> extends Tuples.AtLeastQuintuple<A, B, C, D, E> {
 
   @Override
+  default int count() {
+    return 5;
+  }
+
+  @Override
   <R> Quintuple<R, B, C, D, E> mapFirst(Function<? super A, ? extends R> mapper);
 
   @Override

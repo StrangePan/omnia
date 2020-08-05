@@ -5,6 +5,11 @@ import java.util.function.Function;
 public interface Decuple<A, B, C, D, E, F, G, H, I, J> extends Tuples.AtLeastDecuple<A, B, C, D, E, F, G, H, I, J> {
 
   @Override
+  default int count() {
+    return 10;
+  }
+
+  @Override
   <R> Decuple<R, B, C, D, E, F, G, H, I, J> mapFirst(Function<? super A, ? extends R> mapper);
 
   @Override

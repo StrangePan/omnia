@@ -5,6 +5,11 @@ import java.util.function.Function;
 public interface Sextuple<A, B, C, D, E, F> extends Tuples.AtLeastSextuple<A, B, C, D, E, F> {
 
   @Override
+  default int count() {
+    return 6;
+  }
+
+  @Override
   <R> Sextuple<R, B, C, D, E, F> mapFirst(Function<? super A, ? extends R> mapper);
 
   @Override
