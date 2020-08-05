@@ -1,3 +1,6 @@
 package omnia.data.structure.tuple;
 
-public interface Tuple {}
+import omnia.contract.Container;
+import omnia.contract.Countable;
+
+public interface Tuple extends Container, Countable {}

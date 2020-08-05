@@ -2,9 +2,8 @@ package omnia.data.structure.tuple;
 
 import java.util.function.Function;
 
-public interface Monuple<A> extends Tuple {
+public interface Monuple<A> extends Tuples.AtLeastMonuple<A> {
 
-  A first();
-
+  @Override
   <R> Monuple<R> mapFirst(Function<? super A, ? extends R> mapper);
 }
