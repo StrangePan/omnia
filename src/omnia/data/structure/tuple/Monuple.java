@@ -13,7 +13,7 @@ public interface Monuple<A> extends Tuples.AtLeastMonuple<A>, Tuples.AtMostMonup
   <R> Monuple<R> mapFirst(Function<? super A, ? extends R> mapper);
 
   @Override
-  Tuple dropFirst();
+  EmptyTuple dropFirst();
 
   @Override
   <T> Couple<T, A> prepend(T object);

@@ -12,7 +12,7 @@ public class Tuples {
 
     <R> AtLeastMonuple<R> mapFirst(Function<? super A, ? extends R> mapper);
 
-    Tuple dropFirst();
+    AtLeastEmptyTuple dropFirst();
   }
 
   interface AtLeastCouple<A, B> extends AtLeastMonuple<A> {
