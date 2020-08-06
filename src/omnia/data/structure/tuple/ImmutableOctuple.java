@@ -175,22 +175,17 @@ final class ImmutableOctuple<A, B, C, D, E, F, G, H> implements Octuple<A, B, C,
   }
 
   @Override
-  public <T> Nonuple<T, A, B, C, D, E, F, G, H> prepend(T object) {
-    return Tuple.of(object, first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth());
-  }
-
-  @Override
   public <T> Nonuple<A, B, C, D, E, F, G, H, T> append(T object) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), object);
   }
 
   @Override
-  public <I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Monuple<I> other) {
+  public <I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Monuple<I> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), other.first());
   }
 
   @Override
-  public <I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Couple<I, J> other) {
+  public <I, J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Couple<I, J> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), other.first(), other.second());
   }
 }

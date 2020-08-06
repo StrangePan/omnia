@@ -8,38 +8,35 @@ public interface EmptyTuple extends Tuples.AtLeastEmptyTuple, Tuples.AtMostEmpty
   }
 
   @Override
-  <T> Monuple<T> prepend(T object);
-
-  @Override
   <T> Monuple<T> append(T object);
 
   @Override
-  <A> Monuple<A> appendAll(Monuple<A> other);
+  <A> Monuple<A> concat(Monuple<A> other);
 
   @Override
-  <A, B> Couple<A, B> appendAll(Couple<A, B> other);
+  <A, B> Couple<A, B> concat(Couple<A, B> other);
 
   @Override
-  <A, B, C> Triple<A, B, C> appendAll(Triple<A, B, C> other);
+  <A, B, C> Triple<A, B, C> concat(Triple<A, B, C> other);
 
   @Override
-  <A, B, C, D> Quadruple<A, B, C, D> appendAll(Quadruple<A, B, C, D> other);
+  <A, B, C, D> Quadruple<A, B, C, D> concat(Quadruple<A, B, C, D> other);
 
   @Override
-  <A, B, C, D, E> Quintuple<A, B, C, D, E> appendAll(Quintuple<A, B, C, D, E> other);
+  <A, B, C, D, E> Quintuple<A, B, C, D, E> concat(Quintuple<A, B, C, D, E> other);
 
   @Override
-  <A, B, C, D, E, F> Sextuple<A, B, C, D, E, F> appendAll(Sextuple<A, B, C, D, E, F> other);
+  <A, B, C, D, E, F> Sextuple<A, B, C, D, E, F> concat(Sextuple<A, B, C, D, E, F> other);
 
   @Override
-  <A, B, C, D, E, F, G> Septuple<A, B, C, D, E, F, G> appendAll(Septuple<A, B, C, D, E, F, G> other);
+  <A, B, C, D, E, F, G> Septuple<A, B, C, D, E, F, G> concat(Septuple<A, B, C, D, E, F, G> other);
 
   @Override
-  <A, B, C, D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Octuple<A, B, C, D, E, F, G, H> other);
+  <A, B, C, D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> concat(Octuple<A, B, C, D, E, F, G, H> other);
 
   @Override
-  <A, B, C, D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Nonuple<A, B, C, D, E, F, G, H, I> other);
+  <A, B, C, D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Nonuple<A, B, C, D, E, F, G, H, I> other);
 
   @Override
-  <A, B, C, D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Decuple<A, B, C, D, E, F, G, H, I, J> other);
+  <A, B, C, D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Decuple<A, B, C, D, E, F, G, H, I, J> other);
 }

@@ -139,32 +139,27 @@ final class ImmutableSextuple<A, B, C, D, E, F> implements Sextuple<A, B, C, D, 
   }
 
   @Override
-  public <T> Septuple<T, A, B, C, D, E, F> prepend(T object) {
-    return Tuple.of(object, first(), second(), third(), fourth(), fifth(), sixth());
-  }
-
-  @Override
   public <T> Septuple<A, B, C, D, E, F, T> append(T object) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), object);
   }
 
   @Override
-  public <G> Septuple<A, B, C, D, E, F, G> appendAll(Monuple<G> other) {
+  public <G> Septuple<A, B, C, D, E, F, G> concat(Monuple<G> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), other.first());
   }
 
   @Override
-  public <G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Couple<G, H> other) {
+  public <G, H> Octuple<A, B, C, D, E, F, G, H> concat(Couple<G, H> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), other.first(), other.second());
   }
 
   @Override
-  public <G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Triple<G, H, I> other) {
+  public <G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Triple<G, H, I> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), other.first(), other.second(), other.third());
   }
 
   @Override
-  public <G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Quadruple<G, H, I, J> other) {
+  public <G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Quadruple<G, H, I, J> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), other.first(), other.second(), other.third(), other.fourth());
   }
 }

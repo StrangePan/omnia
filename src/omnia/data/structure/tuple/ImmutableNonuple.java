@@ -193,17 +193,12 @@ final class ImmutableNonuple<A, B, C, D, E, F, G, H, I> implements Nonuple<A, B,
   }
 
   @Override
-  public <T> Decuple<T, A, B, C, D, E, F, G, H, I> prepend(T object) {
-    return Tuple.of(object, first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth());
-  }
-
-  @Override
   public <T> Decuple<A, B, C, D, E, F, G, H, I, T> append(T object) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), object);
   }
 
   @Override
-  public <J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Monuple<J> other) {
+  public <J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Monuple<J> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), other.first());
   }
 }

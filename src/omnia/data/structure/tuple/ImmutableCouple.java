@@ -67,52 +67,47 @@ final class ImmutableCouple<A, B> implements Couple<A, B> {
   }
 
   @Override
-  public <T> Triple<T, A, B> prepend(T object) {
-    return Tuple.of(object, first(), second());
-  }
-
-  @Override
   public <T> Triple<A, B, T> append(T object) {
     return Tuple.of(first(), second(), object);
   }
 
   @Override
-  public <C> Triple<A, B, C> appendAll(Monuple<C> other) {
+  public <C> Triple<A, B, C> concat(Monuple<C> other) {
     return Tuple.of(first(), second(), other.first());
   }
 
   @Override
-  public <C, D> Quadruple<A, B, C, D> appendAll(Couple<C, D> other) {
+  public <C, D> Quadruple<A, B, C, D> concat(Couple<C, D> other) {
     return Tuple.of(first(), second(), other.first(), other.second());
   }
 
   @Override
-  public <C, D, E> Quintuple<A, B, C, D, E> appendAll(Triple<C, D, E> other) {
+  public <C, D, E> Quintuple<A, B, C, D, E> concat(Triple<C, D, E> other) {
     return Tuple.of(first(), second(), other.first(), other.second(), other.third());
   }
 
   @Override
-  public <C, D, E, F> Sextuple<A, B, C, D, E, F> appendAll(Quadruple<C, D, E, F> other) {
+  public <C, D, E, F> Sextuple<A, B, C, D, E, F> concat(Quadruple<C, D, E, F> other) {
     return Tuple.of(first(), second(), other.first(), other.second(), other.third(), other.fourth());
   }
 
   @Override
-  public <C, D, E, F, G> Septuple<A, B, C, D, E, F, G> appendAll(Quintuple<C, D, E, F, G> other) {
+  public <C, D, E, F, G> Septuple<A, B, C, D, E, F, G> concat(Quintuple<C, D, E, F, G> other) {
     return Tuple.of(first(), second(), other.first(), other.second(), other.third(), other.fourth(), other.fifth());
   }
 
   @Override
-  public <C, D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Sextuple<C, D, E, F, G, H> other) {
+  public <C, D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> concat(Sextuple<C, D, E, F, G, H> other) {
     return Tuple.of(first(), second(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth());
   }
 
   @Override
-  public <C, D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Septuple<C, D, E, F, G, H, I> other) {
+  public <C, D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Septuple<C, D, E, F, G, H, I> other) {
     return Tuple.of(first(), second(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth(), other.seventh());
   }
 
   @Override
-  public <C, D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Octuple<C, D, E, F, G, H, I, J> other) {
+  public <C, D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Octuple<C, D, E, F, G, H, I, J> other) {
     return Tuple.of(first(), second(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth(), other.seventh(), other.eighth());
   }
 }

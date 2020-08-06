@@ -64,11 +64,8 @@ public interface Nonuple<A, B, C, D, E, F, G, H, I> extends Tuples.AtLeastNonupl
   Octuple<A, B, C, D, E, F, G, H> dropNinth();
 
   @Override
-  <T> Decuple<T, A, B, C, D, E, F, G, H, I> prepend(T object);
-
-  @Override
   <T> Decuple<A, B, C, D, E, F, G, H, I, T> append(T object);
 
   @Override
-  <J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Monuple<J> other);
+  <J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Monuple<J> other);
 }
