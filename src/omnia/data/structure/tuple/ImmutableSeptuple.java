@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableSeptuple<A, B, C, D, E, F, G> implements Septuple<A, B, C, D, E, F, G> {
@@ -26,6 +27,28 @@ final class ImmutableSeptuple<A, B, C, D, E, F, G> implements Septuple<A, B, C, 
     this.fifth = requireNonNull(fifth);
     this.sixth = requireNonNull(sixth);
     this.seventh = requireNonNull(seventh);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableSeptuple
+        && Objects.equals(first(), ((ImmutableSeptuple<?, ?, ?, ?, ?, ?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableSeptuple<?, ?, ?, ?, ?, ?, ?>) obj).second())
+        && Objects.equals(third(), ((ImmutableSeptuple<?, ?, ?, ?, ?, ?, ?>) obj).third())
+        && Objects.equals(fourth(), ((ImmutableSeptuple<?, ?, ?, ?, ?, ?, ?>) obj).fourth())
+        && Objects.equals(fifth(), ((ImmutableSeptuple<?, ?, ?, ?, ?, ?, ?>) obj).fifth())
+        && Objects.equals(sixth(), ((ImmutableSeptuple<?, ?, ?, ?, ?, ?, ?>) obj).sixth())
+        && Objects.equals(seventh(), ((ImmutableSeptuple<?, ?, ?, ?, ?, ?, ?>) obj).seventh());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second(), third(), fourth(), fifth(), sixth(), seventh());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "," + fifth() + "," + sixth() + "," + seventh() + "}";
   }
 
   @Override

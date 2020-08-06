@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableQuadruple<A, B, C, D> implements Quadruple<A, B, C, D> {
@@ -20,6 +21,25 @@ final class ImmutableQuadruple<A, B, C, D> implements Quadruple<A, B, C, D> {
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);
     this.fourth = requireNonNull(fourth);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableQuadruple
+        && Objects.equals(first(), ((ImmutableQuadruple<?, ?, ?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableQuadruple<?, ?, ?, ?>) obj).second())
+        && Objects.equals(third(), ((ImmutableQuadruple<?, ?, ?, ?>) obj).third())
+        && Objects.equals(fourth(), ((ImmutableQuadruple<?, ?, ?, ?>) obj).fourth());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second(), third(), fourth());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "}";
   }
 
   @Override

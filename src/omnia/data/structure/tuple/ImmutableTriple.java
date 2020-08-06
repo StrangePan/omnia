@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableTriple<A, B, C> implements Triple<A, B, C> {
@@ -18,6 +19,24 @@ final class ImmutableTriple<A, B, C> implements Triple<A, B, C> {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableTriple
+        && Objects.equals(first(), ((ImmutableTriple<?, ?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableTriple<?, ?, ?>) obj).second())
+        && Objects.equals(third(), ((ImmutableTriple<?, ?, ?>) obj).third());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second(), third());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "," + third() + "}";
   }
 
   @Override

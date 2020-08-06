@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableCouple<A, B> implements Couple<A, B> {
@@ -16,6 +17,23 @@ final class ImmutableCouple<A, B> implements Couple<A, B> {
   private ImmutableCouple(A first, B second) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableCouple
+        && Objects.equals(first(), ((ImmutableCouple<?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableCouple<?, ?>) obj).second());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "}";
   }
 
   @Override

@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableSextuple<A, B, C, D, E, F> implements Sextuple<A, B, C, D, E, F> {
@@ -24,6 +25,27 @@ final class ImmutableSextuple<A, B, C, D, E, F> implements Sextuple<A, B, C, D, 
     this.fourth = requireNonNull(fourth);
     this.fifth = requireNonNull(fifth);
     this.sixth = requireNonNull(sixth);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableSextuple
+        && Objects.equals(first(), ((ImmutableSextuple<?, ?, ?, ?, ?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableSextuple<?, ?, ?, ?, ?, ?>) obj).second())
+        && Objects.equals(third(), ((ImmutableSextuple<?, ?, ?, ?, ?, ?>) obj).third())
+        && Objects.equals(fourth(), ((ImmutableSextuple<?, ?, ?, ?, ?, ?>) obj).fourth())
+        && Objects.equals(fifth(), ((ImmutableSextuple<?, ?, ?, ?, ?, ?>) obj).fifth())
+        && Objects.equals(sixth(), ((ImmutableSextuple<?, ?, ?, ?, ?, ?>) obj).sixth());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second(), third(), fourth(), fifth(), sixth());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "," + fifth() + "," + sixth() + "}";
   }
 
   @Override

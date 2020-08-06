@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J> implements Decuple<A, B, C, D, E, F, G, H, I, J> {
@@ -32,6 +33,31 @@ final class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J> implements Decuple<A,
     this.eighth = requireNonNull(eighth);
     this.ninth = requireNonNull(ninth);
     this.tenth = requireNonNull(tenth);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableDecuple
+        && Objects.equals(first(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).second())
+        && Objects.equals(third(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).third())
+        && Objects.equals(fourth(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).fourth())
+        && Objects.equals(fifth(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).fifth())
+        && Objects.equals(sixth(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).sixth())
+        && Objects.equals(seventh(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).seventh())
+        && Objects.equals(eighth(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).eighth())
+        && Objects.equals(ninth(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).ninth())
+        && Objects.equals(tenth(), ((ImmutableDecuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) obj).tenth());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), tenth());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "," + fifth() + "," + sixth() + "," + seventh() + "," + eighth() + "," + ninth() + "," + tenth() + "}";
   }
 
   @Override

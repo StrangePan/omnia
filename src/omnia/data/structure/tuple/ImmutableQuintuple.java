@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E> {
@@ -22,6 +23,26 @@ final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E
     this.third = requireNonNull(third);
     this.fourth = requireNonNull(fourth);
     this.fifth = requireNonNull(fifth);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableQuintuple
+        && Objects.equals(first(), ((ImmutableQuintuple<?, ?, ?, ?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableQuintuple<?, ?, ?, ?, ?>) obj).second())
+        && Objects.equals(third(), ((ImmutableQuintuple<?, ?, ?, ?, ?>) obj).third())
+        && Objects.equals(fourth(), ((ImmutableQuintuple<?, ?, ?, ?, ?>) obj).fourth())
+        && Objects.equals(fifth(), ((ImmutableQuintuple<?, ?, ?, ?, ?>) obj).fifth());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second(), third(), fourth(), fifth());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "," + fifth() + "}";
   }
 
   @Override

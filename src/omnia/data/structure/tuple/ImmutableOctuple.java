@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableOctuple<A, B, C, D, E, F, G, H> implements Octuple<A, B, C, D, E, F, G, H> {
@@ -28,6 +29,29 @@ final class ImmutableOctuple<A, B, C, D, E, F, G, H> implements Octuple<A, B, C,
     this.sixth = requireNonNull(sixth);
     this.seventh = requireNonNull(seventh);
     this.eighth = requireNonNull(eighth);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableOctuple
+        && Objects.equals(first(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).first())
+        && Objects.equals(second(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).second())
+        && Objects.equals(third(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).third())
+        && Objects.equals(fourth(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).fourth())
+        && Objects.equals(fifth(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).fifth())
+        && Objects.equals(sixth(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).sixth())
+        && Objects.equals(seventh(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).seventh())
+        && Objects.equals(eighth(), ((ImmutableOctuple<?, ?, ?, ?, ?, ?, ?, ?>) obj).eighth());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "," + fifth() + "," + sixth() + "," + seventh() + "," + eighth() + "}";
   }
 
   @Override

@@ -9,6 +9,21 @@ final class ImmutableEmptyTuple implements EmptyTuple {
   private ImmutableEmptyTuple() {}
 
   @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableEmptyTuple;
+  }
+
+  @Override
+  public int hashCode() {
+    return ImmutableEmptyTuple.class.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{}";
+  }
+
+  @Override
   public <T> Monuple<T> prepend(T object) {
     return Tuple.of(object);
   }

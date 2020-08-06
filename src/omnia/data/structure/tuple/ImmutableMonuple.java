@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class ImmutableMonuple<A> implements Monuple<A> {
@@ -14,6 +15,22 @@ final class ImmutableMonuple<A> implements Monuple<A> {
 
   private ImmutableMonuple(A first) {
     this.first = requireNonNull(first);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof ImmutableMonuple
+        && Objects.equals(first(), ((ImmutableMonuple<?>) obj).first());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first());
+  }
+
+  @Override
+  public String toString() {
+    return "Tuple{" + first() + "}";
   }
 
   @Override
