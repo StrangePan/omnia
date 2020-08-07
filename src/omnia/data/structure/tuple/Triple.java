@@ -31,9 +31,6 @@ public interface Triple<A, B, C> extends Tuples.AtLeastTriple<A, B, C>, Tuples.A
   <T> Quadruple<A, B, C, T> append(T object);
 
   @Override
-  <D> Quadruple<A, B, C, D> concat(Monuple<D> other);
-
-  @Override
   <D, E> Quintuple<A, B, C, D, E> concat(Couple<D, E> other);
 
   @Override

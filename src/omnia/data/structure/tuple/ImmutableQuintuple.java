@@ -126,11 +126,6 @@ final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E
   }
 
   @Override
-  public <F> Sextuple<A, B, C, D, E, F> concat(Monuple<F> other) {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first());
-  }
-
-  @Override
   public <F, G> Septuple<A, B, C, D, E, F, G> concat(Couple<F, G> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second());
   }

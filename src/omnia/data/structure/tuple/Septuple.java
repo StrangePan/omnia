@@ -55,9 +55,6 @@ public interface Septuple<A, B, C, D, E, F, G> extends Tuples.AtLeastSeptuple<A,
   <T> Octuple<A, B, C, D, E, F, G, T> append(T object);
 
   @Override
-  <H> Octuple<A, B, C, D, E, F, G, H> concat(Monuple<H> other);
-
-  @Override
   <H, I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Couple<H, I> other);
 
   @Override

@@ -162,11 +162,6 @@ final class ImmutableSeptuple<A, B, C, D, E, F, G> implements Septuple<A, B, C, 
   }
 
   @Override
-  public <H> Octuple<A, B, C, D, E, F, G, H> concat(Monuple<H> other) {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), other.first());
-  }
-
-  @Override
   public <H, I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Couple<H, I> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), other.first(), other.second());
   }

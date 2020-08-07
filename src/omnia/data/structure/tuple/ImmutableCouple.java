@@ -57,23 +57,8 @@ final class ImmutableCouple<A, B> implements Couple<A, B> {
   }
 
   @Override
-  public Monuple<B> dropFirst() {
-    return Tuple.of(second());
-  }
-
-  @Override
-  public Monuple<A> dropSecond() {
-    return Tuple.of(first());
-  }
-
-  @Override
   public <T> Triple<A, B, T> append(T object) {
     return Tuple.of(first(), second(), object);
-  }
-
-  @Override
-  public <C> Triple<A, B, C> concat(Monuple<C> other) {
-    return Tuple.of(first(), second(), other.first());
   }
 
   @Override

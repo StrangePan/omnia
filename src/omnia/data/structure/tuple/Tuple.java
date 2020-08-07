@@ -6,14 +6,6 @@ import omnia.data.structure.immutable.ImmutableList;
 
 public interface Tuple extends Countable {
 
-  static EmptyTuple empty() {
-    return ImmutableEmptyTuple.create();
-  }
-
-  static <A> Monuple<A> of(A first) {
-    return ImmutableMonuple.create(first);
-  }
-
   static <A, B> Couple<A, B> of(A first, B second) {
     return ImmutableCouple.create(first, second);
   }
@@ -52,12 +44,6 @@ public interface Tuple extends Countable {
 
   static ImmutableList<?> toList(Tuple tuple) {
     Objects.requireNonNull(tuple);
-    if (tuple instanceof EmptyTuple) {
-      return ImmutableList.empty();
-    }
-    if (tuple instanceof Monuple) {
-      return toList((Monuple<?>) tuple);
-    }
     if (tuple instanceof Couple) {
       return toList((Couple<?, ?>) tuple);
     }
@@ -86,10 +72,6 @@ public interface Tuple extends Countable {
       return toList((Decuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) tuple);
     }
     throw new IllegalArgumentException("unrecognized tuple " + tuple.getClass());
-  }
-
-  static <T> ImmutableList<T> toList(Monuple<? extends T> monuple) {
-    return ImmutableList.of(monuple.first());
   }
 
   static <T> ImmutableList<T> toList(Couple<? extends T, ? extends T> couple) {

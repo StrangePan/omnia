@@ -37,9 +37,6 @@ public interface Quadruple<A, B, C, D> extends Tuples.AtLeastQuadruple<A, B, C, 
   <T> Quintuple<A, B, C, D, T> append(T object);
 
   @Override
-  <E> Quintuple<A, B, C, D, E> concat(Monuple<E> other);
-
-  @Override
   <E, F> Sextuple<A, B, C, D, E, F> concat(Couple<E, F> other);
 
   @Override

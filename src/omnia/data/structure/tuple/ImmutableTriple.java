@@ -90,11 +90,6 @@ final class ImmutableTriple<A, B, C> implements Triple<A, B, C> {
   }
 
   @Override
-  public <D> Quadruple<A, B, C, D> concat(Monuple<D> other) {
-    return Tuple.of(first(), second(), third(), other.first());
-  }
-
-  @Override
   public <D, E> Quintuple<A, B, C, D, E> concat(Couple<D, E> other) {
     return Tuple.of(first(), second(), third(), other.first(), other.second());
   }
