@@ -5,18 +5,14 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableQuadruple<A, B, C, D> implements Quadruple<A, B, C, D> {
+class ImmutableQuadruple<A, B, C, D> implements Quadruple<A, B, C, D> {
 
   private final A first;
   private final B second;
   private final C third;
   private final D fourth;
 
-  static <A, B, C, D> ImmutableQuadruple<A, B, C, D> create(A first, B second, C third, D fourth) {
-    return new ImmutableQuadruple<>(first, second, third, fourth);
-  }
-
-  private ImmutableQuadruple(A first, B second, C third, D fourth) {
+  ImmutableQuadruple(A first, B second, C third, D fourth) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);

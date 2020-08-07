@@ -5,17 +5,13 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableTriple<A, B, C> implements Triple<A, B, C> {
+class ImmutableTriple<A, B, C> implements Triple<A, B, C> {
 
   private final A first;
   private final B second;
   private final C third;
 
-  static <A, B, C> ImmutableTriple<A, B, C> create(A first, B second, C third) {
-    return new ImmutableTriple<>(first, second, third);
-  }
-
-  private ImmutableTriple(A first, B second, C third) {
+  ImmutableTriple(A first, B second, C third) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);

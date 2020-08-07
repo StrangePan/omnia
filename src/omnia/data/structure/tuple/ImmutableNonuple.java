@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableNonuple<A, B, C, D, E, F, G, H, I> implements Nonuple<A, B, C, D, E, F, G, H, I> {
+class ImmutableNonuple<A, B, C, D, E, F, G, H, I> implements Nonuple<A, B, C, D, E, F, G, H, I> {
 
   private final A first;
   private final B second;
@@ -17,11 +17,7 @@ final class ImmutableNonuple<A, B, C, D, E, F, G, H, I> implements Nonuple<A, B,
   private final H eighth;
   private final I ninth;
 
-  static <A, B, C, D, E, F, G, H, I> ImmutableNonuple<A, B, C, D, E, F, G, H, I> create(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth) {
-    return new ImmutableNonuple<>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth);
-  }
-
-  private ImmutableNonuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth) {
+  ImmutableNonuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);

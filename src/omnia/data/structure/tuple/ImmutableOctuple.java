@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableOctuple<A, B, C, D, E, F, G, H> implements Octuple<A, B, C, D, E, F, G, H> {
+class ImmutableOctuple<A, B, C, D, E, F, G, H> implements Octuple<A, B, C, D, E, F, G, H> {
 
   private final A first;
   private final B second;
@@ -16,11 +16,7 @@ final class ImmutableOctuple<A, B, C, D, E, F, G, H> implements Octuple<A, B, C,
   private final G seventh;
   private final H eighth;
 
-  static <A, B, C, D, E, F, G, H> ImmutableOctuple<A, B, C, D, E, F, G, H> create(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth) {
-    return new ImmutableOctuple<>(first, second, third, fourth, fifth, sixth, seventh, eighth);
-  }
-
-  private ImmutableOctuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth) {
+  ImmutableOctuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);

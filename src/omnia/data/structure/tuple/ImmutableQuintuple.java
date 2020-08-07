@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E> {
+class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E> {
 
   private final A first;
   private final B second;
@@ -13,11 +13,7 @@ final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E
   private final D fourth;
   private final E fifth;
 
-  static <A, B, C, D, E> ImmutableQuintuple<A, B, C, D, E> create(A first, B second, C third, D fourth, E fifth) {
-    return new ImmutableQuintuple<>(first, second, third, fourth, fifth);
-  }
-
-  private ImmutableQuintuple(A first, B second, C third, D fourth, E fifth) {
+  ImmutableQuintuple(A first, B second, C third, D fourth, E fifth) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);

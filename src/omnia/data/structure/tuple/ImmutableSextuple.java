@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableSextuple<A, B, C, D, E, F> implements Sextuple<A, B, C, D, E, F> {
+class ImmutableSextuple<A, B, C, D, E, F> implements Sextuple<A, B, C, D, E, F> {
 
   private final A first;
   private final B second;
@@ -14,11 +14,7 @@ final class ImmutableSextuple<A, B, C, D, E, F> implements Sextuple<A, B, C, D, 
   private final E fifth;
   private final F sixth;
 
-  static <A, B, C, D, E, F> ImmutableSextuple<A, B, C, D, E, F> create(A first, B second, C third, D fourth, E fifth, F sixth) {
-    return new ImmutableSextuple<>(first, second, third, fourth, fifth, sixth);
-  }
-
-  private ImmutableSextuple(A first, B second, C third, D fourth, E fifth, F sixth) {
+  ImmutableSextuple(A first, B second, C third, D fourth, E fifth, F sixth) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);

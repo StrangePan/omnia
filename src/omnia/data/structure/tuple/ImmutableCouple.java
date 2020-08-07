@@ -5,16 +5,12 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableCouple<A, B> implements Couple<A, B> {
+class ImmutableCouple<A, B> implements Couple<A, B> {
 
   private final A first;
   private final B second;
 
-  static <A, B> ImmutableCouple<A, B> create(A first, B second) {
-    return new ImmutableCouple<>(first, second);
-  }
-
-  private ImmutableCouple(A first, B second) {
+  ImmutableCouple(A first, B second) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
   }

@@ -7,39 +7,39 @@ import omnia.data.structure.immutable.ImmutableList;
 public interface Tuple extends Countable {
 
   static <A, B> Couple<A, B> of(A first, B second) {
-    return ImmutableCouple.create(first, second);
+    return new ImmutableCouple<>(first, second);
   }
 
   static <A, B, C> Triple<A, B, C> of(A first, B second, C third) {
-    return ImmutableTriple.create(first, second, third);
+    return new ImmutableTriple<>(first, second, third);
   }
 
   static <A, B, C, D> Quadruple<A, B, C, D> of(A first, B second, C third, D fourth) {
-    return ImmutableQuadruple.create(first, second, third, fourth);
+    return new ImmutableQuadruple<>(first, second, third, fourth);
   }
 
   static <A, B, C, D, E> Quintuple<A, B, C, D, E> of(A first, B second, C third, D fourth, E fifth) {
-    return ImmutableQuintuple.create(first, second, third, fourth, fifth);
+    return new ImmutableQuintuple<>(first, second, third, fourth, fifth);
   }
 
   static <A, B, C, D, E, F> Sextuple<A, B, C, D, E, F> of(A first, B second, C third, D fourth, E fifth, F sixth) {
-    return ImmutableSextuple.create(first, second, third, fourth, fifth, sixth);
+    return new ImmutableSextuple<>(first, second, third, fourth, fifth, sixth);
   }
 
   static <A, B, C, D, E, F, G> Septuple<A, B, C, D, E, F, G> of(A first, B second, C third, D fourth, E fifth, F sixth, G seventh) {
-    return ImmutableSeptuple.create(first, second, third, fourth, fifth, sixth, seventh);
+    return new ImmutableSeptuple<>(first, second, third, fourth, fifth, sixth, seventh);
   }
 
   static <A, B, C, D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> of(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth) {
-    return ImmutableOctuple.create(first, second, third, fourth, fifth, sixth, seventh, eighth);
+    return new ImmutableOctuple<>(first, second, third, fourth, fifth, sixth, seventh, eighth);
   }
 
   static <A, B, C, D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> of(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth) {
-    return ImmutableNonuple.create(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth);
+    return new ImmutableNonuple<>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth);
   }
 
   static <A, B, C, D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> of(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth, J tenth) {
-    return ImmutableDecuple.create(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth);
+    return new ImmutableDecuple<>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth);
   }
 
   static ImmutableList<?> toList(Tuple tuple) {

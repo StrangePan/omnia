@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableSeptuple<A, B, C, D, E, F, G> implements Septuple<A, B, C, D, E, F, G> {
+class ImmutableSeptuple<A, B, C, D, E, F, G> implements Septuple<A, B, C, D, E, F, G> {
 
   private final A first;
   private final B second;
@@ -15,11 +15,7 @@ final class ImmutableSeptuple<A, B, C, D, E, F, G> implements Septuple<A, B, C, 
   private final F sixth;
   private final G seventh;
 
-  static <A, B, C, D, E, F, G> ImmutableSeptuple<A, B, C, D, E, F, G> create(A first, B second, C third, D fourth, E fifth, F sixth, G seventh) {
-    return new ImmutableSeptuple<>(first, second, third, fourth, fifth, sixth, seventh);
-  }
-
-  private ImmutableSeptuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh) {
+  ImmutableSeptuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);
