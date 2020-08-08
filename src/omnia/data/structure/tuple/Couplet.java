@@ -1,6 +1,15 @@
 package omnia.data.structure.tuple;
 
+import java.util.function.Function;
+
 public interface Couplet<T> extends Couple<T, T>, Tuples.AtMostCouplet<T> {
+
+  static <T> Couplet<T> of(T first, T second) {
+    return new ImmutableCouplet<>(first, second);
+  }
+
+  @Override
+  <R> Couplet<R> map(Function<? super T, ? extends R> mapper);
 
   @Override
   Triplet<T> concat(T object);

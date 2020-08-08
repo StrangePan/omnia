@@ -1,6 +1,15 @@
 package omnia.data.structure.tuple;
 
+import java.util.function.Function;
+
 public interface Quintuplet<T> extends Quintuple<T, T, T, T, T>, Tuples.AtMostQuintuplet<T> {
+
+  static <T> Quintuplet<T> of(T first, T second, T third, T fourth, T fifth) {
+    return new ImmutableQuintuplet<>(first, second, third, fourth, fifth);
+  }
+
+  @Override
+  <R> Quintuplet<R> map(Function<? super T, ? extends R> mapper);
 
   @Override
   Quadruplet<T> dropFirst();

@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import omnia.data.cache.Memoized;
 import omnia.data.iterate.MappingIterator;
+import omnia.data.structure.tuple.Couple;
+import omnia.data.structure.tuple.Tuple;
 
 /** A {@link Map} is a data structure that associates unique keys to corresponding values. */
 public interface Map<K, V> {
@@ -79,27 +81,27 @@ public interface Map<K, V> {
 
     static <K, V> Entry<K, V> of(K key, V value) {
       class PairEntry implements Entry<K, V> {
-        private final Pair<K, V> pair = Pair.of(key, value);
+        private final Couple<K, V> couple = Tuple.of(key, value);
 
         @Override
         public K key() {
-          return pair.first();
+          return couple.first();
         }
 
         @Override
         public V value() {
-          return pair.second();
+          return couple.second();
         }
 
         @Override
         public boolean equals(Object other) {
           return other == this
-              || other instanceof PairEntry && ((PairEntry) other).pair.equals(pair);
+              || other instanceof PairEntry && ((PairEntry) other).couple.equals(couple);
         }
 
         @Override
         public int hashCode() {
-          return Objects.hash(pair);
+          return Objects.hash(couple);
         }
       }
 

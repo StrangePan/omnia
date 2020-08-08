@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.Iterator;
 import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.structure.immutable.ImmutableList;
 
@@ -9,6 +10,11 @@ class ImmutableCouplet<T> extends ImmutableCouple<T, T> implements Couplet<T> {
 
   ImmutableCouplet(T first, T second) {
     super(first, second);
+  }
+
+  @Override
+  public <R> Couplet<R> map(Function<? super T, ? extends R> mapper) {
+    return Tuplet.of(mapper.apply(first()), mapper.apply(second()));
   }
 
   @Override

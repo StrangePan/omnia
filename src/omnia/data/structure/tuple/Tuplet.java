@@ -1,43 +1,46 @@
 package omnia.data.structure.tuple;
 
+import java.util.function.Function;
 import omnia.data.structure.List;
 
 public interface Tuplet<T> extends Tuple, List<T> {
 
+  <R> Tuplet<R> map(Function<? super T, ? extends R> mapper);
+
   static <T> Couplet<T> of(T first, T second) {
-    return new ImmutableCouplet<>(first, second);
+    return Couplet.of(first, second);
   }
 
   static <T> Triplet<T> of(T first, T second, T third) {
-    return new ImmutableTriplet<>(first, second, third);
+    return Triplet.of(first, second, third);
   }
 
   static <T> Quadruplet<T> of(T first, T second, T third, T fourth) {
-    return new ImmutableQuadruplet<>(first, second, third, fourth);
+    return Quadruplet.of(first, second, third, fourth);
   }
 
   static <T> Quintuplet<T> of(T first, T second, T third, T fourth, T fifth) {
-    return new ImmutableQuintuplet<>(first, second, third, fourth, fifth);
+    return Quintuplet.of(first, second, third, fourth, fifth);
   }
 
   static <T> Sextuplet<T> of(T first, T second, T third, T fourth, T fifth, T sixth) {
-    return new ImmutableSextuplet<>(first, second, third, fourth, fifth, sixth);
+    return Sextuplet.of(first, second, third, fourth, fifth, sixth);
   }
 
   static <T> Septuplet<T> of(T first, T second, T third, T fourth, T fifth, T sixth, T seventh) {
-    return new ImmutableSeptuplet<>(first, second, third, fourth, fifth, sixth, seventh);
+    return Septuplet.of(first, second, third, fourth, fifth, sixth, seventh);
   }
 
   static <T> Octuplet<T> of(T first, T second, T third, T fourth, T fifth, T sixth, T seventh, T eighth) {
-    return new ImmutableOctuplet<>(first, second, third, fourth, fifth, sixth, seventh, eighth);
+    return Octuplet.of(first, second, third, fourth, fifth, sixth, seventh, eighth);
   }
 
   static <T> Nonuplet<T> of(T first, T second, T third, T fourth, T fifth, T sixth, T seventh, T eighth, T ninth) {
-    return new ImmutableNonuplet<>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth);
+    return Nonuplet.of(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth);
   }
 
   static <T> Decuplet<T> of(T first, T second, T third, T fourth, T fifth, T sixth, T seventh, T eighth, T ninth, T tenth) {
-    return new ImmutableDecuplet<>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth);
+    return Decuplet.of(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth);
   }
 
   @SuppressWarnings("unchecked")

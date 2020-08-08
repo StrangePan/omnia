@@ -1,6 +1,15 @@
 package omnia.data.structure.tuple;
 
+import java.util.function.Function;
+
 public interface Octuplet<T> extends Octuple<T, T, T, T, T, T, T, T>, Tuples.AtMostOctuplet<T> {
+
+  static <T> Octuplet<T> of(T first, T second, T third, T fourth, T fifth, T sixth, T seventh, T eighth) {
+    return new ImmutableOctuplet<>(first, second, third, fourth, fifth, sixth, seventh, eighth);
+  }
+
+  @Override
+  <R> Octuplet<R> map(Function<? super T, ? extends R> mapper);
 
   @Override
   Septuplet<T> dropFirst();

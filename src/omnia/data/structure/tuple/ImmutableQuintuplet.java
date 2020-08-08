@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.Iterator;
 import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.structure.immutable.ImmutableList;
 
@@ -9,6 +10,11 @@ class ImmutableQuintuplet<T> extends ImmutableQuintuple<T, T, T, T, T> implement
 
   ImmutableQuintuplet(T first, T second, T third, T fourth, T fifth) {
     super(first, second, third, fourth, fifth);
+  }
+
+  @Override
+  public <R> Quintuplet<R> map(Function<? super T, ? extends R> mapper) {
+    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()), mapper.apply(fourth()), mapper.apply(fifth()));
   }
 
   @Override

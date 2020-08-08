@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.Iterator;
 import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.structure.immutable.ImmutableList;
 
@@ -9,6 +10,11 @@ class ImmutableQuadruplet<T> extends ImmutableQuadruple<T, T, T, T> implements Q
 
   ImmutableQuadruplet(T first, T second, T third, T fourth) {
     super(first, second, third, fourth);
+  }
+
+  @Override
+  public <R> Quadruplet<R> map(Function<? super T, ? extends R> mapper) {
+    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()), mapper.apply(fourth()));
   }
 
   @Override

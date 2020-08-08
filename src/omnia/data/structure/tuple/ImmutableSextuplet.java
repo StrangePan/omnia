@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.Iterator;
 import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.structure.immutable.ImmutableList;
 
@@ -9,6 +10,11 @@ class ImmutableSextuplet<T> extends ImmutableSextuple<T, T, T, T, T, T> implemen
 
   ImmutableSextuplet(T first, T second, T third, T fourth, T fifth, T sixth) {
     super(first, second, third, fourth, fifth, sixth);
+  }
+
+  @Override
+  public <R> Sextuplet<R> map(Function<? super T, ? extends R> mapper) {
+    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()), mapper.apply(fourth()), mapper.apply(fifth()), mapper.apply(sixth()));
   }
 
   @Override

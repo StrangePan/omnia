@@ -2,6 +2,7 @@ package omnia.data.structure.tuple;
 
 import java.util.Iterator;
 import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import omnia.data.structure.immutable.ImmutableList;
 
@@ -14,6 +15,11 @@ class ImmutableTriplet<T> extends ImmutableTriple<T, T, T> implements Triplet<T>
   @Override
   public Couplet<T> dropFirst() {
     return Tuplet.of(second(), third());
+  }
+
+  @Override
+  public <R> Triplet<R> map(Function<? super T, ? extends R> mapper) {
+    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()));
   }
 
   @Override

@@ -3,8 +3,8 @@ package omnia.data.structure.observable;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import omnia.data.structure.Graph;
-import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
+import omnia.data.structure.tuple.Couplet;
 
 public interface ObservableGraph<E> extends Graph<E>, ObservableDataStructure {
 
@@ -74,7 +74,7 @@ public interface ObservableGraph<E> extends Graph<E>, ObservableDataStructure {
   }
 
   interface EdgeOperation<E> extends GraphOperation<E> {
-    HomogeneousPair<E> endpoints();
+    Couplet<E> endpoints();
   }
 
   interface AddNodeToGraph<E> extends NodeOperation<E> {}

@@ -1,6 +1,15 @@
 package omnia.data.structure.tuple;
 
+import java.util.function.Function;
+
 public interface Triplet<T> extends Triple<T, T, T>, Tuples.AtMostTriplet<T> {
+
+  static <T> Triplet<T> of(T first, T second, T third) {
+    return new ImmutableTriplet<>(first, second, third);
+  }
+
+  @Override
+  <R> Triplet<R> map(Function<? super T, ? extends R> mapper);
 
   @Override
   Couplet<T> dropFirst();
