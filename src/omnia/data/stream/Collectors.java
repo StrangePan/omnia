@@ -97,8 +97,8 @@ public final class Collectors {
    * from {@link Couple#first()} and the values are derived from {@link Couple#second()}. It is
    * undefined how duplicate keys are handled.
    *
-   * @param <K> the first type of the pair and the key type for the map
-   * @param <V> the second type of the pair and the value type for the map
+   * @param <K> the first type of the {@link Couple} and the key type for the map
+   * @param <V> the second type of the {@link Couple} and the value type for the map
    */
   public static <K, V>
   Collector<Couple<? extends K, ? extends V>, ?, ImmutableMap<K, V>> toImmutableMap() {

@@ -80,7 +80,7 @@ public interface Map<K, V> {
     }
 
     static <K, V> Entry<K, V> of(K key, V value) {
-      class PairEntry implements Entry<K, V> {
+      class SimpleEntry implements Entry<K, V> {
         private final Couple<K, V> couple = Tuple.of(key, value);
 
         @Override
@@ -96,7 +96,7 @@ public interface Map<K, V> {
         @Override
         public boolean equals(Object other) {
           return other == this
-              || other instanceof PairEntry && ((PairEntry) other).couple.equals(couple);
+              || other instanceof SimpleEntry && ((SimpleEntry) other).couple.equals(couple);
         }
 
         @Override
@@ -105,7 +105,7 @@ public interface Map<K, V> {
         }
       }
 
-      return new PairEntry();
+      return new SimpleEntry();
     }
   }
 

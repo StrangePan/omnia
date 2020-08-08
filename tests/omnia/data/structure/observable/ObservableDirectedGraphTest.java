@@ -151,7 +151,7 @@ public final class ObservableDirectedGraphTest {
     assertThat(
         graph.edges().stream()
             .map(DirectedEdge::endpoints)
-            .map(pair -> pair.map(DirectedNode::item)))
+            .map(couplet -> couplet.map(DirectedNode::item)))
         .containsExactlyElementsIn(ImmutableSet.of(Couplet.of(replacement, replacement)));
   }
 

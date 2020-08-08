@@ -81,7 +81,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       requireNonNull(element);
       nodes.removeUnknownTyped(element);
       directedEdges.stream()
-          .filter(pair -> pair.containsUnknownTyped(element))
+          .filter(couplet -> couplet.containsUnknownTyped(element))
           .collect(toSet())
           .forEach(directedEdges::remove);
       return this;
@@ -98,7 +98,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
             "cannot replace a node with an already existing node. replacement=" + replacement);
       }
       Set<Couplet<E>> edgesToRemove =
-          directedEdges.stream().filter(pair -> pair.contains(original)).collect(toSet());
+          directedEdges.stream().filter(couplet -> couplet.contains(original)).collect(toSet());
       Set<Couplet<E>> edgesToAdd =
           edgesToRemove.stream()
               .map(

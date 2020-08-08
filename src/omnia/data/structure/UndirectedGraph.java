@@ -1,6 +1,7 @@
 package omnia.data.structure;
 
 import java.util.Optional;
+import omnia.data.structure.tuple.Couplet;
 
 public interface UndirectedGraph<E> extends Graph<E> {
 
@@ -16,7 +17,7 @@ public interface UndirectedGraph<E> extends Graph<E> {
   interface UndirectedEdge<E> extends Graph.Edge<E> {
 
     @Override
-    UnorderedPair<? extends UndirectedNode<E>> endpoints();
+    Couplet<? extends UndirectedNode<E>> endpoints();
   }
 
   @Override
