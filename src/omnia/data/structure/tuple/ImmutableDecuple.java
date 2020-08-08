@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J> implements Decuple<A, B, C, D, E, F, G, H, I, J> {
+class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J> implements Decuple<A, B, C, D, E, F, G, H, I, J> {
 
   private final A first;
   private final B second;
@@ -18,11 +18,7 @@ final class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J> implements Decuple<A,
   private final I ninth;
   private final J tenth;
 
-  static <A, B, C, D, E, F, G, H, I, J> ImmutableDecuple<A, B, C, D, E, F, G, H, I, J> create(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth, J tenth) {
-    return new ImmutableDecuple<>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth);
-  }
-
-  private ImmutableDecuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth, J tenth) {
+  ImmutableDecuple(A first, B second, C third, D fourth, E fifth, F sixth, G seventh, H eighth, I ninth, J tenth) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);

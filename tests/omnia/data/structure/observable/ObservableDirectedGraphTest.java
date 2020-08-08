@@ -8,7 +8,6 @@ import io.reactivex.subscribers.TestSubscriber;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.DirectedGraph.DirectedEdge;
 import omnia.data.structure.DirectedGraph.DirectedNode;
-import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.observable.ObservableDirectedGraph.MutationEvent;
 import omnia.data.structure.observable.ObservableGraph.AddEdgeToGraph;
@@ -16,6 +15,7 @@ import omnia.data.structure.observable.ObservableGraph.AddNodeToGraph;
 import omnia.data.structure.observable.ObservableGraph.RemoveEdgeFromGraph;
 import omnia.data.structure.observable.ObservableGraph.RemoveNodeFromGraph;
 import omnia.data.structure.observable.writable.WritableObservableDirectedGraph;
+import omnia.data.structure.tuple.Couplet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -102,7 +102,7 @@ public final class ObservableDirectedGraphTest {
 
     assertThat(
         graph.edges().stream().findFirst().map(edge -> edge.endpoints().map(DirectedNode::item)))
-        .hasValue(HomogeneousPair.of(item1, item2));
+        .hasValue(Couplet.of(item1, item2));
   }
 
   @Test
@@ -151,8 +151,8 @@ public final class ObservableDirectedGraphTest {
     assertThat(
         graph.edges().stream()
             .map(DirectedEdge::endpoints)
-            .map(pair -> pair.map(DirectedNode::item)))
-        .containsExactlyElementsIn(ImmutableSet.of(HomogeneousPair.of(replacement, replacement)));
+            .map(couplet -> couplet.map(DirectedNode::item)))
+        .containsExactlyElementsIn(ImmutableSet.of(Couplet.of(replacement, replacement)));
   }
 
   @Test
@@ -207,7 +207,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void observeMutations_whenHasEdge_emitsStateWithEdge() {
     Object item = new Object();
-    HomogeneousPair<Object> edge = HomogeneousPair.of(item, item);
+    Couplet<Object> edge = Couplet.of(item, item);
     WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
@@ -268,7 +268,7 @@ public final class ObservableDirectedGraphTest {
             .map(op -> (RemoveEdgeFromGraph<Object>) op)
             .get()
             .endpoints()
-            .equals(HomogeneousPair.of(item, item)));
+            .equals(Couplet.of(item, item)));
   }
 
   @Test
@@ -294,7 +294,7 @@ public final class ObservableDirectedGraphTest {
             .findFirst()
             .get()
             .endpoints()
-            .equals(HomogeneousPair.of(item, item)));
+            .equals(Couplet.of(item, item)));
   }
 
   @Test
@@ -363,7 +363,7 @@ public final class ObservableDirectedGraphTest {
             .findFirst()
             .get()
             .endpoints()
-            .equals(HomogeneousPair.of(original, original)));
+            .equals(Couplet.of(original, original)));
     testSubscriber.assertValue(
         event -> event.operations().stream()
             .filter(op -> op instanceof AddEdgeToGraph)
@@ -371,6 +371,6 @@ public final class ObservableDirectedGraphTest {
             .findFirst()
             .get()
             .endpoints()
-            .equals(HomogeneousPair.of(replacement, replacement)));
+            .equals(Couplet.of(replacement, replacement)));
   }
 }

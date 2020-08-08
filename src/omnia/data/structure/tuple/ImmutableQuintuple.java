@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E> {
+class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E> {
 
   private final A first;
   private final B second;
@@ -13,11 +13,7 @@ final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E
   private final D fourth;
   private final E fifth;
 
-  static <A, B, C, D, E> ImmutableQuintuple<A, B, C, D, E> create(A first, B second, C third, D fourth, E fifth) {
-    return new ImmutableQuintuple<>(first, second, third, fourth, fifth);
-  }
-
-  private ImmutableQuintuple(A first, B second, C third, D fourth, E fifth) {
+  ImmutableQuintuple(A first, B second, C third, D fourth, E fifth) {
     this.first = requireNonNull(first);
     this.second = requireNonNull(second);
     this.third = requireNonNull(third);
@@ -121,37 +117,27 @@ final class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E
   }
 
   @Override
-  public <T> Sextuple<T, A, B, C, D, E> prepend(T object) {
-    return Tuple.of(object, first(), second(), third(), fourth(), fifth());
-  }
-
-  @Override
   public <T> Sextuple<A, B, C, D, E, T> append(T object) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), object);
   }
 
   @Override
-  public <F> Sextuple<A, B, C, D, E, F> appendAll(Monuple<F> other) {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first());
-  }
-
-  @Override
-  public <F, G> Septuple<A, B, C, D, E, F, G> appendAll(Couple<F, G> other) {
+  public <F, G> Septuple<A, B, C, D, E, F, G> append(Couple<F, G> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second());
   }
 
   @Override
-  public <F, G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Triple<F, G, H> other) {
+  public <F, G, H> Octuple<A, B, C, D, E, F, G, H> append(Triple<F, G, H> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third());
   }
 
   @Override
-  public <F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Quadruple<F, G, H, I> other) {
+  public <F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> append(Quadruple<F, G, H, I> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth());
   }
 
   @Override
-  public <F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Quintuple<F, G, H, I, J> other) {
+  public <F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> append(Quintuple<F, G, H, I, J> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth());
   }
 }

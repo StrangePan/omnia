@@ -16,38 +16,26 @@ public interface Couple<A, B> extends Tuples.AtLeastCouple<A, B>, Tuples.AtMostC
   <R> Couple<A, R> mapSecond(Function<? super B, ? extends R> mapper);
 
   @Override
-  Monuple<B> dropFirst();
-
-  @Override
-  Monuple<A> dropSecond();
-
-  @Override
-  <T> Triple<T, A, B> prepend(T object);
-
-  @Override
   <T> Triple<A, B, T> append(T object);
 
   @Override
-  <C> Triple<A, B, C> appendAll(Monuple<C> other);
+  <C, D> Quadruple<A, B, C, D> append(Couple<C, D> other);
 
   @Override
-  <C, D> Quadruple<A, B, C, D> appendAll(Couple<C, D> other);
+  <C, D, E> Quintuple<A, B, C, D, E> append(Triple<C, D, E> other);
 
   @Override
-  <C, D, E> Quintuple<A, B, C, D, E> appendAll(Triple<C, D, E> other);
+  <C, D, E, F> Sextuple<A, B, C, D, E, F> append(Quadruple<C, D, E, F> other);
 
   @Override
-  <C, D, E, F> Sextuple<A, B, C, D, E, F> appendAll(Quadruple<C, D, E, F> other);
+  <C, D, E, F, G> Septuple<A, B, C, D, E, F, G> append(Quintuple<C, D, E, F, G> other);
 
   @Override
-  <C, D, E, F, G> Septuple<A, B, C, D, E, F, G> appendAll(Quintuple<C, D, E, F, G> other);
+  <C, D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> append(Sextuple<C, D, E, F, G, H> other);
 
   @Override
-  <C, D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Sextuple<C, D, E, F, G, H> other);
+  <C, D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> append(Septuple<C, D, E, F, G, H, I> other);
 
   @Override
-  <C, D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Septuple<C, D, E, F, G, H, I> other);
-
-  @Override
-  <C, D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Octuple<C, D, E, F, G, H, I, J> other);
+  <C, D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> append(Octuple<C, D, E, F, G, H, I, J> other);
 }

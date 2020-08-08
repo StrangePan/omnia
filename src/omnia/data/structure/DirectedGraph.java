@@ -3,6 +3,7 @@ package omnia.data.structure;
 import static omnia.data.stream.Collectors.toSet;
 
 import java.util.Optional;
+import omnia.data.structure.tuple.Couplet;
 
 public interface DirectedGraph<E> extends Graph<E> {
 
@@ -30,7 +31,7 @@ public interface DirectedGraph<E> extends Graph<E> {
     DirectedNode<E> end();
 
     @Override
-    HomogeneousPair<? extends DirectedNode<E>> endpoints();
+    Couplet<? extends DirectedNode<E>> endpoints();
   }
 
   @Override
@@ -52,11 +53,11 @@ public interface DirectedGraph<E> extends Graph<E> {
         && Set.areEqual(
             a.edges().stream()
                 .map(DirectedEdge::endpoints)
-                .map(pair -> pair.map(DirectedNode::item))
+                .map(couplet -> couplet.map(DirectedNode::item))
                 .collect(toSet()),
             b.edges().stream()
                 .map(DirectedEdge::endpoints)
-                .map(pair -> pair.map(DirectedNode::item))
+                .map(couplet -> couplet.map(DirectedNode::item))
                 .collect(toSet()));
   }
 }

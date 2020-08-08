@@ -14,11 +14,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import omnia.data.stream.Streams;
 import omnia.data.structure.DirectedGraph;
-import omnia.data.structure.HomogeneousPair;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableDirectedGraph;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.observable.ObservableDirectedGraph;
+import omnia.data.structure.tuple.Couplet;
 
 final class WritableObservableDirectedGraphImpl<E> implements WritableObservableDirectedGraph<E> {
 
@@ -65,7 +65,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
                     .map(DirectedNode::edges)
                     .flatMap(Set::stream)
                     .map(DirectedEdge::endpoints)
-                    .map(pair -> pair.map(DirectedNode::item))
+                    .map(couplet -> couplet.map(DirectedNode::item))
                     .map(RemoveEdgeFromGraph::create),
                 previousState.nodeOf(original)
                     .stream()
@@ -80,7 +80,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
                     .map(DirectedNode::edges)
                     .flatMap(Set::stream)
                     .map(DirectedEdge::endpoints)
-                    .map(pair -> pair.map(DirectedNode::item))
+                    .map(couplet -> couplet.map(DirectedNode::item))
                     .map(AddEdgeToGraph::create))
                 .collect(toSet()));
   }
@@ -96,7 +96,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
                     .map(DirectedNode::edges)
                     .flatMap(Set::stream)
                     .map(DirectedEdge::endpoints)
-                    .map(pair -> pair.map(DirectedNode::item))
+                    .map(couplet -> couplet.map(DirectedNode::item))
                     .map(RemoveEdgeFromGraph::create),
                 previousState.nodeOf(item).stream()
                     .map(DirectedNode::item)
@@ -112,7 +112,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
         (previousState, newState) ->
             newState.edgeOf(from, to).stream()
                 .map(DirectedEdge::endpoints)
-                .map(pair -> pair.map(DirectedNode::item))
+                .map(couplet -> couplet.map(DirectedNode::item))
                 .map(AddEdgeToGraph::create)
                 .collect(toSet()));
   }
@@ -125,7 +125,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
         (previousState, newState) ->
             previousState.edgeOf(from, to).stream()
                 .map(DirectedEdge::endpoints)
-                .map(pair -> pair.map(DirectedNode::item))
+                .map(couplet -> couplet.map(DirectedNode::item))
                 .map(RemoveEdgeFromGraph::create)
                 .collect(toSet()));
   }
@@ -251,7 +251,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
                              .map(AddNodeToGraph::create),
                          state.edges().stream()
                              .map(DirectedEdge::endpoints)
-                             .map(pair -> pair.map(DirectedNode::item))
+                             .map(couplet -> couplet.map(DirectedNode::item))
                              .map(AddEdgeToGraph::create))
                          .collect(toImmutableSet());
                  emitter.onNext(new MutationEvent<>() {
@@ -325,34 +325,34 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
   }
 
   private static abstract class EdgeOperation<E> implements ObservableDirectedGraph.EdgeOperation<E> {
-    private final HomogeneousPair<E> endpoints;
+    private final Couplet<E> endpoints;
 
-    private EdgeOperation(HomogeneousPair<E> endpoints) {
+    private EdgeOperation(Couplet<E> endpoints) {
       this.endpoints = requireNonNull(endpoints);
     }
 
     @Override
-    public final HomogeneousPair<E> endpoints() {
+    public final Couplet<E> endpoints() {
       return endpoints;
     }
   }
 
   private static final class AddEdgeToGraph<E> extends EdgeOperation<E> implements ObservableDirectedGraph.AddEdgeToGraph<E> {
-    private AddEdgeToGraph(HomogeneousPair<E> endpoints) {
+    private AddEdgeToGraph(Couplet<E> endpoints) {
       super(endpoints);
     }
 
-    static <E> AddEdgeToGraph<E> create(HomogeneousPair<E> endpoints) {
+    static <E> AddEdgeToGraph<E> create(Couplet<E> endpoints) {
       return new AddEdgeToGraph<>(endpoints);
     }
   }
 
   private static final class RemoveEdgeFromGraph<E> extends EdgeOperation<E> implements ObservableDirectedGraph.RemoveEdgeFromGraph<E> {
-    private RemoveEdgeFromGraph(HomogeneousPair<E> endpoints) {
+    private RemoveEdgeFromGraph(Couplet<E> endpoints) {
       super(endpoints);
     }
 
-    static <E> RemoveEdgeFromGraph<E> create(HomogeneousPair<E> endpoints) {
+    static <E> RemoveEdgeFromGraph<E> create(Couplet<E> endpoints) {
       return new RemoveEdgeFromGraph<>(endpoints);
     }
   }

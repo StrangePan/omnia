@@ -6,7 +6,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import omnia.data.structure.List;
-import omnia.data.structure.Pair;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.immutable.ImmutableMap;
@@ -16,6 +15,7 @@ import omnia.data.structure.mutable.HashMap;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableMap;
 import omnia.data.structure.mutable.MutableSet;
+import omnia.data.structure.tuple.Couple;
 
 /** Collection empty collectors for Omnia data structures that can be used with Java streams. */
 public final class Collectors {
@@ -93,16 +93,16 @@ public final class Collectors {
   }
 
   /**
-   * Collects a stream of {@link Pair}s into an {@link ImmutableMap} where the keys are derived
-   * from {@link Pair#first()} and the values are derived from {@link Pair#second()}. It is
+   * Collects a stream of {@link Couple}s into an {@link ImmutableMap} where the keys are derived
+   * from {@link Couple#first()} and the values are derived from {@link Couple#second()}. It is
    * undefined how duplicate keys are handled.
    *
-   * @param <K> the first type of the pair and the key type for the map
-   * @param <V> the second type of the pair and the value type for the map
+   * @param <K> the first type of the {@link Couple} and the key type for the map
+   * @param <V> the second type of the {@link Couple} and the value type for the map
    */
   public static <K, V>
-  Collector<Pair<? extends K, ? extends V>, ?, ImmutableMap<K, V>> toImmutableMap() {
-    return toImmutableMap(Pair::first, Pair::second);
+  Collector<Couple<? extends K, ? extends V>, ?, ImmutableMap<K, V>> toImmutableMap() {
+    return toImmutableMap(Couple::first, Couple::second);
   }
 
   /**

@@ -40,23 +40,17 @@ public interface Quintuple<A, B, C, D, E> extends Tuples.AtLeastQuintuple<A, B, 
   Quadruple<A, B, C, D> dropFifth();
 
   @Override
-  <T> Sextuple<T, A, B, C, D, E> prepend(T object);
-
-  @Override
   <T> Sextuple<A, B, C, D, E, T> append(T object);
 
   @Override
-  <F> Sextuple<A, B, C, D, E, F> appendAll(Monuple<F> other);
+  <F, G> Septuple<A, B, C, D, E, F, G> append(Couple<F, G> other);
 
   @Override
-  <F, G> Septuple<A, B, C, D, E, F, G> appendAll(Couple<F, G> other);
+  <F, G, H> Octuple<A, B, C, D, E, F, G, H> append(Triple<F, G, H> other);
 
   @Override
-  <F, G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Triple<F, G, H> other);
+  <F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> append(Quadruple<F, G, H, I> other);
 
   @Override
-  <F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Quadruple<F, G, H, I> other);
-
-  @Override
-  <F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Quintuple<F, G, H, I, J> other);
+  <F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> append(Quintuple<F, G, H, I, J> other);
 }

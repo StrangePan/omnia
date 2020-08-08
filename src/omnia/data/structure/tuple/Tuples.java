@@ -4,30 +4,15 @@ import java.util.function.Function;
 
 public class Tuples {
 
-  interface AtLeastEmptyTuple extends Tuple {}
-
-  interface AtLeastMonuple<A> extends AtLeastEmptyTuple {
+  interface AtLeastCouple<A, B> extends Tuple {
 
     A first();
 
-    <R> AtLeastMonuple<R> mapFirst(Function<? super A, ? extends R> mapper);
-
-    AtLeastEmptyTuple dropFirst();
-  }
-
-  interface AtLeastCouple<A, B> extends AtLeastMonuple<A> {
-
     B second();
 
-    @Override
     <R> AtLeastCouple<R, B> mapFirst(Function<? super A, ? extends R> mapper);
 
     <R> AtLeastCouple<A, R> mapSecond(Function<? super B, ? extends R> mapper);
-
-    @Override
-    AtLeastMonuple<B> dropFirst();
-
-    AtLeastMonuple<A> dropSecond();
   }
 
   interface AtLeastTriple<A, B, C> extends AtLeastCouple<A, B> {
@@ -42,10 +27,8 @@ public class Tuples {
 
     <R> AtLeastTriple<A, B, R> mapThird(Function<? super C, ? extends R> mapper);
 
-    @Override
     AtLeastCouple<B, C> dropFirst();
 
-    @Override
     AtLeastCouple<A, C> dropSecond();
 
     AtLeastCouple<A, B> dropThird();
@@ -366,248 +349,255 @@ public class Tuples {
     AtLeastNonuple<A, B, C, D, E, F, G, H, I> dropTenth();
   }
 
-  interface AtMostEmptyTuple extends AtMostMonuple {
-
-    @Override
-    <T> AtMostMonuple prepend(T object);
-
-    @Override
-    <T> AtMostMonuple append(T object);
-
-    @Override
-    <A> AtMostMonuple appendAll(Monuple<A> other);
-
-    @Override
-    <A, B> AtMostCouple appendAll(Couple<A, B> other);
-
-    @Override
-    <A, B, C> AtMostTriple appendAll(Triple<A, B, C> other);
-
-    @Override
-    <A, B, C, D> AtMostQuadruple appendAll(Quadruple<A, B, C, D> other);
-
-    @Override
-    <A, B, C, D, E> AtMostQuintuple appendAll(Quintuple<A, B, C, D, E> other);
-
-    @Override
-    <A, B, C, D, E, F> AtMostSextuple appendAll(Sextuple<A, B, C, D, E, F> other);
-
-    @Override
-    <A, B, C, D, E, F, G> AtMostSeptuple appendAll(Septuple<A, B, C, D, E, F, G> other);
-
-    @Override
-    <A, B, C, D, E, F, G, H> AtMostOctuple appendAll(Octuple<A, B, C, D, E, F, G, H> other);
-
-    @Override
-    <A, B, C, D, E, F, G, H, I> AtMostNonuple appendAll(Nonuple<A, B, C, D, E, F, G, H, I> other);
-
-    <A, B, C, D, E, F, G, H, I, J> AtMostDecuple appendAll(Decuple<A, B, C, D, E, F, G, H, I, J> other);
-  }
-
-  interface AtMostMonuple extends AtMostCouple {
-
-    @Override
-    <T> AtMostCouple prepend(T object);
-
-    @Override
-    <T> AtMostCouple append(T object);
-
-    @Override
-    <B> AtMostCouple appendAll(Monuple<B> other);
-
-    @Override
-    <B, C> AtMostTriple appendAll(Couple<B, C> other);
-
-    @Override
-    <B, C, D> AtMostQuadruple appendAll(Triple<B, C, D> other);
-
-    @Override
-    <B, C, D, E> AtMostQuintuple appendAll(Quadruple<B, C, D, E> other);
-
-    @Override
-    <B, C, D, E, F> AtMostSextuple appendAll(Quintuple<B, C, D, E, F> other);
-
-    @Override
-    <B, C, D, E, F, G> AtMostSeptuple appendAll(Sextuple<B, C, D, E, F, G> other);
-
-    @Override
-    <B, C, D, E, F, G, H> AtMostOctuple appendAll(Septuple<B, C, D, E, F, G, H> other);
-
-    @Override
-    <B, C, D, E, F, G, H, I> AtMostNonuple appendAll(Octuple<B, C, D, E, F, G, H, I> other);
-
-    <B, C, D, E, F, G, H, I, J> AtMostDecuple appendAll(Nonuple<B, C, D, E, F, G, H, I, J> other);
-  }
-
   interface AtMostCouple extends AtMostTriple {
-
-    @Override
-    <T> AtMostTriple prepend(T object);
 
     @Override
     <T> AtMostTriple append(T object);
 
     @Override
-    <C> AtMostTriple appendAll(Monuple<C> other);
+    <C, D> AtMostQuadruple append(Couple<C, D> other);
 
     @Override
-    <C, D> AtMostQuadruple appendAll(Couple<C, D> other);
+    <C, D, E> AtMostQuintuple append(Triple<C, D, E> other);
 
     @Override
-    <C, D, E> AtMostQuintuple appendAll(Triple<C, D, E> other);
+    <C, D, E, F> AtMostSextuple append(Quadruple<C, D, E, F> other);
 
     @Override
-    <C, D, E, F> AtMostSextuple appendAll(Quadruple<C, D, E, F> other);
+    <C, D, E, F, G> AtMostSeptuple append(Quintuple<C, D, E, F, G> other);
 
     @Override
-    <C, D, E, F, G> AtMostSeptuple appendAll(Quintuple<C, D, E, F, G> other);
+    <C, D, E, F, G, H> AtMostOctuple append(Sextuple<C, D, E, F, G, H> other);
 
     @Override
-    <C, D, E, F, G, H> AtMostOctuple appendAll(Sextuple<C, D, E, F, G, H> other);
+    <C, D, E, F, G, H, I> AtMostNonuple append(Septuple<C, D, E, F, G, H, I> other);
 
-    @Override
-    <C, D, E, F, G, H, I> AtMostNonuple appendAll(Septuple<C, D, E, F, G, H, I> other);
-
-    <C, D, E, F, G, H, I, J> AtMostDecuple appendAll(Octuple<C, D, E, F, G, H, I, J> other);
+    <C, D, E, F, G, H, I, J> AtMostDecuple append(Octuple<C, D, E, F, G, H, I, J> other);
   }
 
   interface AtMostTriple extends AtMostQuadruple {
 
     @Override
-    <T> AtMostQuadruple prepend(T object);
-
-    @Override
     <T> AtMostQuadruple append(T object);
 
     @Override
-    <D> AtMostQuadruple appendAll(Monuple<D> other);
+    <D, E> AtMostQuintuple append(Couple<D, E> other);
 
     @Override
-    <D, E> AtMostQuintuple appendAll(Couple<D, E> other);
+    <D, E, F> AtMostSextuple append(Triple<D, E, F> other);
 
     @Override
-    <D, E, F> AtMostSextuple appendAll(Triple<D, E, F> other);
+    <D, E, F, G> AtMostSeptuple append(Quadruple<D, E, F, G> other);
 
     @Override
-    <D, E, F, G> AtMostSeptuple appendAll(Quadruple<D, E, F, G> other);
+    <D, E, F, G, H> AtMostOctuple append(Quintuple<D, E, F, G, H> other);
 
     @Override
-    <D, E, F, G, H> AtMostOctuple appendAll(Quintuple<D, E, F, G, H> other);
+    <D, E, F, G, H, I> AtMostNonuple append(Sextuple<D, E, F, G, H, I> other);
 
-    @Override
-    <D, E, F, G, H, I> AtMostNonuple appendAll(Sextuple<D, E, F, G, H, I> other);
-
-    <D, E, F, G, H, I, J> AtMostDecuple appendAll(Septuple<D, E, F, G, H, I, J> other);
+    <D, E, F, G, H, I, J> AtMostDecuple append(Septuple<D, E, F, G, H, I, J> other);
   }
 
   interface AtMostQuadruple extends AtMostQuintuple {
 
     @Override
-    <T> AtMostQuintuple prepend(T object);
-
-    @Override
     <T> AtMostQuintuple append(T object);
 
     @Override
-    <E> AtMostQuintuple appendAll(Monuple<E> other);
+    <E, F> AtMostSextuple append(Couple<E, F> other);
 
     @Override
-    <E, F> AtMostSextuple appendAll(Couple<E, F> other);
+    <E, F, G> AtMostSeptuple append(Triple<E, F, G> other);
 
     @Override
-    <E, F, G> AtMostSeptuple appendAll(Triple<E, F, G> other);
+    <E, F, G, H> AtMostOctuple append(Quadruple<E, F, G, H> other);
 
     @Override
-    <E, F, G, H> AtMostOctuple appendAll(Quadruple<E, F, G, H> other);
+    <E, F, G, H, I> AtMostNonuple append(Quintuple<E, F, G, H, I> other);
 
-    @Override
-    <E, F, G, H, I> AtMostNonuple appendAll(Quintuple<E, F, G, H, I> other);
-
-    <E, F, G, H, I, J> AtMostDecuple appendAll(Sextuple<E, F, G, H, I, J> other);
+    <E, F, G, H, I, J> AtMostDecuple append(Sextuple<E, F, G, H, I, J> other);
   }
 
   interface AtMostQuintuple extends AtMostSextuple {
 
     @Override
-    <T> AtMostSextuple prepend(T object);
-
-    @Override
     <T> AtMostSextuple append(T object);
 
     @Override
-    <F> AtMostSextuple appendAll(Monuple<F> other);
+    <F, G> AtMostSeptuple append(Couple<F, G> other);
 
     @Override
-    <F, G> AtMostSeptuple appendAll(Couple<F, G> other);
+    <F, G, H> AtMostOctuple append(Triple<F, G, H> other);
 
     @Override
-    <F, G, H> AtMostOctuple appendAll(Triple<F, G, H> other);
+    <F, G, H, I> AtMostNonuple append(Quadruple<F, G, H, I> other);
 
-    @Override
-    <F, G, H, I> AtMostNonuple appendAll(Quadruple<F, G, H, I> other);
-
-    <F, G, H, I, J> AtMostDecuple appendAll(Quintuple<F, G, H, I, J> other);
+    <F, G, H, I, J> AtMostDecuple append(Quintuple<F, G, H, I, J> other);
   }
 
   interface AtMostSextuple extends AtMostSeptuple {
 
     @Override
-    <T> AtMostSeptuple prepend(T object);
-
-    @Override
     <T> AtMostSeptuple append(T object);
 
     @Override
-    <G> AtMostSeptuple appendAll(Monuple<G> other);
+    <G, H> AtMostOctuple append(Couple<G, H> other);
 
     @Override
-    <G, H> AtMostOctuple appendAll(Couple<G, H> other);
+    <G, H, I> AtMostNonuple append(Triple<G, H, I> other);
 
-    @Override
-    <G, H, I> AtMostNonuple appendAll(Triple<G, H, I> other);
-
-    <G, H, I, J> AtMostDecuple appendAll(Quadruple<G, H, I, J> other);
+    <G, H, I, J> AtMostDecuple append(Quadruple<G, H, I, J> other);
   }
 
   interface AtMostSeptuple extends AtMostOctuple {
 
     @Override
-    <T> AtMostOctuple prepend(T object);
-
-    @Override
     <T> AtMostOctuple append(T object);
 
     @Override
-    <H> AtMostOctuple appendAll(Monuple<H> other);
+    <H, I> AtMostNonuple append(Couple<H, I> other);
 
-    @Override
-    <H, I> AtMostNonuple appendAll(Couple<H, I> other);
-
-    <H, I, J> AtMostDecuple appendAll(Triple<H, I, J> other);
+    <H, I, J> AtMostDecuple append(Triple<H, I, J> other);
   }
 
   interface AtMostOctuple extends AtMostNonuple {
 
     @Override
-    <T> AtMostNonuple prepend(T object);
-
-    @Override
     <T> AtMostNonuple append(T object);
 
-    @Override
-    <I> AtMostNonuple appendAll(Monuple<I> other);
-
-    <I, J> AtMostDecuple appendAll(Couple<I, J> other);
+    <I, J> AtMostDecuple append(Couple<I, J> other);
   }
 
   interface AtMostNonuple extends AtMostDecuple {
 
-    <T> AtMostDecuple prepend(T object);
-
     <T> AtMostDecuple append(T object);
-
-    <J> AtMostDecuple appendAll(Monuple<J> other);
   }
 
   interface AtMostDecuple {}
+
+  interface AtMostCouplet<T> extends AtMostTriplet<T>, AtMostCouple {
+
+    @Override
+    AtMostTriplet<T> concat(T object);
+
+    @Override
+    AtMostQuadruplet<T> concat(Couple<T, T> other);
+
+    @Override
+    AtMostQuintuplet<T> concat(Triple<T, T, T> other);
+
+    @Override
+    AtMostSextuplet<T> concat(Quadruple<T, T, T, T> other);
+
+    @Override
+    AtMostSeptuplet<T> concat(Quintuple<T, T, T, T, T> other);
+
+    @Override
+    AtMostOctuplet<T> concat(Sextuple<T, T, T, T, T, T> other);
+
+    @Override
+    AtMostNonuplet<T> concat(Septuple<T, T, T, T, T, T, T> other);
+
+    AtMostDecuplet<T> concat(Octuple<T, T, T, T, T, T, T, T> other);
+  }
+
+  interface AtMostTriplet<T> extends AtMostQuadruplet<T>, AtMostTriple {
+
+    @Override
+    AtMostQuadruplet<T> concat(T object);
+
+    @Override
+    AtMostQuintuplet<T> concat(Couple<T, T> other);
+
+    @Override
+    AtMostSextuplet<T> concat(Triple<T, T, T> other);
+
+    @Override
+    AtMostSeptuplet<T> concat(Quadruple<T, T, T, T> other);
+
+    @Override
+    AtMostOctuplet<T> concat(Quintuple<T, T, T, T, T> other);
+
+    @Override
+    AtMostNonuplet<T> concat(Sextuple<T, T, T, T, T, T> other);
+
+    AtMostDecuplet<T> concat(Septuple<T, T, T, T, T, T, T> other);
+  }
+
+  interface AtMostQuadruplet<T> extends AtMostQuintuplet<T>, AtMostQuadruple {
+
+    @Override
+    AtMostQuintuplet<T> concat(T object);
+
+    @Override
+    AtMostSextuplet<T> concat(Couple<T, T> other);
+
+    @Override
+    AtMostSeptuplet<T> concat(Triple<T, T, T> other);
+
+    @Override
+    AtMostOctuplet<T> concat(Quadruple<T, T, T, T> other);
+
+    @Override
+    AtMostNonuplet<T> concat(Quintuple<T, T, T, T, T> other);
+    
+    AtMostDecuplet<T> concat(Sextuple<T, T, T, T, T, T> other);
+  }
+
+  interface AtMostQuintuplet<T> extends AtMostSextuplet<T>, AtMostQuintuple {
+
+    @Override
+    AtMostSextuplet<T> concat(T object);
+
+    @Override
+    AtMostSeptuplet<T> concat(Couple<T, T> other);
+
+    @Override
+    AtMostOctuplet<T> concat(Triple<T, T, T> other);
+
+    @Override
+    AtMostNonuplet<T> concat(Quadruple<T, T, T, T> other);
+    
+    AtMostDecuplet<T> concat(Quintuple<T, T, T, T, T> other);
+  }
+
+  interface AtMostSextuplet<T> extends AtMostSeptuplet<T>, AtMostSextuple {
+
+    @Override
+    AtMostSeptuplet<T> concat(T object);
+
+    @Override
+    AtMostOctuplet<T> concat(Couple<T, T> other);
+
+    @Override
+    AtMostNonuplet<T> concat(Triple<T, T, T> other);
+    
+    AtMostDecuplet<T> concat(Quadruple<T, T, T, T> other);
+  }
+
+  interface AtMostSeptuplet<T> extends AtMostOctuplet<T>, AtMostSeptuple {
+
+    @Override
+    AtMostOctuplet<T> concat(T object);
+
+    @Override
+    AtMostNonuplet<T> concat(Couple<T, T> other);
+
+    AtMostDecuplet<T> concat(Triple<T, T, T> other);
+  }
+
+  interface AtMostOctuplet<T> extends AtMostNonuplet<T>, AtMostOctuple {
+
+    @Override
+    AtMostNonuplet<T> concat(T object);
+
+    AtMostDecuplet<T> concat(Couple<T, T> other);
+  }
+
+  interface AtMostNonuplet<T> extends AtMostDecuplet<T>, AtMostNonuple {
+
+    AtMostDecuplet<T> concat(T object);
+  }
+
+  interface AtMostDecuplet<T> extends AtMostDecuple, Tuplet<T> {}
 }

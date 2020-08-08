@@ -28,29 +28,23 @@ public interface Triple<A, B, C> extends Tuples.AtLeastTriple<A, B, C>, Tuples.A
   Couple<A, B> dropThird();
 
   @Override
-  <T> Quadruple<T, A, B, C> prepend(T object);
-
-  @Override
   <T> Quadruple<A, B, C, T> append(T object);
 
   @Override
-  <D> Quadruple<A, B, C, D> appendAll(Monuple<D> other);
+  <D, E> Quintuple<A, B, C, D, E> append(Couple<D, E> other);
 
   @Override
-  <D, E> Quintuple<A, B, C, D, E> appendAll(Couple<D, E> other);
+  <D, E, F> Sextuple<A, B, C, D, E, F> append(Triple<D, E, F> other);
 
   @Override
-  <D, E, F> Sextuple<A, B, C, D, E, F> appendAll(Triple<D, E, F> other);
+  <D, E, F, G> Septuple<A, B, C, D, E, F, G> append(Quadruple<D, E, F, G> other);
 
   @Override
-  <D, E, F, G> Septuple<A, B, C, D, E, F, G> appendAll(Quadruple<D, E, F, G> other);
+  <D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> append(Quintuple<D, E, F, G, H> other);
 
   @Override
-  <D, E, F, G, H> Octuple<A, B, C, D, E, F, G, H> appendAll(Quintuple<D, E, F, G, H> other);
+  <D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> append(Sextuple<D, E, F, G, H, I> other);
 
   @Override
-  <D, E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> appendAll(Sextuple<D, E, F, G, H, I> other);
-
-  @Override
-  <D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> appendAll(Septuple<D, E, F, G, H, I, J> other);
+  <D, E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> append(Septuple<D, E, F, G, H, I, J> other);
 }

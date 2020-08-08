@@ -8,13 +8,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import omnia.contract.Streamable;
 import omnia.data.cache.WeakCache;
 import omnia.data.structure.DirectedGraph;
-import omnia.data.structure.HomogeneousPair;
-import omnia.data.structure.Pair;
 import omnia.data.structure.Set;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableSet;
+import omnia.data.structure.tuple.Couplet;
+import omnia.data.structure.tuple.Tuplet;
 
 public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
 
@@ -22,7 +23,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       new ImmutableDirectedGraph<>();
 
   private final ImmutableSet<E> elements;
-  private final ImmutableSet<HomogeneousPair<E>> directedEdges;
+  private final ImmutableSet<Couplet<E>> directedEdges;
 
   public static <E> ImmutableDirectedGraph<E> empty() {
     @SuppressWarnings("unchecked")
@@ -45,24 +46,24 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     return new Builder<>(
         original.nodes().stream().map(DirectedGraph.DirectedNode::item).collect(toSet()),
         original.edges().stream()
-            .map(edge -> HomogeneousPair.of(edge.start().item(), edge.end().item()))
+            .map(edge -> Tuplet.of(edge.start().item(), edge.end().item()))
             .collect(toSet()));
   }
 
   public static final class Builder<E> {
     private final MutableSet<E> nodes;
-    private final MutableSet<HomogeneousPair<E>> directedEdges;
+    private final MutableSet<Couplet<E>> directedEdges;
 
     private Builder() {
       nodes = new HashSet<>();
       directedEdges = new HashSet<>();
     }
 
-    private Builder(Set<E> nodes, Set<HomogeneousPair<E>> directedEdges) {
+    private Builder(Set<E> nodes, Set<Couplet<E>> directedEdges) {
       this.nodes = nodes instanceof MutableSet ? (MutableSet<E>) nodes : HashSet.copyOf(nodes);
       this.directedEdges =
           directedEdges instanceof MutableSet
-              ? (MutableSet<HomogeneousPair<E>>) directedEdges
+              ? (MutableSet<Couplet<E>>) directedEdges
               : HashSet.copyOf(directedEdges);
     }
 
@@ -80,7 +81,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       requireNonNull(element);
       nodes.removeUnknownTyped(element);
       directedEdges.stream()
-          .filter(pair -> pair.containsUnknownTyped(element))
+          .filter(couplet -> couplet.containsUnknownTyped(element))
           .collect(toSet())
           .forEach(directedEdges::remove);
       return this;
@@ -96,13 +97,13 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
         throw new IllegalArgumentException(
             "cannot replace a node with an already existing node. replacement=" + replacement);
       }
-      Set<HomogeneousPair<E>> edgesToRemove =
-          directedEdges.stream().filter(pair -> pair.contains(original)).collect(toSet());
-      Set<HomogeneousPair<E>> edgesToAdd =
+      Set<Couplet<E>> edgesToRemove =
+          directedEdges.stream().filter(couplet -> couplet.contains(original)).collect(toSet());
+      Set<Couplet<E>> edgesToAdd =
           edgesToRemove.stream()
               .map(
-                  pair ->
-                      pair.map(
+                  couplet ->
+                      couplet.map(
                           element -> Objects.equals(element, original) ? replacement : element))
               .collect(toSet());
       edgesToRemove.forEach(directedEdges::remove);
@@ -121,14 +122,14 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       if (!nodes.contains(to)) {
         throw new IllegalStateException("cannot add an edge for a nonexistent node");
       }
-      directedEdges.add(HomogeneousPair.of(from, to));
+      directedEdges.add(Tuplet.of(from, to));
       return this;
     }
 
     public Builder<E> removeEdge(Object from, Object to) {
       requireNonNull(from);
       requireNonNull(to);
-      directedEdges.removeUnknownTyped(HomogeneousPair.of(from, to));
+      directedEdges.removeUnknownTyped(Tuplet.of(from, to));
       return this;
     }
 
@@ -146,12 +147,12 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     elements =
         Stream.concat(
                 builder.nodes.stream(),
-                builder.directedEdges.stream().flatMap(HomogeneousPair::stream))
+                builder.directedEdges.stream().flatMap(Streamable::stream))
             .collect(toImmutableSet());
     directedEdges =
         builder.directedEdges.stream()
-            .filter(pair -> elements.contains(pair.first()))
-            .filter(pair -> elements.contains(pair.second()))
+            .filter(couple -> elements.contains(couple.first()))
+            .filter(couple -> elements.contains(couple.second()))
             .collect(toImmutableSet());
   }
 
@@ -167,9 +168,9 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   public Optional<? extends DirectedEdge> edgeOf(Object from, Object to) {
     @SuppressWarnings("unchecked")
     Optional<? extends DirectedEdge> edge =
-        Stream.of(HomogeneousPair.of(from, to))
+        Stream.of(Tuplet.of(from, to))
             .filter(directedEdges::containsUnknownTyped)
-            .map(p -> (HomogeneousPair<E>) p)
+            .map(p -> (Couplet<E>) p)
             .findFirst()
             .map(this::getOrCreateEdge);
     return edge;
@@ -217,7 +218,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     @Override
     public Set<? extends DirectedEdge> outgoingEdges() {
       return ImmutableDirectedGraph.this.directedEdges.stream()
-          .filter(pair -> pair.first().equals(item))
+          .filter(couplet -> couplet.first().equals(item))
           .map(ImmutableDirectedGraph.this.toEdge())
           .collect(toSet());
     }
@@ -225,7 +226,7 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     @Override
     public Set<? extends DirectedEdge> incomingEdges() {
       return ImmutableDirectedGraph.this.directedEdges.stream()
-          .filter(pair -> pair.second().equals(item))
+          .filter(couplet -> couplet.second().equals(item))
           .map(ImmutableDirectedGraph.this.toEdge())
           .collect(toSet());
     }
@@ -233,8 +234,8 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     @Override
     public Set<? extends DirectedGraph.DirectedNode<E>> neighbors() {
       return ImmutableDirectedGraph.this.directedEdges.stream()
-          .filter(p -> p.contains(item))
-          .map(p -> p.first().equals(item) ? p.second() : p.first())
+          .filter(couplet -> couplet.contains(item))
+          .map(couplet -> couplet.first().equals(item) ? couplet.second() : couplet.first())
           .map(ImmutableDirectedGraph.this.toNode())
           .collect(toSet());
     }
@@ -242,8 +243,8 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     @Override
     public Set<? extends DirectedGraph.DirectedNode<E>> successors() {
       return ImmutableDirectedGraph.this.directedEdges.stream()
-          .filter(pair -> pair.first().equals(item))
-          .map(Pair::second)
+          .filter(couplet -> couplet.first().equals(item))
+          .map(Couplet::second)
           .map(ImmutableDirectedGraph.this.toNode())
           .collect(toSet());
     }
@@ -251,8 +252,8 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     @Override
     public Set<? extends DirectedGraph.DirectedNode<E>> predecessors() {
       return ImmutableDirectedGraph.this.directedEdges.stream()
-          .filter(pair -> pair.second().equals(item))
-          .map(Pair::first)
+          .filter(couplet -> couplet.second().equals(item))
+          .map(Couplet::first)
           .map(ImmutableDirectedGraph.this.toNode())
           .collect(toSet());
     }
@@ -270,9 +271,9 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   }
 
   public final class DirectedEdge implements DirectedGraph.DirectedEdge<E> {
-    private final HomogeneousPair<E> endpoints;
+    private final Couplet<E> endpoints;
 
-    private DirectedEdge(HomogeneousPair<E> endpoints) {
+    private DirectedEdge(Couplet<E> endpoints) {
       this.endpoints = endpoints;
     }
 
@@ -287,8 +288,8 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     }
 
     @Override
-    public HomogeneousPair<DirectedNode> endpoints() {
-      return HomogeneousPair.of(
+    public Couplet<DirectedNode> endpoints() {
+      return Tuplet.of(
           ImmutableDirectedGraph.this.getOrCreateNode(endpoints.first()),
           ImmutableDirectedGraph.this.getOrCreateNode(endpoints.second()));
     }
@@ -320,13 +321,13 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     return nodeCache.getOrCache(item, () -> new DirectedNode(item));
   }
 
-  private Function<? super HomogeneousPair<E>, ? extends DirectedEdge> toEdge() {
+  private Function<? super Couplet<E>, ? extends DirectedEdge> toEdge() {
     return this::getOrCreateEdge;
   }
 
-  private WeakCache<HomogeneousPair<E>, DirectedEdge> edgeCache = new WeakCache<>();
+  private WeakCache<Couplet<E>, DirectedEdge> edgeCache = new WeakCache<>();
 
-  private DirectedEdge getOrCreateEdge(HomogeneousPair<E> endpoints) {
+  private DirectedEdge getOrCreateEdge(Couplet<E> endpoints) {
     return edgeCache.getOrCache(endpoints, () -> new DirectedEdge(endpoints));
   }
 }
