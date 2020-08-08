@@ -52,7 +52,7 @@ class ImmutableNonuplet<T> extends ImmutableNonuple<T, T, T, T, T, T, T, T, T> i
   }
 
   @Override
-  public Decuplet<T> concatlet(T object) {
+  public Decuplet<T> concat(T object) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), object);
   }
 }

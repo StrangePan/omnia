@@ -42,17 +42,17 @@ class ImmutableSeptuplet<T> extends ImmutableSeptuple<T, T, T, T, T, T, T> imple
   }
 
   @Override
-  public Octuplet<T> concatlet(T object) {
+  public Octuplet<T> concat(T object) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), object);
   }
 
   @Override
-  public Nonuplet<T> concatlet(Couple<T, T> other) {
+  public Nonuplet<T> concat(Couple<T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), other.first(), other.second());
   }
 
   @Override
-  public Decuplet<T> concatlet(Triple<T, T, T> other) {
+  public Decuplet<T> concat(Triple<T, T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), other.first(), other.second(), other.third());
   }
 }

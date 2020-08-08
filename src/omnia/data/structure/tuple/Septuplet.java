@@ -24,11 +24,11 @@ public interface Septuplet<T> extends Septuple<T, T, T, T, T, T, T>, Tuples.AtMo
   Sextuplet<T> dropSeventh();
 
   @Override
-  Octuplet<T> concatlet(T object);
+  Octuplet<T> concat(T object);
 
   @Override
-  Nonuplet<T> concatlet(Couple<T, T> other);
+  Nonuplet<T> concat(Couple<T, T> other);
 
   @Override
-  Decuplet<T> concatlet(Triple<T, T, T> other);
+  Decuplet<T> concat(Triple<T, T, T> other);
 }

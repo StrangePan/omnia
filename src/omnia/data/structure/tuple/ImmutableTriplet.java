@@ -22,37 +22,37 @@ class ImmutableTriplet<T> extends ImmutableTriple<T, T, T> implements Triplet<T>
   }
 
   @Override
-  public Quadruplet<T> concatlet(T object) {
+  public Quadruplet<T> concat(T object) {
     return Tuplet.of(first(), second(), third(), object);
   }
 
   @Override
-  public Quintuplet<T> concatlet(Couple<T, T> other) {
+  public Quintuplet<T> concat(Couple<T, T> other) {
     return Tuplet.of(first(), second(), third(), other.first(), other.second());
   }
 
   @Override
-  public Sextuplet<T> concatlet(Triple<T, T, T> other) {
+  public Sextuplet<T> concat(Triple<T, T, T> other) {
     return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third());
   }
 
   @Override
-  public Septuplet<T> concatlet(Quadruple<T, T, T, T> other) {
+  public Septuplet<T> concat(Quadruple<T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth());
   }
 
   @Override
-  public Octuplet<T> concatlet(Quintuple<T, T, T, T, T> other) {
+  public Octuplet<T> concat(Quintuple<T, T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth());
   }
 
   @Override
-  public Nonuplet<T> concatlet(Sextuple<T, T, T, T, T, T> other) {
+  public Nonuplet<T> concat(Sextuple<T, T, T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth());
   }
 
   @Override
-  public Decuplet<T> concatlet(Septuple<T, T, T, T, T, T, T> other) {
+  public Decuplet<T> concat(Septuple<T, T, T, T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth(), other.seventh());
   }
 }

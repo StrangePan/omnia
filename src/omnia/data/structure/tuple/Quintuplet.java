@@ -18,17 +18,17 @@ public interface Quintuplet<T> extends Quintuple<T, T, T, T, T>, Tuples.AtMostQu
   Quadruplet<T> dropFifth();
 
   @Override
-  Sextuplet<T> concatlet(T object);
+  Sextuplet<T> concat(T object);
 
   @Override
-  Septuplet<T> concatlet(Couple<T, T> other);
+  Septuplet<T> concat(Couple<T, T> other);
 
   @Override
-  Octuplet<T> concatlet(Triple<T, T, T> other);
+  Octuplet<T> concat(Triple<T, T, T> other);
 
   @Override
-  Nonuplet<T> concatlet(Quadruple<T, T, T, T> other);
+  Nonuplet<T> concat(Quadruple<T, T, T, T> other);
 
   @Override
-  Decuplet<T> concatlet(Quintuple<T, T, T, T, T> other);
+  Decuplet<T> concat(Quintuple<T, T, T, T, T> other);
 }

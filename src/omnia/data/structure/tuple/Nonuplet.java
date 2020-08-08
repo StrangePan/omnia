@@ -30,5 +30,5 @@ public interface Nonuplet<T> extends Nonuple<T, T, T, T, T, T, T, T, T>, Tuples.
   Octuplet<T> dropNinth();
 
   @Override
-  Decuplet<T> concatlet(T object);
+  Decuplet<T> concat(T object);
 }

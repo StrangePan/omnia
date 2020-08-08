@@ -2,7 +2,7 @@ package omnia.data.structure.tuple;
 
 import omnia.data.structure.immutable.ImmutableList;
 
-public interface Tuplet {
+public interface Tuplet extends Tuple {
 
   static <T> Couplet<T> of(T first, T second) {
     return new ImmutableCouplet<>(first, second);

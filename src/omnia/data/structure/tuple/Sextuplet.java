@@ -21,14 +21,14 @@ public interface Sextuplet<T> extends Sextuple<T, T, T, T, T, T>, Tuples.AtMostS
   Quintuplet<T> dropSixth();
 
   @Override
-  Septuplet<T> concatlet(T object);
+  Septuplet<T> concat(T object);
 
   @Override
-  Octuplet<T> concatlet(Couple<T, T> other);
+  Octuplet<T> concat(Couple<T, T> other);
 
   @Override
-  Nonuplet<T> concatlet(Triple<T, T, T> other);
+  Nonuplet<T> concat(Triple<T, T, T> other);
 
   @Override
-  Decuplet<T> concatlet(Quadruple<T, T, T, T> other);
+  Decuplet<T> concat(Quadruple<T, T, T, T> other);
 }

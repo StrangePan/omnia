@@ -47,12 +47,12 @@ class ImmutableOctuplet<T> extends ImmutableOctuple<T, T, T, T, T, T, T, T> impl
   }
 
   @Override
-  public Nonuplet<T> concatlet(T object) {
+  public Nonuplet<T> concat(T object) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), object);
   }
 
   @Override
-  public Decuplet<T> concatlet(Couple<T, T> other) {
+  public Decuplet<T> concat(Couple<T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), other.first(), other.second());
   }
 }

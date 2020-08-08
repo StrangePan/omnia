@@ -176,7 +176,7 @@ class ImmutableOctuple<A, B, C, D, E, F, G, H> implements Octuple<A, B, C, D, E,
   }
 
   @Override
-  public <I, J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Couple<I, J> other) {
+  public <I, J> Decuple<A, B, C, D, E, F, G, H, I, J> append(Couple<I, J> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), other.first(), other.second());
   }
 }

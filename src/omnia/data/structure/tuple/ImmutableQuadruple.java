@@ -104,27 +104,27 @@ class ImmutableQuadruple<A, B, C, D> implements Quadruple<A, B, C, D> {
   }
 
   @Override
-  public <E, F> Sextuple<A, B, C, D, E, F> concat(Couple<E, F> other) {
+  public <E, F> Sextuple<A, B, C, D, E, F> append(Couple<E, F> other) {
     return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second());
   }
 
   @Override
-  public <E, F, G> Septuple<A, B, C, D, E, F, G> concat(Triple<E, F, G> other) {
+  public <E, F, G> Septuple<A, B, C, D, E, F, G> append(Triple<E, F, G> other) {
     return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third());
   }
 
   @Override
-  public <E, F, G, H> Octuple<A, B, C, D, E, F, G, H> concat(Quadruple<E, F, G, H> other) {
+  public <E, F, G, H> Octuple<A, B, C, D, E, F, G, H> append(Quadruple<E, F, G, H> other) {
     return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third(), other.fourth());
   }
 
   @Override
-  public <E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Quintuple<E, F, G, H, I> other) {
+  public <E, F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> append(Quintuple<E, F, G, H, I> other) {
     return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth());
   }
 
   @Override
-  public <E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Sextuple<E, F, G, H, I, J> other) {
+  public <E, F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> append(Sextuple<E, F, G, H, I, J> other) {
     return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth());
   }
 }

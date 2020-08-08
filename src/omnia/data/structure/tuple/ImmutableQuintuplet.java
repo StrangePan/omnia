@@ -32,27 +32,27 @@ class ImmutableQuintuplet<T> extends ImmutableQuintuple<T, T, T, T, T> implement
   }
 
   @Override
-  public Sextuplet<T> concatlet(T object) {
+  public Sextuplet<T> concat(T object) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), object);
   }
 
   @Override
-  public Septuplet<T> concatlet(Couple<T, T> other) {
+  public Septuplet<T> concat(Couple<T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second());
   }
 
   @Override
-  public Octuplet<T> concatlet(Triple<T, T, T> other) {
+  public Octuplet<T> concat(Triple<T, T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third());
   }
 
   @Override
-  public Nonuplet<T> concatlet(Quadruple<T, T, T, T> other) {
+  public Nonuplet<T> concat(Quadruple<T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth());
   }
 
   @Override
-  public Decuplet<T> concatlet(Quintuple<T, T, T, T, T> other) {
+  public Decuplet<T> concat(Quintuple<T, T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth());
   }
 }

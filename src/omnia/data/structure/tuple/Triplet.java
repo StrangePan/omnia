@@ -12,23 +12,23 @@ public interface Triplet<T> extends Triple<T, T, T>, Tuples.AtMostTriplet<T> {
   Couplet<T> dropThird();
 
   @Override
-  Quadruplet<T> concatlet(T object);
+  Quadruplet<T> concat(T object);
 
   @Override
-  Quintuplet<T> concatlet(Couple<T, T> other);
+  Quintuplet<T> concat(Couple<T, T> other);
 
   @Override
-  Sextuplet<T> concatlet(Triple<T, T, T> other);
+  Sextuplet<T> concat(Triple<T, T, T> other);
 
   @Override
-  Septuplet<T> concatlet(Quadruple<T, T, T, T> other);
+  Septuplet<T> concat(Quadruple<T, T, T, T> other);
 
   @Override
-  Octuplet<T> concatlet(Quintuple<T, T, T, T, T> other);
+  Octuplet<T> concat(Quintuple<T, T, T, T, T> other);
 
   @Override
-  Nonuplet<T> concatlet(Sextuple<T, T, T, T, T, T> other);
+  Nonuplet<T> concat(Sextuple<T, T, T, T, T, T> other);
 
   @Override
-  Decuplet<T> concatlet(Septuple<T, T, T, T, T, T, T> other);
+  Decuplet<T> concat(Septuple<T, T, T, T, T, T, T> other);
 }

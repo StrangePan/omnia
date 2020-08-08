@@ -15,20 +15,20 @@ public interface Quadruplet<T> extends Quadruple<T, T, T, T>, Tuples.AtMostQuadr
   Triplet<T> dropFourth();
 
   @Override
-  Quintuplet<T> concatlet(T object);
+  Quintuplet<T> concat(T object);
 
   @Override
-  Sextuplet<T> concatlet(Couple<T, T> other);
+  Sextuplet<T> concat(Couple<T, T> other);
 
   @Override
-  Septuplet<T> concatlet(Triple<T, T, T> other);
+  Septuplet<T> concat(Triple<T, T, T> other);
 
   @Override
-  Octuplet<T> concatlet(Quadruple<T, T, T, T> other);
+  Octuplet<T> concat(Quadruple<T, T, T, T> other);
 
   @Override
-  Nonuplet<T> concatlet(Quintuple<T, T, T, T, T> other);
+  Nonuplet<T> concat(Quintuple<T, T, T, T, T> other);
 
   @Override
-  Decuplet<T> concatlet(Sextuple<T, T, T, T, T, T> other);
+  Decuplet<T> concat(Sextuple<T, T, T, T, T, T> other);
 }

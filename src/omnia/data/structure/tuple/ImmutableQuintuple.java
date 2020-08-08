@@ -122,22 +122,22 @@ class ImmutableQuintuple<A, B, C, D, E> implements Quintuple<A, B, C, D, E> {
   }
 
   @Override
-  public <F, G> Septuple<A, B, C, D, E, F, G> concat(Couple<F, G> other) {
+  public <F, G> Septuple<A, B, C, D, E, F, G> append(Couple<F, G> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second());
   }
 
   @Override
-  public <F, G, H> Octuple<A, B, C, D, E, F, G, H> concat(Triple<F, G, H> other) {
+  public <F, G, H> Octuple<A, B, C, D, E, F, G, H> append(Triple<F, G, H> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third());
   }
 
   @Override
-  public <F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> concat(Quadruple<F, G, H, I> other) {
+  public <F, G, H, I> Nonuple<A, B, C, D, E, F, G, H, I> append(Quadruple<F, G, H, I> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth());
   }
 
   @Override
-  public <F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> concat(Quintuple<F, G, H, I, J> other) {
+  public <F, G, H, I, J> Decuple<A, B, C, D, E, F, G, H, I, J> append(Quintuple<F, G, H, I, J> other) {
     return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth());
   }
 }

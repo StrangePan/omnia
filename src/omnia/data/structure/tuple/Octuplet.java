@@ -27,8 +27,8 @@ public interface Octuplet<T> extends Octuple<T, T, T, T, T, T, T, T>, Tuples.AtM
   Septuplet<T> dropEighth();
 
   @Override
-  Nonuplet<T> concatlet(T object);
+  Nonuplet<T> concat(T object);
 
   @Override
-  Decuplet<T> concatlet(Couple<T, T> other);
+  Decuplet<T> concat(Couple<T, T> other);
 }
