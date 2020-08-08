@@ -1,5 +1,10 @@
 package omnia.data.structure.tuple;
 
+import java.util.Iterator;
+import java.util.OptionalInt;
+import java.util.stream.Stream;
+import omnia.data.structure.immutable.ImmutableList;
+
 class ImmutableOctuplet<T> extends ImmutableOctuple<T, T, T, T, T, T, T, T> implements Octuplet<T> {
 
   ImmutableOctuplet(T first, T second, T third, T fourth, T fifth, T sixth, T seventh, T eighth) {
@@ -54,5 +59,34 @@ class ImmutableOctuplet<T> extends ImmutableOctuple<T, T, T, T, T, T, T, T> impl
   @Override
   public Decuplet<T> concat(Couple<T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), other.first(), other.second());
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return toActualList().iterator();
+  }
+
+  @Override
+  public T itemAt(int index) {
+    return toActualList().itemAt(index);
+  }
+
+  @Override
+  public OptionalInt indexOf(Object item) {
+    return toActualList().indexOf(item);
+  }
+
+  @Override
+  public Stream<T> stream() {
+    return toActualList().stream();
+  }
+
+  @Override
+  public boolean containsUnknownTyped(Object element) {
+    return toActualList().containsUnknownTyped(element);
+  }
+
+  private ImmutableList<T> toActualList() {
+    return ImmutableList.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth());
   }
 }

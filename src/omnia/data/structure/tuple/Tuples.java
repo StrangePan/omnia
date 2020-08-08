@@ -599,5 +599,5 @@ public class Tuples {
     AtMostDecuplet<T> concat(T object);
   }
 
-  interface AtMostDecuplet<T> extends AtMostDecuple, Tuplet {}
+  interface AtMostDecuplet<T> extends AtMostDecuple, Tuplet<T> {}
 }

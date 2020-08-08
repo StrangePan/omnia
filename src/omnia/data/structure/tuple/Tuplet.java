@@ -1,8 +1,8 @@
 package omnia.data.structure.tuple;
 
-import omnia.data.structure.immutable.ImmutableList;
+import omnia.data.structure.List;
 
-public interface Tuplet extends Tuple {
+public interface Tuplet<T> extends Tuple, List<T> {
 
   static <T> Couplet<T> of(T first, T second) {
     return new ImmutableCouplet<>(first, second);
@@ -40,39 +40,66 @@ public interface Tuplet extends Tuple {
     return new ImmutableDecuplet<>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth);
   }
 
-  static <T> ImmutableList<T> toList(Couplet<? extends T> couplet) {
-    return ImmutableList.of(couplet.first(), couplet.second());
+  @SuppressWarnings("unchecked")
+  static <T> Couplet<T> copyOf(Couple<? extends T, ? extends T> couplet) {
+    return couplet instanceof ImmutableCouplet
+        ? (ImmutableCouplet<T>) couplet
+        : Tuplet.of(couplet.first(), couplet.second());
   }
 
-  static <T> ImmutableList<T> toList(Triplet<? extends T> triplet) {
-    return ImmutableList.of(triplet.first(), triplet.second(), triplet.third());
+  @SuppressWarnings("unchecked")
+  static <T> Triplet<T> copyOf(Triple<? extends T, ? extends T, ? extends T> triple) {
+    return triple instanceof ImmutableTriplet
+        ? (ImmutableTriplet<T>) triple
+        : Tuplet.of(triple.first(), triple.second(), triple.third());
   }
 
-  static <T> ImmutableList<T> toList(Quadruplet<? extends T> quadruplet) {
-    return ImmutableList.of(quadruplet.first(), quadruplet.second(), quadruplet.third(), quadruplet.fourth());
+  @SuppressWarnings("unchecked")
+  static <T> Quadruplet<T> copyOf(Quadruple<? extends T, ? extends T, ? extends T, ? extends T> quadruple) {
+    return quadruple instanceof ImmutableQuadruplet
+        ? (ImmutableQuadruplet<T>) quadruple
+        : Tuplet.of(quadruple.first(), quadruple.second(), quadruple.third(), quadruple.fourth());
   }
 
-  static <T> ImmutableList<T> toList(Quintuplet<? extends T> quintuplet) {
-    return ImmutableList.of(quintuplet.first(), quintuplet.second(), quintuplet.third(), quintuplet.fourth(), quintuplet.fifth());
+  @SuppressWarnings("unchecked")
+  static <T> Quintuplet<T> copyOf(Quintuple<? extends T, ? extends T, ? extends T, ? extends T, ? extends T> quintuple) {
+    return quintuple instanceof ImmutableQuintuplet
+        ? (ImmutableQuintuplet<T>) quintuple
+        : Tuplet.of(quintuple.first(), quintuple.second(), quintuple.third(), quintuple.fourth(), quintuple.fifth());
   }
 
-  static <T> ImmutableList<T> toList(Sextuplet<? extends T> sextuplet) {
-    return ImmutableList.of(sextuplet.first(), sextuplet.second(), sextuplet.third(), sextuplet.fourth(), sextuplet.fifth(), sextuplet.sixth());
+  @SuppressWarnings("unchecked")
+  static <T> Sextuplet<T> copyOf(Sextuple<? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T> sextuple) {
+    return sextuple instanceof ImmutableSextuplet
+        ? (ImmutableSextuplet<T>) sextuple
+        : Tuplet.of(sextuple.first(), sextuple.second(), sextuple.third(), sextuple.fourth(), sextuple.fifth(), sextuple.sixth());
   }
 
-  static <T> ImmutableList<T> toList(Septuplet<? extends T> septuplet) {
-    return ImmutableList.of(septuplet.first(), septuplet.second(), septuplet.third(), septuplet.fourth(), septuplet.fifth(), septuplet.sixth(), septuplet.seventh());
+  @SuppressWarnings("unchecked")
+  static <T> Septuplet<T> copyOf(Septuple<? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T> septuple) {
+    return septuple instanceof ImmutableSeptuplet
+        ? (ImmutableSeptuplet<T>) septuple
+        : Tuplet.of(septuple.first(), septuple.second(), septuple.third(), septuple.fourth(), septuple.fifth(), septuple.sixth(), septuple.seventh());
   }
 
-  static <T> ImmutableList<T> toList(Octuplet<? extends T> octuplet) {
-    return ImmutableList.of(octuplet.first(), octuplet.second(), octuplet.third(), octuplet.fourth(), octuplet.fifth(), octuplet.sixth(), octuplet.seventh(), octuplet.eighth());
+  @SuppressWarnings("unchecked")
+  static <T> Octuplet<T> copyOf(Octuple<? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T> octuple) {
+    return octuple instanceof ImmutableOctuplet
+        ? (ImmutableOctuplet<T>) octuple
+        : Tuplet.of(octuple.first(), octuple.second(), octuple.third(), octuple.fourth(), octuple.fifth(), octuple.sixth(), octuple.seventh(), octuple.eighth());
   }
 
-  static <T> ImmutableList<T> toList(Nonuplet<? extends T> nonuplet) {
-    return ImmutableList.of(nonuplet.first(), nonuplet.second(), nonuplet.third(), nonuplet.fourth(), nonuplet.fifth(), nonuplet.sixth(), nonuplet.seventh(), nonuplet.eighth(), nonuplet.ninth());
+  @SuppressWarnings("unchecked")
+  static <T> Nonuplet<T> copyOf(Nonuple<? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T> nonuple) {
+    return nonuple instanceof ImmutableNonuplet
+        ? (ImmutableNonuplet<T>) nonuple
+        : Tuplet.of(nonuple.first(), nonuple.second(), nonuple.third(), nonuple.fourth(), nonuple.fifth(), nonuple.sixth(), nonuple.seventh(), nonuple.eighth(), nonuple.ninth());
   }
 
-  static <T> ImmutableList<T> toList(Decuplet<? extends T> decuplet) {
-    return ImmutableList.of(decuplet.first(), decuplet.second(), decuplet.third(), decuplet.fourth(), decuplet.fifth(), decuplet.sixth(), decuplet.seventh(), decuplet.eighth(), decuplet.ninth(), decuplet.tenth());
+  @SuppressWarnings("unchecked")
+  static <T> Decuplet<T> copyOf(Decuple<? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T, ? extends T> decuple) {
+    return decuple instanceof ImmutableDecuplet
+        ? (ImmutableDecuplet<T>) decuple
+        : Tuplet.of(decuple.first(), decuple.second(), decuple.third(), decuple.fourth(), decuple.fifth(), decuple.sixth(), decuple.seventh(), decuple.eighth(), decuple.ninth(), decuple.tenth());
   }
 }

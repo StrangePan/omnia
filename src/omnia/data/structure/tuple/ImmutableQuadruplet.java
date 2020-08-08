@@ -1,5 +1,10 @@
 package omnia.data.structure.tuple;
 
+import java.util.Iterator;
+import java.util.OptionalInt;
+import java.util.stream.Stream;
+import omnia.data.structure.immutable.ImmutableList;
+
 class ImmutableQuadruplet<T> extends ImmutableQuadruple<T, T, T, T> implements Quadruplet<T> {
 
   ImmutableQuadruplet(T first, T second, T third, T fourth) {
@@ -54,5 +59,34 @@ class ImmutableQuadruplet<T> extends ImmutableQuadruple<T, T, T, T> implements Q
   @Override
   public Decuplet<T> concat(Sextuple<T, T, T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth());
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return toActualList().iterator();
+  }
+
+  @Override
+  public T itemAt(int index) {
+    return toActualList().itemAt(index);
+  }
+
+  @Override
+  public OptionalInt indexOf(Object item) {
+    return toActualList().indexOf(item);
+  }
+
+  @Override
+  public Stream<T> stream() {
+    return toActualList().stream();
+  }
+
+  @Override
+  public boolean containsUnknownTyped(Object element) {
+    return toActualList().containsUnknownTyped(element);
+  }
+
+  private ImmutableList<T> toActualList() {
+    return ImmutableList.of(first(), second(), third(), fourth());
   }
 }

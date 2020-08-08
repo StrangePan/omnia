@@ -1,5 +1,10 @@
 package omnia.data.structure.tuple;
 
+import java.util.Iterator;
+import java.util.OptionalInt;
+import java.util.stream.Stream;
+import omnia.data.structure.immutable.ImmutableList;
+
 class ImmutableTriplet<T> extends ImmutableTriple<T, T, T> implements Triplet<T> {
 
   ImmutableTriplet(T first, T second, T third) {
@@ -55,4 +60,34 @@ class ImmutableTriplet<T> extends ImmutableTriple<T, T, T> implements Triplet<T>
   public Decuplet<T> concat(Septuple<T, T, T, T, T, T, T> other) {
     return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth(), other.seventh());
   }
+
+  @Override
+  public Iterator<T> iterator() {
+    return toActualList().iterator();
+  }
+
+  @Override
+  public T itemAt(int index) {
+    return toActualList().itemAt(index);
+  }
+
+  @Override
+  public OptionalInt indexOf(Object item) {
+    return toActualList().indexOf(item);
+  }
+
+  @Override
+  public Stream<T> stream() {
+    return toActualList().stream();
+  }
+
+  @Override
+  public boolean containsUnknownTyped(Object element) {
+    return toActualList().containsUnknownTyped(element);
+  }
+
+  private ImmutableList<T> toActualList() {
+    return ImmutableList.of(first(), second(), third());
+  }
+
 }
