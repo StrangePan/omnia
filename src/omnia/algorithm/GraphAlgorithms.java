@@ -4,13 +4,18 @@ import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
 import java.util.Iterator;
+import java.util.Optional;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.Graph;
+import omnia.data.structure.List;
 import omnia.data.structure.Set;
+import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.mutable.ArrayList;
+import omnia.data.structure.mutable.HashMap;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableList;
+import omnia.data.structure.mutable.MutableMap;
 import omnia.data.structure.mutable.MutableSet;
 
 /**
@@ -76,33 +81,56 @@ public final class GraphAlgorithms {
    * @return true if the graph is cyclical, false if not
    */
   public static boolean isCyclical(DirectedGraph<?> graph) {
-    MutableSet<Object> visitedItems = HashSet.create();
+    return findAnyCycle(graph).isPresent();
+  }
 
-    for (DirectedGraph.DirectedNode<?> directedNode : graph.nodes()) {
+  /**
+   * Returns a list of nodes that form a cycle in a directed graph. This method's determinism is
+   * entirely dependent on the iteration determinism of the provided graph. If the graph's edges
+   * are deterministically iterated over, then this method's results will also be deterministic.
+   *
+   * <p>If a cycle is found, a List containing the nodes forming the cycle is returned. The list
+   * is ordered such that each node in the list is followed by its successor. Each item appears in
+   * the list at most once.</p>
+   *
+   * @param graph the graph to search for a cycle
+   * @param <T> the type of item contained in the graph
+   * @return a list of nodes that form a cycle, or nothing if no cycles were found
+   */
+  public static <T> Optional<List<T>> findAnyCycle(DirectedGraph<T> graph) {
+    MutableSet<T> visitedItems = HashSet.create();
+    MutableMap<T, T> visitedFrom = HashMap.create();
+
+    // iterate over every node, skipping over those we've already visited in another inner loop
+    for (DirectedGraph.DirectedNode<T> directedNode : graph.nodes()) {
       if (visitedItems.contains(directedNode.item())) {
         continue;
       }
 
-      MutableSet<Object> itemsInStack = HashSet.create();
-      MutableList<Object> itemStack = ArrayList.create();
-      MutableList<Iterator<? extends DirectedGraph.DirectedNode<?>>> iteratorStack =
-          ArrayList.create();
+      // depth-first traversal
+      MutableList<T> itemStack = ArrayList.create();  // stack of nodes in this current traversal
+      MutableSet<T> itemsInStack = HashSet.create();  // for quick lookups
+      MutableList<Iterator<? extends DirectedGraph.DirectedNode<T>>> iteratorStack =
+          ArrayList.create();  // correlates to itemStack. iterators track state.
 
       itemStack.add(directedNode.item());
       itemsInStack.add(directedNode.item());
       iteratorStack.add(directedNode.successors().iterator());
 
       while (iteratorStack.isPopulated()) {
-        Object item = itemStack.itemAt(itemStack.count() - 1);
-        Iterator<? extends DirectedGraph.DirectedNode<?>> iterator =
+        T item = itemStack.itemAt(itemStack.count() - 1);
+        Iterator<? extends DirectedGraph.DirectedNode<T>> iterator =
             iteratorStack.itemAt(iteratorStack.count() - 1);
 
         if (iterator.hasNext()) {
-          DirectedGraph.DirectedNode<?> nextNode = iterator.next();
-          Object nextItem = nextNode.item();
+          DirectedGraph.DirectedNode<T> nextNode = iterator.next();
+          T nextItem = nextNode.item();
 
           if (itemsInStack.contains(nextItem)) {
-            return true;
+            // navigate back up the stack, building a list representing the cycle
+            return Optional.of(
+                ListAlgorithms.sublistOf(
+                    itemStack, itemStack.indexOf(nextItem).getAsInt(), itemStack.count()));
           }
           if (visitedItems.contains(nextItem)) {
             continue;
@@ -112,6 +140,7 @@ public final class GraphAlgorithms {
           itemsInStack.add(nextItem);
           iteratorStack.add(nextNode.successors().iterator());
         } else {
+          // only if all possible paths from the current node are acyclical
           visitedItems.add(item);
           itemStack.removeAt(itemStack.count() - 1);
           itemsInStack.remove(item);
@@ -119,12 +148,12 @@ public final class GraphAlgorithms {
         }
       }
     }
-    return false;
+    return Optional.empty();
   }
 
   /**
    * Tests if the provided graph is acyclical, that is NOT cyclical. Simply returns the inverse of
-   * {@link #isCyclical(DirectedGraph)}
+   * {@link #findAnyCycle(DirectedGraph)}
    *
    * @param graph the graph to test
    * @return true if the graph is acyclical, false if the graph is cyclical
