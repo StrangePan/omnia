@@ -26,10 +26,25 @@ public final class Output {
   }
 
   public String toString() {
-    return renderForTerminal();
+    return renderWithoutCodes();
   }
 
-  public String renderForTerminal() {
+  /**
+   * Renders the contents of this Output for the terminal, complete with formatting and color codes.
+   */
+  public String render() {
+    return render(Renderable::render);
+  }
+
+  /**
+   * Renders the contents of this Output for the terminal minus any color codes and formatting
+   * codes.
+   */
+  public String renderWithoutCodes() {
+    return render(Renderable::renderWithoutCodes);
+  }
+
+  private String render(Function<? super Renderable, ? extends StringBuilder> propagation) {
     StringBuilder output = new StringBuilder();
     for (int i = 0; i < spans.count(); i++) {
       Span<?> span = spans.itemAt(i);
@@ -39,7 +54,7 @@ public final class Output {
           && span instanceof LineSpan) {
         output.append('\n');
       }
-      output.append(span.render());
+      output.append(propagation.apply(span));
     }
     return output.toString();
   }
@@ -279,9 +294,14 @@ public final class Output {
     }
   }
 
-  private interface Span<T extends Span<T>> {
+  private interface Renderable {
 
     StringBuilder render();
+
+    StringBuilder renderWithoutCodes();
+  }
+
+  private interface Span<T extends Span<T>> extends Renderable {
 
     T mergeFormatting(Formatting base);
   }
@@ -301,6 +321,11 @@ public final class Output {
     }
 
     @Override
+    public StringBuilder renderWithoutCodes() {
+      return formatting.renderWithoutCodes().append(text);
+    }
+
+    @Override
     public InlineSpan mergeFormatting(Formatting base) {
       return new InlineSpan(text, base.apply(formatting));
     }
@@ -317,13 +342,22 @@ public final class Output {
 
     @Override
     public StringBuilder render() {
+      return render(Renderable::render);
+    }
+
+    @Override
+    public StringBuilder renderWithoutCodes() {
+      return render(Renderable::renderWithoutCodes);
+    }
+
+    private StringBuilder render(Function<? super Renderable, ? extends StringBuilder> propagation) {
       if (!spans.isPopulated()) {
         return new StringBuilder("\n");
       }
       String indentation = " ".repeat(this.indentation);
       return new StringBuilder(indentation)
           .append(spans.stream()
-              .map(Span::render)
+              .map(propagation)
               .map(Object::toString)
               .map(rendering -> rendering.replaceAll("\\n", "\n" + indentation))
               .<StringBuilder>collect(
@@ -339,7 +373,7 @@ public final class Output {
     }
   }
 
-  private static final class Formatting {
+  private static final class Formatting implements Renderable {
     private static final Formatting EMPTY =
         new Formatting(
             Optional.empty(),
@@ -391,7 +425,8 @@ public final class Output {
           other.hidden.or(() -> this.hidden));
     }
 
-    StringBuilder render() {
+    @Override
+    public StringBuilder render() {
       return new StringBuilder("\033[")
           .append(
               Stream.<Optional<String>>builder()
@@ -408,6 +443,11 @@ public final class Output {
                   .flatMap(Optional::stream)
                   .collect(joining(";")))
           .append("m");
+    }
+
+    @Override
+    public StringBuilder renderWithoutCodes() {
+      return new StringBuilder();
     }
   }
 
@@ -430,8 +470,8 @@ public final class Output {
     LIGHT_CYAN("96", "106"),
     WHITE("97", "107");
 
-    private String foreground;
-    private String background;
+    private final String foreground;
+    private final String background;
 
     Color16(String foreground, String background) {
       this.foreground = foreground;
