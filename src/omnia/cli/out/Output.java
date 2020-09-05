@@ -13,7 +13,9 @@ import omnia.data.structure.mutable.ArrayList;
 import omnia.data.structure.mutable.MutableList;
 
 public final class Output {
+  private static final LineSpan EMPTY_LINE_SPAN = new LineSpan(ImmutableList.empty(), 0);
   private static final Output EMPTY = new Output(ImmutableList.empty());
+  private static final Output EMPTY_LINE = new Output(ImmutableList.of(EMPTY_LINE_SPAN));
 
   private final List<Span<?>> spans;
 
@@ -73,6 +75,18 @@ public final class Output {
         : new Output(ImmutableList.of(new InlineSpan(message, Formatting.EMPTY)));
   }
 
+  public static Output justLine(String message) {
+    return message.isEmpty()
+        ? empty()
+        : new Output(
+            ImmutableList.of(
+                new LineSpan(ImmutableList.of(new InlineSpan(message, Formatting.EMPTY)), 0)));
+  }
+
+  public static Output justNewline() {
+    return EMPTY_LINE;
+  }
+
   public static Output empty() {
     return EMPTY;
   }
@@ -104,7 +118,7 @@ public final class Output {
     }
 
     public Builder appendLine() {
-      spans.add(new LineSpan(ImmutableList.empty(), 0));
+      spans.add(EMPTY_LINE_SPAN);
       return this;
     }
 
