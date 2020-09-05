@@ -24,11 +24,22 @@ public interface Memoized<T> extends Holder<T> {
   @Override T value();
 
   /**
+   * Creates a {@link Memoized} implementation that returns the provided value verbatim.
+   *
+   * @param value the value for the Memoized to hold
+   * @param <T> the type of object to be memoized
+   * @return a new {@link Memoized} instance that simply holes the provided value
+   */
+  static <T> Memoized<T> just(T value) {
+    return new SimpleMemoizer<>(value);
+  }
+
+  /**
    * Creates a {@link Memoized} implementation that uses the provided {@link Supplier} as the
    * factory that supplies the value to be memoized.
    *
    * @param supplier the supplier that will create the value to be memoized
-   * @param <T> the type empty object to be memoized
+   * @param <T> the type of object to be memoized
    * @return a new {@link Memoized} instance that will memoize the created value
    */
   static <T> Memoized<T> memoize(Supplier<? extends T> supplier) {

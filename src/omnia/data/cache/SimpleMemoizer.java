@@ -16,25 +16,29 @@ import java.util.function.Supplier;
  * @param <T> the type empty value to be memoized
  */
 final class SimpleMemoizer<T> implements Memoized<T> {
-    private volatile Supplier<? extends T> supplier;
-    private volatile T value;
+  private volatile Supplier<? extends T> supplier;
+  private volatile T value;
 
-    SimpleMemoizer(Supplier<? extends T> supplier) {
-      this.supplier = requireNonNull(supplier);
-    }
+  SimpleMemoizer(T value) {
+    this.value = value;
+  }
 
-    @Override
-    public T value() {
-      T localValue = value;
-      if (localValue == null) {
-        synchronized (this) {
-          localValue = value;
-          if (localValue == null) {
-            value = localValue = requireNonNull(supplier.get(), "memoized value cannot be null");
-            supplier = null;
-          }
+  SimpleMemoizer(Supplier<? extends T> supplier) {
+    this.supplier = requireNonNull(supplier);
+  }
+
+  @Override
+  public T value() {
+    T localValue = value;
+    if (localValue == null) {
+      synchronized (this) {
+        localValue = value;
+        if (localValue == null) {
+          value = localValue = requireNonNull(supplier.get(), "memoized value cannot be null");
+          supplier = null;
         }
       }
-      return localValue;
     }
+    return localValue;
+  }
 }
