@@ -25,14 +25,16 @@ final class SimpleMemoizer<T> implements Memoized<T> {
 
     @Override
     public T value() {
-      if (supplier != null) {
+      T localValue = value;
+      if (localValue == null) {
         synchronized (this) {
-          if (supplier != null) {
-            value = requireNonNull(supplier.get(), "memoized value is was null");
+          localValue = value;
+          if (localValue == null) {
+            value = localValue = requireNonNull(supplier.get(), "memoized value cannot be null");
             supplier = null;
           }
         }
       }
-      return value;
+      return localValue;
     }
 }
