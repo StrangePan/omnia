@@ -31,22 +31,32 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
   }
 
   @Override
-  public void removeAt(int index) {
+  public E removeAt(int index) {
     IndexRange range = IndexRange.just(index);
-    mutateState(
-        state -> true,
-        state -> state.toBuilder().removeAt(index).build(),
-        (previousState, currentState) -> generateRemoveAtMutations(previousState, range));
+    E value;
+    synchronized (this) {
+      value = getState().itemAt(index);
+      mutateState(
+          state -> true,
+          state -> state.toBuilder().removeAt(index).build(),
+          (previousState, currentState) -> generateRemoveAtMutations(previousState, range));
+    }
+    return value;
   }
 
   @Override
-  public void replaceAt(int index, E item) {
+  public E replaceAt(int index, E item) {
     IndexRange range = IndexRange.just(index);
-    mutateState(
-        state -> true,
-        state -> state.toBuilder().replaceAt(index, item).build(),
-        (previousState, currentState) ->
-            generateReplaceAtMutations(previousState, currentState, range));
+    E value;
+    synchronized (this) {
+      value = getState().itemAt(index);
+      mutateState(
+          state -> true,
+          state -> state.toBuilder().replaceAt(index, item).build(),
+          (previousState, currentState) ->
+              generateReplaceAtMutations(previousState, currentState, range));
+    }
+    return value;
   }
 
   @Override

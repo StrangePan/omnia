@@ -18,13 +18,13 @@ class MaskingList<E> implements MutableList<E> {
   }
 
   @Override
-  public void removeAt(int index) {
-    javaList.remove(index);
+  public E removeAt(int index) {
+    return javaList.remove(index);
   }
 
   @Override
-  public void replaceAt(int index, E element) {
-    javaList.set(index, element);
+  public E replaceAt(int index, E element) {
+    return javaList.set(index, element);
   }
 
   @Override
