@@ -24,7 +24,7 @@ public final class HashSet<E> implements MutableSet<E> {
     return new HashSet<>();
   }
 
-  public HashSet() {
+  private HashSet() {
     this(null, null, null);
   }
 
@@ -82,6 +82,15 @@ public final class HashSet<E> implements MutableSet<E> {
   @Override
   public void add(E element) {
     javaSet.add(wrap(requireNonNull(element)));
+  }
+
+  @Override
+  public void addAll(Collection<? extends E> elements) {
+    javaSet.addAll(
+        requireNonNull(elements)
+            .stream()
+            .<Wrapper<E>>map(this::wrap)
+            .collect(java.util.stream.Collectors.toList()));
   }
 
   @Override

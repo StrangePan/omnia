@@ -13,11 +13,19 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
 
   /**
    * Adds the given the element to this collection. Each specific data structure has its own
-   * definition empty how the item is added and the semantic location the item is added.
+   * definition of how the items are added and the semantic location the items added.
    *
    * @param element the item to add to the collection
    */
   void add(E element);
+
+  /**
+   * Adds all items in the given collection to this one. Each specific data structure has its own
+   * definition of how the items are added and the semantic location the items added.
+   *
+   * @param elements the items to add to the collection
+   */
+  void addAll(Collection<? extends E> elements);
 
   /**
    * Removes the given item from this {@link Collection} if contained within.
@@ -56,6 +64,11 @@ public interface MutableCollection<E> extends Collection<E>, Clearable {
       @Override
       public void add(E element) {
         javaCollection.add(element);
+      }
+
+      @Override
+      public void addAll(Collection<? extends E> elements) {
+        javaCollection.addAll(elements.stream().collect(java.util.stream.Collectors.toList()));
       }
 
       @Override

@@ -13,7 +13,6 @@ import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.mutable.ArrayList;
 import omnia.data.structure.mutable.HashMap;
 import omnia.data.structure.mutable.HashSet;
-import omnia.data.structure.mutable.MutableMap;
 import omnia.data.structure.mutable.MutableSet;
 import omnia.data.structure.tuple.Couple;
 
@@ -131,27 +130,49 @@ public final class Collectors {
    */
   public static <E, K, V> Collector<E, ?, ImmutableMap<K, V>> toImmutableMap(
       Function<? super E, K> keyExtractor, Function<? super E, V> valueExtractor) {
-    return new Collector<E, MutableMap<K, V>, ImmutableMap<K, V>>() {
+    return groupBy(keyExtractor, valueExtractor, ImmutableMap::copyOf);
+  }
+
+  /**
+   * Collects the stream contents into a HashMap using the provided functions to derive the key and
+   * value for each stream item. It is undefined how duplicate keys will be handled.
+   *
+   * @param keyExtractor mapping function that produces a key for each entry
+   * @param valueExtractor mapping function that produces a value for each entry
+   * @param <E> the item type of the stream
+   * @param <K> the key type for the map
+   * @param <V> the value type for the map
+   */
+  public static <E, K, V> Collector<E, ?, HashMap<K, V>> toHashMap(
+      Function<? super E, K> keyExtractor, Function<? super E, V> valueExtractor) {
+    return groupBy(keyExtractor, valueExtractor, Function.identity());
+  }
+
+  private static <E, K, V, R> Collector<E, ?, R> groupBy(
+      Function<? super E, K> keyExtractor,
+      Function<? super E, V> valueExtractor,
+      Function<HashMap<K, V>, R> finisher) {
+    return new Collector<E, HashMap<K, V>, R>() {
 
       @Override
-      public Supplier<MutableMap<K, V>> supplier() {
+      public Supplier<HashMap<K, V>> supplier() {
         return HashMap::create;
       }
 
       @Override
-      public BiConsumer<MutableMap<K, V>, E> accumulator() {
+      public BiConsumer<HashMap<K, V>, E> accumulator() {
         return (map, item) -> map.putMapping(keyExtractor.apply(item), valueExtractor.apply(item));
       }
 
       @Override
-      public BinaryOperator<MutableMap<K, V>> combiner() {
+      public BinaryOperator<HashMap<K, V>> combiner() {
         return (map1, map2) ->
             HashMap.copyOf(ImmutableMap.<K, V>builder().putAll(map1).putAll(map2).build());
       }
 
       @Override
-      public Function<MutableMap<K, V>, ImmutableMap<K, V>> finisher() {
-        return ImmutableMap::copyOf;
+      public Function<HashMap<K, V>, R> finisher() {
+        return finisher;
       }
 
       @Override

@@ -44,6 +44,14 @@ public final class ImmutableSet<E> implements Set<E> {
     return new Builder<>();
   }
 
+  public static <E> Builder<E> buildUpon(Set<? extends E> other) {
+    return ImmutableSet.<E>builder().addAll(other);
+  }
+
+  public Builder<E> toBuilder() {
+    return buildUpon(this);
+  }
+
   public static class Builder<E> extends AbstractBuilder<E, Builder<E>, ImmutableSet<E>> {
     private BiPredicate<Object, Object> equalsFunction = null;
     private ToIntFunction<Object> hashFunction = null;

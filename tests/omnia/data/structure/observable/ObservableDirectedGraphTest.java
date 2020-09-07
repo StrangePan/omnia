@@ -139,7 +139,7 @@ public final class ObservableDirectedGraphTest {
   }
 
   @Test
-  public void replaceNode_withEdges_edgesContainsReplacementEdgesOnly() {
+  public void replaceNode_withEdges_edgesContainReplacementEdgesOnly() {
     Object original = new Object();
     Object replacement = new Object();
     WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();

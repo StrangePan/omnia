@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
+import omnia.data.structure.Collection;
 
 class MaskingSet<E, J extends java.util.Set<E>> implements MutableSet<E> {
 
@@ -20,6 +21,11 @@ class MaskingSet<E, J extends java.util.Set<E>> implements MutableSet<E> {
   @Override
   public void add(E element) {
     javaSet.add(element);
+  }
+
+  @Override
+  public void addAll(Collection<? extends E> elements) {
+    javaSet.addAll(elements.stream().collect(java.util.stream.Collectors.toSet()));
   }
 
   @Override

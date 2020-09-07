@@ -3,6 +3,7 @@ package omnia.data.structure.mutable;
 import java.util.Iterator;
 import java.util.OptionalInt;
 import java.util.stream.Stream;
+import omnia.data.structure.Collection;
 
 class MaskingList<E> implements MutableList<E> {
 
@@ -41,6 +42,11 @@ class MaskingList<E> implements MutableList<E> {
   @Override
   public void add(E element) {
     javaList.add(element);
+  }
+
+  @Override
+  public void addAll(Collection<? extends E> elements) {
+    javaList.addAll(elements.stream().collect(java.util.stream.Collectors.toList()));
   }
 
   @Override

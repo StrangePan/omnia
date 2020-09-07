@@ -1,5 +1,6 @@
 package omnia.data.structure.observable.writable;
 
+import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
 import io.reactivex.BackpressureStrategy;
@@ -12,6 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import omnia.algorithm.SetAlgorithms;
+import omnia.data.structure.Collection;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.observable.ObservableSet;
@@ -28,6 +30,18 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
         state -> !state.contains(element),
         state -> ImmutableSet.copyOf(SetAlgorithms.unionOf(state, ImmutableSet.of(element))),
         (previousState, currentState) -> ImmutableSet.of(new AddToSet<>(element)));
+  }
+
+  @Override
+  public void addAll(Collection<? extends E> elements) {
+    mutateState(
+        state -> elements.stream().anyMatch(e -> !state.contains(e)),
+        state -> state.toBuilder().addAll(elements).build(),
+        (previousState, currentState) ->
+            SetAlgorithms.differenceBetween(previousState, currentState)
+                .stream()
+                .map(AddToSet::new)
+                .collect(toImmutableSet()));
   }
 
   @SuppressWarnings("unchecked")

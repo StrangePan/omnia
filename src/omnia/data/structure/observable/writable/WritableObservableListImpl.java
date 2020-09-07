@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import omnia.data.iterate.IntegerRangeIterator;
+import omnia.data.structure.Collection;
 import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.observable.ObservableList;
@@ -66,6 +67,16 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
         state -> state.toBuilder().add(item).build(),
         (previousState, currentState) ->
             generateInsertAtMutations(currentState, IndexRange.just(currentState.count() - 1)));
+  }
+
+  @Override
+  public void addAll(Collection<? extends E> elements) {
+    mutateState(
+        state -> true,
+        state -> state.toBuilder().addAll(elements).build(),
+        (previousState, currentState) ->
+            generateInsertAtMutations(
+                currentState, IndexRange.of(previousState.count(), currentState.count())));
   }
 
   @Override
@@ -337,6 +348,10 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
     private static IndexRange just(int index) {
       return new IndexRange(index, index + 1);
+    }
+
+    private static IndexRange of(int start, int end) {
+      return new IndexRange(start, end);
     }
 
     private IndexRange(int start, int end) {

@@ -114,6 +114,12 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
       }
 
       @Override
+      public void addAll(Collection<? extends Entry<K, V>> elements) {
+        javaMap.putAll(
+            elements.stream().collect(java.util.stream.Collectors.toMap(Entry::key, Entry::value)));
+      }
+
+      @Override
       public boolean removeUnknownTyped(Object element) {
         requireNonNull(element);
         return element instanceof Entry<?, ?>
