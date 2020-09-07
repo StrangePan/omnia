@@ -25,6 +25,11 @@ public final class ArrayStack<E> implements Stack<E> {
   }
 
   @Override
+  public Optional<E> peek() {
+    return list.isPopulated() ? Optional.of(list.itemAt(list.count())) : Optional.empty();
+  }
+
+  @Override
   public Iterator<E> iterator() {
     return list.iterator();
   }

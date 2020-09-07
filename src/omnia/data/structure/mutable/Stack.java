@@ -12,6 +12,8 @@ public interface Stack<E> extends Countable, Iterable<E> {
 
   Optional<E> pop();
 
+  Optional<E> peek();
+
   static <E> Stack<E> masking(java.util.Stack<E> javaStack) {
     return new Stack<>() {
 
@@ -23,6 +25,11 @@ public interface Stack<E> extends Countable, Iterable<E> {
       @Override
       public Optional<E> pop() {
         return javaStack.isEmpty() ? Optional.empty() : Optional.ofNullable(javaStack.pop());
+      }
+
+      @Override
+      public Optional<E> peek() {
+        return javaStack.isEmpty() ? Optional.empty() : Optional.ofNullable(javaStack.peek());
       }
 
       @Override
