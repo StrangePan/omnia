@@ -21,12 +21,12 @@ public final class ArrayStack<E> implements Stack<E> {
 
   @Override
   public Optional<E> pop() {
-    return list.isPopulated() ? Optional.of(list.removeAt(list.count())) : Optional.empty();
+    return list.isPopulated() ? Optional.of(list.removeAt(list.count() - 1)) : Optional.empty();
   }
 
   @Override
   public Optional<E> peek() {
-    return list.isPopulated() ? Optional.of(list.itemAt(list.count())) : Optional.empty();
+    return list.isPopulated() ? Optional.of(list.itemAt(list.count() - 1)) : Optional.empty();
   }
 
   @Override
