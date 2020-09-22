@@ -5,8 +5,8 @@ import static omnia.data.stream.Collectors.toSet;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -20,8 +20,8 @@ import omnia.data.structure.observable.ObservableSet;
 
 final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
   private volatile ImmutableSet<E> currentState = ImmutableSet.empty();
-  private final Subject<MutationEvent> mutationEventSubject =
-      PublishSubject.create();
+  private final FlowableProcessor<MutationEvent> mutationEventProcessor =
+      PublishProcessor.<MutationEvent>create().toSerialized();
   private final ObservableChannels observableChannels = new ObservableChannels();
 
   @Override
@@ -74,7 +74,7 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
       }
       ImmutableSet<E> newState = mutator.apply(previousState);
       currentState = newState;
-      mutationEventSubject.onNext(
+      mutationEventProcessor.onNext(
           new MutationEvent(newState, mutationsGenerator.apply(previousState, newState)));
       return true;
     }
@@ -184,15 +184,14 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
               },
               BackpressureStrategy.BUFFER)
               .concatWith(
-                  mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)
-                      .map(MutationEvent::state)),
+                  mutationEventProcessor.map(MutationEvent::state)),
           Flowable.<MutationEvent>create(
               flowableEmitter -> {
                 flowableEmitter.onNext(generateMutationEventForNewSubscription());
                 flowableEmitter.onComplete();
               },
               BackpressureStrategy.BUFFER)
-              .concatWith(mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)));
+              .concatWith(mutationEventProcessor));
     }
   }
 
