@@ -36,7 +36,7 @@ public interface ObservableMap<K, V> extends Map<K, V>, ObservableDataStructure 
     /** The key associated with the operation. */
     K key();
 
-    static <K, V> Flowable<AddToMap<K, V>> justAddToMapMutations(
+    static <K, V> Flowable<AddToMap<K, V>> justAddToMapOperations(
         Flowable<? extends MapOperation<K, V>> flowable) {
       return flowable.flatMap(
           mutation -> mutation instanceof AddToMap<?, ?>
@@ -44,7 +44,7 @@ public interface ObservableMap<K, V> extends Map<K, V>, ObservableDataStructure 
               : Flowable.empty());
     }
 
-    static <K, V> Flowable<RemoveFromMap<K, V>> justRemoveFromMapMutations(
+    static <K, V> Flowable<RemoveFromMap<K, V>> justRemoveFromMapOperations(
         Flowable<? extends MapOperation<K, V>> flowable) {
       return flowable.flatMap(
           mutation -> mutation instanceof RemoveFromMap<?, ?>
@@ -52,7 +52,7 @@ public interface ObservableMap<K, V> extends Map<K, V>, ObservableDataStructure 
               : Flowable.empty());
     }
 
-    static <K, V> Flowable<ReplaceInMap<K, V>> justReplaceInMapMutations(
+    static <K, V> Flowable<ReplaceInMap<K, V>> justReplaceInMapOperations(
         Flowable<? extends MapOperation<K, V>> flowable) {
       return flowable.flatMap(
           mutation -> mutation instanceof ReplaceInMap<?, ?>

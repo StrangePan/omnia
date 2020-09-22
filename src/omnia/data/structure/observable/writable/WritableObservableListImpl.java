@@ -285,12 +285,12 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     }
 
     @Override
-    public IndexRange previousIndicies() {
+    public IndexRange previousIndices() {
       return previousIndices;
     }
 
     @Override
-    public IndexRange currentIndicies() {
+    public IndexRange currentIndices() {
       return currentIndices;
     }
   }
