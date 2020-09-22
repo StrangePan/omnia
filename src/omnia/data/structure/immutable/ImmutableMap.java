@@ -5,6 +5,7 @@ import static omnia.data.stream.Collectors.toImmutableSet;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Supplier;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Map;
 import omnia.data.structure.Set;
@@ -47,23 +48,46 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
     return new Builder<>();
   }
 
+  public static <K, V> Builder<K, V> buildUpon(Map<? extends K, ? extends V> other) {
+    return ImmutableMap.<K, V>builder().putAll(other);
+  }
+
+  public Builder<K, V> toBuilder() {
+    return buildUpon(this);
+  }
+
   public static final class Builder<K, V> {
     private final java.util.Map<K, V> javaMap = new java.util.HashMap<>();
 
     private Builder() {}
 
-    public Builder<K, V> put(K key, V value) {
+    public Builder<K, V> putMapping(K key, V value) {
       javaMap.put(requireNonNull(key), requireNonNull(value));
       return this;
     }
 
+    public Builder<K, V> putMappingIfAbsent(K key, Supplier<? extends V> value) {
+      requireNonNull(value);
+      javaMap.computeIfAbsent(requireNonNull(key), k -> value.get());
+      return this;
+    }
+
     public Builder<K, V> putAll(Map<? extends K, ? extends V> otherMap) {
-      otherMap.entries().stream().forEach(e -> put(e.key(), e.value()));
+      otherMap.entries().stream().forEach(e -> putMapping(e.key(), e.value()));
       return this;
     }
 
     public Builder<K, V> putAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> iterable) {
-      iterable.forEach(e -> put(e.key(), e.value()));
+      iterable.forEach(e -> putMapping(e.key(), e.value()));
+      return this;
+    }
+
+    public Builder<K, V> removeKey(K key) {
+      return removeUnknownTypedKey(key);
+    }
+
+    public Builder<K, V> removeUnknownTypedKey(Object key) {
+      javaMap.remove(requireNonNull(key));
       return this;
     }
 

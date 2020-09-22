@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import omnia.data.iterate.MappingIterator;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Set;
 
@@ -46,89 +47,29 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
   }
 
   @Override
-  public MutableSet<Entry<K, V>> entries() {
-    java.util.Set<java.util.Map.Entry<K, V>> javaEntries = javaMap.entrySet();
-    return new MutableSet<>() {
+  public Set<Entry<K, V>> entries() {
+    return new Set<>() {
 
       @Override
-      public Stream<Entry<K, V>> stream() {
-        return javaEntries.stream().map(Entry::masking);
+      public boolean containsUnknownTyped(Object element) {
+        return element instanceof Entry<?, ?>
+            && Objects.equals(
+                javaMap.get(((Entry<?, ?>) element).key()), ((Entry<?, ?>) element).value());
       }
 
       @Override
-      public boolean isPopulated() {
-        return !javaEntries.isEmpty();
+      public Stream<Entry<K, V>> stream() {
+        return javaMap.entrySet().stream().map(Entry::masking);
       }
 
       @Override
       public int count() {
-        return javaEntries.size();
-      }
-
-      @Override
-      public boolean containsUnknownTyped(Object element) {
-        return javaEntries.stream()
-            .map(Entry::masking)
-            .anyMatch(e -> Objects.equals(element, e));
+        return javaMap.size();
       }
 
       @Override
       public Iterator<Entry<K, V>> iterator() {
-        Set<Entry<K, V>> entries =
-            javaEntries.stream().map(Entry::masking).collect(toImmutableSet());
-        Iterator<Entry<K, V>> entriesIterator = entries.iterator();
-
-        return new Iterator<>() {
-          private Entry<K, V> lastEntry = null;
-
-          @Override
-          public boolean hasNext() {
-            return entriesIterator.hasNext();
-          }
-
-          @Override
-          public Entry<K, V> next() {
-            lastEntry = entriesIterator.next();
-            return lastEntry;
-          }
-
-          @Override
-          public void remove() {
-            if (lastEntry == null) {
-              throw new IllegalStateException("remove() called on iterator before next()");
-            }
-            javaMap.remove(lastEntry.key());
-          }
-
-          @Override
-          public void forEachRemaining(Consumer<? super Entry<K, V>> action) {
-            entriesIterator.forEachRemaining(action);
-          }
-        };
-      }
-
-      @Override
-      public void add(Entry<K, V> element) {
-        requireNonNull(element);
-        javaMap.put(element.key(), element.value());
-      }
-
-      @Override
-      public void addAll(Collection<? extends Entry<K, V>> elements) {
-        javaMap.putAll(
-            elements.stream().collect(java.util.stream.Collectors.toMap(Entry::key, Entry::value)));
-      }
-
-      @Override
-      public boolean removeUnknownTyped(Object element) {
-        requireNonNull(element);
-        return element instanceof Entry<?, ?>
-            && javaMap.remove(((Entry<?, ?>) element).key(), ((Entry<?, ?>) element).value());
-      }
-
-      @Override
-      public void clear() {
-        javaMap.clear();
+        return new MappingIterator<>(javaMap.entrySet().iterator(), Entry::masking);
       }
     };
   }
