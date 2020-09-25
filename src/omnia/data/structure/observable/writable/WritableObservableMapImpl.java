@@ -22,11 +22,17 @@ import omnia.data.structure.observable.ObservableMap;
 
 final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, V> {
 
-  private volatile ImmutableMap<K, V> currentState = ImmutableMap.empty();
+  private volatile ImmutableMap<K, V> currentState;
   private final FlowableProcessor<MutationEvent> mutationEventProcessor =
       PublishProcessor.<MutationEvent>create().toSerialized();
 
-  WritableObservableMapImpl() {}
+  WritableObservableMapImpl() {
+    currentState = ImmutableMap.empty();
+  }
+
+  WritableObservableMapImpl(Map<? extends K, ? extends V> other) {
+    currentState = ImmutableMap.copyOf(other);
+  }
 
   @Override
   public void putMapping(K key, V value) {
