@@ -2,8 +2,8 @@ package omnia.data.structure.observable.writable;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
 import java.util.Iterator;
 import java.util.OptionalInt;
 import java.util.function.BiFunction;
@@ -19,7 +19,8 @@ import omnia.data.structure.observable.ObservableList;
 final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   private volatile ImmutableList<E> currentState = ImmutableList.empty();
-  private final Subject<MutationEvent> mutationEventSubject = PublishSubject.create();
+  private final FlowableProcessor<MutationEvent> mutationEventProcessor =
+      PublishProcessor.<MutationEvent>create().toSerialized();
   private final ObservableChannels observableChannels = new ObservableChannels();
 
   @Override
@@ -115,7 +116,8 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
       }
       ImmutableList<E> newState = mutator.apply(previousState);
       currentState = newState;
-      mutationEventSubject.onNext(new MutationEvent(newState, mutationsGenerator.apply(previousState, newState)));
+      mutationEventProcessor.onNext(
+          new MutationEvent(newState, mutationsGenerator.apply(previousState, newState)));
       return true;
     }
   }
@@ -285,12 +287,12 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     }
 
     @Override
-    public IndexRange previousIndicies() {
+    public IndexRange previousIndices() {
       return previousIndices;
     }
 
     @Override
-    public IndexRange currentIndicies() {
+    public IndexRange currentIndices() {
       return currentIndices;
     }
   }
@@ -410,16 +412,14 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
                     flowableEmitter.onComplete();
                   },
                   BackpressureStrategy.BUFFER)
-              .concatWith(
-                  mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)
-                      .map(MutationEvent::state)),
+              .concatWith(mutationEventProcessor.map(MutationEvent::state)),
           Flowable.<MutationEvent>create(
                   flowableEmitter -> {
                     flowableEmitter.onNext(generateMutationEventForNewSubscription());
                     flowableEmitter.onComplete();
                   },
                   BackpressureStrategy.BUFFER)
-              .concatWith(mutationEventSubject.toFlowable(BackpressureStrategy.BUFFER)));
+              .concatWith(mutationEventProcessor));
     }
   }
 

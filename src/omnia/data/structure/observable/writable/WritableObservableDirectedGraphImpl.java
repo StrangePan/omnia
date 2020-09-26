@@ -6,8 +6,8 @@ import static omnia.data.stream.Collectors.toSet;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -22,10 +22,9 @@ import omnia.data.structure.tuple.Couplet;
 
 final class WritableObservableDirectedGraphImpl<E> implements WritableObservableDirectedGraph<E> {
 
-  private final Subject<MutationEvent<E>> subject =
-      PublishSubject.<MutationEvent<E>>create().toSerialized();
-
   private volatile ImmutableDirectedGraph<E> state;
+  private final FlowableProcessor<MutationEvent<E>> mutationEventProcessor =
+      PublishProcessor.<MutationEvent<E>>create().toSerialized();
 
   WritableObservableDirectedGraphImpl() {
     state = ImmutableDirectedGraph.empty();
@@ -144,7 +143,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
       nextState = requireNonNull(mutateState.apply(previousState));
       state = nextState;
       Set<GraphOperation<E>> operations = mutationOperations.apply(previousState, nextState);
-      subject.onNext(
+      mutationEventProcessor.onNext(
           new MutationEvent<>() {
             @Override
             public DirectedGraph<E> state() {
@@ -230,8 +229,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
               synchronized (this) {
                 emitter.onNext(getState());
                 emitter.setDisposable(
-                    subject.toFlowable(BackpressureStrategy.LATEST)
-                        .map(MutationEvent::state)
+                    mutationEventProcessor.map(MutationEvent::state)
                         .subscribe(emitter::onNext, emitter::onError, emitter::onComplete));
               }
             },
@@ -266,7 +264,7 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
                    }
                  });
                  emitter.setDisposable(
-                     subject.toFlowable(BackpressureStrategy.BUFFER)
+                     mutationEventProcessor
                          .subscribe(emitter::onNext, emitter::onError, emitter::onComplete));
                }
             },

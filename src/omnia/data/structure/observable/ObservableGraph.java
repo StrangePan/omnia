@@ -29,43 +29,38 @@ public interface ObservableGraph<E> extends Graph<E>, ObservableDataStructure {
     Set<? extends ObservableGraph.GraphOperation<E>> operations();
   }
 
-  @SuppressWarnings("unused")
   interface GraphOperation<E> {
 
-    static <E> Function<
-            ObservableGraph.GraphOperation<E>,
-            Flowable<ObservableGraph.AddNodeToGraph<E>>>
-        justAddNodeToGraphMutations() {
-      return mutation -> mutation instanceof AddNodeToGraph<?>
-          ? Flowable.just((AddNodeToGraph<E>) mutation)
-          : Flowable.empty();
+    static <E> Flowable<AddNodeToGraph<E>> justAddNodeToGraphOperations(
+        Flowable<? extends GraphOperation<E>> flowable) {
+      return flowable.flatMap(
+          mutation -> mutation instanceof AddNodeToGraph<?>
+              ? Flowable.just((AddNodeToGraph<E>) mutation)
+              : Flowable.empty());
     }
 
-    static <E> Function<
-            ObservableGraph.GraphOperation<E>,
-            Flowable<ObservableGraph.RemoveNodeFromGraph<E>>>
-        justRemoveNodeFromGraphMutations() {
-      return mutation -> mutation instanceof RemoveNodeFromGraph<?>
-          ? Flowable.just((RemoveNodeFromGraph<E>) mutation)
-          : Flowable.empty();
+    static <E> Flowable<RemoveNodeFromGraph<E>> justRemoveNodeFromGraphOperations(
+        Flowable<? extends GraphOperation<E>> flowable) {
+      return flowable.flatMap(
+          mutation -> mutation instanceof RemoveNodeFromGraph<?>
+              ? Flowable.just((RemoveNodeFromGraph<E>) mutation)
+              : Flowable.empty());
     }
 
-    static <E> Function<
-            ObservableGraph.GraphOperation<E>,
-            Flowable<ObservableGraph.AddEdgeToGraph<E>>>
-        justAddEdgeToGraphMutations() {
-      return mutation -> mutation instanceof AddEdgeToGraph<?>
-          ? Flowable.just((AddEdgeToGraph<E>) mutation)
-          : Flowable.empty();
+    static <E> Flowable<AddEdgeToGraph<E>> justAddEdgeToGraphOperations(
+        Flowable<? extends GraphOperation<E>> flowable) {
+      return flowable.flatMap(
+          mutation -> mutation instanceof AddEdgeToGraph<?>
+              ? Flowable.just((AddEdgeToGraph<E>) mutation)
+              : Flowable.empty());
     }
 
-    static <E> Function<
-            ObservableGraph.GraphOperation<E>,
-            Flowable<ObservableGraph.RemoveEdgeFromGraph<E>>>
-        justRemoveEdgeFromGraphMutations() {
-      return mutation -> mutation instanceof RemoveEdgeFromGraph<?>
-          ? Flowable.just((RemoveEdgeFromGraph<E>) mutation)
-          : Flowable.empty();
+    static <E> Flowable<RemoveEdgeFromGraph<E>> justRemoveEdgeFromGraphOperations(
+        Flowable<? extends GraphOperation<E>> flowable) {
+      return flowable.flatMap(
+          mutation -> mutation instanceof RemoveEdgeFromGraph<?>
+              ? Flowable.just((RemoveEdgeFromGraph<E>) mutation)
+              : Flowable.empty());
     }
   }
 

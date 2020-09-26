@@ -27,29 +27,28 @@ public interface ObservableSet<E> extends ObservableDataStructure, Set<E> {
     Set<? extends ObservableSet.SetOperation<E>> operations();
   }
 
-  @SuppressWarnings("unused")
   interface SetOperation<E> {
 
-    static <E> Function<ObservableSet.SetOperation<E>, Flowable<ObservableSet.AddToSet<E>>>
-        justAddToSetOperations() {
-      return mutation -> mutation instanceof AddToSet<?>
-          ? Flowable.just((AddToSet<E>) mutation)
-          : Flowable.empty();
+    E item();
+
+    static <E> Flowable<AddToSet<E>> justAddToSetOperations(
+        Flowable<? extends SetOperation<E>> flowable) {
+      return flowable.flatMap(
+          mutation -> mutation instanceof AddToSet<?>
+              ? Flowable.just((AddToSet<E>) mutation)
+              : Flowable.empty());
     }
 
-    static <E> Function<ObservableSet.SetOperation<E>, Flowable<ObservableSet.RemoveFromSet<E>>>
-        justRemoveFromSetOperations() {
-      return mutation -> mutation instanceof RemoveFromSet<?>
-          ? Flowable.just((RemoveFromSet<E>) mutation)
-          : Flowable.empty();
+    static <E> Flowable<RemoveFromSet<E>> justRemoveFromSetOperations(
+        Flowable<? extends SetOperation<E>> flowable) {
+      return flowable.flatMap(
+          mutation -> mutation instanceof RemoveFromSet<?>
+              ? Flowable.just((RemoveFromSet<E>) mutation)
+              : Flowable.empty());
     }
   }
 
-  interface AddToSet<E> extends SetOperation<E> {
-    E item();
-  }
+  interface AddToSet<E> extends SetOperation<E> {}
 
-  interface RemoveFromSet<E> extends SetOperation<E> {
-    E item();
-  }
+  interface RemoveFromSet<E> extends SetOperation<E> {}
 }
