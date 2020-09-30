@@ -12,11 +12,15 @@ import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.mutable.ArrayList;
+import omnia.data.structure.mutable.ArrayStack;
 import omnia.data.structure.mutable.HashMap;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableList;
 import omnia.data.structure.mutable.MutableMap;
 import omnia.data.structure.mutable.MutableSet;
+import omnia.data.structure.mutable.Stack;
+import omnia.data.structure.tuple.Couple;
+import omnia.data.structure.tuple.Tuple;
 
 /**
  * A collection of useful algorithms for nalyzing and querying the contents of graph data
@@ -149,6 +153,76 @@ public final class GraphAlgorithms {
       }
     }
     return Optional.empty();
+  }
+
+
+  /**
+   * Traverses the given graph, producing a list of its nodes sorted topologically such that for
+   * every edge AB where A is the node at the edge start and B is the node at the edge end, A
+   * will precede B in the result (A will have a lower index than B).
+   *
+   * <p>If the given graph is disconnected, then each subgraph will be locally grouped in the
+   * result.</p>
+   *
+   * @param graph The graph whose nodes to topologically sort. Must be acyclic.
+   * @return an ordered list containing all nodes from the given graph sorted topologically
+   * @throws IllegalArgumentException if the graph is given graph is cyclic
+   */
+  public static <T> List<T> topologicallySort(DirectedGraph<T> graph) {
+
+    // iterative depth-first search with back tracking
+    ImmutableList.Builder<T> result = ImmutableList.builder();
+    MutableSet<DirectedGraph.DirectedNode<T>> itemsInResult = HashSet.create();
+
+    Stack<Couple<DirectedGraph.DirectedNode<T>, Iterator<? extends DirectedGraph.DirectedNode<T>>>> stack =
+        ArrayStack.create();
+    MutableSet<DirectedGraph.DirectedNode<T>> itemsInStack = HashSet.create();
+
+    // all starting nodes
+    for (DirectedGraph.DirectedNode<T> rootNode : graph.nodes()) {
+      if (rootNode.outgoingEdges().isPopulated()) {
+        continue;
+      }
+      stack.push(Tuple.of(rootNode, rootNode.predecessors().iterator()));
+      itemsInStack.add(rootNode);
+
+      // core loop
+      for (
+          Optional<Couple<DirectedGraph.DirectedNode<T>, Iterator<? extends DirectedGraph.DirectedNode<T>>>> frame =
+          stack.peek();
+          frame.isPresent(); // base case
+          frame = stack.peek()) {
+        Iterator<? extends DirectedGraph.DirectedNode<T>> iterator = frame.get().second();
+
+        if (iterator.hasNext()) {
+          DirectedGraph.DirectedNode<T> next = iterator.next();
+
+          // validation: cyclic graph detection
+          if (itemsInStack.contains(next)) {
+            throw new IllegalArgumentException(
+                "graph must be acyclic to perform a topological sort");
+          }
+
+          // deduplication: helps reduce complexity, corrects output
+          if (!itemsInResult.contains(next)) {
+
+            // put successors in the stack for future processing
+            stack.push(Tuple.of(next, next.predecessors().iterator()));
+            itemsInStack.add(next);
+          }
+        } else {
+          DirectedGraph.DirectedNode<T> current = frame.get().first();
+
+          // no other successors, add to result
+          result.add(current.item());
+          itemsInResult.add(current);
+          stack.pop();
+          itemsInStack.remove(current);
+        }
+      }
+    }
+
+    return result.build();
   }
 
   /**
