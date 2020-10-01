@@ -275,7 +275,7 @@ public final class GraphAlgorithmsTest {
     }
 
     @Test
-    public void topologicallySort_whenCyclical_throwsException() {
+    public void topologicallySort_whenLollipop_throwsException() {
       assertThrows(
           IllegalArgumentException.class,
           () -> GraphAlgorithms.topologicallySort(
@@ -290,7 +290,7 @@ public final class GraphAlgorithmsTest {
     }
 
     @Test
-    public void topologicallySort_whenLoop_throwsException() {
+    public void topologicallySort_whenCycle_withTwoNodes_throwsException() {
       assertThrows(
           IllegalArgumentException.class,
           () -> GraphAlgorithms.topologicallySort(
@@ -299,6 +299,21 @@ public final class GraphAlgorithmsTest {
                   .addNode(2)
                   .addEdge(1, 2)
                   .addEdge(2, 1)
+                  .build()));
+    }
+
+    @Test
+    public void topologicallySort_whenCycle_withThreeNodes_throwsException() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () -> GraphAlgorithms.topologicallySort(
+              ImmutableDirectedGraph.builder()
+                  .addNode(1)
+                  .addNode(2)
+                  .addNode(3)
+                  .addEdge(1, 2)
+                  .addEdge(2, 3)
+                  .addEdge(3, 1)
                   .build()));
     }
 
