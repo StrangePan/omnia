@@ -12,11 +12,19 @@ public class ArrayQueue<E> implements Queue<E> {
   private final int minimumCapacity;
   private FixedArrayQueue<E> subQueue;
 
-  public ArrayQueue() {
+  public static <E> ArrayQueue<E> create() {
+    return new ArrayQueue<E>();
+  }
+
+  public static <E> ArrayQueue<E> createWithInitialCapacity(int capacity) {
+    return new ArrayQueue<E>(capacity);
+  }
+
+  private ArrayQueue() {
     this(INITIAL_CAPACITY);
   }
 
-  public ArrayQueue(int capacity) {
+  private ArrayQueue(int capacity) {
     if (capacity < 1) {
       throw new IllegalArgumentException(
           String.format("Capacity must be at least 1: %d given.", capacity));

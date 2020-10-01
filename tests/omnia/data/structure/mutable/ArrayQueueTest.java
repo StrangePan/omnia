@@ -17,26 +17,26 @@ public class ArrayQueueTest {
 
   @Test
   public void init_isEmpty() {
-    Queue<?> testSubject = new ArrayQueue<>();
+    Queue<?> testSubject = ArrayQueue.create();
 
     assertFalse(testSubject.isPopulated());
   }
 
   @Test
   public void init_countIsZero() {
-    Queue<?> testSubject = new ArrayQueue<>();
+    Queue<?> testSubject = ArrayQueue.create();
 
     assertEquals(0, testSubject.count());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void init_withCapacityZero_didThrowException() {
-    new ArrayQueue(/* capacity= */ 0);
+    ArrayQueue.createWithInitialCapacity(/* capacity= */ 0);
   }
 
   @Test
   public void enqueue_one_isPopulated() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
 
     testSubject.enqueue(new Object());
 
@@ -45,7 +45,7 @@ public class ArrayQueueTest {
 
   @Test
   public void enqueue_one_countIsOne() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
 
     testSubject.enqueue(new Object());
 
@@ -54,14 +54,14 @@ public class ArrayQueueTest {
 
   @Test(expected = NullPointerException.class)
   public void enqueue_null_didThrowException() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
 
     testSubject.enqueue(null);
   }
 
   @Test
   public void enqueue_thenDequeue_didReturnObject() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
     Object item = new Object();
     testSubject.enqueue(item);
 
@@ -73,7 +73,7 @@ public class ArrayQueueTest {
 
   @Test
   public void enqueue_thenDequeue_isEmpty() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
     Object item = new Object();
     testSubject.enqueue(item);
 
@@ -84,7 +84,7 @@ public class ArrayQueueTest {
 
   @Test
   public void enqueue_thenDequeue_countIsZero() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
     Object item = new Object();
     testSubject.enqueue(item);
 
@@ -95,12 +95,12 @@ public class ArrayQueueTest {
 
   @Test
   public void dequeue_whenEmpty_didReturnEmpty() {
-    assertFalse(new ArrayQueue<>().dequeue().isPresent());
+    assertFalse(ArrayQueue.create().dequeue().isPresent());
   }
 
   @Test
   public void enqueue_thenDequeueTwice_didReturnEmpty() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
     testSubject.enqueue(new Object());
 
     testSubject.dequeue();
@@ -111,7 +111,7 @@ public class ArrayQueueTest {
   @Test
   public void enqueue_fiveHundredTimes_isExpectedSize() {
     List<Integer> data = buildData(500);
-    Queue<Integer> testSubject = new ArrayQueue<>();
+    Queue<Integer> testSubject = ArrayQueue.create();
 
     for (Integer datum : data) {
       testSubject.enqueue(datum);
@@ -123,7 +123,7 @@ public class ArrayQueueTest {
   @Test
   public void enqueue_fiveHundredTimes_thenDequeueFiveHundredTimes_didReturnExpectedItems() {
     List<Integer> data = buildData(500);
-    Queue<Integer> testSubject = new ArrayQueue<>();
+    Queue<Integer> testSubject = ArrayQueue.create();
 
     for (Integer datum : data) {
       testSubject.enqueue(datum);
@@ -137,7 +137,7 @@ public class ArrayQueueTest {
   @Test
   public void enqueue_fiveHundredTimes_thenDequeueFiveHundredTimes_isEmpty() {
     List<Integer> data = buildData(500);
-    Queue<Integer> testSubject = new ArrayQueue<>();
+    Queue<Integer> testSubject = ArrayQueue.create();
 
     for (Integer datum : data) {
       testSubject.enqueue(datum);
@@ -153,7 +153,7 @@ public class ArrayQueueTest {
   @Test
   public void enqueue_thenDequeue_fiveHundredTimes_didReturnExpectedItems() {
     List<Integer> data = buildData(500);
-    Queue<Integer> testSubject = new ArrayQueue<>();
+    Queue<Integer> testSubject = ArrayQueue.create();
 
     for (int i = 0; i < 500; i++) {
       Integer item = data.itemAt(i);
@@ -165,7 +165,7 @@ public class ArrayQueueTest {
   @Test
   public void enqueue_thenDequeue_fiveHundredTimes_isEmpty() {
     List<Integer> data = buildData(500);
-    Queue<Integer> testSubject = new ArrayQueue<>();
+    Queue<Integer> testSubject = ArrayQueue.create();
 
     for (int i = 0; i < 500; i++) {
       Integer item = data.itemAt(i);
@@ -180,12 +180,12 @@ public class ArrayQueueTest {
 
   @Test
   public void peek_whenEmpty_isEmpty() {
-    assertFalse(new ArrayQueue<>().peek().isPresent());
+    assertFalse(ArrayQueue.create().peek().isPresent());
   }
 
   @Test
   public void peek_withOne_didReturnObject() {
-    Queue<Integer> testSubject = new ArrayQueue<>();
+    Queue<Integer> testSubject = ArrayQueue.create();
     testSubject.enqueue(132);
 
     Optional<Integer> datum = testSubject.peek();
@@ -196,7 +196,7 @@ public class ArrayQueueTest {
 
   @Test
   public void peek_withOne_didNotDequeue() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
     testSubject.enqueue(new Object());
 
     testSubject.peek();
@@ -207,7 +207,7 @@ public class ArrayQueueTest {
 
   @Test
   public void peekRepeatedly_withContent_didNotDequeue() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
     for (int i = 0; i < 10; i++) {
       testSubject.enqueue(new Object());
     }
@@ -222,7 +222,7 @@ public class ArrayQueueTest {
 
   @Test
   public void peekRepeatedly_withContent_didReturnFirst() {
-    Queue<Object> testSubject = new ArrayQueue<>();
+    Queue<Object> testSubject = ArrayQueue.create();
     // First item (which we'll compare with)
     Object expected = new Object();
     testSubject.enqueue(expected);
