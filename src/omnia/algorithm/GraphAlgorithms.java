@@ -169,7 +169,6 @@ public final class GraphAlgorithms {
    * @throws IllegalArgumentException if the graph is given graph is cyclic
    */
   public static <T> List<T> topologicallySort(DirectedGraph<T> graph) {
-
     // iterative depth-first search with back tracking
     ImmutableList.Builder<T> result = ImmutableList.builder();
     MutableSet<DirectedGraph.DirectedNode<T>> itemsInResult = HashSet.create();
@@ -188,8 +187,11 @@ public final class GraphAlgorithms {
 
       // core loop
       for (
-          Optional<Couple<DirectedGraph.DirectedNode<T>, Iterator<? extends DirectedGraph.DirectedNode<T>>>> frame =
-          stack.peek();
+          Optional<
+              Couple<
+                  DirectedGraph.DirectedNode<T>,
+                  Iterator<? extends DirectedGraph.DirectedNode<T>>>> frame =
+              stack.peek();
           frame.isPresent(); // base case
           frame = stack.peek()) {
         Iterator<? extends DirectedGraph.DirectedNode<T>> iterator = frame.get().second();
@@ -222,7 +224,13 @@ public final class GraphAlgorithms {
       }
     }
 
-    return result.build();
+    List<T> resultList = result.build();
+
+    if (resultList.count() != graph.nodes().count()) {
+      throw new IllegalArgumentException("graph must be acyclic to perform a topological sort");
+    }
+
+    return resultList;
   }
 
   /**
