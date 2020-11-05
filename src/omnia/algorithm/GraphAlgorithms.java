@@ -12,12 +12,12 @@ import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.mutable.ArrayList;
+import omnia.data.structure.mutable.ArrayQueue;
 import omnia.data.structure.mutable.ArrayStack;
-import omnia.data.structure.mutable.HashMap;
 import omnia.data.structure.mutable.HashSet;
 import omnia.data.structure.mutable.MutableList;
-import omnia.data.structure.mutable.MutableMap;
 import omnia.data.structure.mutable.MutableSet;
+import omnia.data.structure.mutable.Queue;
 import omnia.data.structure.mutable.Stack;
 import omnia.data.structure.tuple.Couple;
 import omnia.data.structure.tuple.Tuple;
@@ -103,7 +103,6 @@ public final class GraphAlgorithms {
    */
   public static <T> Optional<List<T>> findAnyCycle(DirectedGraph<T> graph) {
     MutableSet<T> visitedItems = HashSet.create();
-    MutableMap<T, T> visitedFrom = HashMap.create();
 
     // iterate over every node, skipping over those we've already visited in another inner loop
     for (DirectedGraph.DirectedNode<T> directedNode : graph.nodes()) {
@@ -178,48 +177,59 @@ public final class GraphAlgorithms {
     MutableSet<DirectedGraph.DirectedNode<T>> itemsInStack = HashSet.create();
 
     // all starting nodes
-    for (DirectedGraph.DirectedNode<T> rootNode : graph.nodes()) {
-      if (rootNode.outgoingEdges().isPopulated()) {
+    for (DirectedGraph.DirectedNode<T> sourceNode : graph.nodes()) {
+      if (itemsInResult.contains(sourceNode)) {
         continue;
       }
-      stack.push(Tuple.of(rootNode, rootNode.predecessors().iterator()));
-      itemsInStack.add(rootNode);
 
-      // core loop
-      for (
-          Optional<
-              Couple<
-                  DirectedGraph.DirectedNode<T>,
-                  Iterator<? extends DirectedGraph.DirectedNode<T>>>> frame =
-              stack.peek();
-          frame.isPresent(); // base case
-          frame = stack.peek()) {
-        Iterator<? extends DirectedGraph.DirectedNode<T>> iterator = frame.get().second();
+      // traverse entire sub-graph to help cluster nodes
+      Set<DirectedGraph.DirectedNode<T>> subgraphNodes = findSubgraph(sourceNode);
 
-        if (iterator.hasNext()) {
-          DirectedGraph.DirectedNode<T> next = iterator.next();
+      for (DirectedGraph.DirectedNode<T> rootNode : subgraphNodes) {
+        if (rootNode.outgoingEdges().isPopulated()) {
+          continue;
+        }
 
-          // validation: cyclic graph detection
-          if (itemsInStack.contains(next)) {
-            throw new IllegalArgumentException(
-                "graph must be acyclic to perform a topological sort");
+
+        stack.push(Tuple.of(rootNode, rootNode.predecessors().iterator()));
+        itemsInStack.add(rootNode);
+
+        // core loop
+        for (
+            Optional<
+                Couple<
+                    DirectedGraph.DirectedNode<T>,
+                    Iterator<? extends DirectedGraph.DirectedNode<T>>>> frame =
+            stack.peek();
+            frame.isPresent(); // base case
+            frame = stack.peek()) {
+          Iterator<? extends DirectedGraph.DirectedNode<T>> iterator = frame.get().second();
+
+          if (iterator.hasNext()) {
+            DirectedGraph.DirectedNode<T> next = iterator.next();
+
+            // validation: cyclic graph detection
+            if (itemsInStack.contains(next)) {
+              throw new IllegalArgumentException(
+                  "graph must be acyclic to perform a topological sort");
+            }
+
+            // deduplication: helps reduce complexity, corrects output
+            if (!itemsInResult.contains(next)) {
+
+              // put successors in the stack for future processing
+              stack.push(Tuple.of(next, next.predecessors().iterator()));
+              itemsInStack.add(next);
+            }
+          } else {
+            DirectedGraph.DirectedNode<T> current = frame.get().first();
+
+            // no other successors, add to result
+            result.add(current.item());
+            itemsInResult.add(current);
+            stack.pop();
+            itemsInStack.remove(current);
           }
-
-          // deduplication: helps reduce complexity, corrects output
-          if (!itemsInResult.contains(next)) {
-
-            // put successors in the stack for future processing
-            stack.push(Tuple.of(next, next.predecessors().iterator()));
-            itemsInStack.add(next);
-          }
-        } else {
-          DirectedGraph.DirectedNode<T> current = frame.get().first();
-
-          // no other successors, add to result
-          result.add(current.item());
-          itemsInResult.add(current);
-          stack.pop();
-          itemsInStack.remove(current);
         }
       }
     }
@@ -231,6 +241,36 @@ public final class GraphAlgorithms {
     }
 
     return resultList;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Graph.Node<?>> ImmutableSet<T> findSubgraph(T source) {
+    MutableSet<T> set = HashSet.create();
+
+    Queue<T> queue = ArrayQueue.create();
+    queue.enqueue(source);
+
+    for (Optional<T> optionalNode = queue.dequeue();
+         optionalNode.isPresent();
+         optionalNode = queue.dequeue()) {
+      T node = optionalNode.get();
+
+      if (set.contains(node)) {
+        continue;
+      }
+
+      set.add(node);
+
+      for (Graph.Node<?> neighbor : node.neighbors()) {
+        if (set.contains((T) neighbor)) {
+          continue;
+        }
+
+        queue.enqueue((T) neighbor);
+      }
+    }
+
+    return ImmutableSet.copyOf(set);
   }
 
   /**
