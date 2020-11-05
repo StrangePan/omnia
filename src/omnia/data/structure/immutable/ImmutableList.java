@@ -1,5 +1,6 @@
 package omnia.data.structure.immutable;
 
+import java.util.stream.Collectors;
 import omnia.data.iterate.ArrayIterator;
 import omnia.data.iterate.IntegerRangeIterator;
 import omnia.data.iterate.MappingIterator;
@@ -166,6 +167,14 @@ public final class ImmutableList<E> implements List<E> {
       }
     }
     return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ImmutableList("
+        + elements.length
+        + ")"
+        + Arrays.stream(elements).map(Objects::toString).collect(Collectors.joining(",", "{", "}"));
   }
 
   @Override
