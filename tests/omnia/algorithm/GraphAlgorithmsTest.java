@@ -1,9 +1,11 @@
 package omnia.algorithm;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth8.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.truth.Truth;
+import com.google.common.truth.Truth8;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.DirectedGraph.DirectedNode;
 import omnia.data.structure.List;
@@ -423,13 +425,21 @@ public final class GraphAlgorithmsTest {
     }
 
     private static <T> TopologicalAssertion<T> assertThat(List<T> list) {
-      // O(N^3)
+      // O(N^2)
       return graph -> {
         Truth.assertThat(list.count()).isEqualTo(graph.nodes().count());
 
-        MutableSet<T> predecessors = HashSet.create();
-
+        // O(N)
         for (T item : list) {
+          Truth8.assertThat(graph.nodeOf(item)).isPresent();
+        }
+
+        MutableSet<T> cumulativePredecessors = HashSet.create();
+
+        // O(N^2)
+        for (T item : list) {
+
+          // predecessors of item exist in cumulative predecessors: O(N)
           graph.nodeOf(item)
               .map(DirectedNode::predecessors)
               .orElse(Set.empty())
@@ -437,7 +447,10 @@ public final class GraphAlgorithmsTest {
               .map(DirectedNode::item)
               .forEach(
                   directPredecessor ->
-                      Truth.assertThat(predecessors.contains(directPredecessor)).isTrue());
+                      Truth.assertThat(cumulativePredecessors.contains(directPredecessor))
+                          .isTrue());
+
+          // successors of item do NOT exist in cumulative predecessors yet: O(N)
           graph.nodeOf(item)
               .map(DirectedNode::successors)
               .orElse(Set.empty())
@@ -445,8 +458,15 @@ public final class GraphAlgorithmsTest {
               .map(DirectedNode::item)
               .forEach(
                   directPredecessor ->
-                      Truth.assertThat(predecessors.contains(directPredecessor)).isFalse());
-          predecessors.add(item);
+                      Truth.assertThat(cumulativePredecessors.contains(directPredecessor))
+                          .isFalse());
+
+          cumulativePredecessors.add(item);
+        }
+
+        // all nodes in graph exist in the result: O(N)
+        for (DirectedNode<? extends T> node : graph.nodes()) {
+          Truth.assertThat(cumulativePredecessors.contains(node.item())).isTrue();
         }
       };
     }
