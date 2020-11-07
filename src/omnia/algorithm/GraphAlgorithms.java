@@ -164,7 +164,8 @@ public final class GraphAlgorithms {
    * result.</p>
    *
    * @param graph The graph whose nodes to topologically sort. Must be acyclic.
-   * @return an ordered list containing all nodes from the given graph sorted topologically
+   * @return an ordered list containing all nodes from the given graph sorted topologically such
+   *     such that every node will appear in the list before its successors
    * @throws IllegalArgumentException if the graph is given graph is cyclic
    */
   public static <T> List<T> topologicallySort(DirectedGraph<T> graph) {
