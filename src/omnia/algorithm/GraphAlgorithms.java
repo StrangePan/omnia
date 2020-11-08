@@ -168,7 +168,7 @@ public final class GraphAlgorithms {
    *     such that every node will appear in the list before its successors
    * @throws IllegalArgumentException if the graph is given graph is cyclic
    */
-  public static <T> List<T> topologicallySort(DirectedGraph<T> graph) {
+  public static <T> ImmutableList<T> topologicallySort(DirectedGraph<T> graph) {
     // iterative depth-first search with back tracking
     ImmutableList.Builder<T> result = ImmutableList.builder();
     MutableSet<DirectedGraph.DirectedNode<T>> itemsInResult = HashSet.create();
@@ -235,7 +235,7 @@ public final class GraphAlgorithms {
       }
     }
 
-    List<T> resultList = result.build();
+    ImmutableList<T> resultList = result.build();
 
     if (resultList.count() != graph.nodes().count()) {
       throw new IllegalArgumentException("graph must be acyclic to perform a topological sort");
