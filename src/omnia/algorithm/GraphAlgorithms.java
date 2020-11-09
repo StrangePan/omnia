@@ -168,25 +168,28 @@ public final class GraphAlgorithms {
    *     such that every node will appear in the list before its successors
    * @throws IllegalArgumentException if the graph is given graph is cyclic
    */
-  public static <T> ImmutableList<T> topologicallySort(DirectedGraph<T> graph) {
+  public static <T> ImmutableList<T> topologicallySort(DirectedGraph<? extends T> graph) {
     // iterative depth-first search with back tracking
     ImmutableList.Builder<T> result = ImmutableList.builder();
-    MutableSet<DirectedGraph.DirectedNode<T>> itemsInResult = HashSet.create();
+    MutableSet<DirectedGraph.DirectedNode<? extends T>> itemsInResult = HashSet.create();
 
-    Stack<Couple<DirectedGraph.DirectedNode<T>, Iterator<? extends DirectedGraph.DirectedNode<T>>>> stack =
+    Stack<
+        Couple<
+            DirectedGraph.DirectedNode<? extends T>,
+            Iterator<? extends DirectedGraph.DirectedNode<? extends T>>>> stack =
         ArrayStack.create();
-    MutableSet<DirectedGraph.DirectedNode<T>> itemsInStack = HashSet.create();
+    MutableSet<DirectedGraph.DirectedNode<? extends T>> itemsInStack = HashSet.create();
 
     // all starting nodes
-    for (DirectedGraph.DirectedNode<T> sourceNode : graph.nodes()) {
+    for (DirectedGraph.DirectedNode<? extends T> sourceNode : graph.nodes()) {
       if (itemsInResult.contains(sourceNode)) {
         continue;
       }
 
       // traverse entire sub-graph to help cluster nodes
-      Set<DirectedGraph.DirectedNode<T>> subgraphNodes = findSubgraph(sourceNode);
+      Set<DirectedGraph.DirectedNode<? extends T>> subgraphNodes = findSubgraph(sourceNode);
 
-      for (DirectedGraph.DirectedNode<T> rootNode : subgraphNodes) {
+      for (DirectedGraph.DirectedNode<? extends T> rootNode : subgraphNodes) {
         if (rootNode.outgoingEdges().isPopulated()) {
           continue;
         }
@@ -199,15 +202,16 @@ public final class GraphAlgorithms {
         for (
             Optional<
                 Couple<
-                    DirectedGraph.DirectedNode<T>,
-                    Iterator<? extends DirectedGraph.DirectedNode<T>>>> frame =
+                    DirectedGraph.DirectedNode<? extends T>,
+                    Iterator<? extends DirectedGraph.DirectedNode<? extends T>>>> frame =
             stack.peek();
             frame.isPresent(); // base case
             frame = stack.peek()) {
-          Iterator<? extends DirectedGraph.DirectedNode<T>> iterator = frame.get().second();
+          Iterator<? extends DirectedGraph.DirectedNode<? extends T>> iterator =
+              frame.get().second();
 
           if (iterator.hasNext()) {
-            DirectedGraph.DirectedNode<T> next = iterator.next();
+            DirectedGraph.DirectedNode<? extends T> next = iterator.next();
 
             // validation: cyclic graph detection
             if (itemsInStack.contains(next)) {
@@ -223,7 +227,7 @@ public final class GraphAlgorithms {
               itemsInStack.add(next);
             }
           } else {
-            DirectedGraph.DirectedNode<T> current = frame.get().first();
+            DirectedGraph.DirectedNode<? extends T> current = frame.get().first();
 
             // no other successors, add to result
             result.add(current.item());

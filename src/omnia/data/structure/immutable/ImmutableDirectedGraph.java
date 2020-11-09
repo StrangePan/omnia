@@ -42,6 +42,22 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
     return buildUpon(original).build();
   }
 
+  public static <E, R> ImmutableDirectedGraph<R> copyOf(
+      DirectedGraph<E> original, Function<? super E, ? extends R> mapper) {
+    ImmutableDirectedGraph.Builder<R> builder = ImmutableDirectedGraph.builder();
+    Map<E, R> convertedTasks =
+        original.contents().stream()
+            .map(e -> Tuple.of(e, mapper.apply(e)))
+            .collect(toImmutableMap());
+    original.contents().forEach(
+        id -> builder.addNode(convertedTasks.valueOf(id).orElseThrow()));
+    original.edges().forEach(
+        edge -> builder.addEdge(
+            convertedTasks.valueOf(edge.start().item()).orElseThrow(),
+            convertedTasks.valueOf(edge.end().item()).orElseThrow()));
+    return builder.build();
+  }
+
   public static <E> Builder<E> builder() {
     return new Builder<>();
   }
