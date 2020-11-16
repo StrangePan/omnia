@@ -140,12 +140,10 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       requireNonNull(replacement);
 
       if (!nodes.contains(original)) {
-        throw new IllegalArgumentException(
-            "cannot replace a non-existent node. original:" + original);
+        throw new UnknownNodeException(original);
       }
       if (nodes.contains(replacement)) {
-        throw new IllegalArgumentException(
-            "cannot replace a node with an already existing node. replacement:" + replacement);
+        throw new DuplicateNodeException(original, replacement);
       }
 
       deepReplace(successors, original, replacement);
@@ -175,10 +173,10 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       requireNonNull(from);
       requireNonNull(to);
       if (!nodes.contains(from)) {
-        throw new IllegalArgumentException("cannot add an edge for a nonexistent node");
+        throw new UnknownNodeException(from);
       }
       if (!nodes.contains(to)) {
-        throw new IllegalStateException("cannot add an edge for a nonexistent node");
+        throw new UnknownNodeException(to);
       }
       successors.putMappingIfAbsent(from, HashSet::create).add(to);
       predecessors.putMappingIfAbsent(to, HashSet::create).add(from);
@@ -413,5 +411,21 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
 
   private DirectedEdge getOrCreateEdge(Couplet<? extends E> endpoints) {
     return edgeCache.getOrCache(endpoints, () -> new DirectedEdge(endpoints));
+  }
+
+  public static final class UnknownNodeException extends IllegalStateException {
+    private UnknownNodeException(Object node) {
+      super("Graph does not contain the specified node: " + node);
+    }
+  }
+
+  public static final class DuplicateNodeException extends IllegalStateException {
+    private DuplicateNodeException(Object original, Object replacement) {
+      super(
+          "Attempt to replace an existing node with itself or an equal node. Original: "
+              + original
+              + ", replacement: "
+              + replacement);
+    }
   }
 }
