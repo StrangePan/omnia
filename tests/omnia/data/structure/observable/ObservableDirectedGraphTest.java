@@ -8,6 +8,7 @@ import io.reactivex.subscribers.TestSubscriber;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.DirectedGraph.DirectedEdge;
 import omnia.data.structure.DirectedGraph.DirectedNode;
+import omnia.data.structure.immutable.ImmutableDirectedGraph;
 import omnia.data.structure.immutable.ImmutableSet;
 import omnia.data.structure.observable.ObservableDirectedGraph.MutationEvent;
 import omnia.data.structure.observable.ObservableGraph.AddEdgeToGraph;
@@ -86,7 +87,7 @@ public final class ObservableDirectedGraphTest {
   @Test
   public void addEdge_unrecognizedEdges_throwsException() {
     assertThrows(
-        IllegalArgumentException.class,
+        ImmutableDirectedGraph.UnknownNodeException.class,
         () -> WritableObservableDirectedGraph.create().addEdge(new Object(), new Object()));
   }
 
