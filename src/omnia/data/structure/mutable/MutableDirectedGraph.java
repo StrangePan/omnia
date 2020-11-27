@@ -6,5 +6,7 @@ public interface MutableDirectedGraph<E> extends MutableGraph<E>, DirectedGraph<
 
   void addEdge(E first, E second);
 
-  boolean removeEdge(Object first, Object second);
+  boolean removeEdge(E first, E second);
+
+  boolean removeEdgeUnknownTyped(Object first, Object second);
 }

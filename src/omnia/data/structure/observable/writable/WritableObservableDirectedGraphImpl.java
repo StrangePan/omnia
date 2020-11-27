@@ -117,10 +117,15 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
   }
 
   @Override
-  public boolean removeEdge(Object from, Object to) {
+  public boolean removeEdge(E from, E to) {
+    return removeEdgeUnknownTyped(from, to);
+  }
+
+  @Override
+  public boolean removeEdgeUnknownTyped(Object from, Object to) {
     return mutateState(
         currentState -> currentState.edgeOf(from, to).isPresent(),
-        currentState -> currentState.toBuilder().removeEdge(from, to).build(),
+        currentState -> currentState.toBuilder().removeEdgeUnknownEdge(from, to).build(),
         (previousState, newState) ->
             previousState.edgeOf(from, to).stream()
                 .map(DirectedEdge::endpoints)
