@@ -1,11 +1,16 @@
 package omnia.data.structure.immutable;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
+import static omnia.data.cache.MemoizedInt.memoize;
 import static omnia.data.stream.Collectors.toImmutableSet;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import omnia.data.cache.MemoizedInt;
 import omnia.data.structure.Collection;
 import omnia.data.structure.Map;
 import omnia.data.structure.Set;
@@ -134,6 +139,29 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
       public V value() {
         return javaEntry.getValue();
       }
+
+      @Override
+      public boolean equals(Object other) {
+        if (other == this) {
+          return true;
+        }
+        if (!(other instanceof Map.Entry)) {
+          return false;
+        }
+        Map.Entry<?, ?> otherEntry = (Map.Entry<?, ?>) other;
+        return Objects.equals(key(), otherEntry.key())
+            && Objects.equals(value(), otherEntry.value());
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(key(), value());
+      }
+
+      @Override
+      public String toString() {
+        return key().toString() + " => " + value().toString();
+      }
     }
 
     return javaMap.entrySet().stream().map(Entry::new).collect(toImmutableSet());
@@ -151,5 +179,52 @@ public final class ImmutableMap<K, V> implements Map<K, V> {
         .filter(e -> e.getValue().equals(value))
         .map(java.util.Map.Entry::getKey)
         .collect(toImmutableSet());
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) {
+      return true;
+    }
+    if (!(other instanceof ImmutableMap)) {
+      return false;
+    }
+    ImmutableMap<?, ?> otherMap = (ImmutableMap<?, ?>) other;
+    if (otherMap.entries().count() != entries().count()) {
+      return false;
+    }
+    for (Entry<?, ?> entry : entries()) {
+      Optional<?> otherValue = otherMap.valueOfUnknownTyped(entry.key());
+      if (otherValue.isEmpty() || !Objects.equals(otherValue.get(), entry.value())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return hashCode.value();
+  }
+
+  private final MemoizedInt hashCode = memoize(this::computeHash);
+
+  private int computeHash() {
+    Set<? extends Entry<?, ?>> entries = entries();
+    int[] entryCodes = new int[entries.count()];
+    int i = 0;
+    for (Entry<?, ?> entry : entries) {
+      entryCodes[i++] = entry.hashCode();
+    }
+    Arrays.sort(entryCodes);
+    return Objects.hash(Arrays.hashCode(entryCodes));
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName()
+        + "["
+        + entries().stream().map(Object::toString).map(s -> "{" + s + "}").collect(joining(", "))
+        + "]";
   }
 }

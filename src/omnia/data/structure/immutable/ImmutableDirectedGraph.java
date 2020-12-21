@@ -183,7 +183,11 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       return this;
     }
 
-    public Builder<E> removeEdge(Object from, Object to) {
+    public Builder<E> removeEdge(E from, E to) {
+      return removeEdgeUnknownEdge(from, to);
+    }
+
+    public Builder<E> removeEdgeUnknownEdge(Object from, Object to) {
       requireNonNull(from);
       requireNonNull(to);
       successors.valueOfUnknownTyped(from).ifPresent(set -> set.removeUnknownTyped(to));

@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public final class ImmutableSet<E> implements Set<E> {
 
-  private static ImmutableSet<?> EMPTY_IMMUTABLE_SET = new ImmutableSet<>();
+  private final static ImmutableSet<?> EMPTY_IMMUTABLE_SET = new ImmutableSet<>();
 
   private final Set<E> elements;
 
@@ -112,6 +112,9 @@ public final class ImmutableSet<E> implements Set<E> {
 
   @Override
   public boolean equals(Object other) {
+    if (other == this) {
+      return true;
+    }
     if (!(other instanceof ImmutableSet)) {
       return false;
     }
