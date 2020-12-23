@@ -10,8 +10,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import omnia.data.iterate.IntegerRangeIterator;
 import omnia.data.structure.Collection;
+import omnia.data.structure.IntRange;
 import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
 import omnia.data.structure.observable.ObservableList;
@@ -25,7 +25,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   @Override
   public void insertAt(int index, E item) {
-    IndexRange range = IndexRange.just(index);
+    IntRange range = IntRange.startingAt(index).withLength(1);
     mutateState(
         state -> true,
         state -> state.toBuilder().insertAt(index, item).build(),
@@ -34,7 +34,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   @Override
   public E removeAt(int index) {
-    IndexRange range = IndexRange.just(index);
+    IntRange range = IntRange.startingAt(index).withLength(1);
     E value;
     synchronized (this) {
       value = getState().itemAt(index);
@@ -48,7 +48,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   @Override
   public E replaceAt(int index, E item) {
-    IndexRange range = IndexRange.just(index);
+    IntRange range = IntRange.startingAt(index).withLength(1);
     E value;
     synchronized (this) {
       value = getState().itemAt(index);
@@ -66,8 +66,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     mutateState(
         state -> true,
         state -> state.toBuilder().add(item).build(),
-        (previousState, currentState) ->
-            generateInsertAtMutations(currentState, IndexRange.just(currentState.count() - 1)));
+        (previousState, currentState) -> generateInsertAtMutations(currentState, IntRange.startingAt(currentState.count() - 1).withLength(1)));
   }
 
   @Override
@@ -75,9 +74,8 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     mutateState(
         state -> true,
         state -> state.toBuilder().addAll(elements).build(),
-        (previousState, currentState) ->
-            generateInsertAtMutations(
-                currentState, IndexRange.of(previousState.count(), currentState.count())));
+        (previousState, currentState) -> generateInsertAtMutations(
+            currentState, IntRange.startingAt(previousState.count()).endingAt(currentState.count())));
   }
 
   @Override
@@ -86,10 +84,9 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
       OptionalInt index = getState().indexOf(item);
       return mutateState(
           state -> index.isPresent(),
-          state -> state.toBuilder().removeAt(index.getAsInt()).build(),
-          (previousState, currentState) ->
-              generateRemoveAtMutations(
-                  previousState, IndexRange.just(index.getAsInt())));
+          state -> state.toBuilder().removeAt(index.orElseThrow()).build(),
+          (previousState, currentState) -> generateRemoveAtMutations(
+              previousState, IntRange.startingAt(index.orElseThrow()).withLength(1)));
     }
   }
 
@@ -101,7 +98,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
           state -> ImmutableList.empty(),
           (previousState, currentState) ->
               generateRemoveAtMutations(
-                  previousState, new IndexRange(0, previousState.count())));
+                  previousState, IntRange.startingAt(0).endingAt(previousState.count())));
     }
   }
 
@@ -123,45 +120,45 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
   }
 
   private static <E> ImmutableList<ListOperation<E>> generateInsertAtMutations(
-      ImmutableList<E> state, IndexRange range) {
+      ImmutableList<E> state, IntRange range) {
     ImmutableList.Builder<ListOperation<E>> builder = ImmutableList.builder();
 
     // Move must be done before insert to make way for new items
     if (range.end() < state.count()) {
       int numItemsMoved = state.count() - range.end();
-      IndexRange moveFromRange = new IndexRange(range.start(), range.start() + numItemsMoved);
-      IndexRange moveToRange = new IndexRange(range.end(), range.end() + numItemsMoved);
-      builder.add(new MoveInList<>(moveToRange.asSublistOf(state), moveFromRange, moveToRange));
+      IntRange moveFromRange = IntRange.startingAt(range.start()).withLength(numItemsMoved);
+      IntRange moveToRange = IntRange.startingAt(range.end()).withLength(numItemsMoved);
+      builder.add(new MoveInList<>(state.getSublist(moveToRange), moveFromRange, moveToRange));
     }
 
-    builder.add(new AddToList<>(range.asSublistOf(state), range));
+    builder.add(new AddToList<>(state.getSublist(range), range));
 
     return builder.build();
   }
 
   private static <E> ImmutableList<ListOperation<E>> generateRemoveAtMutations(
-      ImmutableList<E> previousState, IndexRange range) {
+      ImmutableList<E> previousState, IntRange range) {
     ImmutableList.Builder<ListOperation<E>> builder = ImmutableList.builder();
 
     /// Removal must be done BEFORE move to make space for moved items
-    builder.add(new RemoveFromList<>(range.asSublistOf(previousState), range));
+    builder.add(new RemoveFromList<>(previousState.getSublist(range), range));
 
     if (range.end() < previousState.count()) {
       int numItemsMoved = previousState.count() - range.end();
-      IndexRange moveFromRange = new IndexRange(range.end(), range.end() + numItemsMoved);
-      IndexRange moveToRange = new IndexRange(range.start(), range.start() + numItemsMoved);
+      IntRange moveFromRange = IntRange.startingAt(range.end()).withLength(numItemsMoved);
+      IntRange moveToRange = IntRange.startingAt(range.start()).withLength(numItemsMoved);
       builder.add(
-          new MoveInList<>(moveFromRange.asSublistOf(previousState), moveFromRange, moveToRange));
+          new MoveInList<>(previousState.getSublist(moveFromRange), moveFromRange, moveToRange));
     }
 
     return builder.build();
   }
 
   private static <E> ImmutableList<ListOperation<E>> generateReplaceAtMutations(
-      ImmutableList<E> previousState, ImmutableList<E> currentState, IndexRange range) {
+      ImmutableList<E> previousState, ImmutableList<E> currentState, IntRange range) {
     return ImmutableList.of(
         new ReplaceInList<>(
-            range.asSublistOf(previousState), range.asSublistOf(currentState), range));
+            previousState.getSublist(range), currentState.getSublist(range), range));
   }
 
   @Override
@@ -252,9 +249,9 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   private static final class AddToList<E> implements ObservableList.AddToList<E> {
     private final List<E> items;
-    private final IndexRange indices;
+    private final IntRange indices;
 
-    private AddToList(List<E> items, IndexRange indices) {
+    private AddToList(List<E> items, IntRange indices) {
       this.items = items;
       this.indices = indices;
     }
@@ -265,17 +262,17 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     }
 
     @Override
-    public IndexRange indices() {
+    public IntRange indices() {
       return indices;
     }
   }
 
   private static final class MoveInList<E> implements ObservableList.MoveInList<E> {
     private final List<E> items;
-    private final IndexRange previousIndices;
-    private final IndexRange currentIndices;
+    private final IntRange previousIndices;
+    private final IntRange currentIndices;
 
-    private MoveInList(List<E> items, IndexRange previousIndices, IndexRange currentIndices) {
+    private MoveInList(List<E> items, IntRange previousIndices, IntRange currentIndices) {
       this.items = items;
       this.previousIndices = previousIndices;
       this.currentIndices = currentIndices;
@@ -287,21 +284,21 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     }
 
     @Override
-    public IndexRange previousIndices() {
+    public IntRange previousIndices() {
       return previousIndices;
     }
 
     @Override
-    public IndexRange currentIndices() {
+    public IntRange currentIndices() {
       return currentIndices;
     }
   }
 
   private static final class RemoveFromList<E> implements ObservableList.RemoveFromList<E> {
     private final List<E> items;
-    private final IndexRange indices;
+    private final IntRange indices;
 
-    private RemoveFromList(List<E> items, IndexRange indices) {
+    private RemoveFromList(List<E> items, IntRange indices) {
       this.items = items;
       this.indices = indices;
     }
@@ -312,7 +309,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     }
 
     @Override
-    public IndexRange indices() {
+    public IntRange indices() {
       return indices;
     }
   }
@@ -320,9 +317,9 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
   private static final class ReplaceInList<E> implements ObservableList.ReplaceInList<E> {
     private final List<E> replacedItems;
     private final List<E> newItems;
-    private final IndexRange indices;
+    private final IntRange indices;
 
-    private ReplaceInList(List<E> replacedItems, List<E> newItems, IndexRange indices) {
+    private ReplaceInList(List<E> replacedItems, List<E> newItems, IntRange indices) {
       this.replacedItems = replacedItems;
       this.newItems = newItems;
       this.indices = indices;
@@ -339,64 +336,8 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     }
 
     @Override
-    public IndexRange indices() {
+    public IntRange indices() {
       return indices;
-    }
-  }
-
-  private static final class IndexRange implements ObservableList.IndexRange {
-    private final int start;
-    private final int end;
-
-    private static IndexRange just(int index) {
-      return new IndexRange(index, index + 1);
-    }
-
-    private static IndexRange of(int start, int end) {
-      return new IndexRange(start, end);
-    }
-
-    private IndexRange(int start, int end) {
-      if (start <= end) {
-        throw new IllegalArgumentException(
-            "range must describe a non-empty set of integers. start=" + start + " end=" + end);
-      }
-      this.start = start;
-      this.end = end;
-    }
-
-    @Override
-    public int start() {
-      return start;
-    }
-
-    @Override
-    public int end() {
-      return end;
-    }
-
-    @Override
-    public int endInclusive() {
-      return end - 1;
-    }
-
-    @Override
-    public int count() {
-      return end - start;
-    }
-
-    @Override
-    public boolean isPopulated() {
-      return start < end;
-    }
-
-    @Override
-    public Iterator<Integer> iterator() {
-      return IntegerRangeIterator.create(start, end);
-    }
-
-    private <E> ImmutableList<E> asSublistOf(ImmutableList<E> list) {
-      return list.sublistStartingAt(start()).to(end());
     }
   }
 
@@ -434,6 +375,6 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
   private MutationEvent generateMutationEventForNewSubscription() {
     List<E> state = getState();
     return new MutationEvent(
-        state, ImmutableList.of(new AddToList<>(state, new IndexRange(0, state.count()))));
+        state, ImmutableList.of(new AddToList<>(state, IntRange.startingAt(0).endingAt(state.count()))));
   }
 }

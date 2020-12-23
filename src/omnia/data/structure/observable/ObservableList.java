@@ -2,7 +2,7 @@ package omnia.data.structure.observable;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
-import omnia.contract.Countable;
+import omnia.data.structure.IntRange;
 import omnia.data.structure.List;
 
 public interface ObservableList<E> extends List<E>, ObservableDataStructure {
@@ -90,7 +90,7 @@ public interface ObservableList<E> extends List<E>, ObservableDataStructure {
     List<E> items();
 
     /** The index range at which the items were added. */
-    IndexRange indices();
+    IntRange indices();
   }
 
   /**
@@ -103,10 +103,10 @@ public interface ObservableList<E> extends List<E>, ObservableDataStructure {
     List<E> items();
 
     /** The range of indices at which the items resided in the previous state of the list. */
-    IndexRange previousIndices();
+    IntRange previousIndices();
 
     /** The range of indices at which the items now reside in the current state of the list. */
-    IndexRange currentIndices();
+    IntRange currentIndices();
   }
 
   /** Represents one or more items being removed from the list. */
@@ -116,7 +116,7 @@ public interface ObservableList<E> extends List<E>, ObservableDataStructure {
     List<E> items();
 
     /** The indices of the items in the previous state of the list. */
-    IndexRange indices();
+    IntRange indices();
   }
 
   /**
@@ -134,32 +134,7 @@ public interface ObservableList<E> extends List<E>, ObservableDataStructure {
     List<E> newItems();
 
     /** The range of indices within the list whose values were replaced in this operation. */
-    IndexRange indices();
+    IntRange indices();
   }
 
-  interface IndexRange extends Countable, Iterable<Integer> {
-    /**
-     * The <b>inclusive</b> starting index of the range. Guaranteed to represent a valid index into
-     * a list.
-     */
-    int start();
-
-    /**
-     * The <b>non-inclusive</b> ending index of the range. Not guaranteed to represent a valid
-     * index into a list.
-     */
-    int end();
-
-    /**
-     * The <b>inclusive</b> end index of the range. Guaranteed to represent a valid index into a
-     * list.
-     */
-    int endInclusive();
-
-    /**
-     * The number of indices contained within the range. Equivalent to
-     * {@code {@link #end()} - {@link #start()}}.
-     */
-    int count();
-  }
 }

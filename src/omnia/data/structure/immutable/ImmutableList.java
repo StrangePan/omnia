@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 import omnia.data.iterate.ArrayIterator;
 import omnia.data.iterate.IntegerRangeIterator;
 import omnia.data.iterate.MappingIterator;
+import omnia.data.structure.IntRange;
 import omnia.data.structure.List;
 
 import java.util.Arrays;
@@ -182,6 +183,10 @@ public final class ImmutableList<E> implements List<E> {
     return Arrays.hashCode(elements);
   }
 
+  public ImmutableList<E> getSublist(IntRange intRange) {
+    return sublistStartingAt(intRange.start()).length(intRange.count());
+  }
+
   public SublistBuilder sublistStartingAt(int startingIndex) {
     return new SublistBuilder(startingIndex);
   }
@@ -191,6 +196,10 @@ public final class ImmutableList<E> implements List<E> {
 
     private SublistBuilder(int startingIndex) {
       this.startingIndex = startingIndex;
+    }
+
+    public ImmutableList<E> length(int length) {
+      return to(startingIndex + length);
     }
 
     public ImmutableList<E> to(int endingIndex) {
