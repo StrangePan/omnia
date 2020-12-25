@@ -23,7 +23,7 @@ public final class ObservableState<T> {
     observableState =
         mutations.hide()
             .scan(initialState, (state, mutation) -> Objects.requireNonNull(mutation.apply(state)))
-            .startWith(initialState)
+            .distinctUntilChanged()
             .replay(1)
             .autoConnect(0);
   }
