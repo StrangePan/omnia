@@ -4,7 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import io.reactivex.subscribers.TestSubscriber;
+import io.reactivex.rxjava3.observers.TestObserver;
 import omnia.data.structure.DirectedGraph;
 import omnia.data.structure.DirectedGraph.DirectedEdge;
 import omnia.data.structure.DirectedGraph.DirectedNode;
@@ -191,7 +191,7 @@ public final class ObservableDirectedGraphTest {
     WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
-    TestSubscriber<? extends MutationEvent<Object>> subscriber = graph.observe().mutations().test();
+    TestObserver<? extends MutationEvent<Object>> subscriber = graph.observe().mutations().test();
 
     subscriber.assertValue(event -> event.operations().count() == 1);
     subscriber.assertValue(
@@ -214,7 +214,7 @@ public final class ObservableDirectedGraphTest {
     graph.addNode(item);
     graph.addEdge(edge.first(), edge.second());
 
-    TestSubscriber<DirectedGraph<Object>> subscriber =
+    TestObserver<DirectedGraph<Object>> subscriber =
         graph.observe().mutations().map(MutationEvent::state).test();
 
     subscriber.assertValue(state -> state.edges().count() == 1);
@@ -234,7 +234,7 @@ public final class ObservableDirectedGraphTest {
     WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(item);
-    TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
+    TestObserver<? extends MutationEvent<Object>> testSubscriber =
         graph.observe().mutations().skip(1).test();
     graph.removeNode(item);
 
@@ -256,7 +256,7 @@ public final class ObservableDirectedGraphTest {
 
     graph.addNode(item);
     graph.addEdge(item, item);
-    TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
+    TestObserver<? extends MutationEvent<Object>> testSubscriber =
         graph.observe().mutations().skip(1).test();
     graph.removeEdge(item, item);
 
@@ -279,7 +279,7 @@ public final class ObservableDirectedGraphTest {
 
     graph.addNode(item);
     graph.addEdge(item, item);
-    TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
+    TestObserver<? extends MutationEvent<Object>> testSubscriber =
         graph.observe().mutations().skip(1).test();
     graph.removeNode(item);
 
@@ -305,7 +305,7 @@ public final class ObservableDirectedGraphTest {
     WritableObservableDirectedGraph<Object> graph = WritableObservableDirectedGraph.create();
 
     graph.addNode(original);
-    TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
+    TestObserver<? extends MutationEvent<Object>> testSubscriber =
         graph.observe().mutations().skip(1).test();
     graph.replaceNode(original, replacement);
 
@@ -344,7 +344,7 @@ public final class ObservableDirectedGraphTest {
 
     graph.addNode(original);
     graph.addEdge(original, original);
-    TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
+    TestObserver<? extends MutationEvent<Object>> testSubscriber =
         graph.observe().mutations().skip(1).test();
     graph.replaceNode(original, replacement);
 

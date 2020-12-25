@@ -2,11 +2,11 @@ package omnia.data.structure.observable;
 
 import static java.util.Objects.requireNonNull;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.functions.Function;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.SingleSubject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.functions.Function;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.SingleSubject;
 import java.util.Objects;
 import omnia.data.structure.tuple.Couple;
 

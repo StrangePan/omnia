@@ -1,6 +1,6 @@
 package omnia.data.structure.observable;
 
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import omnia.data.structure.Collection;
 
 /**
@@ -30,7 +30,7 @@ public interface ObservableDataStructure {
      * data structure. New subscribers should ignore this first emission if they wish to only be
      * notified of changes.
      */
-    Flowable<?> states();
+    Observable<?> states();
 
     /**
      * Emits both an immutable copy of the data structure whenever its state changes, as well
@@ -41,7 +41,7 @@ public interface ObservableDataStructure {
      * structure, as well as a mutation equivalent of populating an empty data structure with the
      * contents of current state.
      */
-    Flowable<? extends MutationEvent> mutations();
+    Observable<? extends MutationEvent> mutations();
   }
 
   /**

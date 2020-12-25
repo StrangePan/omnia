@@ -1,6 +1,6 @@
 package omnia.data.structure.observable;
 
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import omnia.data.structure.Set;
 import omnia.data.structure.UndirectedGraph;
 
@@ -12,10 +12,10 @@ public interface ObservableUndirectedGraph<E> extends ObservableGraph<E>, Undire
   interface ObservableChannels<E> extends ObservableGraph.ObservableChannels<E> {
 
     @Override
-    Flowable<? extends UndirectedGraph<E>> states();
+    Observable<? extends UndirectedGraph<E>> states();
 
     @Override
-    Flowable<? extends MutationEvent<E>> mutations();
+    Observable<? extends MutationEvent<E>> mutations();
   }
 
   interface MutationEvent<E> extends ObservableGraph.MutationEvent<E> {

@@ -1,7 +1,6 @@
 package omnia.data.structure.observable;
 
-import io.reactivex.Flowable;
-import io.reactivex.functions.Function;
+import io.reactivex.rxjava3.core.Observable;
 import omnia.data.structure.Set;
 
 public interface ObservableSet<E> extends ObservableDataStructure, Set<E> {
@@ -12,10 +11,10 @@ public interface ObservableSet<E> extends ObservableDataStructure, Set<E> {
   interface ObservableChannels<E> extends ObservableDataStructure.ObservableChannels {
 
     @Override
-    Flowable<? extends Set<E>> states();
+    Observable<? extends Set<E>> states();
 
     @Override
-    Flowable<? extends ObservableSet.MutationEvent<E>> mutations();
+    Observable<? extends ObservableSet.MutationEvent<E>> mutations();
   }
 
   interface MutationEvent<E> extends ObservableDataStructure.MutationEvent {
@@ -31,20 +30,20 @@ public interface ObservableSet<E> extends ObservableDataStructure, Set<E> {
 
     E item();
 
-    static <E> Flowable<AddToSet<E>> justAddToSetOperations(
-        Flowable<? extends SetOperation<E>> flowable) {
-      return flowable.flatMap(
+    static <E> Observable<AddToSet<E>> justAddToSetOperations(
+        Observable<? extends SetOperation<E>> observable) {
+      return observable.flatMap(
           mutation -> mutation instanceof AddToSet<?>
-              ? Flowable.just((AddToSet<E>) mutation)
-              : Flowable.empty());
+              ? Observable.just((AddToSet<E>) mutation)
+              : Observable.empty());
     }
 
-    static <E> Flowable<RemoveFromSet<E>> justRemoveFromSetOperations(
-        Flowable<? extends SetOperation<E>> flowable) {
-      return flowable.flatMap(
+    static <E> Observable<RemoveFromSet<E>> justRemoveFromSetOperations(
+        Observable<? extends SetOperation<E>> observable) {
+      return observable.flatMap(
           mutation -> mutation instanceof RemoveFromSet<?>
-              ? Flowable.just((RemoveFromSet<E>) mutation)
-              : Flowable.empty());
+              ? Observable.just((RemoveFromSet<E>) mutation)
+              : Observable.empty());
     }
   }
 

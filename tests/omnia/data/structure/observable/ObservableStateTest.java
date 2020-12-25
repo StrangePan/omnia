@@ -1,6 +1,6 @@
 package omnia.data.structure.observable;
 
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.observers.TestObserver;
 import omnia.data.structure.tuple.Tuple;
 import org.junit.Test;
 import org.junit.runner.RunWith;

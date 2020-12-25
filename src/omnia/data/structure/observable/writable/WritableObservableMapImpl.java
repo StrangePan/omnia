@@ -3,10 +3,9 @@ package omnia.data.structure.observable.writable;
 import static java.util.Objects.requireNonNull;
 import static omnia.data.stream.Collectors.toSet;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.processors.FlowableProcessor;
-import io.reactivex.processors.PublishProcessor;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -23,8 +22,8 @@ import omnia.data.structure.observable.ObservableMap;
 final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, V> {
 
   private volatile ImmutableMap<K, V> currentState;
-  private final FlowableProcessor<MutationEvent> mutationEventProcessor =
-      PublishProcessor.<MutationEvent>create().toSerialized();
+  private final Subject<MutationEvent> mutationEvents =
+      PublishSubject.<MutationEvent>create().toSerialized();
 
   WritableObservableMapImpl() {
     currentState = ImmutableMap.empty();
@@ -43,7 +42,7 @@ final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, 
             ImmutableSet.of(
                 previousState.valueOf(key)
                     .<MapOperation<K, V>>map(previous -> new ReplaceInMap<>(key, previous, value))
-                    .orElseGet(() -> new AddToMap<K, V>(key, value))));
+                    .orElseGet(() -> new AddToMap<>(key, value))));
   }
 
   @Override
@@ -53,8 +52,8 @@ final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, 
           currentState -> currentState.valueOf(key).isEmpty(),
           currentState -> currentState.toBuilder().putMapping(key, value.get()).build(),
           (previousState, newState) ->
-              ImmutableSet.of(new AddToMap<>(key, newState.valueOf(key).get())));
-      return currentState.valueOf(key).get();
+              ImmutableSet.of(new AddToMap<>(key, newState.valueOf(key).orElseThrow())));
+      return currentState.valueOf(key).orElseThrow();
     }
   }
 
@@ -66,12 +65,13 @@ final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, 
           currentState -> currentState.valueOf(key).isPresent(),
           currentState -> currentState.toBuilder().removeKey(key).build(),
           (previousState, newState) ->
-              ImmutableSet.of(new RemoveFromMap<>(key, previousState.valueOf(key).get())));
+              ImmutableSet.of(new RemoveFromMap<>(key, previousState.valueOf(key).orElseThrow())));
       return removedValue;
     }
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public Optional<V> removeUnknownTypedKey(Object key) {
     synchronized (this) {
       Optional<V> removedValue = currentState.valueOfUnknownTyped(key);
@@ -79,8 +79,9 @@ final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, 
           currentState -> currentState.valueOfUnknownTyped(key).isPresent(),
           currentState -> currentState.toBuilder().removeUnknownTypedKey(key).build(),
           (previousState, newState) ->
-              ImmutableSet.<MapOperation<K, V>>of(
-                  new RemoveFromMap<>((K) key, previousState.valueOfUnknownTyped(key).get())));
+              ImmutableSet.of(
+                  new RemoveFromMap<>(
+                      (K) key, previousState.valueOfUnknownTyped(key).orElseThrow())));
       return removedValue;
     }
   }
@@ -97,7 +98,7 @@ final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, 
       ImmutableMap<K, V> nextState = requireNonNull(mutateState.apply(previousState));
       currentState = nextState;
       Set<MapOperation<K, V>> operations = mutationOperations.apply(previousState, nextState);
-      mutationEventProcessor.onNext(new MutationEvent(nextState, operations));
+      mutationEvents.onNext(new MutationEvent(nextState, operations));
       return true;
     }
   }
@@ -152,20 +153,18 @@ final class WritableObservableMapImpl<K, V> implements WritableObservableMap<K, 
       implements ObservableMap.ObservableChannels<K, V> {
     private ObservableChannels() {
       super(
-          Flowable.<Map<K, V>>create(
+          Observable.<Map<K, V>>create(
                   flowableEmitter -> {
                     flowableEmitter.onNext(getState());
                     flowableEmitter.onComplete();
-                  },
-                  BackpressureStrategy.BUFFER)
-              .concatWith(mutationEventProcessor.map(MutationEvent::state)),
-          Flowable.<MutationEvent>create(
+                  })
+              .concatWith(mutationEvents.map(MutationEvent::state)),
+          Observable.<MutationEvent>create(
                   flowableEmitter -> {
                     flowableEmitter.onNext(generateMutationEventForNewSubscription());
                     flowableEmitter.onComplete();
-                  },
-                  BackpressureStrategy.BUFFER)
-              .concatWith(mutationEventProcessor));
+                  })
+              .concatWith(mutationEvents));
     }
   }
 
