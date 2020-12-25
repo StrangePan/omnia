@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public final class ImmutableList<E> implements List<E> {
 
-  private static ImmutableList<?> EMPTY_LIST = new ImmutableList<>();
+  private static final ImmutableList<?> EMPTY_LIST = new ImmutableList<>();
 
   private final E[] elements;
 
