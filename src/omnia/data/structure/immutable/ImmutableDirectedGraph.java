@@ -6,6 +6,7 @@ import static omnia.data.stream.Collectors.toImmutableMap;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -234,9 +235,14 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   }
 
   @Override
-  public Optional<? extends DirectedNode> nodeOf(Object item) {
+  public Optional<? extends DirectedGraph.DirectedNode<E>> nodeOf(E item) {
+    return nodeOfUnknownType(item);
+  }
+
+  @Override
+  public Optional<DirectedNode> nodeOfUnknownType(Object item) {
     @SuppressWarnings("unchecked")
-    Optional<? extends DirectedNode> node =
+    Optional<DirectedNode> node =
         nodes.containsUnknownTyped(item)
             ? Optional.of(getOrCreateNode((E) item))
             : Optional.empty();
@@ -244,9 +250,14 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   }
 
   @Override
-  public Optional<? extends DirectedEdge> edgeOf(Object from, Object to) {
+  public Optional<DirectedEdge> edgeOf(E from, E to) {
+    return edgeOfUnknownType(from, to);
+  }
+
+  @Override
+  public Optional<DirectedEdge> edgeOfUnknownType(Object from, Object to) {
     @SuppressWarnings("unchecked")
-    Optional<? extends DirectedEdge> edge =
+    Optional<DirectedEdge> edge =
         successors.valueOfUnknownTyped(from)
             .filter(set -> set.containsUnknownTyped(to))
             .map(u -> Tuplet.of((E) from, (E) to))
@@ -347,6 +358,16 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
           && Objects.equals(item, ((ImmutableDirectedGraph<?>.DirectedNode) other).item);
     }
 
+    @Override
+    public int hashCode() {
+      return Objects.hash(item);
+    }
+
+    @Override
+    public String toString() {
+      return String.format("ImmutableDirectedNode{%s}", item);
+    }
+
     private ImmutableDirectedGraph<E> graph() {
       return ImmutableDirectedGraph.this;
     }
@@ -388,6 +409,11 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
       return Objects.hash(endpoints);
     }
 
+    @Override
+    public String toString() {
+      return String.format("ImmutableDirectedEdge{from=%s, to=%s}", endpoints.first(), endpoints.second());
+    }
+
     private ImmutableDirectedGraph<E> graph() {
       return ImmutableDirectedGraph.this;
     }
@@ -418,12 +444,16 @@ public final class ImmutableDirectedGraph<E> implements DirectedGraph<E> {
   }
 
   public static final class UnknownNodeException extends IllegalStateException {
+    private static final long serialVersionUID = -533435014961799617L;
+
     private UnknownNodeException(Object node) {
       super("Graph does not contain the specified node: " + node);
     }
   }
 
   public static final class DuplicateNodeException extends IllegalStateException {
+    private static final long serialVersionUID = 1879962996101718193L;
+
     private DuplicateNodeException(Object original, Object replacement) {
       super(
           "Attempt to replace an existing node with itself or an equal node. Original: "

@@ -18,7 +18,9 @@ public interface Graph<E> {
     Collection<? extends Node<E>> endpoints();
   }
 
-  Optional<? extends Node<E>> nodeOf(Object item);
+  Optional<? extends Node<E>> nodeOf(E item);
+
+  Optional<? extends Node<E>> nodeOfUnknownType(Object item);
 
   Set<E> contents();
 

@@ -1,11 +1,13 @@
 package omnia.cli.out;
 
+import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static omnia.data.stream.Collectors.toList;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import omnia.data.structure.List;
 import omnia.data.structure.immutable.ImmutableList;
@@ -54,7 +56,7 @@ public final class Output {
           && spans.itemAt(i - 1) instanceof InlineSpan
           && endsInNewLine(((InlineSpan) spans.itemAt(i - 1)).text)
           && span instanceof LineSpan) {
-        output.append('\n');
+        output.append(lineSeparator());
       }
       output.append(propagation.apply(span));
     }
@@ -62,7 +64,7 @@ public final class Output {
   }
 
   private static boolean endsInNewLine(String string) {
-    return string.charAt(string.length() - 1) == '\n';
+    return string.endsWith(lineSeparator()) || string.endsWith("\n") || string.endsWith("\r");
   }
 
   public static Builder builder() {
@@ -366,17 +368,20 @@ public final class Output {
 
     private StringBuilder render(Function<? super Renderable, ? extends StringBuilder> propagation) {
       if (!spans.isPopulated()) {
-        return new StringBuilder("\n");
+        return new StringBuilder(lineSeparator());
       }
       String indentation = " ".repeat(this.indentation);
       return new StringBuilder(indentation)
           .append(spans.stream()
               .map(propagation)
               .map(Object::toString)
-              .map(rendering -> rendering.replaceAll("\\n", "\n" + indentation))
+              .map(
+                  rendering ->
+                      rendering.replaceAll(
+                          Pattern.quote(lineSeparator()), lineSeparator() + indentation))
               .<StringBuilder>collect(
                   StringBuilder::new, StringBuilder::append, StringBuilder::append))
-          .append("\n");
+          .append(lineSeparator());
     }
 
     @Override

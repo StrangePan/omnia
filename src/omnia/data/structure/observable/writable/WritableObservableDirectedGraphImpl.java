@@ -91,13 +91,13 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
         currentState -> currentState.toBuilder().removeUnknownTypedNode(item).build(),
         (previousState, newState) ->
             Streams.concat(
-                previousState.nodeOf(item).stream()
+                previousState.nodeOfUnknownType(item).stream()
                     .map(DirectedNode::edges)
                     .flatMap(Set::stream)
                     .map(DirectedEdge::endpoints)
                     .map(couplet -> couplet.map(DirectedNode::item))
                     .map(RemoveEdgeFromGraph::create),
-                previousState.nodeOf(item).stream()
+                previousState.nodeOfUnknownType(item).stream()
                     .map(DirectedNode::item)
                     .map(RemoveNodeFromGraph::create))
                 .collect(toSet()));
@@ -124,10 +124,10 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
   @Override
   public boolean removeEdgeUnknownTyped(Object from, Object to) {
     return mutateState(
-        currentState -> currentState.edgeOf(from, to).isPresent(),
+        currentState -> currentState.edgeOfUnknownType(from, to).isPresent(),
         currentState -> currentState.toBuilder().removeEdgeUnknownEdge(from, to).build(),
         (previousState, newState) ->
-            previousState.edgeOf(from, to).stream()
+            previousState.edgeOfUnknownType(from, to).stream()
                 .map(DirectedEdge::endpoints)
                 .map(couplet -> couplet.map(DirectedNode::item))
                 .map(RemoveEdgeFromGraph::create)
@@ -165,13 +165,23 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
   }
 
   @Override
-  public Optional<? extends DirectedNode<E>> nodeOf(Object item) {
-    return getState().nodeOf(item);
+  public Optional<? extends DirectedNode<E>> nodeOf(E item) {
+    return nodeOfUnknownType(item);
   }
 
   @Override
-  public Optional<? extends DirectedEdge<E>> edgeOf(Object from, Object to) {
-    return getState().edgeOf(from, to);
+  public Optional<? extends DirectedNode<E>> nodeOfUnknownType(Object item) {
+    return getState().nodeOfUnknownType(item);
+  }
+
+  @Override
+  public Optional<? extends DirectedEdge<E>> edgeOf(E from, E to) {
+    return edgeOfUnknownType(from, to);
+  }
+
+  @Override
+  public Optional<? extends DirectedEdge<E>> edgeOfUnknownType(Object from, Object to) {
+    return getState().edgeOfUnknownType(from, to);
   }
 
   @Override
@@ -198,13 +208,23 @@ final class WritableObservableDirectedGraphImpl<E> implements WritableObservable
       }
 
       @Override
-      public Optional<? extends DirectedNode<E>> nodeOf(Object item) {
-        return WritableObservableDirectedGraphImpl.this.nodeOf(item);
+      public Optional<? extends DirectedNode<E>> nodeOf(E item) {
+        return nodeOfUnknownType(item);
+      }
+
+      @Override
+      public Optional<? extends DirectedNode<E>> nodeOfUnknownType(Object item) {
+        return WritableObservableDirectedGraphImpl.this.nodeOfUnknownType(item);
       }
 
       @Override
       public Optional<? extends DirectedEdge<E>> edgeOf(E from, E to) {
-        return WritableObservableDirectedGraphImpl.this.edgeOf(from, to);
+        return edgeOfUnknownType(from, to);
+      }
+
+      @Override
+      public Optional<? extends DirectedEdge<E>> edgeOfUnknownType(Object from, Object to) {
+        return WritableObservableDirectedGraphImpl.this.edgeOfUnknownType(from, to);
       }
 
       @Override

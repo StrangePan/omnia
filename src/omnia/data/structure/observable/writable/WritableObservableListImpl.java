@@ -25,7 +25,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   @Override
   public void insertAt(int index, E item) {
-    IntRange range = IntRange.startingAt(index).withLength(1);
+    IntRange range = IntRange.just(index);
     mutateState(
         state -> true,
         state -> state.toBuilder().insertAt(index, item).build(),
@@ -34,7 +34,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   @Override
   public E removeAt(int index) {
-    IntRange range = IntRange.startingAt(index).withLength(1);
+    IntRange range = IntRange.just(index);
     E value;
     synchronized (this) {
       value = getState().itemAt(index);
@@ -48,7 +48,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
 
   @Override
   public E replaceAt(int index, E item) {
-    IntRange range = IntRange.startingAt(index).withLength(1);
+    IntRange range = IntRange.just(index);
     E value;
     synchronized (this) {
       value = getState().itemAt(index);
@@ -66,7 +66,8 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
     mutateState(
         state -> true,
         state -> state.toBuilder().add(item).build(),
-        (previousState, currentState) -> generateInsertAtMutations(currentState, IntRange.startingAt(currentState.count() - 1).withLength(1)));
+        (previousState, currentState) ->
+            generateInsertAtMutations(currentState, IntRange.just(currentState.count() - 1)));
   }
 
   @Override
@@ -75,7 +76,8 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
         state -> true,
         state -> state.toBuilder().addAll(elements).build(),
         (previousState, currentState) -> generateInsertAtMutations(
-            currentState, IntRange.startingAt(previousState.count()).endingAt(currentState.count())));
+            currentState,
+            IntRange.startingAt(previousState.count()).endingAt(currentState.count())));
   }
 
   @Override
@@ -86,7 +88,7 @@ final class WritableObservableListImpl<E> implements WritableObservableList<E> {
           state -> index.isPresent(),
           state -> state.toBuilder().removeAt(index.orElseThrow()).build(),
           (previousState, currentState) -> generateRemoveAtMutations(
-              previousState, IntRange.startingAt(index.orElseThrow()).withLength(1)));
+              previousState, IntRange.just(index.orElseThrow())));
     }
   }
 

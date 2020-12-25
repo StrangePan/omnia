@@ -11,6 +11,10 @@ public final class IntRange implements Countable, Iterable<Integer> {
   private final int start;
   private final int length;
 
+  public static IntRange just(int point) {
+    return startingAt(point).withLength(1);
+  }
+
   public static Builder startingAt(int start) {
     return new Builder() {
 
@@ -80,8 +84,13 @@ public final class IntRange implements Countable, Iterable<Integer> {
    * The number of indices contained within the range. Equivalent to
    * {@code {@link #end()} - {@link #start()}}.
    */
+  @Override
   public int count() {
     return length;
+  }
+
+  public boolean contains(int n) {
+    return start <= n && n < start + length;
   }
 
   @Override
@@ -108,5 +117,10 @@ public final class IntRange implements Countable, Iterable<Integer> {
     return obj instanceof IntRange
         && ((IntRange) obj).start == start
         && ((IntRange) obj).length == length;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("IntRange[%d–%d)", start(), endInclusive());
   }
 }

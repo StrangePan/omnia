@@ -87,4 +87,9 @@ class MaskingMap<K, V> implements MutableMap<K, V> {
         .map(java.util.Map.Entry::getKey)
         .collect(toImmutableSet());
   }
+
+  @Override
+  public String toString() {
+    return javaMap.toString();
+  }
 }

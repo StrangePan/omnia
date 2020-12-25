@@ -1,7 +1,6 @@
 package omnia.algorithm;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth8.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.truth.Truth;
@@ -473,7 +472,7 @@ public final class GraphAlgorithmsTest {
 
     private interface TopologicalAssertion<T> {
 
-      void isATopologicalSortOf(DirectedGraph<? extends T> graph);
+      void isATopologicalSortOf(DirectedGraph<T> graph);
     }
   }
 }

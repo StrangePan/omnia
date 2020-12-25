@@ -111,7 +111,10 @@ public interface DirectedGraph<E> extends Graph<E> {
    * Optional is returned.
    */
   @Override
-  Optional<? extends DirectedNode<E>> nodeOf(Object item);
+  Optional<? extends DirectedNode<E>> nodeOf(E item);
+
+  @Override
+  Optional<? extends DirectedNode<E>> nodeOfUnknownType(Object item);
 
   /**
    * Retrieves the {@link DirectedEdge} representation of the given items in the graph. In a
@@ -123,6 +126,8 @@ public interface DirectedGraph<E> extends Graph<E> {
    * @param to the ending node of the edge
    */
   Optional<? extends DirectedEdge<E>> edgeOf(E from, E to);
+
+  Optional<? extends DirectedEdge<E>> edgeOfUnknownType(Object from, Object to);
 
   /** All nodes contained in the graph. */
   @Override
