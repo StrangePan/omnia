@@ -1,6 +1,6 @@
 package omnia.data.structure.observable;
 
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import omnia.data.structure.Map;
 import omnia.data.structure.Set;
 
@@ -12,10 +12,10 @@ public interface ObservableMap<K, V> extends Map<K, V>, ObservableDataStructure 
   interface ObservableChannels<K, V> extends ObservableDataStructure.ObservableChannels {
 
     @Override
-    Flowable<? extends Map<K, V>> states();
+    Observable<? extends Map<K, V>> states();
 
     @Override
-    Flowable<? extends ObservableMap.MutationEvent<K, V>> mutations();
+    Observable<? extends ObservableMap.MutationEvent<K, V>> mutations();
   }
 
   interface MutationEvent<K, V> extends ObservableDataStructure.MutationEvent {
@@ -36,28 +36,28 @@ public interface ObservableMap<K, V> extends Map<K, V>, ObservableDataStructure 
     /** The key associated with the operation. */
     K key();
 
-    static <K, V> Flowable<AddToMap<K, V>> justAddToMapOperations(
-        Flowable<? extends MapOperation<K, V>> flowable) {
-      return flowable.flatMap(
+    static <K, V> Observable<AddToMap<K, V>> justAddToMapOperations(
+        Observable<? extends MapOperation<K, V>> observable) {
+      return observable.flatMap(
           mutation -> mutation instanceof AddToMap<?, ?>
-              ? Flowable.just((AddToMap<K, V>) mutation)
-              : Flowable.empty());
+              ? Observable.just((AddToMap<K, V>) mutation)
+              : Observable.empty());
     }
 
-    static <K, V> Flowable<RemoveFromMap<K, V>> justRemoveFromMapOperations(
-        Flowable<? extends MapOperation<K, V>> flowable) {
-      return flowable.flatMap(
+    static <K, V> Observable<RemoveFromMap<K, V>> justRemoveFromMapOperations(
+        Observable<? extends MapOperation<K, V>> observable) {
+      return observable.flatMap(
           mutation -> mutation instanceof RemoveFromMap<?, ?>
-              ? Flowable.just((RemoveFromMap<K, V>) mutation)
-              : Flowable.empty());
+              ? Observable.just((RemoveFromMap<K, V>) mutation)
+              : Observable.empty());
     }
 
-    static <K, V> Flowable<ReplaceInMap<K, V>> justReplaceInMapOperations(
-        Flowable<? extends MapOperation<K, V>> flowable) {
-      return flowable.flatMap(
+    static <K, V> Observable<ReplaceInMap<K, V>> justReplaceInMapOperations(
+        Observable<? extends MapOperation<K, V>> observable) {
+      return observable.flatMap(
           mutation -> mutation instanceof ReplaceInMap<?, ?>
-              ? Flowable.just((ReplaceInMap<K, V>) mutation)
-              : Flowable.empty());
+              ? Observable.just((ReplaceInMap<K, V>) mutation)
+              : Observable.empty());
     }
   }
 

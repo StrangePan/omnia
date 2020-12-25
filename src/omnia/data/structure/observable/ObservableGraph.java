@@ -1,7 +1,6 @@
 package omnia.data.structure.observable;
 
-import io.reactivex.Flowable;
-import io.reactivex.functions.Function;
+import io.reactivex.rxjava3.core.Observable;
 import omnia.data.structure.Graph;
 import omnia.data.structure.Set;
 import omnia.data.structure.tuple.Couplet;
@@ -14,10 +13,10 @@ public interface ObservableGraph<E> extends Graph<E>, ObservableDataStructure {
   interface ObservableChannels<E> extends ObservableDataStructure.ObservableChannels {
 
     @Override
-    Flowable<? extends Graph<E>> states();
+    Observable<? extends Graph<E>> states();
 
     @Override
-    Flowable<? extends ObservableGraph.MutationEvent<E>> mutations();
+    Observable<? extends ObservableGraph.MutationEvent<E>> mutations();
   }
 
   interface MutationEvent<E> extends ObservableDataStructure.MutationEvent {
@@ -31,36 +30,36 @@ public interface ObservableGraph<E> extends Graph<E>, ObservableDataStructure {
 
   interface GraphOperation<E> {
 
-    static <E> Flowable<AddNodeToGraph<E>> justAddNodeToGraphOperations(
-        Flowable<? extends GraphOperation<E>> flowable) {
+    static <E> Observable<AddNodeToGraph<E>> justAddNodeToGraphOperations(
+        Observable<? extends GraphOperation<E>> flowable) {
       return flowable.flatMap(
           mutation -> mutation instanceof AddNodeToGraph<?>
-              ? Flowable.just((AddNodeToGraph<E>) mutation)
-              : Flowable.empty());
+              ? Observable.just((AddNodeToGraph<E>) mutation)
+              : Observable.empty());
     }
 
-    static <E> Flowable<RemoveNodeFromGraph<E>> justRemoveNodeFromGraphOperations(
-        Flowable<? extends GraphOperation<E>> flowable) {
+    static <E> Observable<RemoveNodeFromGraph<E>> justRemoveNodeFromGraphOperations(
+        Observable<? extends GraphOperation<E>> flowable) {
       return flowable.flatMap(
           mutation -> mutation instanceof RemoveNodeFromGraph<?>
-              ? Flowable.just((RemoveNodeFromGraph<E>) mutation)
-              : Flowable.empty());
+              ? Observable.just((RemoveNodeFromGraph<E>) mutation)
+              : Observable.empty());
     }
 
-    static <E> Flowable<AddEdgeToGraph<E>> justAddEdgeToGraphOperations(
-        Flowable<? extends GraphOperation<E>> flowable) {
+    static <E> Observable<AddEdgeToGraph<E>> justAddEdgeToGraphOperations(
+        Observable<? extends GraphOperation<E>> flowable) {
       return flowable.flatMap(
           mutation -> mutation instanceof AddEdgeToGraph<?>
-              ? Flowable.just((AddEdgeToGraph<E>) mutation)
-              : Flowable.empty());
+              ? Observable.just((AddEdgeToGraph<E>) mutation)
+              : Observable.empty());
     }
 
-    static <E> Flowable<RemoveEdgeFromGraph<E>> justRemoveEdgeFromGraphOperations(
-        Flowable<? extends GraphOperation<E>> flowable) {
+    static <E> Observable<RemoveEdgeFromGraph<E>> justRemoveEdgeFromGraphOperations(
+        Observable<? extends GraphOperation<E>> flowable) {
       return flowable.flatMap(
           mutation -> mutation instanceof RemoveEdgeFromGraph<?>
-              ? Flowable.just((RemoveEdgeFromGraph<E>) mutation)
-              : Flowable.empty());
+              ? Observable.just((RemoveEdgeFromGraph<E>) mutation)
+              : Observable.empty());
     }
   }
 

@@ -3,7 +3,7 @@ package omnia.data.structure.observable;
 import static com.google.common.truth.Truth.assertThat;
 import static omnia.data.stream.Collectors.toImmutableSet;
 
-import io.reactivex.subscribers.TestSubscriber;
+import io.reactivex.rxjava3.observers.TestObserver;
 import omnia.algorithm.SetAlgorithms;
 import omnia.data.structure.Set;
 import omnia.data.structure.immutable.ImmutableSet;
@@ -104,7 +104,7 @@ public final class WritableObservableSetTest {
   public void observeMutations_whenEmpty_emitsEmpty() {
     ObservableSet<Object> set = WritableObservableSet.create();
 
-    TestSubscriber<? extends MutationEvent<Object>> subscriber =
+    TestObserver<? extends MutationEvent<Object>> subscriber =
         set.observe().mutations().test();
     subscriber.assertValue(event -> !event.state().isPopulated());
     subscriber.assertValue(event -> !event.operations().isPopulated());
@@ -125,7 +125,7 @@ public final class WritableObservableSetTest {
     WritableObservableSet<Object> set = WritableObservableSet.create();
     contents.forEach(set::add);
 
-    TestSubscriber<Set<Object>> testSubscriber =
+    TestObserver<Set<Object>> testSubscriber =
         set.observe().mutations().map(MutationEvent::state).test();
 
     testSubscriber.assertValue(state -> Set.areEqual(state, contents));
@@ -137,7 +137,7 @@ public final class WritableObservableSetTest {
     WritableObservableSet<Object> set = WritableObservableSet.create();
     contents.forEach(set::add);
 
-    TestSubscriber<? extends SetOperation<Object>> testSubscriber =
+    TestObserver<? extends SetOperation<Object>> testSubscriber =
         set.observe().mutations().map(MutationEvent::operations).flatMapIterable(s -> s).test();
 
     testSubscriber.values().forEach(
@@ -160,7 +160,7 @@ public final class WritableObservableSetTest {
     originalContents.forEach(set::add);
 
     // Skip 1 because first emission is the initialization subscription
-    TestSubscriber<? extends Set<Object>> testSubscriber =
+    TestObserver<? extends Set<Object>> testSubscriber =
         set.observe().states().skip(1).test();
 
     addedContents.forEach(set::add);
@@ -182,7 +182,7 @@ public final class WritableObservableSetTest {
     originalContents.forEach(set::add);
 
     // Skip 1 because first emission is the initialization subscription
-    TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
+    TestObserver<? extends MutationEvent<Object>> testSubscriber =
         set.observe().mutations().skip(1).test();
 
     removedContents.forEach(set::remove);
@@ -211,7 +211,7 @@ public final class WritableObservableSetTest {
     contents.forEach(set::add);
 
     // Skip 1 because first emission is the initialization subscription
-    TestSubscriber<? extends MutationEvent<Object>> testSubscriber =
+    TestObserver<? extends MutationEvent<Object>> testSubscriber =
         set.observe().mutations().skip(1).test();
 
     set.clear();
@@ -240,7 +240,7 @@ public final class WritableObservableSetTest {
     contents.forEach(set::add);
 
     // Skip 1 because first emission is the initialization subscription
-    TestSubscriber<? extends Set<Object>> testSubscriber =
+    TestObserver<? extends Set<Object>> testSubscriber =
         set.observe().states().skip(1).test();
 
     set.clear();

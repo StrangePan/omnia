@@ -3,10 +3,9 @@ package omnia.data.structure.observable.writable;
 import static omnia.data.stream.Collectors.toImmutableSet;
 import static omnia.data.stream.Collectors.toSet;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.processors.FlowableProcessor;
-import io.reactivex.processors.PublishProcessor;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -20,8 +19,8 @@ import omnia.data.structure.observable.ObservableSet;
 
 final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
   private volatile ImmutableSet<E> currentState = ImmutableSet.empty();
-  private final FlowableProcessor<MutationEvent> mutationEventProcessor =
-      PublishProcessor.<MutationEvent>create().toSerialized();
+  private final Subject<MutationEvent> mutationEvents =
+      PublishSubject.<MutationEvent>create().toSerialized();
   private final ObservableChannels observableChannels = new ObservableChannels();
 
   @Override
@@ -74,7 +73,7 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
       }
       ImmutableSet<E> newState = mutator.apply(previousState);
       currentState = newState;
-      mutationEventProcessor.onNext(
+      mutationEvents.onNext(
           new MutationEvent(newState, mutationsGenerator.apply(previousState, newState)));
       return true;
     }
@@ -177,21 +176,19 @@ final class WritableObservableSetImpl<E> implements WritableObservableSet<E> {
 
     protected ObservableChannels() {
       super(
-          Flowable.<Set<E>>create(
+          Observable.<Set<E>>create(
               flowableEmitter -> {
                 flowableEmitter.onNext(getState());
                 flowableEmitter.onComplete();
-              },
-              BackpressureStrategy.BUFFER)
+              })
               .concatWith(
-                  mutationEventProcessor.map(MutationEvent::state)),
-          Flowable.<MutationEvent>create(
+                  mutationEvents.map(MutationEvent::state)),
+          Observable.<MutationEvent>create(
               flowableEmitter -> {
                 flowableEmitter.onNext(generateMutationEventForNewSubscription());
                 flowableEmitter.onComplete();
-              },
-              BackpressureStrategy.BUFFER)
-              .concatWith(mutationEventProcessor));
+              })
+              .concatWith(mutationEvents));
     }
   }
 

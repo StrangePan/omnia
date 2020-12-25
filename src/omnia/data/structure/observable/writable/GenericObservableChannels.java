@@ -1,28 +1,28 @@
 package omnia.data.structure.observable.writable;
 
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import omnia.data.structure.observable.ObservableDataStructure;
 
 class GenericObservableChannels<
         StateType, MutationEventType extends ObservableDataStructure.MutationEvent>
     implements ObservableDataStructure.ObservableChannels {
 
-  private final Flowable<StateType> states;
-  private final Flowable<MutationEventType> mutations;
+  private final Observable<StateType> states;
+  private final Observable<MutationEventType> mutations;
 
   protected GenericObservableChannels(
-      Flowable<StateType> states, Flowable<MutationEventType> mutations) {
+      Observable<StateType> states, Observable<MutationEventType> mutations) {
     this.states = states;
     this.mutations = mutations;
   }
 
   @Override
-  public Flowable<StateType> states() {
+  public Observable<StateType> states() {
     return states;
   }
 
   @Override
-  public Flowable<MutationEventType> mutations() {
+  public Observable<MutationEventType> mutations() {
     return mutations;
   }
 }
