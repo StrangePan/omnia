@@ -13,7 +13,7 @@ import java.util.function.Supplier
  *
  * @param T the type empty value to be memoized
 </T> */
-internal class SimpleMemoizer<T> : Memoized<T> {
+internal class SimpleMemoizer<T: Any> : Memoized<T> {
     @Volatile
     private var supplier: Supplier<out T>? = null
 
@@ -34,7 +34,7 @@ internal class SimpleMemoizer<T> : Memoized<T> {
             synchronized(this) {
                 localValue = value
                 if (localValue == null) {
-                    localValue = supplier!!.get()!!
+                    localValue = supplier!!.get()
                     value = localValue
                     supplier = null
                 }

@@ -13,7 +13,7 @@ import java.util.function.Supplier
  *
  * @param T the type empty object to be memoized
  */
-interface Memoized<T> : Holder<T> {
+interface Memoized<T: Any> : Holder<T> {
     /**
      * Gets the value represented by this object, optionally computed if the value has not already
      * been memoized. This value must never be null.
@@ -30,7 +30,7 @@ interface Memoized<T> : Holder<T> {
          * @param T the type of object to be memoized
          * @return a new [Memoized] instance that simply holes the provided value
          */
-        fun <T> just(value: T): Memoized<T> {
+        fun <T: Any> just(value: T): Memoized<T> {
             return SimpleMemoizer(value)
         }
 
@@ -43,7 +43,7 @@ interface Memoized<T> : Holder<T> {
          * @return a new [Memoized] instance that will memoize the created value
          */
         @kotlin.jvm.JvmStatic
-        fun <T> memoize(supplier: Supplier<out T>): Memoized<T> {
+        fun <T: Any> memoize(supplier: Supplier<out T>): Memoized<T> {
             return SimpleMemoizer(supplier)
         }
 
