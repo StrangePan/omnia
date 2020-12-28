@@ -13,71 +13,71 @@ import java.util.function.Supplier
  *
  * @param T the type empty object to be memoized
  */
-interface Memoized<T: Any> : Holder<T> {
+interface Memoized<T : Any> : Holder<T> {
+  /**
+   * Gets the value represented by this object, optionally computed if the value has not already
+   * been memoized. This value must never be null.
+   *
+   * @return the non-null memoized value
+   */
+  override fun value(): T
+
+  companion object {
     /**
-     * Gets the value represented by this object, optionally computed if the value has not already
-     * been memoized. This value must never be null.
+     * Creates a [Memoized] implementation that returns the provided value verbatim.
      *
-     * @return the non-null memoized value
+     * @param value the value for the Memoized to hold
+     * @param T the type of object to be memoized
+     * @return a new [Memoized] instance that simply holes the provided value
      */
-    override fun value(): T
-
-    companion object {
-        /**
-         * Creates a [Memoized] implementation that returns the provided value verbatim.
-         *
-         * @param value the value for the Memoized to hold
-         * @param T the type of object to be memoized
-         * @return a new [Memoized] instance that simply holes the provided value
-         */
-        fun <T: Any> just(value: T): Memoized<T> {
-            return SimpleMemoizer(value)
-        }
-
-        /**
-         * Creates a [Memoized] implementation that uses the provided [Supplier] as the
-         * factory that supplies the value to be memoized.
-         *
-         * @param supplier the supplier that will create the value to be memoized
-         * @param T the type of object to be memoized
-         * @return a new [Memoized] instance that will memoize the created value
-         */
-        @kotlin.jvm.JvmStatic
-        fun <T: Any> memoize(supplier: Supplier<out T>): Memoized<T> {
-            return SimpleMemoizer(supplier)
-        }
-
-        /**
-         * Creates a [MemoizedInt] implementation that uses the provided [IntSupplier] as the
-         * factory that supplies the value to be memoized.
-         *
-         * @param supplier the supplier that will create the value to be memoized
-         * @return a new [MemoizedInt] instance that will memoize the created value
-         */
-        fun memoizeInt(supplier: IntSupplier): MemoizedInt {
-            return SimpleIntMemoizer(supplier)
-        }
-
-        /**
-         * Creates a [MemoizedLong] implementation that uses the provided [LongSupplier]
-         * as the factory that supplies the value to be memoized.
-         *
-         * @param supplier the supplier that will create the value to be memoized
-         * @return a new [MemoizedLong] instance that will memoize the created value
-         */
-        fun memoizeLong(supplier: LongSupplier): MemoizedLong {
-            return SimpleLongMemoizer(supplier)
-        }
-
-        /**
-         * Creates a [MemoizedDouble] implementation that uses the provided [DoubleSupplier]
-         * as the factory that supplies the value to be memoized.
-         *
-         * @param supplier the supplier that will create the value to be memoized
-         * @return a new [MemoizedDouble] instance that will memoize the created value
-         */
-        fun memoizeDouble(supplier: DoubleSupplier): MemoizedDouble {
-            return SimpleDoubleMemoizer(supplier)
-        }
+    fun <T : Any> just(value: T): Memoized<T> {
+      return SimpleMemoizer(value)
     }
+
+    /**
+     * Creates a [Memoized] implementation that uses the provided [Supplier] as the
+     * factory that supplies the value to be memoized.
+     *
+     * @param supplier the supplier that will create the value to be memoized
+     * @param T the type of object to be memoized
+     * @return a new [Memoized] instance that will memoize the created value
+     */
+    @kotlin.jvm.JvmStatic
+    fun <T : Any> memoize(supplier: Supplier<out T>): Memoized<T> {
+      return SimpleMemoizer(supplier)
+    }
+
+    /**
+     * Creates a [MemoizedInt] implementation that uses the provided [IntSupplier] as the
+     * factory that supplies the value to be memoized.
+     *
+     * @param supplier the supplier that will create the value to be memoized
+     * @return a new [MemoizedInt] instance that will memoize the created value
+     */
+    fun memoizeInt(supplier: IntSupplier): MemoizedInt {
+      return SimpleIntMemoizer(supplier)
+    }
+
+    /**
+     * Creates a [MemoizedLong] implementation that uses the provided [LongSupplier]
+     * as the factory that supplies the value to be memoized.
+     *
+     * @param supplier the supplier that will create the value to be memoized
+     * @return a new [MemoizedLong] instance that will memoize the created value
+     */
+    fun memoizeLong(supplier: LongSupplier): MemoizedLong {
+      return SimpleLongMemoizer(supplier)
+    }
+
+    /**
+     * Creates a [MemoizedDouble] implementation that uses the provided [DoubleSupplier]
+     * as the factory that supplies the value to be memoized.
+     *
+     * @param supplier the supplier that will create the value to be memoized
+     * @return a new [MemoizedDouble] instance that will memoize the created value
+     */
+    fun memoizeDouble(supplier: DoubleSupplier): MemoizedDouble {
+      return SimpleDoubleMemoizer(supplier)
+    }
+  }
 }

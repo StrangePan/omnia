@@ -9,23 +9,23 @@ import java.util.function.IntSupplier
  * based on constant parameters.
  */
 interface MemoizedInt : IntHolder {
-    /**
-     * Gets the value represented by this object, optionally computed if the value has not already
-     * been memoized.
-     */
-    override fun value(): Int
+  /**
+   * Gets the value represented by this object, optionally computed if the value has not already
+   * been memoized.
+   */
+  override fun value(): Int
 
-    companion object {
-        /**
-         * Creates a [MemoizedInt] implementation that uses the provided [IntSupplier] as the
-         * factory that supplies the value to be memoized.
-         *
-         * @param supplier the supplier that will create the value to be memoized
-         * @return a new [MemoizedInt] instance that will memoize the created value
-         */
-        @kotlin.jvm.JvmStatic
-        fun memoize(supplier: IntSupplier): MemoizedInt {
-            return SimpleIntMemoizer(supplier)
-        }
+  companion object {
+    /**
+     * Creates a [MemoizedInt] implementation that uses the provided [IntSupplier] as the
+     * factory that supplies the value to be memoized.
+     *
+     * @param supplier the supplier that will create the value to be memoized
+     * @return a new [MemoizedInt] instance that will memoize the created value
+     */
+    @kotlin.jvm.JvmStatic
+    fun memoize(supplier: IntSupplier): MemoizedInt {
+      return SimpleIntMemoizer(supplier)
     }
+  }
 }

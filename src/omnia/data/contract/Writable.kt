@@ -8,11 +8,11 @@ package omnia.data.contract
  */
 interface Writable<E> {
 
-    /**
-     * Creates a read-only view for the current object. Changes to the current object will be
-     * reflected in the read-only view, but the read-only view cannot push changes to this object.
-     *
-     * @return a read-only view of the current object.
-     */
-    fun toReadOnly(): E
+  /**
+   * Creates a read-only view for the current object. Changes to the current object will be
+   * reflected in the read-only view, but the read-only view cannot push changes to this object.
+   *
+   * @return a read-only view of the current object.
+   */
+  fun toReadOnly(): E
 }

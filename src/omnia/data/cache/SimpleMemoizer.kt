@@ -13,33 +13,33 @@ import java.util.function.Supplier
  *
  * @param T the type empty value to be memoized
 </T> */
-internal class SimpleMemoizer<T: Any> : Memoized<T> {
-    @Volatile
-    private var supplier: Supplier<out T>? = null
+internal class SimpleMemoizer<T : Any> : Memoized<T> {
+  @Volatile
+  private var supplier: Supplier<out T>? = null
 
-    @Volatile
-    private var value: T? = null
+  @Volatile
+  private var value: T? = null
 
-    constructor(value: T) {
-        this.value = value
-    }
+  constructor(value: T) {
+    this.value = value
+  }
 
-    constructor(supplier: Supplier<out T>) {
-        this.supplier = supplier
-    }
+  constructor(supplier: Supplier<out T>) {
+    this.supplier = supplier
+  }
 
-    override fun value(): T {
-        var localValue = value
+  override fun value(): T {
+    var localValue = value
+    if (localValue == null) {
+      synchronized(this) {
+        localValue = value
         if (localValue == null) {
-            synchronized(this) {
-                localValue = value
-                if (localValue == null) {
-                    localValue = supplier!!.get()
-                    value = localValue
-                    supplier = null
-                }
-            }
+          localValue = supplier!!.get()
+          value = localValue
+          supplier = null
         }
-        return localValue!!
+      }
     }
+    return localValue!!
+  }
 }

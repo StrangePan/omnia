@@ -11,20 +11,20 @@ import java.util.function.LongSupplier
  * once.
  */
 internal class SimpleLongMemoizer(supplier: LongSupplier) : MemoizedLong {
-    @Volatile
-    private var supplier: LongSupplier? = supplier
+  @Volatile
+  private var supplier: LongSupplier? = supplier
 
-    @Volatile
-    private var value: Long = 0
-    override fun value(): Long {
+  @Volatile
+  private var value: Long = 0
+  override fun value(): Long {
+    if (supplier != null) {
+      synchronized(this) {
         if (supplier != null) {
-            synchronized(this) {
-                if (supplier != null) {
-                    value = supplier!!.asLong
-                    supplier = null
-                }
-            }
+          value = supplier!!.asLong
+          supplier = null
         }
-        return value
+      }
     }
+    return value
+  }
 }

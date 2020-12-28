@@ -11,20 +11,20 @@ import java.util.function.DoubleSupplier
  * once.
  */
 internal class SimpleDoubleMemoizer(supplier: DoubleSupplier) : MemoizedDouble {
-    @Volatile
-    private var supplier: DoubleSupplier? = supplier
+  @Volatile
+  private var supplier: DoubleSupplier? = supplier
 
-    @Volatile
-    private var value = 0.0
-    override fun value(): Double {
+  @Volatile
+  private var value = 0.0
+  override fun value(): Double {
+    if (supplier != null) {
+      synchronized(this) {
         if (supplier != null) {
-            synchronized(this) {
-                if (supplier != null) {
-                    value = supplier!!.asDouble
-                    supplier = null
-                }
-            }
+          value = supplier!!.asDouble
+          supplier = null
         }
-        return value
+      }
     }
+    return value
+  }
 }

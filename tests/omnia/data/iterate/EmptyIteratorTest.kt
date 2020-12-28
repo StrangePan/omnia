@@ -32,7 +32,7 @@ class EmptyIteratorTest {
 
   @Test
   fun forEachRemaining_doesNothing() {
-    EmptyIterator.create<Any>().forEachRemaining(consumer!!)
+    EmptyIterator.create<Any>().forEachRemaining(consumer)
     Mockito.verifyNoInteractions(consumer)
   }
 }

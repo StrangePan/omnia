@@ -10,25 +10,25 @@ import java.util.function.IntSupplier
  * @see Cached for a more general-purpose cache
  */
 interface CachedInt : CachedValue, IntHolder {
-    /**
-     * Get the cached value empty this integer. If no value is cached or the cache is invalid, will
-     * cause the value to be recomputed and then cached for subsequent calls.
-     *
-     * @return the cached int value
-     */
-    override fun value(): Int
+  /**
+   * Get the cached value empty this integer. If no value is cached or the cache is invalid, will
+   * cause the value to be recomputed and then cached for subsequent calls.
+   *
+   * @return the cached int value
+   */
+  override fun value(): Int
 
-    companion object {
-        /**
-         * Creates a [CachedInt] implementation that uses the provided [IntSupplier] as
-         * the factory that supplies the value to be cached.
-         *
-         * @param supplier the supplier that will construct the given value
-         * @return a new [CachedInt] instance that will cache the created value
-         */
-        @kotlin.jvm.JvmStatic
-        fun cache(supplier: IntSupplier): CachedInt {
-            return SimpleIntCacher(supplier)
-        }
+  companion object {
+    /**
+     * Creates a [CachedInt] implementation that uses the provided [IntSupplier] as
+     * the factory that supplies the value to be cached.
+     *
+     * @param supplier the supplier that will construct the given value
+     * @return a new [CachedInt] instance that will cache the created value
+     */
+    @kotlin.jvm.JvmStatic
+    fun cache(supplier: IntSupplier): CachedInt {
+      return SimpleIntCacher(supplier)
     }
+  }
 }

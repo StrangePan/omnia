@@ -12,19 +12,19 @@ import java.util.function.Supplier
  * @param T the type empty object to be cached
  */
 internal class SimpleCacher<T>(private val supplier: Supplier<T>) : Cached<T> {
-    private var isValid = false
-    private var value: T? = null
+  private var isValid = false
+  private var value: T? = null
 
-    override fun value(): T {
-        val value = if (isValid) this.value ?: supplier.get() else supplier.get()
-        isValid = true
-        this.value = value
-        return value
-    }
+  override fun value(): T {
+    val value = if (isValid) this.value ?: supplier.get() else supplier.get()
+    isValid = true
+    this.value = value
+    return value
+  }
 
-    override fun invalidate() {
-        isValid = false
-        value = null
-    }
+  override fun invalidate() {
+    isValid = false
+    value = null
+  }
 
 }

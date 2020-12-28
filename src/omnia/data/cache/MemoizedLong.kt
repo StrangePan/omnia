@@ -9,23 +9,23 @@ import java.util.function.LongSupplier
  * based on constant parameters.
  */
 interface MemoizedLong : LongHolder {
-    /**
-     * Gets the value represented by this object, optionally computed if the value has not already
-     * been memoized.
-     */
-    override fun value(): Long
+  /**
+   * Gets the value represented by this object, optionally computed if the value has not already
+   * been memoized.
+   */
+  override fun value(): Long
 
-    companion object {
-        /**
-         * Creates a [MemoizedLong] implementation that uses the provided [LongSupplier]
-         * as the factory that supplies the value to be memoized.
-         *
-         * @param supplier the supplier that will create the value to be memoized
-         * @return a new [MemoizedLong] instance that will memoize the created value
-         */
-        @kotlin.jvm.JvmStatic
-        fun memoize(supplier: LongSupplier): MemoizedLong {
-            return SimpleLongMemoizer(supplier)
-        }
+  companion object {
+    /**
+     * Creates a [MemoizedLong] implementation that uses the provided [LongSupplier]
+     * as the factory that supplies the value to be memoized.
+     *
+     * @param supplier the supplier that will create the value to be memoized
+     * @return a new [MemoizedLong] instance that will memoize the created value
+     */
+    @kotlin.jvm.JvmStatic
+    fun memoize(supplier: LongSupplier): MemoizedLong {
+      return SimpleLongMemoizer(supplier)
     }
+  }
 }

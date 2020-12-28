@@ -135,7 +135,7 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
         return ObservableChannels()
     }
 
-    inner class ObservableChannels() : GenericObservableChannels<Map<K, V>, MutationEvent>(
+    inner class ObservableChannels : GenericObservableChannels<Map<K, V>, MutationEvent>(
             Observable.create { flowableEmitter: ObservableEmitter<Map<K, V>> ->
                 flowableEmitter.onNext(state)
                 flowableEmitter.onComplete()
