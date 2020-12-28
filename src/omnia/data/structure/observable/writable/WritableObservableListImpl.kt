@@ -11,7 +11,8 @@ import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.observable.ObservableList
 import omnia.data.structure.observable.ObservableList.ListOperation
 import java.util.OptionalInt
-import java.util.function.*
+import java.util.function.BiFunction
+import java.util.function.Predicate
 import java.util.stream.Stream
 
 internal class WritableObservableListImpl<E> : WritableObservableList<E> {
@@ -97,9 +98,10 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
     }
 
     private fun mutateState(
-            shouldMutate: Predicate<ImmutableList<E>>,
-            mutator: java.util.function.Function<ImmutableList<E>, ImmutableList<E>>,
-            mutationsGenerator: BiFunction<ImmutableList<E>, ImmutableList<E>, List<ListOperation<E>>>): Boolean {
+        shouldMutate: Predicate<ImmutableList<E>>,
+        mutator: java.util.function.Function<ImmutableList<E>, ImmutableList<E>>,
+        mutationsGenerator: BiFunction<ImmutableList<E>, ImmutableList<E>, List<ListOperation<E>>>
+    ): Boolean {
         synchronized(this) {
             val previousState = currentState
             if (!shouldMutate.test(previousState)) {

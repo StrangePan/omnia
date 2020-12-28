@@ -13,8 +13,11 @@ import omnia.data.structure.observable.ObservableDirectedGraph
 import omnia.data.structure.observable.ObservableGraph
 import omnia.data.structure.observable.ObservableGraph.GraphOperation
 import omnia.data.structure.tuple.Couplet
-import java.util.*
-import java.util.function.*
+import java.util.Objects
+import java.util.Optional
+import java.util.function.BiFunction
+import java.util.function.Function
+import java.util.function.Predicate
 
 internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirectedGraph<E> {
     @Volatile
@@ -122,9 +125,10 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
     }
 
     private fun mutateState(
-            shouldChange: Predicate<in ImmutableDirectedGraph<E>>,
-            mutateState: Function<in ImmutableDirectedGraph<E>, out ImmutableDirectedGraph<E>>,
-            mutationOperations: BiFunction<in ImmutableDirectedGraph<E>, in ImmutableDirectedGraph<E>, out Set<GraphOperation<E>>>): Boolean {
+        shouldChange: Predicate<in ImmutableDirectedGraph<E>>,
+        mutateState: Function<in ImmutableDirectedGraph<E>, out ImmutableDirectedGraph<E>>,
+        mutationOperations: BiFunction<in ImmutableDirectedGraph<E>, in ImmutableDirectedGraph<E>, out Set<GraphOperation<E>>>
+    ): Boolean {
         var previousState: ImmutableDirectedGraph<E>
         var nextState: ImmutableDirectedGraph<E>
         synchronized(this) {

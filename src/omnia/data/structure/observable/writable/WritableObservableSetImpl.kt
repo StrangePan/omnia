@@ -11,7 +11,9 @@ import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.observable.ObservableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
-import java.util.function.*
+import java.util.function.BiFunction
+import java.util.function.Function
+import java.util.function.Predicate
 import java.util.stream.Stream
 
 internal class WritableObservableSetImpl<E> : WritableObservableSet<E> {
@@ -61,9 +63,10 @@ internal class WritableObservableSetImpl<E> : WritableObservableSet<E> {
     }
 
     private fun mutateState(
-            shouldMutate: Predicate<ImmutableSet<E>>,
-            mutator: Function<ImmutableSet<E>, ImmutableSet<E>>,
-            mutationsGenerator: BiFunction<ImmutableSet<E>, ImmutableSet<E>, Set<SetOperation<E>>>): Boolean {
+        shouldMutate: Predicate<ImmutableSet<E>>,
+        mutator: Function<ImmutableSet<E>, ImmutableSet<E>>,
+        mutationsGenerator: BiFunction<ImmutableSet<E>, ImmutableSet<E>, Set<SetOperation<E>>>
+    ): Boolean {
         synchronized(this) {
             val previousState = currentState
             if (!shouldMutate.test(previousState)) {

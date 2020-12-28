@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.functions.Function
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.SingleSubject
 import omnia.data.structure.tuple.Couple
-import java.util.*
+import java.util.Objects
 
 class ObservableState<T> private constructor(initialState: T) {
     private val mutations: PublishSubject<Function<T, T>> = PublishSubject.create()
