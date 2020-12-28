@@ -15,7 +15,6 @@ import omnia.data.structure.observable.ObservableGraph.GraphOperation
 import omnia.data.structure.tuple.Couplet
 import java.util.*
 import java.util.function.*
-import java.util.function.Function
 
 internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirectedGraph<E> {
     @Volatile

@@ -12,7 +12,6 @@ import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.observable.ObservableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
 import java.util.function.*
-import java.util.function.Function
 import java.util.stream.Stream
 
 internal class WritableObservableSetImpl<E> : WritableObservableSet<E> {

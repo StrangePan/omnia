@@ -3,7 +3,6 @@ package omnia.data.cache
 import com.google.common.truth.Truth
 import org.junit.Assert
 import org.junit.Test
-import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.Mockito
