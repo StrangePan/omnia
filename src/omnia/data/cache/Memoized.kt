@@ -32,6 +32,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @param T the type of object to be memoized
      * @return a new [Memoized] instance that simply holes the provided value
      */
+    @JvmStatic
     fun <T : Any> just(value: T): Memoized<T> {
       return SimpleMemoizer(value)
     }
@@ -56,6 +57,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @param supplier the supplier that will create the value to be memoized
      * @return a new [MemoizedInt] instance that will memoize the created value
      */
+    @JvmStatic
     fun memoizeInt(supplier: IntSupplier): MemoizedInt {
       return SimpleIntMemoizer(supplier)
     }
@@ -67,6 +69,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @param supplier the supplier that will create the value to be memoized
      * @return a new [MemoizedLong] instance that will memoize the created value
      */
+    @JvmStatic
     fun memoizeLong(supplier: LongSupplier): MemoizedLong {
       return SimpleLongMemoizer(supplier)
     }
@@ -78,6 +81,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @param supplier the supplier that will create the value to be memoized
      * @return a new [MemoizedDouble] instance that will memoize the created value
      */
+    @JvmStatic
     fun memoizeDouble(supplier: DoubleSupplier): MemoizedDouble {
       return SimpleDoubleMemoizer(supplier)
     }

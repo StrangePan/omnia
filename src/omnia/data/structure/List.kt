@@ -32,6 +32,7 @@ interface List<E> : Collection<E>, Indexable<E> {
      * @param javaList the [java.util.List] to mask
      * @param E the type contained within the [List]
      */
+    @JvmStatic
     fun <E> masking(javaList: kotlin.collections.List<E>): List<E> {
       return object : List<E> {
         override val isPopulated: Boolean

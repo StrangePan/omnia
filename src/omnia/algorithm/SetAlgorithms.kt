@@ -30,6 +30,7 @@ object SetAlgorithms {
    *
    * @return a new set representing the intersection of sets [a] and [b]
    */
+  @JvmStatic
   fun <T> intersectionOf(a: Set<out T>, b: Set<out T>): Set<T> {
     val min = if (a.count() < b.count()) a else b
     val max = if (min !== a) a else b
@@ -52,6 +53,7 @@ object SetAlgorithms {
    * @return a new set containing the items from set [a] except for the items contained in
    * set [b]
    */
+  @JvmStatic
   fun <T> differenceBetween(a: Set<out T>, b: Set<*>): Set<T> {
     return a.stream().filter { item: T -> !b.containsUnknownTyped(item) }
       .collect(Collectors.toSet())
@@ -68,6 +70,7 @@ object SetAlgorithms {
    *
    * @return true if the sets are disjoint, false if any item is present in both.
    */
+  @JvmStatic
   fun areDisjoint(a: Set<*>, b: Set<*>): Boolean {
     val min = if (a.count() < b.count()) a else b
     val max = if (min !== a) a else b

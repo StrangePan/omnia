@@ -79,10 +79,12 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
 
   companion object {
 
+    @JvmStatic
     fun just(point: Int): IntRange {
       return startingAt(point).withLength(1)
     }
 
+    @JvmStatic
     fun startingAt(start: Int): Builder {
       return object : Builder {
         override fun endingAt(end: Int): IntRange {

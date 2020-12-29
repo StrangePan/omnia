@@ -10,10 +10,12 @@ class HashMap<K, V> : MaskingMap<K, V> {
 
   companion object {
 
+    @JvmStatic
     fun <K, V> create(): HashMap<K, V> {
       return HashMap()
     }
 
+    @JvmStatic
     fun <K, V> copyOf(original: Map<out K, out V>): HashMap<K, V> {
       return HashMap(
         original.entries().stream().collect(

@@ -59,11 +59,13 @@ class ImmutableSortedSet<E> private constructor(
     private val EMPTY_SET: ImmutableSortedSet<*> =
       ImmutableSortedSet({ _, _ -> 0 }, ImmutableSet.empty<Any>())
 
+    @JvmStatic
     fun <E> empty(): ImmutableSortedSet<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_SET as ImmutableSortedSet<E>
     }
 
+    @JvmStatic
     fun <E> copyOf(
       comparator: Comparator<in E>, other: Collection<out E>,
     ): ImmutableSortedSet<E> {

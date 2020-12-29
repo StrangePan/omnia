@@ -164,19 +164,24 @@ class ImmutableMap<K, V> : Map<K, V> {
   companion object {
 
     private val EMPTY_IMMUTABLE_MAP: ImmutableMap<*, *> = ImmutableMap<Any, Any>()
+
+    @JvmStatic
     fun <K, V> empty(): ImmutableMap<K, V> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_IMMUTABLE_MAP as ImmutableMap<K, V>
     }
 
+    @JvmStatic
     fun <K, V> of(key: K, value: V): ImmutableMap<K, V> {
       return ImmutableMap(Collections.singletonMap(key, value))
     }
 
+    @JvmStatic
     fun <K, V> copyOf(otherMap: kotlin.collections.Map<out K, V>): ImmutableMap<K, V> {
       return copyOf(Map.masking(otherMap))
     }
 
+    @JvmStatic
     fun <K, V> copyOf(otherMap: Map<out K, out V>): ImmutableMap<K, V> {
       return if (otherMap is ImmutableMap<*, *>) {
         @Suppress("UNCHECKED_CAST")
@@ -184,14 +189,17 @@ class ImmutableMap<K, V> : Map<K, V> {
       } else builder<K, V>().putAll(otherMap).build()
     }
 
+    @JvmStatic
     fun <K, V> copyOf(iterable: Iterable<Map.Entry<out K, out V>>): ImmutableMap<K, V> {
       return builder<K, V>().putAll(iterable).build()
     }
 
+    @JvmStatic
     fun <K, V> builder(): Builder<K, V> {
       return Builder()
     }
 
+    @JvmStatic
     fun <K, V> buildUpon(other: Map<out K, out V>): Builder<K, V> {
       return builder<K, V>().putAll(other)
     }

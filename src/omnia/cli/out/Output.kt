@@ -431,16 +431,19 @@ class Output private constructor(spans: List<Span<*>>) {
       return string.endsWith(System.lineSeparator()) || string.endsWith("\n") || string.endsWith("\r")
     }
 
+    @JvmStatic
     fun builder(): Builder {
       return Builder()
     }
 
+    @JvmStatic
     fun just(message: String): Output {
       return if (message.isEmpty()) empty() else Output(
         ImmutableList.of(InlineSpan(message, Formatting.EMPTY))
       )
     }
 
+    @JvmStatic
     fun justLine(message: String): Output {
       return if (message.isEmpty()) empty() else Output(
         ImmutableList.of(
@@ -453,10 +456,12 @@ class Output private constructor(spans: List<Span<*>>) {
       )
     }
 
+    @JvmStatic
     fun justNewline(): Output {
       return EMPTY_LINE
     }
 
+    @JvmStatic
     fun empty(): Output {
       return EMPTY
     }

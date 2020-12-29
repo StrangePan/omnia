@@ -9,6 +9,7 @@ import omnia.data.structure.immutable.ImmutableList
 
 object ListAlgorithms {
 
+  @JvmStatic
   fun <T> sublistOf(other: List<T>, startingIndex: Int, endingIndex: Int): ImmutableList<T> {
     Objects.checkFromToIndex(startingIndex, endingIndex, other.count())
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
@@ -18,6 +19,7 @@ object ListAlgorithms {
     return sublist.build()
   }
 
+  @JvmStatic
   fun <T> reverse(other: List<T>): ImmutableList<T> {
     requireNonNull(other)
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
@@ -35,6 +37,7 @@ object ListAlgorithms {
    * @param template The seed array used to create a new array instance. Not mutated in this method.
    * Can have any length, including 0.
    */
+  @JvmStatic
   fun <T> toArray(list: List<out T>, template: Array<T>): Array<T> {
     return list.stream().toArray(template::copyOf)
   }
@@ -49,6 +52,7 @@ object ListAlgorithms {
    * @return the index of the needle within the haystack or the empty optional if the needle was not
    * found
    */
+  @JvmStatic
   fun <T> binarySearch(
     haystack: List<out T>, needle: T, comparator: Comparator<in T>
   ): OptionalInt {

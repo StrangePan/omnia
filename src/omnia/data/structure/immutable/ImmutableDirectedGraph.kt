@@ -382,10 +382,12 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
       return EMPTY_IMMUTABLE_DIRECTED_GRAPH as ImmutableDirectedGraph<E>
     }
 
+    @JvmStatic
     fun <E> copyOf(original: DirectedGraph<E>): ImmutableDirectedGraph<E> {
       return buildUpon(original).build()
     }
 
+    @JvmStatic
     fun <E, R : Any> copyOf(
       original: DirectedGraph<E>, mapper: Function<in E, out R>,
     ): ImmutableDirectedGraph<R> {
@@ -409,6 +411,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
       return Builder()
     }
 
+    @JvmStatic
     fun <E> buildUpon(original: DirectedGraph<E>): Builder<E> {
       return if (original is ImmutableDirectedGraph<*>) {
         (original as ImmutableDirectedGraph<E>).toBuilder()

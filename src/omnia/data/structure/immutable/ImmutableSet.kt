@@ -118,6 +118,7 @@ class ImmutableSet<E> : Set<E> {
       return builder<E>().add(firstItem).addAll(*items).build()
     }
 
+    @JvmStatic
     fun <E> copyOf(iterable: Iterable<E>): ImmutableSet<E> {
       return if (iterable is ImmutableSet<*>) {
         iterable as ImmutableSet<E>
@@ -129,6 +130,7 @@ class ImmutableSet<E> : Set<E> {
       return Builder()
     }
 
+    @JvmStatic
     fun <E> buildUpon(other: Set<out E>): Builder<E> {
       return builder<E>().addAll(other)
     }

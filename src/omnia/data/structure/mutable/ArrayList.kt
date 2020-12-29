@@ -19,6 +19,7 @@ class ArrayList<E> private constructor(javaList: java.util.ArrayList<E> = java.u
       return newList
     }
 
+    @JvmStatic
     fun <E> create(): ArrayList<E> {
       return ArrayList()
     }

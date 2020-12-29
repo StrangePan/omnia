@@ -165,6 +165,7 @@ class ImmutableList<E> : List<E> {
 
     private val EMPTY_LIST: ImmutableList<*> = ImmutableList<Any>()
 
+    @JvmStatic
     fun <E> empty(): ImmutableList<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_LIST as ImmutableList<E>
@@ -185,6 +186,7 @@ class ImmutableList<E> : List<E> {
      * the provided iterable is already an [ImmutableList], this function returns the
      * original list without creating a copy.
      */
+    @JvmStatic
     fun <E> copyOf(iterable: Iterable<E>): ImmutableList<E> {
       return if (iterable is ImmutableList<*>) {
         iterable as ImmutableList<E>
@@ -192,6 +194,7 @@ class ImmutableList<E> : List<E> {
     }
 
     /** Copies the items from the provided array into a new [ImmutableList] instance.  */
+    @JvmStatic
     fun <E> copyOf(items: Array<E>): ImmutableList<E> {
       return builder<E>().addAll(*items).build()
     }

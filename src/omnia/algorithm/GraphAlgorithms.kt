@@ -104,6 +104,7 @@ object GraphAlgorithms {
    * @param T the type of item contained in the graph
    * @return a list of nodes that form a cycle, or nothing if no cycles were found
    */
+  @JvmStatic
   fun <T> findAnyCycle(graph: DirectedGraph<T>): Optional<List<T>> {
     val visitedItems: MutableSet<T> = HashSet.create()
 
@@ -231,6 +232,7 @@ object GraphAlgorithms {
     return resultList
   }
 
+  @JvmStatic
   fun <T : Graph.Node<*>> findSubgraph(source: T): ImmutableSet<T> {
     val set: MutableSet<T> = HashSet.create()
     val queue: Queue<T> = ArrayQueue.create()
@@ -262,6 +264,7 @@ object GraphAlgorithms {
    * @param graph the graph to test
    * @return true if the graph is acyclical, false if the graph is cyclical
    */
+  @JvmStatic
   fun isAcyclical(graph: DirectedGraph<*>): Boolean {
     return !isCyclical(graph)
   }

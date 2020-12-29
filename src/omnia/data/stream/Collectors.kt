@@ -20,6 +20,7 @@ import omnia.data.structure.tuple.Couple
 object Collectors {
 
   /** Creates a [Collector] that collects stream items into a [Set].  */
+  @JvmStatic
   fun <E> toSet(): Collector<E, *, Set<E>> {
     return MaskingCollector(java.util.stream.Collectors.toSet(), Set.Companion::masking)
   }
@@ -54,10 +55,12 @@ object Collectors {
     }
   }
 
+  @JvmStatic
   fun <E> toList(): Collector<E, *, List<E>> {
     return MaskingCollector(java.util.stream.Collectors.toList(), List.Companion::masking)
   }
 
+  @JvmStatic
   fun <E> toImmutableList(): Collector<E, *, ImmutableList<E>> {
     return object : Collector<E, ArrayList<E>, ImmutableList<E>> {
       override fun supplier(): Supplier<ArrayList<E>> {
@@ -94,6 +97,7 @@ object Collectors {
    * @param K the first type of the [Couple] and the key type for the map
    * @param V the second type of the [Couple] and the value type for the map
    */
+  @JvmStatic
   fun <K, V> toImmutableMap(): Collector<Couple<out K, out V>, *, ImmutableMap<K, V>> {
     return toImmutableMap({ obj -> obj.first() }, { obj -> obj.second() })
   }
@@ -107,6 +111,7 @@ object Collectors {
    * @param E the item type of the stream and the value type of the produced map
    * @param K the key type for the map
    */
+  @JvmStatic
   fun <E, K> toImmutableMap(
     keyExtractor: Function<in E, K>,
   ): Collector<E, *, ImmutableMap<K, E>> {
@@ -123,6 +128,7 @@ object Collectors {
    * @param K the key type for the map
    * @param V the value type for the map
    */
+  @JvmStatic
   fun <E, K, V> toImmutableMap(
     keyExtractor: Function<in E, K>,
     valueExtractor: Function<in E, V>,
@@ -140,6 +146,7 @@ object Collectors {
    * @param K the key type for the map
    * @param V the value type for the map
    */
+  @JvmStatic
   fun <E, K, V> toHashMap(
     keyExtractor: Function<in E, K>, valueExtractor: Function<in E, V>,
   ): Collector<E, *, HashMap<K, V>> {
