@@ -4,13 +4,13 @@ import java.util.Objects
 import java.util.function.Function
 
 internal open class ImmutableSeptuple<A, B, C, D, E, F, G>(
-    private val first: A,
-    private val second: B,
-    private val third: C,
-    private val fourth: D,
-    private val fifth: E,
-    private val sixth: F,
-    private val seventh: G,
+  private val first: A,
+  private val second: B,
+  private val third: C,
+  private val fourth: D,
+  private val fifth: E,
+  private val sixth: F,
+  private val seventh: G,
 ) : Septuple<A, B, C, D, E, F, G> {
 
   override fun equals(other: Any?): Boolean {
@@ -121,10 +121,31 @@ internal open class ImmutableSeptuple<A, B, C, D, E, F, G>(
   }
 
   override fun <H, I> append(other: Couple<H, I>): Nonuple<A, B, C, D, E, F, G, H, I> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), other.first(), other.second())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      other.first(),
+      other.second()
+    )
   }
 
   override fun <H, I, J> append(other: Triple<H, I, J>): Decuple<A, B, C, D, E, F, G, H, I, J> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), other.first(), other.second(), other.third())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      other.first(),
+      other.second(),
+      other.third()
+    )
   }
 }

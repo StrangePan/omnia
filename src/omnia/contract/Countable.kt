@@ -9,19 +9,20 @@ package omnia.contract
  * maps.
  */
 interface Countable {
-    /**
-     * Get the number of items contained in this object.
-     *
-     * @return a non-negative integer between `0` and [Integer.MAX_VALUE], inclusive.
-     */
-    fun count(): Int
 
-    /**
-     * Get whether or not this object contains any items. Default implementation returns true if
-     * [count] is greater than 0.
-     *
-     * @return `true` if this object contains any items, and `false` otherwise.
-     */
-    val isPopulated: Boolean
-        get() = count() > 0
+  /**
+   * Get the number of items contained in this object.
+   *
+   * @return a non-negative integer between `0` and [Integer.MAX_VALUE], inclusive.
+   */
+  fun count(): Int
+
+  /**
+   * Get whether or not this object contains any items. Default implementation returns true if
+   * [count] is greater than 0.
+   *
+   * @return `true` if this object contains any items, and `false` otherwise.
+   */
+  val isPopulated: Boolean
+    get() = count() > 0
 }

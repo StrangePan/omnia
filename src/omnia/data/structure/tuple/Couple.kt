@@ -1,10 +1,11 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastCouple
 import omnia.data.structure.tuple.Tuples.AtMostCouple
-import java.util.function.Function
 
 interface Couple<A, B> : AtLeastCouple<A, B>, AtMostCouple {
+
   override fun count(): Int {
     return 2
   }

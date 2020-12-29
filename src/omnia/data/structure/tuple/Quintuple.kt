@@ -1,10 +1,11 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastQuintuple
 import omnia.data.structure.tuple.Tuples.AtMostQuintuple
-import java.util.function.Function
 
 interface Quintuple<A, B, C, D, E> : AtLeastQuintuple<A, B, C, D, E>, AtMostQuintuple {
+
   override fun count(): Int {
     return 5
   }

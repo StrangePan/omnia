@@ -1,15 +1,16 @@
 package omnia.data.structure.mutable
 
-import omnia.contract.Clearable
-import omnia.data.structure.Collection
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import omnia.contract.Clearable
+import omnia.data.structure.Collection
 
 /**
  * A [MutableCollection] is a [Collection] whose contents can be manipulated at
  * runtime.
  */
 interface MutableCollection<E> : Collection<E>, Clearable {
+
   /**
    * Adds the given the item to this collection. Each specific data structure has its own
    * definition of how the items are added and the semantic location the items added.
@@ -58,6 +59,7 @@ interface MutableCollection<E> : Collection<E>, Clearable {
   override fun clear()
 
   companion object {
+
     fun <E> masking(javaCollection: kotlin.collections.MutableCollection<E>): MutableCollection<E> {
       return object : MutableCollection<E> {
         override fun add(item: E) {

@@ -1,9 +1,10 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.tuple.Tuples.AtMostCouplet
 import java.util.function.Function
+import omnia.data.structure.tuple.Tuples.AtMostCouplet
 
 interface Couplet<T> : Couple<T, T>, AtMostCouplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Couplet<R>
   override fun concat(`object`: T): Triplet<T>
   override fun concat(other: Couple<T, T>): Quadruplet<T>
@@ -15,6 +16,7 @@ interface Couplet<T> : Couple<T, T>, AtMostCouplet<T> {
   override fun concat(other: Octuple<T, T, T, T, T, T, T, T>): Decuplet<T>
 
   companion object {
+
     @kotlin.jvm.JvmStatic
     fun <T> of(first: T, second: T): Couplet<T> {
       return ImmutableCouplet(first, second)

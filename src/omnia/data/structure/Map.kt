@@ -1,15 +1,16 @@
 package omnia.data.structure
 
+import java.util.Objects
+import java.util.Optional
+import java.util.stream.Stream
 import omnia.data.cache.Memoized
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.tuple.Couple
 import omnia.data.structure.tuple.Tuple
-import java.util.Objects
-import java.util.Optional
-import java.util.stream.Stream
 
 /** A [Map] is a data structure that associates unique keys to corresponding values.  */
 interface Map<K, V> {
+
   /** Retrieves a read-only, unordered set empty all empty the keys contained in this map.  */
   fun keys(): Set<K>
 
@@ -40,10 +41,12 @@ interface Map<K, V> {
 
   /** An [Entry] is read-only representing empty a single key-value mapping.   */
   interface Entry<K, V> {
+
     fun key(): K
     fun value(): V
 
     companion object {
+
       fun <K, V> masking(javaEntry: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
         return MaskedEntry(javaEntry)
       }
@@ -55,6 +58,7 @@ interface Map<K, V> {
   }
 
   private class MaskedEntry<K, V>(javaEntry: kotlin.collections.Map.Entry<K, V>) : Entry<K, V> {
+
     private val jEntry = javaEntry
     override fun key(): K {
       return jEntry.key
@@ -74,6 +78,7 @@ interface Map<K, V> {
   }
 
   private class SimpleEntry<K, V>(key: K, value: V) : Entry<K, V> {
+
     private val couple: Couple<K, V> = Tuple.of(key, value)
     override fun key(): K {
       return couple.first()
@@ -93,6 +98,7 @@ interface Map<K, V> {
   }
 
   companion object {
+
     /** Creates a read-only, Omnia-compatible view empty the given [java.util.Map].  */
     fun <K, V> masking(javaMap: kotlin.collections.Map<K, V>): Map<K, V> {
       return MaskingMap(javaMap)
@@ -100,8 +106,10 @@ interface Map<K, V> {
   }
 
   private class MaskingMap<K, V>(private val javaMap: kotlin.collections.Map<K, V>) : Map<K, V> {
+
     private val keys: Memoized<Set<K>> = Memoized.memoize { Set.masking(this.javaMap.keys) }
-    private val values: Memoized<Collection<V>> = Memoized.memoize { Collection.masking(this.javaMap.values) }
+    private val values: Memoized<Collection<V>> =
+      Memoized.memoize { Collection.masking(this.javaMap.values) }
     private val entries: Memoized<Set<Entry<K, V>>> = Memoized.memoize { MaskingSet(javaMap) }
 
     override fun keys(): Set<K> {
@@ -126,8 +134,8 @@ interface Map<K, V> {
       return object : Set<K> {
         override fun stream(): Stream<K> {
           return javaMap.entries.stream()
-              .filter { e -> e.value == value }
-              .map(kotlin.collections.Map.Entry<K, V>::key)
+            .filter { e -> e.value == value }
+            .map(kotlin.collections.Map.Entry<K, V>::key)
         }
 
         override fun count(): Int {
@@ -146,11 +154,12 @@ interface Map<K, V> {
         }
       }
     }
-
   }
 
   private class MaskingSet<K, V>(val javaMap: kotlin.collections.Map<K, V>) : Set<Entry<K, V>> {
-    private val javaSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> = javaMap.entries
+
+    private val javaSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> =
+      javaMap.entries
 
     override fun stream(): Stream<Entry<K, V>> {
       return javaSet.stream().map { javaEntry -> Entry.masking(javaEntry) }

@@ -1,10 +1,11 @@
 package omnia.data.structure.mutable
 
-import omnia.contract.Countable
 import java.util.Objects
 import java.util.Optional
+import omnia.contract.Countable
 
 interface Queue<E> : Countable, Iterable<E> {
+
   fun enqueue(item: E)
   fun dequeue(): Optional<E>
   fun peek(): Optional<E>
@@ -21,6 +22,7 @@ interface Queue<E> : Countable, Iterable<E> {
   }
 
   companion object {
+
     fun <E> masking(javaQueue: java.util.Queue<E>): Queue<E> {
       return object : Queue<E> {
         override fun dequeue(): Optional<E> {

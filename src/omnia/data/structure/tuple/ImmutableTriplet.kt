@@ -1,11 +1,13 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.immutable.ImmutableList
 import java.util.OptionalInt
 import java.util.function.Function
 import java.util.stream.Stream
+import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableTriplet<T>(first: T, second: T, third: T) : ImmutableTriple<T, T, T>(first, second, third), Triplet<T> {
+internal class ImmutableTriplet<T>(first: T, second: T, third: T) :
+  ImmutableTriple<T, T, T>(first, second, third), Triplet<T> {
+
   override fun dropFirst(): Couplet<T> {
     return Tuplet.of(second(), third())
   }
@@ -35,19 +37,57 @@ internal class ImmutableTriplet<T>(first: T, second: T, third: T) : ImmutableTri
   }
 
   override fun concat(other: Quadruple<T, T, T, T>): Septuplet<T> {
-    return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth()
+    )
   }
 
   override fun concat(other: Quintuple<T, T, T, T, T>): Octuplet<T> {
-    return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth()
+    )
   }
 
   override fun concat(other: Sextuple<T, T, T, T, T, T>): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth(),
+      other.sixth()
+    )
   }
 
   override fun concat(other: Septuple<T, T, T, T, T, T, T>): Decuplet<T> {
-    return Tuplet.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth(), other.seventh())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth(),
+      other.sixth(),
+      other.seventh()
+    )
   }
 
   override fun iterator(): Iterator<T> {

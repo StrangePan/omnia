@@ -1,13 +1,44 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.immutable.ImmutableList
 import java.util.OptionalInt
 import java.util.function.Function
 import java.util.stream.Stream
+import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableNonuplet<T>(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T, seventh: T, eighth: T, ninth: T) : ImmutableNonuple<T, T, T, T, T, T, T, T, T>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth), Nonuplet<T> {
+internal class ImmutableNonuplet<T>(
+  first: T,
+  second: T,
+  third: T,
+  fourth: T,
+  fifth: T,
+  sixth: T,
+  seventh: T,
+  eighth: T,
+  ninth: T
+) : ImmutableNonuple<T, T, T, T, T, T, T, T, T>(
+  first,
+  second,
+  third,
+  fourth,
+  fifth,
+  sixth,
+  seventh,
+  eighth,
+  ninth
+), Nonuplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Nonuplet<R> {
-    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()), mapper.apply(fourth()), mapper.apply(fifth()), mapper.apply(sixth()), mapper.apply(seventh()), mapper.apply(eighth()), mapper.apply(ninth()))
+    return Tuplet.of(
+      mapper.apply(first()),
+      mapper.apply(second()),
+      mapper.apply(third()),
+      mapper.apply(fourth()),
+      mapper.apply(fifth()),
+      mapper.apply(sixth()),
+      mapper.apply(seventh()),
+      mapper.apply(eighth()),
+      mapper.apply(ninth())
+    )
   }
 
   override fun dropFirst(): Octuplet<T> {
@@ -47,7 +78,18 @@ internal class ImmutableNonuplet<T>(first: T, second: T, third: T, fourth: T, fi
   }
 
   override fun concat(`object`: T): Decuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), `object`)
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      `object`
+    )
   }
 
   override fun iterator(): Iterator<T> {
@@ -71,6 +113,16 @@ internal class ImmutableNonuplet<T>(first: T, second: T, third: T, fourth: T, fi
   }
 
   private fun toActualList(): ImmutableList<T> {
-    return ImmutableList.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth())
+    return ImmutableList.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth()
+    )
   }
 }

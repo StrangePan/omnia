@@ -1,11 +1,12 @@
 package omnia.data.structure.tuple
 
+import java.util.Objects
 import omnia.contract.Countable
 import omnia.data.structure.immutable.ImmutableList
-import java.util.Objects
 
 interface Tuple : Countable {
   companion object {
+
     fun <A, B> of(first: A, second: B): Couple<A, B> {
       return ImmutableCouple(first, second)
     }
@@ -18,28 +19,90 @@ interface Tuple : Countable {
       return ImmutableQuadruple(first, second, third, fourth)
     }
 
-    fun <A, B, C, D, E> of(first: A, second: B, third: C, fourth: D, fifth: E): Quintuple<A, B, C, D, E> {
+    fun <A, B, C, D, E> of(
+      first: A,
+      second: B,
+      third: C,
+      fourth: D,
+      fifth: E
+    ): Quintuple<A, B, C, D, E> {
       return ImmutableQuintuple(first, second, third, fourth, fifth)
     }
 
-    fun <A, B, C, D, E, F> of(first: A, second: B, third: C, fourth: D, fifth: E, sixth: F): Sextuple<A, B, C, D, E, F> {
+    fun <A, B, C, D, E, F> of(
+      first: A,
+      second: B,
+      third: C,
+      fourth: D,
+      fifth: E,
+      sixth: F
+    ): Sextuple<A, B, C, D, E, F> {
       return ImmutableSextuple(first, second, third, fourth, fifth, sixth)
     }
 
-    fun <A, B, C, D, E, F, G> of(first: A, second: B, third: C, fourth: D, fifth: E, sixth: F, seventh: G): Septuple<A, B, C, D, E, F, G> {
+    fun <A, B, C, D, E, F, G> of(
+      first: A,
+      second: B,
+      third: C,
+      fourth: D,
+      fifth: E,
+      sixth: F,
+      seventh: G
+    ): Septuple<A, B, C, D, E, F, G> {
       return ImmutableSeptuple(first, second, third, fourth, fifth, sixth, seventh)
     }
 
-    fun <A, B, C, D, E, F, G, H> of(first: A, second: B, third: C, fourth: D, fifth: E, sixth: F, seventh: G, eighth: H): Octuple<A, B, C, D, E, F, G, H> {
+    fun <A, B, C, D, E, F, G, H> of(
+      first: A,
+      second: B,
+      third: C,
+      fourth: D,
+      fifth: E,
+      sixth: F,
+      seventh: G,
+      eighth: H
+    ): Octuple<A, B, C, D, E, F, G, H> {
       return ImmutableOctuple(first, second, third, fourth, fifth, sixth, seventh, eighth)
     }
 
-    fun <A, B, C, D, E, F, G, H, I> of(first: A, second: B, third: C, fourth: D, fifth: E, sixth: F, seventh: G, eighth: H, ninth: I): Nonuple<A, B, C, D, E, F, G, H, I> {
+    fun <A, B, C, D, E, F, G, H, I> of(
+      first: A,
+      second: B,
+      third: C,
+      fourth: D,
+      fifth: E,
+      sixth: F,
+      seventh: G,
+      eighth: H,
+      ninth: I
+    ): Nonuple<A, B, C, D, E, F, G, H, I> {
       return ImmutableNonuple(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
     }
 
-    fun <A, B, C, D, E, F, G, H, I, J> of(first: A, second: B, third: C, fourth: D, fifth: E, sixth: F, seventh: G, eighth: H, ninth: I, tenth: J): Decuple<A, B, C, D, E, F, G, H, I, J> {
-      return ImmutableDecuple(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth)
+    fun <A, B, C, D, E, F, G, H, I, J> of(
+      first: A,
+      second: B,
+      third: C,
+      fourth: D,
+      fifth: E,
+      sixth: F,
+      seventh: G,
+      eighth: H,
+      ninth: I,
+      tenth: J
+    ): Decuple<A, B, C, D, E, F, G, H, I, J> {
+      return ImmutableDecuple(
+        first,
+        second,
+        third,
+        fourth,
+        fifth,
+        sixth,
+        seventh,
+        eighth,
+        ninth,
+        tenth
+      )
     }
 
     fun toList(tuple: Tuple): ImmutableList<*> {
@@ -83,31 +146,87 @@ interface Tuple : Countable {
     }
 
     fun <T> toList(quadruple: Quadruple<out T, out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(quadruple.first(), quadruple.second(), quadruple.third(), quadruple.fourth())
+      return ImmutableList.of(
+        quadruple.first(),
+        quadruple.second(),
+        quadruple.third(),
+        quadruple.fourth()
+      )
     }
 
     fun <T> toList(quintuple: Quintuple<out T, out T, out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(quintuple.first(), quintuple.second(), quintuple.third(), quintuple.fourth(), quintuple.fifth())
+      return ImmutableList.of(
+        quintuple.first(),
+        quintuple.second(),
+        quintuple.third(),
+        quintuple.fourth(),
+        quintuple.fifth()
+      )
     }
 
     fun <T> toList(sextuple: Sextuple<out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(sextuple.first(), sextuple.second(), sextuple.third(), sextuple.fourth(), sextuple.fifth(), sextuple.sixth())
+      return ImmutableList.of(
+        sextuple.first(),
+        sextuple.second(),
+        sextuple.third(),
+        sextuple.fourth(),
+        sextuple.fifth(),
+        sextuple.sixth()
+      )
     }
 
     fun <T> toList(septuple: Septuple<out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(septuple.first(), septuple.second(), septuple.third(), septuple.fourth(), septuple.fifth(), septuple.sixth(), septuple.seventh())
+      return ImmutableList.of(
+        septuple.first(),
+        septuple.second(),
+        septuple.third(),
+        septuple.fourth(),
+        septuple.fifth(),
+        septuple.sixth(),
+        septuple.seventh()
+      )
     }
 
     fun <T> toList(octuple: Octuple<out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(octuple.first(), octuple.second(), octuple.third(), octuple.fourth(), octuple.fifth(), octuple.sixth(), octuple.seventh(), octuple.eighth())
+      return ImmutableList.of(
+        octuple.first(),
+        octuple.second(),
+        octuple.third(),
+        octuple.fourth(),
+        octuple.fifth(),
+        octuple.sixth(),
+        octuple.seventh(),
+        octuple.eighth()
+      )
     }
 
     fun <T> toList(nonuple: Nonuple<out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(nonuple.first(), nonuple.second(), nonuple.third(), nonuple.fourth(), nonuple.fifth(), nonuple.sixth(), nonuple.seventh(), nonuple.eighth(), nonuple.ninth())
+      return ImmutableList.of(
+        nonuple.first(),
+        nonuple.second(),
+        nonuple.third(),
+        nonuple.fourth(),
+        nonuple.fifth(),
+        nonuple.sixth(),
+        nonuple.seventh(),
+        nonuple.eighth(),
+        nonuple.ninth()
+      )
     }
 
     fun <T> toList(decuple: Decuple<out T, out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(decuple.first(), decuple.second(), decuple.third(), decuple.fourth(), decuple.fifth(), decuple.sixth(), decuple.seventh(), decuple.eighth(), decuple.ninth(), decuple.tenth())
+      return ImmutableList.of(
+        decuple.first(),
+        decuple.second(),
+        decuple.third(),
+        decuple.fourth(),
+        decuple.fifth(),
+        decuple.sixth(),
+        decuple.seventh(),
+        decuple.eighth(),
+        decuple.ninth(),
+        decuple.tenth()
+      )
     }
   }
 }

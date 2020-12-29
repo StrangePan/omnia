@@ -1,10 +1,11 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastSeptuple
 import omnia.data.structure.tuple.Tuples.AtMostSeptuple
-import java.util.function.Function
 
 interface Septuple<A, B, C, D, E, F, G> : AtLeastSeptuple<A, B, C, D, E, F, G>, AtMostSeptuple {
+
   override fun count(): Int {
     return 7
   }

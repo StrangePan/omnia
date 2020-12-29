@@ -4,9 +4,9 @@ import java.util.Objects
 import java.util.function.Function
 
 internal open class ImmutableTriple<A, B, C>(
-    private val first: A,
-    private val second: B,
-    private val third: C,
+  private val first: A,
+  private val second: B,
+  private val third: C,
 ) : Triple<A, B, C> {
 
   override fun equals(other: Any?): Boolean {
@@ -73,18 +73,56 @@ internal open class ImmutableTriple<A, B, C>(
   }
 
   override fun <D, E, F, G> append(other: Quadruple<D, E, F, G>): Septuple<A, B, C, D, E, F, G> {
-    return Tuple.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth()
+    )
   }
 
   override fun <D, E, F, G, H> append(other: Quintuple<D, E, F, G, H>): Octuple<A, B, C, D, E, F, G, H> {
-    return Tuple.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth()
+    )
   }
 
   override fun <D, E, F, G, H, I> append(other: Sextuple<D, E, F, G, H, I>): Nonuple<A, B, C, D, E, F, G, H, I> {
-    return Tuple.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth(),
+      other.sixth()
+    )
   }
 
   override fun <D, E, F, G, H, I, J> append(other: Septuple<D, E, F, G, H, I, J>): Decuple<A, B, C, D, E, F, G, H, I, J> {
-    return Tuple.of(first(), second(), third(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth(), other.seventh())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth(),
+      other.sixth(),
+      other.seventh()
+    )
   }
 }

@@ -8,10 +8,11 @@ package omnia.contract
  * @see Holder for a more general-purpose object container
  */
 interface IntHolder {
-    /**
-     * Gets the value held in this object.
-     *
-     * @return the number held in this object, which may be any valid `int` value.
-     */
-    fun value(): Int
+
+  /**
+   * Gets the value held in this object.
+   *
+   * @return the number held in this object, which may be any valid `int` value.
+   */
+  fun value(): Int
 }

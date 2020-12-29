@@ -4,10 +4,10 @@ import java.util.Objects
 import java.util.function.Function
 
 internal open class ImmutableQuadruple<A, B, C, D>(
-    private val first: A,
-    private val second: B,
-    private val third: C,
-    private val fourth: D,
+  private val first: A,
+  private val second: B,
+  private val third: C,
+  private val fourth: D,
 ) : Quadruple<A, B, C, D> {
 
   override fun equals(other: Any?): Boolean {
@@ -83,18 +83,56 @@ internal open class ImmutableQuadruple<A, B, C, D>(
   }
 
   override fun <E, F, G> append(other: Triple<E, F, G>): Septuple<A, B, C, D, E, F, G> {
-    return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      other.first(),
+      other.second(),
+      other.third()
+    )
   }
 
   override fun <E, F, G, H> append(other: Quadruple<E, F, G, H>): Octuple<A, B, C, D, E, F, G, H> {
-    return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third(), other.fourth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth()
+    )
   }
 
   override fun <E, F, G, H, I> append(other: Quintuple<E, F, G, H, I>): Nonuple<A, B, C, D, E, F, G, H, I> {
-    return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth()
+    )
   }
 
   override fun <E, F, G, H, I, J> append(other: Sextuple<E, F, G, H, I, J>): Decuple<A, B, C, D, E, F, G, H, I, J> {
-    return Tuple.of(first(), second(), third(), fourth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth(), other.sixth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth(),
+      other.sixth()
+    )
   }
 }

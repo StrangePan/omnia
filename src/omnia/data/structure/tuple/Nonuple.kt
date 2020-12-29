@@ -1,10 +1,12 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastNonuple
 import omnia.data.structure.tuple.Tuples.AtMostNonuple
-import java.util.function.Function
 
-interface Nonuple<A, B, C, D, E, F, G, H, I> : AtLeastNonuple<A, B, C, D, E, F, G, H, I>, AtMostNonuple {
+interface Nonuple<A, B, C, D, E, F, G, H, I> : AtLeastNonuple<A, B, C, D, E, F, G, H, I>,
+  AtMostNonuple {
+
   override fun count(): Int {
     return 9
   }

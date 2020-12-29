@@ -4,6 +4,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class ImmutableSetTest {
+
   @Test
   fun count_whenEmpty_didReturnCount() {
     Assert.assertEquals(0, ImmutableSet.builder<Any>().build().count().toLong())
@@ -72,24 +73,25 @@ class ImmutableSetTest {
   }
 
   companion object {
+
     private const val TEST_ITEM_1 = "first"
     private const val TEST_ITEM_2 = "second"
     private const val TEST_ITEM_3 = "third"
     private fun createTestSubject(): ImmutableSet<String> {
       return ImmutableSet.builder<String>()
-          .add(TEST_ITEM_1)
-          .add(TEST_ITEM_2)
-          .add(TEST_ITEM_3)
-          .build()
+        .add(TEST_ITEM_1)
+        .add(TEST_ITEM_2)
+        .add(TEST_ITEM_3)
+        .build()
     }
 
     private fun createTestSubjectWithDuplicates(): ImmutableSet<String> {
       return ImmutableSet.builder<String>()
-          .add(TEST_ITEM_1)
-          .add(TEST_ITEM_1)
-          .add(TEST_ITEM_2)
-          .add(TEST_ITEM_2)
-          .build()
+        .add(TEST_ITEM_1)
+        .add(TEST_ITEM_1)
+        .add(TEST_ITEM_2)
+        .add(TEST_ITEM_2)
+        .build()
     }
   }
 }

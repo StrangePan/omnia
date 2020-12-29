@@ -1,14 +1,15 @@
 package omnia.data.cache
 
 import com.google.common.truth.Truth
+import java.util.function.LongSupplier
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.Mockito
-import java.util.function.LongSupplier
 
 @RunWith(JUnit4::class)
 class SimpleLongCacherTest {
+
   @Test
   fun value_didReturnSuppliedValue() {
     val testValue = 132L
@@ -67,6 +68,7 @@ class SimpleLongCacherTest {
   }
 
   companion object {
+
     private fun setUpMockSupplier(): LongSupplier {
       val supplier = Mockito.mock(LongSupplier::class.java)
       Mockito.`when`(supplier.asLong).thenReturn(132L)

@@ -1,9 +1,10 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.tuple.Tuples.AtMostNonuplet
 import java.util.function.Function
+import omnia.data.structure.tuple.Tuples.AtMostNonuplet
 
 interface Nonuplet<T> : Nonuple<T, T, T, T, T, T, T, T, T>, AtMostNonuplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Nonuplet<R>
   override fun dropFirst(): Octuplet<T>
   override fun dropSecond(): Octuplet<T>
@@ -17,7 +18,18 @@ interface Nonuplet<T> : Nonuple<T, T, T, T, T, T, T, T, T>, AtMostNonuplet<T> {
   override fun concat(`object`: T): Decuplet<T>
 
   companion object {
-    fun <T> of(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T, seventh: T, eighth: T, ninth: T): Nonuplet<T> {
+
+    fun <T> of(
+      first: T,
+      second: T,
+      third: T,
+      fourth: T,
+      fifth: T,
+      sixth: T,
+      seventh: T,
+      eighth: T,
+      ninth: T
+    ): Nonuplet<T> {
       return ImmutableNonuplet(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
     }
   }

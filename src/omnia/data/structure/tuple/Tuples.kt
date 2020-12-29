@@ -4,6 +4,7 @@ import java.util.function.Function
 
 class Tuples {
   interface AtLeastCouple<A, B> : Tuple {
+
     fun first(): A
     fun second(): B
     fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastCouple<R, B>
@@ -11,6 +12,7 @@ class Tuples {
   }
 
   interface AtLeastTriple<A, B, C> : AtLeastCouple<A, B> {
+
     fun third(): C
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastTriple<R, B, C>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastTriple<A, R, C>
@@ -21,6 +23,7 @@ class Tuples {
   }
 
   interface AtLeastQuadruple<A, B, C, D> : AtLeastTriple<A, B, C> {
+
     fun fourth(): D
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastQuadruple<R, B, C, D>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastQuadruple<A, R, C, D>
@@ -33,6 +36,7 @@ class Tuples {
   }
 
   interface AtLeastQuintuple<A, B, C, D, E> : AtLeastQuadruple<A, B, C, D> {
+
     fun fifth(): E
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastQuintuple<R, B, C, D, E>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastQuintuple<A, R, C, D, E>
@@ -47,6 +51,7 @@ class Tuples {
   }
 
   interface AtLeastSextuple<A, B, C, D, E, F> : AtLeastQuintuple<A, B, C, D, E> {
+
     fun sixth(): F
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastSextuple<R, B, C, D, E, F>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastSextuple<A, R, C, D, E, F>
@@ -63,6 +68,7 @@ class Tuples {
   }
 
   interface AtLeastSeptuple<A, B, C, D, E, F, G> : AtLeastSextuple<A, B, C, D, E, F> {
+
     fun seventh(): G
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastSeptuple<R, B, C, D, E, F, G>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastSeptuple<A, R, C, D, E, F, G>
@@ -81,6 +87,7 @@ class Tuples {
   }
 
   interface AtLeastOctuple<A, B, C, D, E, F, G, H> : AtLeastSeptuple<A, B, C, D, E, F, G> {
+
     fun eighth(): H
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastOctuple<R, B, C, D, E, F, G, H>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastOctuple<A, R, C, D, E, F, G, H>
@@ -101,6 +108,7 @@ class Tuples {
   }
 
   interface AtLeastNonuple<A, B, C, D, E, F, G, H, I> : AtLeastOctuple<A, B, C, D, E, F, G, H> {
+
     fun ninth(): I
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastNonuple<R, B, C, D, E, F, G, H, I>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastNonuple<A, R, C, D, E, F, G, H, I>
@@ -122,7 +130,9 @@ class Tuples {
     fun dropNinth(): AtLeastOctuple<A, B, C, D, E, F, G, H>
   }
 
-  interface AtLeastDecuple<A, B, C, D, E, F, G, H, I, J> : AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
+  interface AtLeastDecuple<A, B, C, D, E, F, G, H, I, J> :
+    AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
+
     fun tenth(): J
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastDecuple<R, B, C, D, E, F, G, H, I, J>
     override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastDecuple<A, R, C, D, E, F, G, H, I, J>
@@ -147,6 +157,7 @@ class Tuples {
   }
 
   interface AtMostCouple : AtMostTriple {
+
     override fun <T> append(`object`: T): AtMostTriple
     override fun <C, D> append(other: Couple<C, D>): AtMostQuadruple
     override fun <C, D, E> append(other: Triple<C, D, E>): AtMostQuintuple
@@ -158,6 +169,7 @@ class Tuples {
   }
 
   interface AtMostTriple : AtMostQuadruple {
+
     override fun <T> append(`object`: T): AtMostQuadruple
     override fun <D, E> append(other: Couple<D, E>): AtMostQuintuple
     override fun <D, E, F> append(other: Triple<D, E, F>): AtMostSextuple
@@ -168,6 +180,7 @@ class Tuples {
   }
 
   interface AtMostQuadruple : AtMostQuintuple {
+
     override fun <T> append(`object`: T): AtMostQuintuple
     override fun <E, F> append(other: Couple<E, F>): AtMostSextuple
     override fun <E, F, G> append(other: Triple<E, F, G>): AtMostSeptuple
@@ -177,6 +190,7 @@ class Tuples {
   }
 
   interface AtMostQuintuple : AtMostSextuple {
+
     override fun <T> append(`object`: T): AtMostSextuple
     override fun <F, G> append(other: Couple<F, G>): AtMostSeptuple
     override fun <F, G, H> append(other: Triple<F, G, H>): AtMostOctuple
@@ -185,6 +199,7 @@ class Tuples {
   }
 
   interface AtMostSextuple : AtMostSeptuple {
+
     override fun <T> append(`object`: T): AtMostSeptuple
     override fun <G, H> append(other: Couple<G, H>): AtMostOctuple
     override fun <G, H, I> append(other: Triple<G, H, I>): AtMostNonuple
@@ -192,22 +207,26 @@ class Tuples {
   }
 
   interface AtMostSeptuple : AtMostOctuple {
+
     override fun <T> append(`object`: T): AtMostOctuple
     override fun <H, I> append(other: Couple<H, I>): AtMostNonuple
     fun <H, I, J> append(other: Triple<H, I, J>): AtMostDecuple
   }
 
   interface AtMostOctuple : AtMostNonuple {
+
     override fun <T> append(`object`: T): AtMostNonuple
     fun <I, J> append(other: Couple<I, J>): AtMostDecuple
   }
 
   interface AtMostNonuple : AtMostDecuple {
+
     fun <T> append(`object`: T): AtMostDecuple
   }
 
   interface AtMostDecuple
   interface AtMostCouplet<T> : AtMostTriplet<T>, AtMostCouple {
+
     override fun concat(`object`: T): AtMostTriplet<T>
     override fun concat(other: Couple<T, T>): AtMostQuadruplet<T>
     override fun concat(other: Triple<T, T, T>): AtMostQuintuplet<T>
@@ -219,6 +238,7 @@ class Tuples {
   }
 
   interface AtMostTriplet<T> : AtMostQuadruplet<T>, AtMostTriple {
+
     override fun concat(`object`: T): AtMostQuadruplet<T>
     override fun concat(other: Couple<T, T>): AtMostQuintuplet<T>
     override fun concat(other: Triple<T, T, T>): AtMostSextuplet<T>
@@ -229,6 +249,7 @@ class Tuples {
   }
 
   interface AtMostQuadruplet<T> : AtMostQuintuplet<T>, AtMostQuadruple {
+
     override fun concat(`object`: T): AtMostQuintuplet<T>
     override fun concat(other: Couple<T, T>): AtMostSextuplet<T>
     override fun concat(other: Triple<T, T, T>): AtMostSeptuplet<T>
@@ -238,6 +259,7 @@ class Tuples {
   }
 
   interface AtMostQuintuplet<T> : AtMostSextuplet<T>, AtMostQuintuple {
+
     override fun concat(`object`: T): AtMostSextuplet<T>
     override fun concat(other: Couple<T, T>): AtMostSeptuplet<T>
     override fun concat(other: Triple<T, T, T>): AtMostOctuplet<T>
@@ -246,6 +268,7 @@ class Tuples {
   }
 
   interface AtMostSextuplet<T> : AtMostSeptuplet<T>, AtMostSextuple {
+
     override fun concat(`object`: T): AtMostSeptuplet<T>
     override fun concat(other: Couple<T, T>): AtMostOctuplet<T>
     override fun concat(other: Triple<T, T, T>): AtMostNonuplet<T>
@@ -253,17 +276,20 @@ class Tuples {
   }
 
   interface AtMostSeptuplet<T> : AtMostOctuplet<T>, AtMostSeptuple {
+
     override fun concat(`object`: T): AtMostOctuplet<T>
     override fun concat(other: Couple<T, T>): AtMostNonuplet<T>
     fun concat(other: Triple<T, T, T>): AtMostDecuplet<T>
   }
 
   interface AtMostOctuplet<T> : AtMostNonuplet<T>, AtMostOctuple {
+
     override fun concat(`object`: T): AtMostNonuplet<T>
     fun concat(other: Couple<T, T>): AtMostDecuplet<T>
   }
 
   interface AtMostNonuplet<T> : AtMostDecuplet<T>, AtMostNonuple {
+
     fun concat(`object`: T): AtMostDecuplet<T>
   }
 

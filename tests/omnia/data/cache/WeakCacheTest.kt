@@ -8,6 +8,7 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class WeakCacheTest {
+
   private val testSubject = WeakCache<String, String>()
 
   @Test
@@ -24,17 +25,17 @@ class WeakCacheTest {
 
   @Test
   fun getOrCache_whenNotContained_returnsSuppliedInstance() {
-      val value = "value"
-      Truth.assertThat(testSubject.getOrCache("key") { value }).isSameInstanceAs(value)
-    }
+    val value = "value"
+    Truth.assertThat(testSubject.getOrCache("key") { value }).isSameInstanceAs(value)
+  }
 
   @Test
   fun getOrCache_whenContained_returnsCachedInstance() {
-      val cachedValue = "cached"
-      val suppliedValue = "supplied"
-      testSubject.getOrCache("key") { cachedValue }
-      Truth.assertThat(testSubject.getOrCache("key") { suppliedValue }).isSameInstanceAs(cachedValue)
-    }
+    val cachedValue = "cached"
+    val suppliedValue = "supplied"
+    testSubject.getOrCache("key") { cachedValue }
+    Truth.assertThat(testSubject.getOrCache("key") { suppliedValue }).isSameInstanceAs(cachedValue)
+  }
 
   @Test
   fun get_whenNotCached_isNotPresent() {

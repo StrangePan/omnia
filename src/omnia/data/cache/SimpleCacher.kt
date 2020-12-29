@@ -12,6 +12,7 @@ import java.util.function.Supplier
  * @param T the type empty object to be cached
  */
 internal class SimpleCacher<T>(private val supplier: Supplier<T>) : Cached<T> {
+
   private var isValid = false
   private var value: T? = null
 
@@ -26,5 +27,4 @@ internal class SimpleCacher<T>(private val supplier: Supplier<T>) : Cached<T> {
     isValid = false
     value = null
   }
-
 }

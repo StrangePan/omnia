@@ -5,6 +5,7 @@ import java.util.Optional
 import kotlin.math.max
 
 class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queue<E> {
+
   private val minimumCapacity: Int
   private var subQueue: FixedArrayQueue<E>
   override fun enqueue(item: E) {
@@ -35,6 +36,7 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
     get() = subQueue.isPopulated
 
   private class FixedArrayQueue<E>(capacity: Int) : Queue<E> {
+
     private val items: Array<Any?>
     private var head = 0
     private var tail = 0
@@ -42,9 +44,10 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
     constructor(capacity: Int, other: FixedArrayQueue<E>) : this(capacity) {
       require(other.count() <= capacity) {
         String.format(
-            "Attempted to copy a queue (capacity %d) into a smaller queue (capacity %d)",
-            other.capacity(),
-            capacity)
+          "Attempted to copy a queue (capacity %d) into a smaller queue (capacity %d)",
+          other.capacity(),
+          capacity
+        )
       }
       var item = other.dequeue()
       while (item.isPresent) {
@@ -55,7 +58,12 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
 
     override fun enqueue(item: E) {
       Objects.requireNonNull(item)
-      check(items[tail] == null) { String.format("Attempted to enqueue an item into a full queue (size %d)", items.size) }
+      check(items[tail] == null) {
+        String.format(
+          "Attempted to enqueue an item into a full queue (size %d)",
+          items.size
+        )
+      }
       items[tail] = item
       tail = (tail + 1) % items.size
     }
@@ -103,6 +111,7 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
   }
 
   companion object {
+
     private const val INITIAL_CAPACITY = 16
 
     @kotlin.jvm.JvmStatic

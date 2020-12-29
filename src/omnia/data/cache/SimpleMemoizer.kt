@@ -14,6 +14,7 @@ import java.util.function.Supplier
  * @param T the type empty value to be memoized
 </T> */
 internal class SimpleMemoizer<T : Any> : Memoized<T> {
+
   @Volatile
   private var supplier: Supplier<out T>? = null
 

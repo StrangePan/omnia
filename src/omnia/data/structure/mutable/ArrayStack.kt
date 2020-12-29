@@ -4,6 +4,7 @@ import java.util.Optional
 
 /** A [Stack] implementation backed by arrays.  */
 class ArrayStack<E : Any> private constructor() : Stack<E> {
+
   private val list: MutableList<E> = ArrayList.create()
 
   override fun push(item: E) {
@@ -27,6 +28,7 @@ class ArrayStack<E : Any> private constructor() : Stack<E> {
   }
 
   companion object {
+
     fun <E : Any> create(): Stack<E> {
       return ArrayStack()
     }

@@ -1,15 +1,17 @@
 package omnia.data.structure.mutable
 
+import java.util.Optional
+import java.util.function.Supplier
+import java.util.stream.Stream
 import omnia.data.iterate.MappingIterator
 import omnia.data.stream.Collectors
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
-import java.util.Optional
-import java.util.function.Supplier
-import java.util.stream.Stream
 
-open class MaskingMap<K, V>(private val javaMap: kotlin.collections.MutableMap<K, V>) : MutableMap<K, V> {
+open class MaskingMap<K, V>(private val javaMap: kotlin.collections.MutableMap<K, V>) :
+  MutableMap<K, V> {
+
   override fun putMapping(key: K, value: V) {
     javaMap[key] = value
   }
@@ -45,7 +47,11 @@ open class MaskingMap<K, V>(private val javaMap: kotlin.collections.MutableMap<K
       }
 
       override fun iterator(): Iterator<Map.Entry<K, V>> {
-        return MappingIterator(javaMap.entries.iterator()) { javaEntry -> Map.Entry.masking(javaEntry) }
+        return MappingIterator(javaMap.entries.iterator()) { javaEntry ->
+          Map.Entry.masking(
+            javaEntry
+          )
+        }
       }
     }
   }
@@ -56,10 +62,10 @@ open class MaskingMap<K, V>(private val javaMap: kotlin.collections.MutableMap<K
 
   override fun keysOfUnknownTyped(value: Any?): Set<K> {
     return javaMap.entries
-        .stream()
-        .filter { e -> e.value == value }
-        .map { e -> e.key }
-        .collect(Collectors.toImmutableSet())
+      .stream()
+      .filter { e -> e.value == value }
+      .map { e -> e.key }
+      .collect(Collectors.toImmutableSet())
   }
 
   override fun toString(): String {

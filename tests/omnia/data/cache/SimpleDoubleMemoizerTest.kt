@@ -1,14 +1,15 @@
 package omnia.data.cache
 
 import com.google.common.truth.Truth
+import java.util.function.DoubleSupplier
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.Mockito
-import java.util.function.DoubleSupplier
 
 @RunWith(JUnit4::class)
 class SimpleDoubleMemoizerTest {
+
   @Test
   fun value_didReturnSuppliedResult() {
     val testValue = 132.0
@@ -49,6 +50,7 @@ class SimpleDoubleMemoizerTest {
   }
 
   companion object {
+
     private fun setUpSupplier(): DoubleSupplier {
       val supplier = Mockito.mock(DoubleSupplier::class.java)
       Mockito.`when`(supplier.asDouble).thenReturn(132.0)

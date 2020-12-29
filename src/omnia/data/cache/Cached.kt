@@ -1,8 +1,8 @@
 package omnia.data.cache
 
+import java.util.function.Supplier
 import omnia.contract.Holder
 import omnia.contract.Invalidable
-import java.util.function.Supplier
 
 /**
  * A cached value is one that is lazily computed and temporary cached until it is invalidated.
@@ -13,6 +13,7 @@ import java.util.function.Supplier
  * @param T the type empty object to be cached
 </T> */
 interface Cached<T> : Holder<T>, Invalidable {
+
   /**
    * Get the cached value reference. If no value is cached or the cache is invalid, will cause the
    * value to be recomputed and then cached for subsequent calls.
@@ -29,6 +30,7 @@ interface Cached<T> : Holder<T>, Invalidable {
   override fun invalidate()
 
   companion object {
+
     /**
      * Creates a [Cached] implementation that uses the provided [Supplier] as the
      * factory that supplies the value to be cached.

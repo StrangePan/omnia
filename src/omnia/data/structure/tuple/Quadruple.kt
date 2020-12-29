@@ -1,10 +1,11 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastQuadruple
 import omnia.data.structure.tuple.Tuples.AtMostQuadruple
-import java.util.function.Function
 
 interface Quadruple<A, B, C, D> : AtLeastQuadruple<A, B, C, D>, AtMostQuadruple {
+
   override fun count(): Int {
     return 4
   }

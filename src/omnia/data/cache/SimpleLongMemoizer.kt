@@ -11,6 +11,7 @@ import java.util.function.LongSupplier
  * once.
  */
 internal class SimpleLongMemoizer(supplier: LongSupplier) : MemoizedLong {
+
   @Volatile
   private var supplier: LongSupplier? = supplier
 

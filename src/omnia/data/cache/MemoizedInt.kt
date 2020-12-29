@@ -1,7 +1,7 @@
 package omnia.data.cache
 
-import omnia.contract.IntHolder
 import java.util.function.IntSupplier
+import omnia.contract.IntHolder
 
 /**
  * A memoized int is one whose value is calculated once and retained indefinitely in memory.
@@ -9,6 +9,7 @@ import java.util.function.IntSupplier
  * based on constant parameters.
  */
 interface MemoizedInt : IntHolder {
+
   /**
    * Gets the value represented by this object, optionally computed if the value has not already
    * been memoized.
@@ -16,6 +17,7 @@ interface MemoizedInt : IntHolder {
   override fun value(): Int
 
   companion object {
+
     /**
      * Creates a [MemoizedInt] implementation that uses the provided [IntSupplier] as the
      * factory that supplies the value to be memoized.

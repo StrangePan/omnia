@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier
  * The given [DoubleSupplier.getAsDouble] method is never invoked if the value is cached.
  */
 internal class SimpleDoubleCacher(private val supplier: DoubleSupplier) : CachedDouble {
+
   private var isValid = false
   private var value = 0.0
   override fun value(): Double {

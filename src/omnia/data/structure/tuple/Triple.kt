@@ -1,10 +1,11 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastTriple
 import omnia.data.structure.tuple.Tuples.AtMostTriple
-import java.util.function.Function
 
 interface Triple<A, B, C> : AtLeastTriple<A, B, C>, AtMostTriple {
+
   override fun count(): Int {
     return 3
   }

@@ -1,6 +1,8 @@
 package omnia.data.iterate
 
 import com.google.common.truth.Truth
+import java.util.NoSuchElementException
+import java.util.function.Consumer
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -10,8 +12,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
-import java.util.NoSuchElementException
-import java.util.function.Consumer
 
 @RunWith(JUnit4::class)
 class EmptyIteratorTest {
@@ -27,7 +27,9 @@ class EmptyIteratorTest {
 
   @Test
   fun next_throwsNoSuchElementException() {
-    Assertions.assertThrows(NoSuchElementException::class.java) { EmptyIterator.create<Any>().next() }
+    Assertions.assertThrows(NoSuchElementException::class.java) {
+      EmptyIterator.create<Any>().next()
+    }
   }
 
   @Test

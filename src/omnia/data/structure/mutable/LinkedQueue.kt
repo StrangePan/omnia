@@ -4,6 +4,7 @@ import java.util.Objects
 import java.util.Optional
 
 class LinkedQueue<E : Any> : Queue<E> {
+
   private val items: MutableList<E> = LinkedList()
   override fun enqueue(item: E) {
     items.add(Objects.requireNonNull(item))

@@ -11,10 +11,11 @@ package omnia.contract
  * @see DoubleHolder for a {@code double} primitive holder
 </T> */
 interface Holder<T> {
-    /**
-     * Gets the value held in this object. The returned reference will never be null.
-     *
-     * @return a non-null reference held by this class
-     */
-    fun value(): T
+
+  /**
+   * Gets the value held in this object. The returned reference will never be null.
+   *
+   * @return a non-null reference held by this class
+   */
+  fun value(): T
 }

@@ -1,9 +1,10 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.tuple.Tuples.AtMostSextuplet
 import java.util.function.Function
+import omnia.data.structure.tuple.Tuples.AtMostSextuplet
 
 interface Sextuplet<T> : Sextuple<T, T, T, T, T, T>, AtMostSextuplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Sextuplet<R>
   override fun dropFirst(): Quintuplet<T>
   override fun dropSecond(): Quintuplet<T>
@@ -17,6 +18,7 @@ interface Sextuplet<T> : Sextuple<T, T, T, T, T, T>, AtMostSextuplet<T> {
   override fun concat(other: Quadruple<T, T, T, T>): Decuplet<T>
 
   companion object {
+
     fun <T> of(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T): Sextuplet<T> {
       return ImmutableSextuplet(first, second, third, fourth, fifth, sixth)
     }

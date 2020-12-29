@@ -1,38 +1,39 @@
 package omnia.data.structure.mutable
 
-import omnia.data.iterate.MappingIterator
-import omnia.data.structure.Collection
 import java.util.Objects
 import java.util.function.BiPredicate
 import java.util.function.Function
 import java.util.function.ToIntFunction
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import omnia.data.iterate.MappingIterator
+import omnia.data.structure.Collection
 
 class HashSet<E>(
-    original: Collection<E>? = null,
-    equalsFunction: BiPredicate<in Any?, in Any?>? = null,
-    hashFunction: ToIntFunction<in Any>? = null,
+  original: Collection<E>? = null,
+  equalsFunction: BiPredicate<in Any?, in Any?>? = null,
+  hashFunction: ToIntFunction<in Any>? = null,
 ) : MutableSet<E> {
 
   private val equalsFunction: BiPredicate<in Any?, in Any?> =
-      equalsFunction ?: BiPredicate<Any?, Any?> { a, b -> Objects.equals(a, b) }
+    equalsFunction ?: BiPredicate<Any?, Any?> { a, b -> Objects.equals(a, b) }
 
   private val hashFunction: ToIntFunction<in Any> =
-      hashFunction ?: ToIntFunction<Any> { obj -> Objects.hashCode(obj) }
+    hashFunction ?: ToIntFunction<Any> { obj -> Objects.hashCode(obj) }
 
   private val javaSet: kotlin.collections.MutableSet<Wrapper<E>> =
-      kotlin.collections.HashSet(
-          (original ?: Collection.empty())
-              .stream()
-              .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) }
-              .collect(Collectors.toSet()))
+    kotlin.collections.HashSet(
+      (original ?: Collection.empty())
+        .stream()
+        .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) }
+        .collect(Collectors.toSet()))
 
   private class Wrapper<out E>(
-      private val element: E?,
-      private val equalsFunction: BiPredicate<in Any?, in Any?>,
-      private val hashFunction: ToIntFunction<in Any>,
+    private val element: E?,
+    private val equalsFunction: BiPredicate<in Any?, in Any?>,
+    private val hashFunction: ToIntFunction<in Any>,
   ) {
+
     fun element(): E? {
       return element
     }
@@ -52,7 +53,8 @@ class HashSet<E>(
 
   override fun addAll(items: Collection<out E>) {
     javaSet.addAll(
-        items.stream().map { element -> wrap(element) }.collect(Collectors.toList()))
+      items.stream().map { element -> wrap(element) }.collect(Collectors.toList())
+    )
   }
 
   override fun removeUnknownTyped(item: Any?): Boolean {
@@ -92,10 +94,12 @@ class HashSet<E>(
   }
 
   companion object {
+
     private val DEFAULT_EQUALS_FUNCTION: BiPredicate<Any?, Any?> =
-        BiPredicate { a: Any?, b: Any? -> Objects.equals(a, b) }
+      BiPredicate { a: Any?, b: Any? -> Objects.equals(a, b) }
     private val DEFAULT_HASH_FUNCTION: ToIntFunction<Any?> = ToIntFunction(Any?::hashCode)
-    private val UNWRAPPER_FUNCTION: Function<Wrapper<*>, Any?> = Function<Wrapper<*>, Any?> { wrapper: Wrapper<*> -> wrapper.element() }
+    private val UNWRAPPER_FUNCTION: Function<Wrapper<*>, Any?> =
+      Function<Wrapper<*>, Any?> { wrapper: Wrapper<*> -> wrapper.element() }
 
     @kotlin.jvm.JvmStatic
     fun <E> create(): HashSet<E> {

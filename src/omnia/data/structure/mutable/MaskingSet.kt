@@ -1,10 +1,12 @@
 package omnia.data.structure.mutable
 
-import omnia.data.structure.Collection
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import omnia.data.structure.Collection
 
-open class MaskingSet<E, J : kotlin.collections.MutableSet<E>>(private val javaSet: J) : MutableSet<E> {
+open class MaskingSet<E, J : kotlin.collections.MutableSet<E>>(private val javaSet: J) :
+  MutableSet<E> {
+
   protected fun javaSet(): J {
     return javaSet
   }
@@ -43,5 +45,4 @@ open class MaskingSet<E, J : kotlin.collections.MutableSet<E>>(private val javaS
   override fun stream(): Stream<E> {
     return javaSet.stream()
   }
-
 }

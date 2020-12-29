@@ -8,38 +8,39 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class ImmutableListTest {
+
   @Test
   fun getAt_whenFirst_didReturnFirst() {
-      val underTest: List<String> = createTestSubject()
-      Assert.assertSame(TEST_ITEM_1, underTest.itemAt(0))
-    }
+    val underTest: List<String> = createTestSubject()
+    Assert.assertSame(TEST_ITEM_1, underTest.itemAt(0))
+  }
 
   @Test
   fun getAt_whenMiddle_didReturnMiddle() {
-      val underTest: List<String> = createTestSubject()
-      Assert.assertSame(TEST_ITEM_2, underTest.itemAt(1))
-    }
+    val underTest: List<String> = createTestSubject()
+    Assert.assertSame(TEST_ITEM_2, underTest.itemAt(1))
+  }
 
   @Test
   fun getAt_whenLast_didReturnLast() {
-      val underTest: List<String> = createTestSubject()
-      Assert.assertSame(TEST_ITEM_3, underTest.itemAt(2))
-    }
+    val underTest: List<String> = createTestSubject()
+    Assert.assertSame(TEST_ITEM_3, underTest.itemAt(2))
+  }
 
   @Test(expected = IndexOutOfBoundsException::class)
   fun getAt_whenEmpty_didThrowException() {
-      ImmutableList.builder<Any>().build().itemAt(0)
-    }
+    ImmutableList.builder<Any>().build().itemAt(0)
+  }
 
   @Test(expected = IndexOutOfBoundsException::class)
   fun getAt_negative_didThrowException() {
-      createTestSubject().itemAt(-1)
-    }
+    createTestSubject().itemAt(-1)
+  }
 
   @Test(expected = IndexOutOfBoundsException::class)
   fun getAt_tooHigh_didThrowException() {
-      createTestSubject().itemAt(20)
-    }
+    createTestSubject().itemAt(20)
+  }
 
   @Test
   fun count_whenEmpty_didReturnCount() {
@@ -102,24 +103,31 @@ class ImmutableListTest {
 
   @Test
   fun equals_whenUnequal_areNotEqual() {
-    Assert.assertNotEquals(ImmutableList.builder<String>().add("hi there").build(), createTestSubject())
+    Assert.assertNotEquals(
+      ImmutableList.builder<String>().add("hi there").build(),
+      createTestSubject()
+    )
   }
 
   @Test
   fun hashCode_whenEqual_areEqual() {
-    Assert.assertEquals(createTestSubject().hashCode().toLong(), createTestSubject().hashCode().toLong())
+    Assert.assertEquals(
+      createTestSubject().hashCode().toLong(),
+      createTestSubject().hashCode().toLong()
+    )
   }
 
   companion object {
+
     private const val TEST_ITEM_1 = "first"
     private const val TEST_ITEM_2 = "second"
     private const val TEST_ITEM_3 = "third"
     private fun createTestSubject(): ImmutableList<String> {
       return ImmutableList.builder<String>()
-          .add(TEST_ITEM_1)
-          .add(TEST_ITEM_2)
-          .add(TEST_ITEM_3)
-          .build()
+        .add(TEST_ITEM_1)
+        .add(TEST_ITEM_2)
+        .add(TEST_ITEM_3)
+        .build()
     }
   }
 }

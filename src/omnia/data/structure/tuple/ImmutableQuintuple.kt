@@ -4,11 +4,11 @@ import java.util.Objects
 import java.util.function.Function
 
 internal open class ImmutableQuintuple<A, B, C, D, E>(
-    private val first: A,
-    private val second: B,
-    private val third: C,
-    private val fourth: D,
-    private val fifth: E,
+  private val first: A,
+  private val second: B,
+  private val third: C,
+  private val fourth: D,
+  private val fifth: E,
 ) : Quintuple<A, B, C, D, E> {
 
   override fun equals(other: Any?): Boolean {
@@ -97,14 +97,44 @@ internal open class ImmutableQuintuple<A, B, C, D, E>(
   }
 
   override fun <F, G, H> append(other: Triple<F, G, H>): Octuple<A, B, C, D, E, F, G, H> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      other.first(),
+      other.second(),
+      other.third()
+    )
   }
 
   override fun <F, G, H, I> append(other: Quadruple<F, G, H, I>): Nonuple<A, B, C, D, E, F, G, H, I> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth()
+    )
   }
 
   override fun <F, G, H, I, J> append(other: Quintuple<F, G, H, I, J>): Decuple<A, B, C, D, E, F, G, H, I, J> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), other.first(), other.second(), other.third(), other.fourth(), other.fifth())
+    return Tuple.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      other.first(),
+      other.second(),
+      other.third(),
+      other.fourth(),
+      other.fifth()
+    )
   }
 }

@@ -1,7 +1,7 @@
 package omnia.data.cache
 
-import omnia.contract.DoubleHolder
 import java.util.function.DoubleSupplier
+import omnia.contract.DoubleHolder
 
 /**
  * A cached double is one whose value is computed once and retrained indefinitely in memory until
@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier
  * @see Cached for a more general-purpose cache
  */
 interface CachedDouble : CachedValue, DoubleHolder {
+
   /**
    * Get the cached value empty this double. If no value is cached or the cache is invalid, will
    * cause the value to be recomputed and then cached for subsequent calls.
@@ -19,6 +20,7 @@ interface CachedDouble : CachedValue, DoubleHolder {
   override fun value(): Double
 
   companion object {
+
     /**
      * Creates a [CachedDouble] implementation that uses the provided [DoubleSupplier] as
      * the factory that supplies the value to be cached.

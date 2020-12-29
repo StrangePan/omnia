@@ -1,53 +1,187 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.immutable.ImmutableList
 import java.util.OptionalInt
 import java.util.function.Function
 import java.util.stream.Stream
+import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableDecuplet<T>(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T, seventh: T, eighth: T, ninth: T, tenth: T) : ImmutableDecuple<T, T, T, T, T, T, T, T, T, T>(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth), Decuplet<T> {
+internal class ImmutableDecuplet<T>(
+  first: T,
+  second: T,
+  third: T,
+  fourth: T,
+  fifth: T,
+  sixth: T,
+  seventh: T,
+  eighth: T,
+  ninth: T,
+  tenth: T
+) : ImmutableDecuple<T, T, T, T, T, T, T, T, T, T>(
+  first,
+  second,
+  third,
+  fourth,
+  fifth,
+  sixth,
+  seventh,
+  eighth,
+  ninth,
+  tenth
+), Decuplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Decuplet<R> {
-    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()), mapper.apply(fourth()), mapper.apply(fifth()), mapper.apply(sixth()), mapper.apply(seventh()), mapper.apply(eighth()), mapper.apply(ninth()), mapper.apply(tenth()))
+    return Tuplet.of(
+      mapper.apply(first()),
+      mapper.apply(second()),
+      mapper.apply(third()),
+      mapper.apply(fourth()),
+      mapper.apply(fifth()),
+      mapper.apply(sixth()),
+      mapper.apply(seventh()),
+      mapper.apply(eighth()),
+      mapper.apply(ninth()),
+      mapper.apply(tenth())
+    )
   }
 
   override fun dropFirst(): Nonuplet<T> {
-    return Tuplet.of(second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), tenth())
+    return Tuplet.of(
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropSecond(): Nonuplet<T> {
-    return Tuplet.of(first(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), tenth())
+    return Tuplet.of(
+      first(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropThird(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), tenth())
+    return Tuplet.of(
+      first(),
+      second(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropFourth(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fifth(), sixth(), seventh(), eighth(), ninth(), tenth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropFifth(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), sixth(), seventh(), eighth(), ninth(), tenth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropSixth(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), seventh(), eighth(), ninth(), tenth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropSeventh(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), eighth(), ninth(), tenth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropEighth(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), ninth(), tenth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      ninth(),
+      tenth()
+    )
   }
 
   override fun dropNinth(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), tenth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      tenth()
+    )
   }
 
   override fun dropTenth(): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth()
+    )
   }
 
   override fun iterator(): Iterator<T> {
@@ -71,6 +205,17 @@ internal class ImmutableDecuplet<T>(first: T, second: T, third: T, fourth: T, fi
   }
 
   private fun toActualList(): ImmutableList<T> {
-    return ImmutableList.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth(), tenth())
+    return ImmutableList.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth(),
+      tenth()
+    )
   }
 }

@@ -8,6 +8,7 @@ import java.util.function.Consumer
  * any operations that would mutate the underlying data structure.
  */
 class ReadOnlyIterator<E>(maskedIterator: Iterator<E>) : Iterator<E> {
+
   private val maskedIterator: Iterator<E> = Objects.requireNonNull(maskedIterator)
 
   override fun hasNext(): Boolean {
@@ -21,5 +22,4 @@ class ReadOnlyIterator<E>(maskedIterator: Iterator<E>) : Iterator<E> {
   override fun forEachRemaining(action: Consumer<in E>) {
     maskedIterator.forEachRemaining(action)
   }
-
 }

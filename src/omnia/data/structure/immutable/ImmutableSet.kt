@@ -1,16 +1,17 @@
 package omnia.data.structure.immutable
 
-import omnia.data.cache.MemoizedInt
-import omnia.data.iterate.ReadOnlyIterator
-import omnia.data.structure.Set
-import omnia.data.structure.mutable.HashSet
 import java.util.Arrays
 import java.util.Objects
 import java.util.function.BiPredicate
 import java.util.function.ToIntFunction
 import java.util.stream.Stream
+import omnia.data.cache.MemoizedInt
+import omnia.data.iterate.ReadOnlyIterator
+import omnia.data.structure.Set
+import omnia.data.structure.mutable.HashSet
 
 class ImmutableSet<E> : Set<E> {
+
   private val elements: Set<E>
 
   fun toBuilder(): Builder<E> {
@@ -18,6 +19,7 @@ class ImmutableSet<E> : Set<E> {
   }
 
   class Builder<E> : AbstractBuilder<E, Builder<E>, ImmutableSet<E>>() {
+
     var equalsFunction: BiPredicate<in Any?, in Any?>? = null
     var hashFunction: ToIntFunction<in Any>? = null
 
@@ -101,6 +103,7 @@ class ImmutableSet<E> : Set<E> {
   }
 
   companion object {
+
     private val EMPTY_IMMUTABLE_SET: ImmutableSet<*> = ImmutableSet<Any>()
 
     @kotlin.jvm.JvmStatic

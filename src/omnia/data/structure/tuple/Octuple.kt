@@ -1,10 +1,11 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastOctuple
 import omnia.data.structure.tuple.Tuples.AtMostOctuple
-import java.util.function.Function
 
 interface Octuple<A, B, C, D, E, F, G, H> : AtLeastOctuple<A, B, C, D, E, F, G, H>, AtMostOctuple {
+
   override fun count(): Int {
     return 8
   }

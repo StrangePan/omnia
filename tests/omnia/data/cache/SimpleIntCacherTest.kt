@@ -1,14 +1,15 @@
 package omnia.data.cache
 
 import com.google.common.truth.Truth
+import java.util.function.IntSupplier
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.Mockito
-import java.util.function.IntSupplier
 
 @RunWith(JUnit4::class)
 class SimpleIntCacherTest {
+
   @Test
   fun value_didReturnSuppliedValue() {
     val testValue = 132
@@ -67,6 +68,7 @@ class SimpleIntCacherTest {
   }
 
   companion object {
+
     private fun setUpMockSupplier(): IntSupplier {
       val supplier = Mockito.mock(IntSupplier::class.java)
       Mockito.`when`(supplier.asInt).thenReturn(132)

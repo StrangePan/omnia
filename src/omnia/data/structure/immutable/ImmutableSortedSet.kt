@@ -1,13 +1,17 @@
 package omnia.data.structure.immutable
 
+import java.util.Optional
+import java.util.stream.Stream
 import omnia.data.structure.Collection
 import omnia.data.structure.SortedSet
 import omnia.data.structure.mutable.TreeSet
-import java.util.Optional
-import java.util.stream.Stream
 
 /** An immutable version of [SortedSet].  */
-class ImmutableSortedSet<E> private constructor(comparator: Comparator<in E>, other: Collection<out E>) : SortedSet<E> {
+class ImmutableSortedSet<E> private constructor(
+  comparator: Comparator<in E>,
+  other: Collection<out E>
+) : SortedSet<E> {
+
   private val baseSet: TreeSet<E> = TreeSet.create(comparator)
 
   override fun contains(item: E): Boolean {
@@ -51,14 +55,17 @@ class ImmutableSortedSet<E> private constructor(comparator: Comparator<in E>, ot
   }
 
   companion object {
-    private val EMPTY_SET: ImmutableSortedSet<*> = ImmutableSortedSet({ _, _ -> 0 }, ImmutableSet.empty<Any>())
+
+    private val EMPTY_SET: ImmutableSortedSet<*> =
+      ImmutableSortedSet({ _, _ -> 0 }, ImmutableSet.empty<Any>())
+
     fun <E> empty(): ImmutableSortedSet<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_SET as ImmutableSortedSet<E>
     }
 
     fun <E> copyOf(
-        comparator: Comparator<in E>, other: Collection<out E>,
+      comparator: Comparator<in E>, other: Collection<out E>,
     ): ImmutableSortedSet<E> {
       return ImmutableSortedSet(comparator, other)
     }

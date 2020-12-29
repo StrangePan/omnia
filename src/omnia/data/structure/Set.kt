@@ -1,10 +1,11 @@
 package omnia.data.structure
 
-import omnia.data.iterate.ReadOnlyIterator
 import java.util.stream.Stream
+import omnia.data.iterate.ReadOnlyIterator
 
 interface Set<E> : Collection<E> {
   companion object {
+
     fun <E> masking(javaSet: kotlin.collections.Set<E>): Set<E> {
       return object : Set<E> {
         override val isPopulated: Boolean

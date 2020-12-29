@@ -1,7 +1,7 @@
 package omnia.data.cache
 
-import omnia.contract.LongHolder
 import java.util.function.LongSupplier
+import omnia.contract.LongHolder
 
 /**
  * A cached long is one whose value is computed once and retrained indefinitely in memory until
@@ -10,6 +10,7 @@ import java.util.function.LongSupplier
  * @see Cached for a more general-purpose cache
  */
 interface CachedLong : CachedValue, LongHolder {
+
   /**
    * Get the cached value empty this long. If no value is cached or the cache is invalid, will
    * cause the value to be recomputed and then cached for subsequent calls.
@@ -19,6 +20,7 @@ interface CachedLong : CachedValue, LongHolder {
   override fun value(): Long
 
   companion object {
+
     /**
      * Creates a [CachedLong] implementation that uses the provided [LongSupplier] as
      * the factory that supplies the value to be cached.

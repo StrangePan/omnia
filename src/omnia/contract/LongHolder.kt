@@ -8,10 +8,11 @@ package omnia.contract
  * @see Holder for a more general-purpose object container
  */
 interface LongHolder {
-    /**
-     * Gets the value held in this object.
-     *
-     * @return the number held in this object, which may be any valid `long` value.
-     */
-    fun value(): Long
+
+  /**
+   * Gets the value held in this object.
+   *
+   * @return the number held in this object, which may be any valid `long` value.
+   */
+  fun value(): Long
 }

@@ -1,23 +1,25 @@
 package omnia.data.structure.immutable
 
-import omnia.data.cache.MemoizedInt
-import omnia.data.stream.Collectors
-import omnia.data.structure.Collection
-import omnia.data.structure.Map
-import omnia.data.structure.Set
 import java.util.Arrays
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import java.util.function.Supplier
+import omnia.data.cache.MemoizedInt
+import omnia.data.stream.Collectors
+import omnia.data.structure.Collection
+import omnia.data.structure.Map
+import omnia.data.structure.Set
 
 class ImmutableMap<K, V> : Map<K, V> {
+
   private val javaMap: MutableMap<K, V> = kotlin.collections.HashMap()
   fun toBuilder(): Builder<K, V> {
     return buildUpon(this)
   }
 
   class Builder<K, V> {
+
     val javaMap: MutableMap<K, V> = kotlin.collections.HashMap()
     fun putMapping(key: K, value: V): Builder<K, V> {
       javaMap[key] = value
@@ -70,8 +72,7 @@ class ImmutableMap<K, V> : Map<K, V> {
   }
 
   override fun entries(): Set<Map.Entry<K, V>> {
-    class Entry(private val javaEntry: MutableMap.MutableEntry<K, V>)
-      : Map.Entry<K, V> {
+    class Entry(private val javaEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
 
       override fun key(): K {
         return javaEntry.key
@@ -99,11 +100,10 @@ class ImmutableMap<K, V> : Map<K, V> {
       override fun toString(): String {
         return key().toString() + " => " + value().toString()
       }
-
     }
     return javaMap.entries.stream()
-        .map { javaEntry -> Entry(javaEntry) }
-        .collect(Collectors.toImmutableSet())
+      .map { javaEntry -> Entry(javaEntry) }
+      .collect(Collectors.toImmutableSet())
   }
 
   override fun valueOfUnknownTyped(key: Any?): Optional<V> {
@@ -112,10 +112,10 @@ class ImmutableMap<K, V> : Map<K, V> {
 
   override fun keysOfUnknownTyped(value: Any?): Set<K> {
     return javaMap.entries
-        .stream()
-        .filter { e -> e.value == value }
-        .map { entry -> entry.key }
-        .collect(Collectors.toImmutableSet())
+      .stream()
+      .filter { e -> e.value == value }
+      .map { entry -> entry.key }
+      .collect(Collectors.toImmutableSet())
   }
 
   override fun equals(other: Any?): Boolean {
@@ -156,11 +156,13 @@ class ImmutableMap<K, V> : Map<K, V> {
   override fun toString(): String {
     return (javaClass.simpleName
         + "["
-        + entries().stream().map { obj: Map.Entry<K, V> -> obj.toString() }.map { s: String -> "{$s}" }.collect(java.util.stream.Collectors.joining(", "))
+        + entries().stream().map { obj: Map.Entry<K, V> -> obj.toString() }
+      .map { s: String -> "{$s}" }.collect(java.util.stream.Collectors.joining(", "))
         + "]")
   }
 
   companion object {
+
     private val EMPTY_IMMUTABLE_MAP: ImmutableMap<*, *> = ImmutableMap<Any, Any>()
     fun <K, V> empty(): ImmutableMap<K, V> {
       @Suppress("UNCHECKED_CAST")

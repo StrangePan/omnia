@@ -4,7 +4,8 @@ import java.util.Comparator
 import java.util.Objects
 import java.util.Optional
 
-class TreeSet<E> private constructor(comparator: Comparator<in E>) : MaskingSet<E, java.util.TreeSet<E>>(java.util.TreeSet<E>(comparator)), MutableSortedSet<E> {
+class TreeSet<E> private constructor(comparator: Comparator<in E>) :
+  MaskingSet<E, java.util.TreeSet<E>>(java.util.TreeSet<E>(comparator)), MutableSortedSet<E> {
 
   override fun itemPreceding(other: E): Optional<E> {
     return Optional.ofNullable(javaSet().higher(other))
@@ -15,6 +16,7 @@ class TreeSet<E> private constructor(comparator: Comparator<in E>) : MaskingSet<
   }
 
   companion object {
+
     fun <E> create(comparator: Comparator<in E>): TreeSet<E> {
       Objects.requireNonNull(comparator)
       return TreeSet(comparator)

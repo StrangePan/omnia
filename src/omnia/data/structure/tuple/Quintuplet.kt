@@ -1,9 +1,10 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.tuple.Tuples.AtMostQuintuplet
 import java.util.function.Function
+import omnia.data.structure.tuple.Tuples.AtMostQuintuplet
 
 interface Quintuplet<T> : Quintuple<T, T, T, T, T>, AtMostQuintuplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Quintuplet<R>
   override fun dropFirst(): Quadruplet<T>
   override fun dropSecond(): Quadruplet<T>
@@ -17,6 +18,7 @@ interface Quintuplet<T> : Quintuple<T, T, T, T, T>, AtMostQuintuplet<T> {
   override fun concat(other: Quintuple<T, T, T, T, T>): Decuplet<T>
 
   companion object {
+
     fun <T> of(first: T, second: T, third: T, fourth: T, fifth: T): Quintuplet<T> {
       return ImmutableQuintuplet(first, second, third, fourth, fifth)
     }

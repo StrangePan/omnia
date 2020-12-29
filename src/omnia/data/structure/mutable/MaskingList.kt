@@ -1,11 +1,13 @@
 package omnia.data.structure.mutable
 
-import omnia.data.structure.Collection
 import java.util.OptionalInt
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import omnia.data.structure.Collection
 
-open class MaskingList<E>(private val kotlinList: kotlin.collections.MutableList<E>) : MutableList<E> {
+open class MaskingList<E>(private val kotlinList: kotlin.collections.MutableList<E>) :
+  MutableList<E> {
+
   override fun insertAt(index: Int, item: E) {
     kotlinList.add(index, item)
   }

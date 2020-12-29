@@ -1,13 +1,41 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.immutable.ImmutableList
 import java.util.OptionalInt
 import java.util.function.Function
 import java.util.stream.Stream
+import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableOctuplet<T>(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T, seventh: T, eighth: T) : ImmutableOctuple<T, T, T, T, T, T, T, T>(first, second, third, fourth, fifth, sixth, seventh, eighth), Octuplet<T> {
+internal class ImmutableOctuplet<T>(
+  first: T,
+  second: T,
+  third: T,
+  fourth: T,
+  fifth: T,
+  sixth: T,
+  seventh: T,
+  eighth: T
+) : ImmutableOctuple<T, T, T, T, T, T, T, T>(
+  first,
+  second,
+  third,
+  fourth,
+  fifth,
+  sixth,
+  seventh,
+  eighth
+), Octuplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Octuplet<R> {
-    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()), mapper.apply(fourth()), mapper.apply(fifth()), mapper.apply(sixth()), mapper.apply(seventh()), mapper.apply(eighth()))
+    return Tuplet.of(
+      mapper.apply(first()),
+      mapper.apply(second()),
+      mapper.apply(third()),
+      mapper.apply(fourth()),
+      mapper.apply(fifth()),
+      mapper.apply(sixth()),
+      mapper.apply(seventh()),
+      mapper.apply(eighth())
+    )
   }
 
   override fun dropFirst(): Septuplet<T> {
@@ -43,11 +71,32 @@ internal class ImmutableOctuplet<T>(first: T, second: T, third: T, fourth: T, fi
   }
 
   override fun concat(`object`: T): Nonuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), `object`)
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      `object`
+    )
   }
 
   override fun concat(other: Couple<T, T>): Decuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), other.first(), other.second())
+    return Tuplet.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      other.first(),
+      other.second()
+    )
   }
 
   override fun iterator(): Iterator<T> {
@@ -71,6 +120,15 @@ internal class ImmutableOctuplet<T>(first: T, second: T, third: T, fourth: T, fi
   }
 
   private fun toActualList(): ImmutableList<T> {
-    return ImmutableList.of(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth())
+    return ImmutableList.of(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth()
+    )
   }
 }

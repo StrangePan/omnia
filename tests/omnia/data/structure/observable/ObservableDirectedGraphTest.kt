@@ -15,6 +15,7 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class ObservableDirectedGraphTest {
+
   @Test
   fun contents_whenInit_areEmpty() {
     Truth.assertThat(WritableObservableDirectedGraph.create<Any>().contents().isPopulated).isFalse()
@@ -32,7 +33,9 @@ class ObservableDirectedGraphTest {
 
   @Test
   fun addNode_whenNull_throwsException() {
-    Assertions.assertThrows(NullPointerException::class.java) { WritableObservableDirectedGraph.create<Any?>().addNode(null) }
+    Assertions.assertThrows(NullPointerException::class.java) {
+      WritableObservableDirectedGraph.create<Any?>().addNode(null)
+    }
   }
 
   @Test
@@ -64,13 +67,15 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    Truth8.assertThat(graph.nodes().stream().findFirst().map { obj: DirectedGraph.DirectedNode<*> -> obj.item() }).hasValue(item)
+    Truth8.assertThat(
+      graph.nodes().stream().findFirst().map { obj: DirectedGraph.DirectedNode<*> -> obj.item() })
+      .hasValue(item)
   }
 
   @Test
   fun addEdge_unrecognizedEdges_throwsException() {
     Assertions.assertThrows(
-        UnknownNodeException::class.java
+      UnknownNodeException::class.java
     ) { WritableObservableDirectedGraph.create<Any>().addEdge(Any(), Any()) }
   }
 
@@ -83,8 +88,10 @@ class ObservableDirectedGraphTest {
     graph.addNode(item2)
     graph.addEdge(item1, item2)
     Truth8.assertThat(
-        graph.edges().stream().findFirst().map { edge: DirectedGraph.DirectedEdge<Any>? -> edge!!.endpoints().map<Any> { obj: DirectedGraph.DirectedNode<*> -> obj.item()!! } })
-        .hasValue(of(item1, item2))
+      graph.edges().stream().findFirst().map { edge: DirectedGraph.DirectedEdge<Any>? ->
+        edge!!.endpoints().map<Any> { obj: DirectedGraph.DirectedNode<*> -> obj.item()!! }
+      })
+      .hasValue(of(item1, item2))
   }
 
   @Test
@@ -92,7 +99,12 @@ class ObservableDirectedGraphTest {
     val original = Any()
     val replacement = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
-    Assertions.assertThrows(IllegalArgumentException::class.java) { graph.replaceNode(original, replacement) }
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
+      graph.replaceNode(
+        original,
+        replacement
+      )
+    }
   }
 
   @Test
@@ -102,7 +114,12 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(original)
     graph.addNode(replacement)
-    Assertions.assertThrows(IllegalArgumentException::class.java) { graph.replaceNode(original, replacement) }
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
+      graph.replaceNode(
+        original,
+        replacement
+      )
+    }
   }
 
   @Test
@@ -124,28 +141,30 @@ class ObservableDirectedGraphTest {
     graph.addEdge(original, original)
     graph.replaceNode(original, replacement)
     Truth8.assertThat(
-        graph.edges().stream()
-            .map { obj: DirectedGraph.DirectedEdge<*> -> obj.endpoints() }
-            .map { couplet -> couplet.map<Any> { obj -> obj.item()!! } })
-        .containsExactlyElementsIn(ImmutableSet.of(of(replacement, replacement)))
+      graph.edges().stream()
+        .map { obj: DirectedGraph.DirectedEdge<*> -> obj.endpoints() }
+        .map { couplet -> couplet.map<Any> { obj -> obj.item()!! } })
+      .containsExactlyElementsIn(ImmutableSet.of(of(replacement, replacement)))
   }
 
   @Test
   fun observeStates_whenInit_emitsEmpty() {
     WritableObservableDirectedGraph.create<Any>().observe().states().test()
-        .assertValue { state: DirectedGraph<Any> -> !state.contents().isPopulated }
+      .assertValue { state: DirectedGraph<Any> -> !state.contents().isPopulated }
   }
 
   @Test
   fun observeMutations_whenInit_emitsEmptyState() {
-    WritableObservableDirectedGraph.create<Any>().observe().mutations().map { obj -> obj.state() }.test()
-        .assertValue { state: DirectedGraph<Any> -> !state.contents().isPopulated }
+    WritableObservableDirectedGraph.create<Any>().observe().mutations().map { obj -> obj.state() }
+      .test()
+      .assertValue { state: DirectedGraph<Any> -> !state.contents().isPopulated }
   }
 
   @Test
   fun observeMutations_whenInit_emitsNoOperations() {
-    WritableObservableDirectedGraph.create<Any>().observe().mutations().map { obj -> obj.operations() }.test()
-        .assertValue { operations -> !operations.isPopulated }
+    WritableObservableDirectedGraph.create<Any>().observe().mutations()
+      .map { obj -> obj.operations() }.test()
+      .assertValue { operations -> !operations.isPopulated }
   }
 
   @Test
@@ -154,7 +173,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
     graph.observe().mutations().map { obj -> obj.state() }.test()
-        .assertValue { state -> state.contents().contains(item) }
+      .assertValue { state -> state.contents().contains(item) }
   }
 
   @Test
@@ -164,13 +183,15 @@ class ObservableDirectedGraphTest {
     graph.addNode(item)
     val subscriber = graph.observe().mutations().test()
     subscriber.assertValue { event -> event.operations().count() == 1 }
-    subscriber.assertValue { event -> event.operations().stream().findFirst().get() is ObservableGraph.AddNodeToGraph<*> }
+    subscriber.assertValue { event ->
+      event.operations().stream().findFirst().get() is ObservableGraph.AddNodeToGraph<*>
+    }
     subscriber.assertValue { event ->
       (event!!.operations().stream()
-          .findFirst()
-          .map { op: GraphOperation<Any>? -> op as ObservableGraph.AddNodeToGraph<Any>? }
-          .get()
-          .item()
+        .findFirst()
+        .map { op: GraphOperation<Any>? -> op as ObservableGraph.AddNodeToGraph<Any>? }
+        .get()
+        .item()
           == item)
     }
   }
@@ -186,10 +207,10 @@ class ObservableDirectedGraphTest {
     subscriber.assertValue { state -> state.edges().count() == 1 }
     subscriber.assertValue { state ->
       (state.edges().stream()
-          .findFirst()
-          .map { obj -> obj.endpoints() }
-          .get()
-          .map<Any> { obj -> obj.item() }
+        .findFirst()
+        .map { obj -> obj.endpoints() }
+        .get()
+        .map<Any> { obj -> obj.item() }
           == edge)
     }
   }
@@ -201,13 +222,15 @@ class ObservableDirectedGraphTest {
     graph.addNode(item)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.removeNode(item)
-    testSubscriber.assertValue { event -> event.operations().stream().findFirst().get() is ObservableGraph.RemoveNodeFromGraph<*> }
+    testSubscriber.assertValue { event ->
+      event.operations().stream().findFirst().get() is ObservableGraph.RemoveNodeFromGraph<*>
+    }
     testSubscriber.assertValue { event ->
       (event!!.operations().stream()
-          .findFirst()
-          .map { op -> op as ObservableGraph.RemoveNodeFromGraph<Any>? }
-          .get()
-          .item()
+        .findFirst()
+        .map { op -> op as ObservableGraph.RemoveNodeFromGraph<Any>? }
+        .get()
+        .item()
           == item)
     }
   }
@@ -221,13 +244,15 @@ class ObservableDirectedGraphTest {
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.removeEdge(item, item)
     testSubscriber.assertValue { event -> event.operations().count() == 1 }
-    testSubscriber.assertValue { event -> event.operations().stream().findFirst().get() is ObservableGraph.RemoveEdgeFromGraph<*> }
+    testSubscriber.assertValue { event ->
+      event.operations().stream().findFirst().get() is ObservableGraph.RemoveEdgeFromGraph<*>
+    }
     testSubscriber.assertValue { event ->
       (event!!.operations().stream()
-          .findFirst()
-          .map { op -> op as ObservableGraph.RemoveEdgeFromGraph<Any> }
-          .get()
-          .endpoints()
+        .findFirst()
+        .map { op -> op as ObservableGraph.RemoveEdgeFromGraph<Any> }
+        .get()
+        .endpoints()
           == of(item, item))
     }
   }
@@ -240,18 +265,21 @@ class ObservableDirectedGraphTest {
     graph.addEdge(item, item)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.removeNode(item)
-    testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? -> event!!.operations().count() == 2 }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
-      (event!!.operations().stream().filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }.count()
+      event!!.operations().count() == 2
+    }
+    testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
+      (event!!.operations().stream()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }.count()
           == 1L)
     }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
       (event!!.operations().stream()
-          .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }
-          .map { op: GraphOperation<Any>? -> op as ObservableGraph.RemoveEdgeFromGraph<Any>? }
-          .findFirst()
-          .get()
-          .endpoints()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }
+        .map { op: GraphOperation<Any>? -> op as ObservableGraph.RemoveEdgeFromGraph<Any>? }
+        .findFirst()
+        .get()
+        .endpoints()
           == of(item, item))
     }
   }
@@ -264,31 +292,35 @@ class ObservableDirectedGraphTest {
     graph.addNode(original)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.replaceNode(original, replacement)
-    testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? -> event!!.operations().count() == 2 }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
-      (event!!.operations().stream().filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveNodeFromGraph<*> }.count()
-          == 1L)
+      event!!.operations().count() == 2
     }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
-      (event!!.operations().stream().filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddNodeToGraph<*> }.count()
+      (event!!.operations().stream()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveNodeFromGraph<*> }.count()
           == 1L)
     }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
       (event!!.operations().stream()
-          .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveNodeFromGraph<*> }
-          .map { op: GraphOperation<Any>? -> op as ObservableGraph.RemoveNodeFromGraph<Any>? }
-          .findFirst()
-          .get()
-          .item()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddNodeToGraph<*> }.count()
+          == 1L)
+    }
+    testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
+      (event!!.operations().stream()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveNodeFromGraph<*> }
+        .map { op: GraphOperation<Any>? -> op as ObservableGraph.RemoveNodeFromGraph<Any>? }
+        .findFirst()
+        .get()
+        .item()
           == original)
     }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
       (event!!.operations().stream()
-          .filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddNodeToGraph<*> }
-          .map { op: GraphOperation<Any>? -> op as ObservableGraph.AddNodeToGraph<Any>? }
-          .findFirst()
-          .get()
-          .item()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddNodeToGraph<*> }
+        .map { op: GraphOperation<Any>? -> op as ObservableGraph.AddNodeToGraph<Any>? }
+        .findFirst()
+        .get()
+        .item()
           == replacement)
     }
   }
@@ -302,31 +334,35 @@ class ObservableDirectedGraphTest {
     graph.addEdge(original, original)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.replaceNode(original, replacement)
-    testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? -> event!!.operations().count() == 4 }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
-      (event!!.operations().stream().filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }.count()
-          == 1L)
+      event!!.operations().count() == 4
     }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
-      (event!!.operations().stream().filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddEdgeToGraph<*> }.count()
+      (event!!.operations().stream()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }.count()
           == 1L)
     }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
       (event!!.operations().stream()
-          .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }
-          .map { op: GraphOperation<Any>? -> op as ObservableGraph.RemoveEdgeFromGraph<Any>? }
-          .findFirst()
-          .get()
-          .endpoints()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddEdgeToGraph<*> }.count()
+          == 1L)
+    }
+    testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
+      (event!!.operations().stream()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.RemoveEdgeFromGraph<*> }
+        .map { op: GraphOperation<Any>? -> op as ObservableGraph.RemoveEdgeFromGraph<Any>? }
+        .findFirst()
+        .get()
+        .endpoints()
           == of(original, original))
     }
     testSubscriber.assertValue { event: ObservableDirectedGraph.MutationEvent<Any>? ->
       (event!!.operations().stream()
-          .filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddEdgeToGraph<*> }
-          .map { op: GraphOperation<Any>? -> op as ObservableGraph.AddEdgeToGraph<Any>? }
-          .findFirst()
-          .get()
-          .endpoints()
+        .filter { op: GraphOperation<Any>? -> op is ObservableGraph.AddEdgeToGraph<*> }
+        .map { op: GraphOperation<Any>? -> op as ObservableGraph.AddEdgeToGraph<Any>? }
+        .findFirst()
+        .get()
+        .endpoints()
           == of(replacement, replacement))
     }
   }

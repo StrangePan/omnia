@@ -8,6 +8,7 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class CachedTest {
+
   @Test
   fun cache_didReturnSimpleCache() {
     Truth.assertThat(cache<Any> { Object() }).isInstanceOf(SimpleCacher::class.java)

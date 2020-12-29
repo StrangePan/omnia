@@ -9,6 +9,7 @@ import java.util.function.LongSupplier
  * The given [LongSupplier.getAsLong] method is never invoked if the value is cached.
  */
 internal class SimpleLongCacher(private val supplier: LongSupplier) : CachedLong {
+
   private var isValid = false
   private var value: Long = 0
   override fun value(): Long {
@@ -22,5 +23,4 @@ internal class SimpleLongCacher(private val supplier: LongSupplier) : CachedLong
   override fun invalidate() {
     isValid = false
   }
-
 }

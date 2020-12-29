@@ -1,17 +1,18 @@
 package omnia.data.iterate
 
 import com.google.common.truth.Truth
+import java.util.NoSuchElementException
+import java.util.function.Predicate
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import java.util.NoSuchElementException
-import java.util.function.Predicate
 
 @RunWith(JUnit4::class)
 class FilterIteratorTest {
+
   @Test
   fun iterate_whenPredicateMatchesAll_iteratesOverAll() {
     val underTest: Iterator<Int> = FilterIterator(TEST_DATA.iterator()) { true }
@@ -92,6 +93,7 @@ class FilterIteratorTest {
   }
 
   companion object {
+
     private val TEST_DATA: List<Int> = ImmutableList.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     private val isEven: Predicate<Int>
       get() = Predicate { number -> number % 2 == 0 }

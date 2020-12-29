@@ -1,10 +1,12 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastDecuple
 import omnia.data.structure.tuple.Tuples.AtMostDecuple
-import java.util.function.Function
 
-interface Decuple<A, B, C, D, E, F, G, H, I, J> : AtLeastDecuple<A, B, C, D, E, F, G, H, I, J>, AtMostDecuple {
+interface Decuple<A, B, C, D, E, F, G, H, I, J> : AtLeastDecuple<A, B, C, D, E, F, G, H, I, J>,
+  AtMostDecuple {
+
   override fun count(): Int {
     return 10
   }

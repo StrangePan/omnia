@@ -3,6 +3,7 @@ package omnia.data.stream
 import java.util.stream.Stream
 
 object Streams {
+
   @SafeVarargs
   fun <T> concat(vararg streams: Stream<out T>): Stream<T> {
     if (streams.isEmpty()) {

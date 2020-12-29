@@ -5,8 +5,11 @@ import omnia.data.structure.Map
 import omnia.data.structure.mutable.MutableMap
 import omnia.data.structure.observable.ObservableMap
 
-interface WritableObservableMap<K, V> : MutableMap<K, V>, ObservableMap<K, V>, Writable<ObservableMap<K, V>> {
+interface WritableObservableMap<K, V> : MutableMap<K, V>, ObservableMap<K, V>,
+  Writable<ObservableMap<K, V>> {
+
   companion object {
+
     fun <K, V> create(): WritableObservableMap<K, V> {
       return WritableObservableMapImpl()
     }

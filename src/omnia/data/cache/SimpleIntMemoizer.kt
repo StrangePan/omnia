@@ -10,6 +10,7 @@ import java.util.function.IntSupplier
  * again. The given [IntSupplier.getAsInt] method is never invoked more than once.
  */
 internal class SimpleIntMemoizer(supplier: IntSupplier) : MemoizedInt {
+
   @Volatile
   private var supplier: IntSupplier? = supplier
 

@@ -4,6 +4,7 @@ import java.util.Objects
 import java.util.function.Consumer
 
 class EmptyIterator<out E> private constructor() : Iterator<E> {
+
   override fun hasNext(): Boolean {
     return false
   }
@@ -17,6 +18,7 @@ class EmptyIterator<out E> private constructor() : Iterator<E> {
   }
 
   companion object {
+
     private val EMPTY_ITERATOR: EmptyIterator<*> = EmptyIterator<Any>()
 
     @kotlin.jvm.JvmStatic

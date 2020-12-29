@@ -11,6 +11,7 @@ import java.util.function.DoubleSupplier
  * once.
  */
 internal class SimpleDoubleMemoizer(supplier: DoubleSupplier) : MemoizedDouble {
+
   @Volatile
   private var supplier: DoubleSupplier? = supplier
 

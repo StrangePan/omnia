@@ -8,7 +8,9 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class ObservableStateTest {
+
   private val underTest = create(0)
+
   @Test
   fun observe_whenInit_emitsInitialValue() {
     underTest.observe().test().assertValue(0)
@@ -34,13 +36,15 @@ class ObservableStateTest {
 
   @Test
   fun mutateAndReturn_whenReturnsOtherValue_returnsOtherValue() {
-    underTest.mutateAndReturn<Any> { i: Int -> Tuple.of(i + 1, 100) }.test().assertValue(Tuple.of(1, 100))
+    underTest.mutateAndReturn<Any> { i: Int -> Tuple.of(i + 1, 100) }.test()
+      .assertValue(Tuple.of(1, 100))
   }
 
   @Test
   fun observe_thenMutateAndReturn_returnsBothValues() {
     val observer = underTest.observe().test()
-    underTest.mutateAndReturn<Any> { i: Int -> Tuple.of(i + 1, 100) }.ignoreElement().blockingAwait()
+    underTest.mutateAndReturn<Any> { i: Int -> Tuple.of(i + 1, 100) }.ignoreElement()
+      .blockingAwait()
     observer.assertValues(0, 1)
   }
 }

@@ -9,6 +9,7 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class LinkedQueueTest {
+
   @Test
   fun init_isEmpty() {
     val testSubject: Queue<*> = LinkedQueue<Any>()
@@ -178,6 +179,7 @@ class LinkedQueueTest {
   }
 
   companion object {
+
     private fun buildData(count: Int): List<Int> {
       require(count >= 0) { String.format("count must be positive (was %d)", count) }
       val data = ImmutableList.builder<Int>()

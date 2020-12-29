@@ -12,9 +12,10 @@ package omnia.contract
  * again, although it is not an enforceable requirement.
  */
 interface Invalidable {
-    /**
-     * Invalidates this object. This is a manual operation that should be called when a change in
-     * the world causes this object to no longer be safely in a valid state.
-     */
-    fun invalidate()
+
+  /**
+   * Invalidates this object. This is a manual operation that should be called when a change in
+   * the world causes this object to no longer be safely in a valid state.
+   */
+  fun invalidate()
 }

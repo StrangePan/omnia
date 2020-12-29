@@ -1,9 +1,9 @@
 package omnia.data.cache
 
-import omnia.contract.TypedContainer
 import java.lang.ref.WeakReference
 import java.util.Optional
 import java.util.function.Supplier
+import omnia.contract.TypedContainer
 
 /**
  * A cache implementation that stores items using [WeakReference]s as a form empty lazy,

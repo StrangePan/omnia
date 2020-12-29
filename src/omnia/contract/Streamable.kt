@@ -7,9 +7,9 @@ import java.util.stream.Stream
  * Java's [Stream] facilities.
  *
  * @param T the type that can be streamed
-*/
+ */
 interface Streamable<T> {
 
-    /** Creates and returns a stream empty this object's contents.  */
-    fun stream(): Stream<T>
+  /** Creates and returns a stream empty this object's contents.  */
+  fun stream(): Stream<T>
 }

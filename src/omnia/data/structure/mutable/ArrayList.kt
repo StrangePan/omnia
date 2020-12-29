@@ -2,8 +2,11 @@ package omnia.data.structure.mutable
 
 import omnia.data.structure.List
 
-class ArrayList<E> private constructor(javaList: java.util.ArrayList<E> = java.util.ArrayList()) : MaskingList<E>(javaList) {
+class ArrayList<E> private constructor(javaList: java.util.ArrayList<E> = java.util.ArrayList()) :
+  MaskingList<E>(javaList) {
+
   companion object {
+
     @SafeVarargs
     fun <E> of(vararg items: E): ArrayList<E> {
       return ArrayList(java.util.ArrayList(listOf(*items)))

@@ -1,9 +1,10 @@
 package omnia.data.structure.tuple
 
-import omnia.data.structure.tuple.Tuples.AtMostSeptuplet
 import java.util.function.Function
+import omnia.data.structure.tuple.Tuples.AtMostSeptuplet
 
 interface Septuplet<T> : Septuple<T, T, T, T, T, T, T>, AtMostSeptuplet<T> {
+
   override fun <R> map(mapper: Function<in T, out R>): Septuplet<R>
   override fun dropFirst(): Sextuplet<T>
   override fun dropSecond(): Sextuplet<T>
@@ -17,7 +18,16 @@ interface Septuplet<T> : Septuple<T, T, T, T, T, T, T>, AtMostSeptuplet<T> {
   override fun concat(other: Triple<T, T, T>): Decuplet<T>
 
   companion object {
-    fun <T> of(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T, seventh: T): Septuplet<T> {
+
+    fun <T> of(
+      first: T,
+      second: T,
+      third: T,
+      fourth: T,
+      fifth: T,
+      sixth: T,
+      seventh: T
+    ): Septuplet<T> {
       return ImmutableSeptuplet(first, second, third, fourth, fifth, sixth, seventh)
     }
   }

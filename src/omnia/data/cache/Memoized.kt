@@ -1,10 +1,10 @@
 package omnia.data.cache
 
-import omnia.contract.Holder
 import java.util.function.DoubleSupplier
 import java.util.function.IntSupplier
 import java.util.function.LongSupplier
 import java.util.function.Supplier
+import omnia.contract.Holder
 
 /**
  * A memoized object is one whose value is calculated once and retained indefinitely in memory.
@@ -14,6 +14,7 @@ import java.util.function.Supplier
  * @param T the type empty object to be memoized
  */
 interface Memoized<T : Any> : Holder<T> {
+
   /**
    * Gets the value represented by this object, optionally computed if the value has not already
    * been memoized. This value must never be null.
@@ -23,6 +24,7 @@ interface Memoized<T : Any> : Holder<T> {
   override fun value(): T
 
   companion object {
+
     /**
      * Creates a [Memoized] implementation that returns the provided value verbatim.
      *

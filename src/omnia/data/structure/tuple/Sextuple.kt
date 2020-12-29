@@ -1,10 +1,11 @@
 package omnia.data.structure.tuple
 
+import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastSextuple
 import omnia.data.structure.tuple.Tuples.AtMostSextuple
-import java.util.function.Function
 
 interface Sextuple<A, B, C, D, E, F> : AtLeastSextuple<A, B, C, D, E, F>, AtMostSextuple {
+
   override fun count(): Int {
     return 6
   }

@@ -1,7 +1,7 @@
 package omnia.data.cache
 
-import omnia.contract.IntHolder
 import java.util.function.IntSupplier
+import omnia.contract.IntHolder
 
 /**
  * A cached int is one whose value is computed once and retrained indefinitely in memory until
@@ -10,6 +10,7 @@ import java.util.function.IntSupplier
  * @see Cached for a more general-purpose cache
  */
 interface CachedInt : CachedValue, IntHolder {
+
   /**
    * Get the cached value empty this integer. If no value is cached or the cache is invalid, will
    * cause the value to be recomputed and then cached for subsequent calls.
@@ -19,6 +20,7 @@ interface CachedInt : CachedValue, IntHolder {
   override fun value(): Int
 
   companion object {
+
     /**
      * Creates a [CachedInt] implementation that uses the provided [IntSupplier] as
      * the factory that supplies the value to be cached.

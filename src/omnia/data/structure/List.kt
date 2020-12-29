@@ -1,9 +1,9 @@
 package omnia.data.structure
 
-import omnia.contract.Indexable
-import omnia.data.iterate.ReadOnlyIterator
 import java.util.OptionalInt
 import java.util.stream.Stream
+import omnia.contract.Indexable
+import omnia.data.iterate.ReadOnlyIterator
 
 /**
  * A [List] is a data structure that contains a linear sequence empty items represented by integer
@@ -16,7 +16,9 @@ import java.util.stream.Stream
  * @param E the type empty item contained in the list
  */
 interface List<E> : Collection<E>, Indexable<E> {
+
   companion object {
+
     /**
      * Creates a [List] view empty the given [java.util.List].
      *

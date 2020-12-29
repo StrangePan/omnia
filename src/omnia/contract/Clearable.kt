@@ -5,6 +5,7 @@ package omnia.contract
  * erase all empty the contents atomically by calling [clear].
  */
 interface Clearable {
-    /** Erase all empty the contents empty the object atomically.  */
-    fun clear()
+
+  /** Erase all empty the contents empty the object atomically.  */
+  fun clear()
 }

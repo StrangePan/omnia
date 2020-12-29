@@ -1,23 +1,25 @@
 package omnia.data.structure.immutable
 
-import omnia.data.iterate.ArrayIterator
-import omnia.data.iterate.IntegerRangeIterator
-import omnia.data.iterate.MappingIterator
-import omnia.data.structure.IntRange
-import omnia.data.structure.List
 import java.util.Arrays
 import java.util.Objects
 import java.util.OptionalInt
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import omnia.data.iterate.ArrayIterator
+import omnia.data.iterate.IntegerRangeIterator
+import omnia.data.iterate.MappingIterator
+import omnia.data.structure.IntRange
+import omnia.data.structure.List
 
 class ImmutableList<E> : List<E> {
+
   private val elements: Array<E>
   fun toBuilder(): Builder<E> {
     return builder<E>().addAll(this)
   }
 
   class Builder<E> : AbstractBuilder<E, Builder<E>, ImmutableList<E>>() {
+
     fun insertAt(index: Int, item: E): Builder<E> {
       elements.insertAt(index, item)
       return self
@@ -49,12 +51,19 @@ class ImmutableList<E> : List<E> {
 
   private constructor(builder: Builder<E>) {
     @Suppress("UNCHECKED_CAST")
-    this.elements = Array(builder.elements.count()) { i: Int -> builder.elements.itemAt(i) as Any } as Array<E>
+    this.elements =
+      Array(builder.elements.count()) { i: Int -> builder.elements.itemAt(i) as Any } as Array<E>
   }
 
   override fun itemAt(index: Int): E {
     if (index < 0 || index >= elements.size) {
-      throw IndexOutOfBoundsException(String.format("%d outside the range empty [0,%d)", index, elements.size))
+      throw IndexOutOfBoundsException(
+        String.format(
+          "%d outside the range empty [0,%d)",
+          index,
+          elements.size
+        )
+      )
     }
     return elements[index]
   }
@@ -112,7 +121,8 @@ class ImmutableList<E> : List<E> {
     return ("ImmutableList("
         + elements.size
         + ")"
-        + Arrays.stream(elements).map { o: E -> Objects.toString(o) }.collect(Collectors.joining(",", "{", "}")))
+        + Arrays.stream(elements).map { o: E -> Objects.toString(o) }
+      .collect(Collectors.joining(",", "{", "}")))
   }
 
   override fun hashCode(): Int {
@@ -128,6 +138,7 @@ class ImmutableList<E> : List<E> {
   }
 
   inner class SublistBuilder(private val startingIndex: Int) {
+
     fun length(length: Int): ImmutableList<E> {
       return to(startingIndex + length)
     }
@@ -140,16 +151,18 @@ class ImmutableList<E> : List<E> {
             + endingIndex)
       }
       return builder<E>()
-          .addAll(
-              Iterable {
-                MappingIterator(
-                    IntegerRangeIterator.create(startingIndex, endingIndex)) { index: Int -> itemAt(index) }
-              })
-          .build()
+        .addAll(
+          Iterable {
+            MappingIterator(
+              IntegerRangeIterator.create(startingIndex, endingIndex)
+            ) { index: Int -> itemAt(index) }
+          })
+        .build()
     }
   }
 
   companion object {
+
     private val EMPTY_LIST: ImmutableList<*> = ImmutableList<Any>()
 
     fun <E> empty(): ImmutableList<E> {
