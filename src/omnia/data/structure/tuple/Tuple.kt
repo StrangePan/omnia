@@ -7,18 +7,22 @@ import omnia.data.structure.immutable.ImmutableList
 interface Tuple : Countable {
   companion object {
 
+    @JvmStatic
     fun <A, B> of(first: A, second: B): Couple<A, B> {
       return ImmutableCouple(first, second)
     }
 
+    @JvmStatic
     fun <A, B, C> of(first: A, second: B, third: C): Triple<A, B, C> {
       return ImmutableTriple(first, second, third)
     }
 
+    @JvmStatic
     fun <A, B, C, D> of(first: A, second: B, third: C, fourth: D): Quadruple<A, B, C, D> {
       return ImmutableQuadruple(first, second, third, fourth)
     }
 
+    @JvmStatic
     fun <A, B, C, D, E> of(
       first: A,
       second: B,
@@ -29,6 +33,7 @@ interface Tuple : Countable {
       return ImmutableQuintuple(first, second, third, fourth, fifth)
     }
 
+    @JvmStatic
     fun <A, B, C, D, E, F> of(
       first: A,
       second: B,
@@ -40,6 +45,7 @@ interface Tuple : Countable {
       return ImmutableSextuple(first, second, third, fourth, fifth, sixth)
     }
 
+    @JvmStatic
     fun <A, B, C, D, E, F, G> of(
       first: A,
       second: B,
@@ -52,6 +58,7 @@ interface Tuple : Countable {
       return ImmutableSeptuple(first, second, third, fourth, fifth, sixth, seventh)
     }
 
+    @JvmStatic
     fun <A, B, C, D, E, F, G, H> of(
       first: A,
       second: B,
@@ -65,6 +72,7 @@ interface Tuple : Countable {
       return ImmutableOctuple(first, second, third, fourth, fifth, sixth, seventh, eighth)
     }
 
+    @JvmStatic
     fun <A, B, C, D, E, F, G, H, I> of(
       first: A,
       second: B,
@@ -79,6 +87,7 @@ interface Tuple : Countable {
       return ImmutableNonuple(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
     }
 
+    @JvmStatic
     fun <A, B, C, D, E, F, G, H, I, J> of(
       first: A,
       second: B,
@@ -105,6 +114,7 @@ interface Tuple : Countable {
       )
     }
 
+    @JvmStatic
     fun toList(tuple: Tuple): ImmutableList<*> {
       Objects.requireNonNull(tuple)
       if (tuple is Couple<*, *>) {
@@ -137,14 +147,17 @@ interface Tuple : Countable {
       throw IllegalArgumentException("unrecognized tuple " + tuple.javaClass)
     }
 
+    @JvmStatic
     fun <T> toList(couple: Couple<out T, out T>): ImmutableList<T> {
       return ImmutableList.of(couple.first(), couple.second())
     }
 
+    @JvmStatic
     fun <T> toList(triple: Triple<out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(triple.first(), triple.second(), triple.third())
     }
 
+    @JvmStatic
     fun <T> toList(quadruple: Quadruple<out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
         quadruple.first(),
@@ -154,6 +167,7 @@ interface Tuple : Countable {
       )
     }
 
+    @JvmStatic
     fun <T> toList(quintuple: Quintuple<out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
         quintuple.first(),
@@ -164,6 +178,7 @@ interface Tuple : Countable {
       )
     }
 
+    @JvmStatic
     fun <T> toList(sextuple: Sextuple<out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
         sextuple.first(),
@@ -175,6 +190,7 @@ interface Tuple : Countable {
       )
     }
 
+    @JvmStatic
     fun <T> toList(septuple: Septuple<out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
         septuple.first(),
@@ -187,6 +203,7 @@ interface Tuple : Countable {
       )
     }
 
+    @JvmStatic
     fun <T> toList(octuple: Octuple<out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
         octuple.first(),
@@ -200,6 +217,7 @@ interface Tuple : Countable {
       )
     }
 
+    @JvmStatic
     fun <T> toList(nonuple: Nonuple<out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
         nonuple.first(),
@@ -214,6 +232,7 @@ interface Tuple : Countable {
       )
     }
 
+    @JvmStatic
     fun <T> toList(decuple: Decuple<out T, out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
         decuple.first(),
