@@ -12,7 +12,7 @@ class ArrayList<E> private constructor(javaList: java.util.ArrayList<E> = java.u
       return ArrayList(java.util.ArrayList(listOf(*items)))
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> copyOf(otherList: List<out E>): ArrayList<E> {
       val newList: ArrayList<E> = create()
       otherList.iterator().forEachRemaining { element: E -> newList.add(element) }

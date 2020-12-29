@@ -33,13 +33,13 @@ interface Set<E> : Collection<E> {
       return masking(HashSet(javaCollection))
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> empty(): Set<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_SET as Set<E>
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun areEqual(a: Set<*>?, b: Set<*>?): Boolean {
       if (a === b) {
         return true

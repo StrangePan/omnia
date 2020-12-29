@@ -28,7 +28,7 @@ interface CachedLong : CachedValue, LongHolder {
      * @param supplier the supplier that will construct the given value
      * @return a new [CachedLong] instance that will cache the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun cache(supplier: LongSupplier): CachedLong {
       return SimpleLongCacher(supplier)
     }

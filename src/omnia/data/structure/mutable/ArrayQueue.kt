@@ -114,12 +114,12 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
 
     private const val INITIAL_CAPACITY = 16
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> create(): ArrayQueue<E> {
       return ArrayQueue()
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> createWithInitialCapacity(capacity: Int): ArrayQueue<E> {
       return ArrayQueue(capacity)
     }

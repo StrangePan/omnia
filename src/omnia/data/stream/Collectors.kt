@@ -25,7 +25,7 @@ object Collectors {
   }
 
   /** Creates a [Collector] that collects stream items into an [ImmutableSet].  */
-  @kotlin.jvm.JvmStatic
+  @JvmStatic
   fun <E> toImmutableSet(): Collector<E, *, ImmutableSet<E>> {
     return object : Collector<E, MutableSet<E>, ImmutableSet<E>> {
       override fun supplier(): Supplier<MutableSet<E>> {

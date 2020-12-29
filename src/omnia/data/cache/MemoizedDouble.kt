@@ -25,7 +25,7 @@ interface MemoizedDouble : DoubleHolder {
      * @param supplier the supplier that will create the value to be memoized
      * @return a new [MemoizedDouble] instance that will memoize the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun memoize(supplier: DoubleSupplier): MemoizedDouble? {
       return SimpleDoubleMemoizer(supplier)
     }

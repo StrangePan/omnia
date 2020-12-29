@@ -174,7 +174,7 @@ class ImmutableList<E> : List<E> {
      * Creates a new [ImmutableList] instance using the provided items as contents. At least
      * item must be provided; use [empty] to get an [ImmutableList] with no contents.
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     @SafeVarargs
     fun <E> of(firstItem: E, vararg items: E): ImmutableList<E> {
       return builder<E>().add(firstItem).addAll(*items).build()
@@ -196,7 +196,7 @@ class ImmutableList<E> : List<E> {
       return builder<E>().addAll(*items).build()
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> builder(): Builder<E> {
       return Builder()
     }

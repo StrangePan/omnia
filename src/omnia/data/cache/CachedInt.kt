@@ -28,7 +28,7 @@ interface CachedInt : CachedValue, IntHolder {
      * @param supplier the supplier that will construct the given value
      * @return a new [CachedInt] instance that will cache the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun cache(supplier: IntSupplier): CachedInt {
       return SimpleIntCacher(supplier)
     }

@@ -17,7 +17,7 @@ interface Couplet<T> : Couple<T, T>, AtMostCouplet<T> {
 
   companion object {
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <T> of(first: T, second: T): Couplet<T> {
       return ImmutableCouplet(first, second)
     }

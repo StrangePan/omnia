@@ -106,13 +106,13 @@ class ImmutableSet<E> : Set<E> {
 
     private val EMPTY_IMMUTABLE_SET: ImmutableSet<*> = ImmutableSet<Any>()
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <T> empty(): ImmutableSet<T> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_IMMUTABLE_SET as ImmutableSet<T>
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     @SafeVarargs
     fun <E> of(firstItem: E, vararg items: E): ImmutableSet<E> {
       return builder<E>().add(firstItem).addAll(*items).build()
@@ -124,7 +124,7 @@ class ImmutableSet<E> : Set<E> {
       } else builder<E>().addAll(iterable).build()
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> builder(): Builder<E> {
       return Builder()
     }

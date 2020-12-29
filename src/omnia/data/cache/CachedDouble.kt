@@ -28,7 +28,7 @@ interface CachedDouble : CachedValue, DoubleHolder {
      * @param supplier the supplier that will construct the given value
      * @return a new [CachedDouble] instance that will cache the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun cache(supplier: DoubleSupplier): CachedDouble {
       return SimpleDoubleCacher(supplier)
     }

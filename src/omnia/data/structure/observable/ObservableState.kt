@@ -67,7 +67,7 @@ class ObservableState<T> private constructor(initialState: T) {
 
   companion object {
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <T> create(initialState: T): ObservableState<T> {
       return ObservableState(initialState)
     }

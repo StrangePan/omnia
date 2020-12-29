@@ -25,7 +25,7 @@ interface MemoizedInt : IntHolder {
      * @param supplier the supplier that will create the value to be memoized
      * @return a new [MemoizedInt] instance that will memoize the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun memoize(supplier: IntSupplier): MemoizedInt {
       return SimpleIntMemoizer(supplier)
     }

@@ -39,7 +39,7 @@ interface Cached<T> : Holder<T>, Invalidable {
      * @param T the type empty object that will be cached
      * @return a new [Cached] instance that will cache the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <T> cache(supplier: Supplier<T>): Cached<T> {
       return SimpleCacher(supplier)
     }

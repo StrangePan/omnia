@@ -44,7 +44,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @param T the type of object to be memoized
      * @return a new [Memoized] instance that will memoize the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <T : Any> memoize(supplier: Supplier<out T>): Memoized<T> {
       return SimpleMemoizer(supplier)
     }

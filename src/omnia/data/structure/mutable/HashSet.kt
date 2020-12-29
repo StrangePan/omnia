@@ -101,7 +101,7 @@ class HashSet<E>(
     private val UNWRAPPER_FUNCTION: Function<Wrapper<*>, Any?> =
       Function<Wrapper<*>, Any?> { wrapper: Wrapper<*> -> wrapper.element() }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> create(): HashSet<E> {
       return HashSet()
     }

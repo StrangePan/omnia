@@ -25,7 +25,7 @@ interface MemoizedLong : LongHolder {
      * @param supplier the supplier that will create the value to be memoized
      * @return a new [MemoizedLong] instance that will memoize the created value
      */
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun memoize(supplier: LongSupplier): MemoizedLong {
       return SimpleLongMemoizer(supplier)
     }

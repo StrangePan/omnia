@@ -11,7 +11,7 @@ interface WritableObservableDirectedGraph<E> : MutableDirectedGraph<E>, Observab
 
   companion object {
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> create(): WritableObservableDirectedGraph<E> {
       return WritableObservableDirectedGraphImpl()
     }

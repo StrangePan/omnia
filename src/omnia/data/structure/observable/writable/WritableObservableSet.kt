@@ -7,7 +7,7 @@ import omnia.data.structure.observable.ObservableSet
 interface WritableObservableSet<E> : MutableSet<E>, ObservableSet<E>, Writable<ObservableSet<E>> {
   companion object {
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> create(): WritableObservableSet<E> {
       return WritableObservableSetImpl()
     }

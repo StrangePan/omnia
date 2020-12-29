@@ -376,7 +376,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     private val EMPTY_IMMUTABLE_DIRECTED_GRAPH: ImmutableDirectedGraph<*> =
       ImmutableDirectedGraph<Any>()
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> empty(): ImmutableDirectedGraph<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_IMMUTABLE_DIRECTED_GRAPH as ImmutableDirectedGraph<E>
@@ -404,7 +404,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
       return builder.build()
     }
 
-    @kotlin.jvm.JvmStatic
+    @JvmStatic
     fun <E> builder(): Builder<E> {
       return Builder()
     }
