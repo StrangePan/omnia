@@ -10,7 +10,7 @@ package omnia.contract
  *
  * @see DoubleHolder for a {@code double} primitive holder
 </T> */
-interface Holder<T> {
+interface Holder<T : Any> {
 
   /**
    * Gets the value held in this object. The returned reference will never be null.

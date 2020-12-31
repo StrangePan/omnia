@@ -34,7 +34,11 @@ interface Memoized<T : Any> : Holder<T> {
      */
     @JvmStatic
     fun <T : Any> just(value: T): Memoized<T> {
-      return SimpleMemoizer(value)
+      return object : Memoized<T> {
+        override fun value(): T {
+          return value
+        }
+      }
     }
 
     /**

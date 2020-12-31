@@ -1,8 +1,8 @@
 package omnia.data.cache
 
-import omnia.contract.Invalidable
+import omnia.contract.Invalidatable
 
-interface CachedValue : Invalidable {
+interface CachedValue : Invalidatable {
 
   /**
    * Invalidates the cached value and clears any lingering references to it. This method can be
