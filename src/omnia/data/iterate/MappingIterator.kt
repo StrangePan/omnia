@@ -5,8 +5,8 @@ import java.util.function.Function
 
 /** An [Iterator] that takes a source iterator and maps its elements to a new value.  */
 class MappingIterator<T, R>(
-  private val source: Iterator<T>,
-  private val mapper: Function<in T, out R>,
+    private val source: Iterator<T>,
+    private val mapper: Function<in T, out R>,
 ) : Iterator<R> {
 
   override fun hasNext(): Boolean {

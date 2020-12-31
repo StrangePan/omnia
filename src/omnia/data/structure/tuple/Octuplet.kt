@@ -20,14 +20,14 @@ interface Octuplet<T> : Octuple<T, T, T, T, T, T, T, T>, AtMostOctuplet<T> {
   companion object {
 
     fun <T> of(
-      first: T,
-      second: T,
-      third: T,
-      fourth: T,
-      fifth: T,
-      sixth: T,
-      seventh: T,
-      eighth: T
+        first: T,
+        second: T,
+        third: T,
+        fourth: T,
+        fifth: T,
+        sixth: T,
+        seventh: T,
+        eighth: T
     ): Octuplet<T> {
       return ImmutableOctuplet(first, second, third, fourth, fifth, sixth, seventh, eighth)
     }

@@ -4,15 +4,15 @@ import java.util.Objects
 import java.util.function.Function
 
 internal open class ImmutableNonuple<A, B, C, D, E, F, G, H, I>(
-  private val first: A,
-  private val second: B,
-  private val third: C,
-  private val fourth: D,
-  private val fifth: E,
-  private val sixth: F,
-  private val seventh: G,
-  private val eighth: H,
-  private val ninth: I,
+    private val first: A,
+    private val second: B,
+    private val third: C,
+    private val fourth: D,
+    private val fifth: E,
+    private val sixth: F,
+    private val seventh: G,
+    private val eighth: H,
+    private val ninth: I,
 ) : Nonuple<A, B, C, D, E, F, G, H, I> {
 
   override fun equals(other: Any?): Boolean {
@@ -30,15 +30,15 @@ internal open class ImmutableNonuple<A, B, C, D, E, F, G, H, I>(
 
   override fun hashCode(): Int {
     return Objects.hash(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      fifth(),
-      sixth(),
-      seventh(),
-      eighth(),
-      ninth()
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
+        ninth()
     )
   }
 
@@ -84,127 +84,127 @@ internal open class ImmutableNonuple<A, B, C, D, E, F, G, H, I>(
 
   override fun <R> mapFirst(mapper: Function<in A, out R>): Nonuple<R, B, C, D, E, F, G, H, I> {
     return Tuple.of(
-      mapper.apply(first()),
-      second(),
-      third(),
-      fourth(),
-      fifth(),
-      sixth(),
-      seventh(),
-      eighth(),
-      ninth()
+        mapper.apply(first()),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
+        ninth()
     )
   }
 
   override fun <R> mapSecond(mapper: Function<in B, out R>): Nonuple<A, R, C, D, E, F, G, H, I> {
     return Tuple.of(
-      first(),
-      mapper.apply(second()),
-      third(),
-      fourth(),
-      fifth(),
-      sixth(),
-      seventh(),
-      eighth(),
-      ninth()
+        first(),
+        mapper.apply(second()),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
+        ninth()
     )
   }
 
   override fun <R> mapThird(mapper: Function<in C, out R>): Nonuple<A, B, R, D, E, F, G, H, I> {
     return Tuple.of(
-      first(),
-      second(),
-      mapper.apply(third()),
-      fourth(),
-      fifth(),
-      sixth(),
-      seventh(),
-      eighth(),
-      ninth()
+        first(),
+        second(),
+        mapper.apply(third()),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
+        ninth()
     )
   }
 
   override fun <R> mapFourth(mapper: Function<in D, out R>): Nonuple<A, B, C, R, E, F, G, H, I> {
     return Tuple.of(
-      first(),
-      second(),
-      third(),
-      mapper.apply(fourth()),
-      fifth(),
-      sixth(),
-      seventh(),
-      eighth(),
-      ninth()
+        first(),
+        second(),
+        third(),
+        mapper.apply(fourth()),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
+        ninth()
     )
   }
 
   override fun <R> mapFifth(mapper: Function<in E, out R>): Nonuple<A, B, C, D, R, F, G, H, I> {
     return Tuple.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      mapper.apply(fifth()),
-      sixth(),
-      seventh(),
-      eighth(),
-      ninth()
+        first(),
+        second(),
+        third(),
+        fourth(),
+        mapper.apply(fifth()),
+        sixth(),
+        seventh(),
+        eighth(),
+        ninth()
     )
   }
 
   override fun <R> mapSixth(mapper: Function<in F, out R>): Nonuple<A, B, C, D, E, R, G, H, I> {
     return Tuple.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      fifth(),
-      mapper.apply(sixth()),
-      seventh(),
-      eighth(),
-      ninth()
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        mapper.apply(sixth()),
+        seventh(),
+        eighth(),
+        ninth()
     )
   }
 
   override fun <R> mapSeventh(mapper: Function<in G, out R>): Nonuple<A, B, C, D, E, F, R, H, I> {
     return Tuple.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      fifth(),
-      sixth(),
-      mapper.apply(seventh()),
-      eighth(),
-      ninth()
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        mapper.apply(seventh()),
+        eighth(),
+        ninth()
     )
   }
 
   override fun <R> mapEighth(mapper: Function<in H, out R>): Nonuple<A, B, C, D, E, F, G, R, I> {
     return Tuple.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      fifth(),
-      sixth(),
-      seventh(),
-      mapper.apply(eighth()),
-      ninth()
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        mapper.apply(eighth()),
+        ninth()
     )
   }
 
   override fun <R> mapNinth(mapper: Function<in I, out R>): Nonuple<A, B, C, D, E, F, G, H, R> {
     return Tuple.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      fifth(),
-      sixth(),
-      seventh(),
-      eighth(),
-      mapper.apply(ninth())
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
+        mapper.apply(ninth())
     )
   }
 
@@ -246,16 +246,16 @@ internal open class ImmutableNonuple<A, B, C, D, E, F, G, H, I>(
 
   override fun <T> append(`object`: T): Decuple<A, B, C, D, E, F, G, H, I, T> {
     return Tuple.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      fifth(),
-      sixth(),
-      seventh(),
-      eighth(),
-      ninth(),
-      `object`
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
+        ninth(),
+        `object`
     )
   }
 }

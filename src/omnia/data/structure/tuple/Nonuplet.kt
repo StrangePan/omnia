@@ -20,15 +20,15 @@ interface Nonuplet<T> : Nonuple<T, T, T, T, T, T, T, T, T>, AtMostNonuplet<T> {
   companion object {
 
     fun <T> of(
-      first: T,
-      second: T,
-      third: T,
-      fourth: T,
-      fifth: T,
-      sixth: T,
-      seventh: T,
-      eighth: T,
-      ninth: T
+        first: T,
+        second: T,
+        third: T,
+        fourth: T,
+        fifth: T,
+        sixth: T,
+        seventh: T,
+        eighth: T,
+        ninth: T
     ): Nonuplet<T> {
       return ImmutableNonuplet(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
     }

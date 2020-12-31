@@ -20,13 +20,13 @@ interface Septuplet<T> : Septuple<T, T, T, T, T, T, T>, AtMostSeptuplet<T> {
   companion object {
 
     fun <T> of(
-      first: T,
-      second: T,
-      third: T,
-      fourth: T,
-      fifth: T,
-      sixth: T,
-      seventh: T
+        first: T,
+        second: T,
+        third: T,
+        fourth: T,
+        fifth: T,
+        sixth: T,
+        seventh: T
     ): Septuplet<T> {
       return ImmutableSeptuplet(first, second, third, fourth, fifth, sixth, seventh)
     }

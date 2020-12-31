@@ -131,7 +131,7 @@ class Tuples {
   }
 
   interface AtLeastDecuple<A, B, C, D, E, F, G, H, I, J> :
-    AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
+      AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
 
     fun tenth(): J
     override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastDecuple<R, B, C, D, E, F, G, H, I, J>

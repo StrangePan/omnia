@@ -4,7 +4,7 @@ import java.util.NoSuchElementException
 import java.util.function.Predicate
 
 class FilterIterator<E>(private val source: Iterator<E>, private val filter: Predicate<in E>) :
-  Iterator<E> {
+    Iterator<E> {
 
   private var didPeekNext = false
   private var peekedNext: E? = null

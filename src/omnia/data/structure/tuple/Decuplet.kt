@@ -20,28 +20,28 @@ interface Decuplet<T> : Decuple<T, T, T, T, T, T, T, T, T, T>, AtMostDecuplet<T>
   companion object {
 
     fun <T> of(
-      first: T,
-      second: T,
-      third: T,
-      fourth: T,
-      fifth: T,
-      sixth: T,
-      seventh: T,
-      eighth: T,
-      ninth: T,
-      tenth: T
+        first: T,
+        second: T,
+        third: T,
+        fourth: T,
+        fifth: T,
+        sixth: T,
+        seventh: T,
+        eighth: T,
+        ninth: T,
+        tenth: T
     ): Decuplet<T> {
       return ImmutableDecuplet(
-        first,
-        second,
-        third,
-        fourth,
-        fifth,
-        sixth,
-        seventh,
-        eighth,
-        ninth,
-        tenth
+          first,
+          second,
+          third,
+          fourth,
+          fifth,
+          sixth,
+          seventh,
+          eighth,
+          ninth,
+          tenth
       )
     }
   }

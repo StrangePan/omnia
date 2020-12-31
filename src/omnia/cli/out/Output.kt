@@ -68,8 +68,8 @@ class Output private constructor(spans: List<Span<*>>) {
     fun append(output: Output): Builder {
       val base = buildFormatting()
       output.spans.stream()
-        .map { span: Span<*> -> span.mergeFormatting(base) }
-        .forEachOrdered { element -> spans.add(element) }
+          .map { span: Span<*> -> span.mergeFormatting(base) }
+          .forEachOrdered { element -> spans.add(element) }
       return this
     }
 
@@ -104,11 +104,11 @@ class Output private constructor(spans: List<Span<*>>) {
             groupedInlineSpans = null
           }
           spans.add(
-            LineSpan(
-              span.spans.stream()
-                .map(mergeFormatting(baseFormatting))
-                .collect(Collectors.toList()), span.indentation + indentation
-            )
+              LineSpan(
+                  span.spans.stream()
+                      .map(mergeFormatting(baseFormatting))
+                      .collect(Collectors.toList()), span.indentation + indentation
+              )
           )
         }
       }
@@ -230,12 +230,12 @@ class Output private constructor(spans: List<Span<*>>) {
 
     fun defaultFormatting(): Builder {
       return defaultColor().defaultBackground()
-        .defaultBold()
-        .defaultDim()
-        .defaultUnderline()
-        .defaultBlinking()
-        .defaultInverted()
-        .defaultHidden()
+          .defaultBold()
+          .defaultDim()
+          .defaultUnderline()
+          .defaultBlinking()
+          .defaultInverted()
+          .defaultHidden()
     }
 
     private fun buildFormatting(): Formatting {
@@ -270,8 +270,8 @@ class Output private constructor(spans: List<Span<*>>) {
   }
 
   private class InlineSpan(
-    val text: String,
-    private val formatting: Formatting,
+      val text: String,
+      private val formatting: Formatting,
   ) : Span<InlineSpan> {
 
     override fun render(): StringBuilder {
@@ -305,27 +305,27 @@ class Output private constructor(spans: List<Span<*>>) {
       }
       val indentation = " ".repeat(indentation)
       return StringBuilder(indentation).append(spans.stream()
-        .map(propagation)
-        .map { obj: Any -> obj.toString() }
-        .map { rendering: String ->
-          rendering.replace(
-            Pattern.quote(System.lineSeparator())
-              .toRegex(),
-            System.lineSeparator() + indentation
-          )
-        }
-        .collect({ StringBuilder() },
-          { obj: StringBuilder, str: String ->
-            obj.append(str)
-          }) { obj: StringBuilder, s: StringBuilder ->
-          obj.append(s)
-        }).append(System.lineSeparator())
+          .map(propagation)
+          .map { obj: Any -> obj.toString() }
+          .map { rendering: String ->
+            rendering.replace(
+                Pattern.quote(System.lineSeparator())
+                    .toRegex(),
+                System.lineSeparator() + indentation
+            )
+          }
+          .collect({ StringBuilder() },
+              { obj: StringBuilder, str: String ->
+                obj.append(str)
+              }) { obj: StringBuilder, s: StringBuilder ->
+            obj.append(s)
+          }).append(System.lineSeparator())
     }
 
     override fun mergeFormatting(base: Formatting): LineSpan {
       return LineSpan(spans.stream()
-        .map { inlineSpan: InlineSpan -> inlineSpan.mergeFormatting(base) }
-        .collect(Collectors.toList()), indentation)
+          .map { inlineSpan: InlineSpan -> inlineSpan.mergeFormatting(base) }
+          .collect(Collectors.toList()), indentation)
     }
 
     init {
@@ -335,42 +335,42 @@ class Output private constructor(spans: List<Span<*>>) {
   }
 
   private class Formatting(
-    private val color: Optional<Color16>,
-    private val background: Optional<Color16>,
-    private val bold: Optional<Boolean>,
-    private val dim: Optional<Boolean>,
-    private val underlined: Optional<Boolean>,
-    private val blinking: Optional<Boolean>,
-    private val inverted: Optional<Boolean>,
-    private val hidden: Optional<Boolean>,
+      private val color: Optional<Color16>,
+      private val background: Optional<Color16>,
+      private val bold: Optional<Boolean>,
+      private val dim: Optional<Boolean>,
+      private val underlined: Optional<Boolean>,
+      private val blinking: Optional<Boolean>,
+      private val inverted: Optional<Boolean>,
+      private val hidden: Optional<Boolean>,
   ) : Renderable {
 
     fun apply(other: Formatting): Formatting {
       return Formatting(other.color.or { color },
-        other.background.or { background },
-        other.bold.or { bold },
-        other.dim.or { dim },
-        other.underlined.or { underlined },
-        other.blinking.or { blinking },
-        other.inverted.or { inverted },
-        other.hidden.or { hidden })
+          other.background.or { background },
+          other.bold.or { bold },
+          other.dim.or { dim },
+          other.underlined.or { underlined },
+          other.blinking.or { blinking },
+          other.inverted.or { inverted },
+          other.hidden.or { hidden })
     }
 
     override fun render(): StringBuilder {
       return StringBuilder("\u001b[").append(Stream.builder<Optional<String>>()
-        .add(Optional.of("0"))
-        .add(color.map { obj: Color16 -> obj.foregroundCode() })
-        .add(background.map { obj: Color16 -> obj.backgroundCode() })
-        .add(bold.map { "1" })
-        .add(dim.map { "2" })
-        .add(underlined.map { "4" })
-        .add(blinking.map { "5" })
-        .add(inverted.map { "7" })
-        .add(hidden.map { "8" })
-        .build()
-        .flatMap { obj: Optional<String> -> obj.stream() }
-        .collect(java.util.stream.Collectors.joining(";")))
-        .append("m")
+          .add(Optional.of("0"))
+          .add(color.map { obj: Color16 -> obj.foregroundCode() })
+          .add(background.map { obj: Color16 -> obj.backgroundCode() })
+          .add(bold.map { "1" })
+          .add(dim.map { "2" })
+          .add(underlined.map { "4" })
+          .add(blinking.map { "5" })
+          .add(inverted.map { "7" })
+          .add(hidden.map { "8" })
+          .build()
+          .flatMap { obj: Optional<String> -> obj.stream() }
+          .collect(java.util.stream.Collectors.joining(";")))
+          .append("m")
     }
 
     override fun renderWithoutCodes(): StringBuilder {
@@ -380,22 +380,23 @@ class Output private constructor(spans: List<Span<*>>) {
     companion object {
 
       val EMPTY: Formatting = Formatting(
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty()
+          Optional.empty(),
+          Optional.empty(),
+          Optional.empty(),
+          Optional.empty(),
+          Optional.empty(),
+          Optional.empty(),
+          Optional.empty(),
+          Optional.empty()
       )
     }
   }
 
-  enum class Color16(private val foreground: String, private val background: String) { DEFAULT(
-    "39",
-    "49"
-  ),
+  enum class Color16(private val foreground: String, private val background: String) {
+    DEFAULT(
+        "39",
+        "49"
+    ),
     BLACK("30", "40"),
     RED("31", "41"),
     GREEN("32", "42"),
@@ -439,20 +440,20 @@ class Output private constructor(spans: List<Span<*>>) {
     @JvmStatic
     fun just(message: String): Output {
       return if (message.isEmpty()) empty() else Output(
-        ImmutableList.of(InlineSpan(message, Formatting.EMPTY))
+          ImmutableList.of(InlineSpan(message, Formatting.EMPTY))
       )
     }
 
     @JvmStatic
     fun justLine(message: String): Output {
       return if (message.isEmpty()) empty() else Output(
-        ImmutableList.of(
-          LineSpan(
-            ImmutableList.of(
-              InlineSpan(message, Formatting.EMPTY)
-            ), 0
+          ImmutableList.of(
+              LineSpan(
+                  ImmutableList.of(
+                      InlineSpan(message, Formatting.EMPTY)
+                  ), 0
+              )
           )
-        )
       )
     }
 

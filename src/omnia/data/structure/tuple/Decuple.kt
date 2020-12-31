@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtLeastDecuple
 import omnia.data.structure.tuple.Tuples.AtMostDecuple
 
 interface Decuple<A, B, C, D, E, F, G, H, I, J> : AtLeastDecuple<A, B, C, D, E, F, G, H, I, J>,
-  AtMostDecuple {
+    AtMostDecuple {
 
   override fun count(): Int {
     return 10

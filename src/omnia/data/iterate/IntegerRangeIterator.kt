@@ -1,13 +1,13 @@
 package omnia.data.iterate
 
 class IntegerRangeIterator private constructor(
-  private var next: Int,
-  private val end: Int,
-  private val increment: Int
+    private var next: Int,
+    private val end: Int,
+    private val increment: Int
 ) : Iterator<Int> {
 
   override fun hasNext(): Boolean {
-    return if (increment > 0) next + increment < end else next + increment > end
+    return if (increment > 0) next < end else next > end
   }
 
   override fun next(): Int {

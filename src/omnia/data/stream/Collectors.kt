@@ -40,7 +40,7 @@ object Collectors {
       override fun combiner(): BinaryOperator<MutableSet<E>> {
         return BinaryOperator { set1: MutableSet<E>, set2: MutableSet<E> ->
           HashSet.copyOf(
-            ImmutableSet.builder<E>().addAll(set1).addAll(set2).build()
+              ImmutableSet.builder<E>().addAll(set1).addAll(set2).build()
           )
         }
       }
@@ -74,7 +74,7 @@ object Collectors {
       override fun combiner(): BinaryOperator<ArrayList<E>> {
         return BinaryOperator { list1: ArrayList<E>, list2: ArrayList<E> ->
           ArrayList.copyOf(
-            ImmutableList.builder<E>().addAll(list1).addAll(list2).build()
+              ImmutableList.builder<E>().addAll(list1).addAll(list2).build()
           )
         }
       }
@@ -113,7 +113,7 @@ object Collectors {
    */
   @JvmStatic
   fun <E, K> toImmutableMap(
-    keyExtractor: Function<in E, K>,
+      keyExtractor: Function<in E, K>,
   ): Collector<E, *, ImmutableMap<K, E>> {
     return toImmutableMap(keyExtractor, Function.identity())
   }
@@ -130,8 +130,8 @@ object Collectors {
    */
   @JvmStatic
   fun <E, K, V> toImmutableMap(
-    keyExtractor: Function<in E, K>,
-    valueExtractor: Function<in E, V>,
+      keyExtractor: Function<in E, K>,
+      valueExtractor: Function<in E, V>,
   ): Collector<E, *, ImmutableMap<K, V>> {
     return groupBy(keyExtractor, valueExtractor, ImmutableMap.Companion::copyOf)
   }
@@ -148,15 +148,15 @@ object Collectors {
    */
   @JvmStatic
   fun <E, K, V> toHashMap(
-    keyExtractor: Function<in E, K>, valueExtractor: Function<in E, V>,
+      keyExtractor: Function<in E, K>, valueExtractor: Function<in E, V>,
   ): Collector<E, *, HashMap<K, V>> {
     return groupBy(keyExtractor, valueExtractor, Function.identity())
   }
 
   private fun <E, K, V, R> groupBy(
-    keyExtractor: Function<in E, K>,
-    valueExtractor: Function<in E, V>,
-    finisher: Function<HashMap<K, V>, R>,
+      keyExtractor: Function<in E, K>,
+      valueExtractor: Function<in E, V>,
+      finisher: Function<HashMap<K, V>, R>,
   ): Collector<E, *, R> {
     return object : Collector<E, HashMap<K, V>, R> {
       override fun supplier(): Supplier<HashMap<K, V>> {
@@ -166,8 +166,8 @@ object Collectors {
       override fun accumulator(): BiConsumer<HashMap<K, V>, E> {
         return BiConsumer { map: HashMap<K, V>, item: E ->
           map.putMapping(
-            keyExtractor.apply(item),
-            valueExtractor.apply(item)
+              keyExtractor.apply(item),
+              valueExtractor.apply(item)
           )
         }
       }
@@ -200,8 +200,8 @@ object Collectors {
    * @param finisher the finisher function that transforms the final result from [maskedCollector]
    */
   internal class MaskingCollector<T, A, R1, R2>(
-    private val maskedCollector: Collector<T, A, R1>,
-    private val finisher: Function<in R1, out R2>,
+      private val maskedCollector: Collector<T, A, R1>,
+      private val finisher: Function<in R1, out R2>,
   ) : Collector<T, A, R2> {
 
     override fun supplier(): Supplier<A> {
@@ -222,7 +222,7 @@ object Collectors {
 
     override fun characteristics(): kotlin.collections.MutableSet<Collector.Characteristics> {
       val characteristics: kotlin.collections.MutableSet<Collector.Characteristics> =
-        java.util.HashSet(maskedCollector.characteristics())
+          java.util.HashSet(maskedCollector.characteristics())
       characteristics.remove(Collector.Characteristics.IDENTITY_FINISH)
       return characteristics
     }

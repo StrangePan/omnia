@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtLeastNonuple
 import omnia.data.structure.tuple.Tuples.AtMostNonuple
 
 interface Nonuple<A, B, C, D, E, F, G, H, I> : AtLeastNonuple<A, B, C, D, E, F, G, H, I>,
-  AtMostNonuple {
+    AtMostNonuple {
 
   override fun count(): Int {
     return 9

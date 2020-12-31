@@ -74,7 +74,7 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
   }
 
   override fun toString(): String {
-    return String.format("IntRange[%d–%d)", start(), endInclusive())
+    return "[${start()}–${end()})"
   }
 
   companion object {

@@ -145,10 +145,8 @@ class ImmutableList<E> : List<E> {
 
     fun to(endingIndex: Int): ImmutableList<E> {
       require(endingIndex >= startingIndex) {
-        ("endingIndex must be greater than or equal to startingIndex. startingIndex="
-            + startingIndex
-            + " endingIndex="
-            + endingIndex)
+        "endingIndex must be greater than or equal to startingIndex. " +
+            "startingIndex=$startingIndex endingIndex=$endingIndex"
       }
       return builder<E>()
         .addAll(
@@ -195,7 +193,7 @@ class ImmutableList<E> : List<E> {
 
     /** Copies the items from the provided array into a new [ImmutableList] instance.  */
     @JvmStatic
-    fun <E> copyOf(items: Array<E>): ImmutableList<E> {
+    fun <E> copyOf(items: Array<out E>): ImmutableList<E> {
       return builder<E>().addAll(*items).build()
     }
 

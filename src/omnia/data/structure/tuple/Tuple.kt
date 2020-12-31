@@ -24,93 +24,93 @@ interface Tuple : Countable {
 
     @JvmStatic
     fun <A, B, C, D, E> of(
-      first: A,
-      second: B,
-      third: C,
-      fourth: D,
-      fifth: E
+        first: A,
+        second: B,
+        third: C,
+        fourth: D,
+        fifth: E
     ): Quintuple<A, B, C, D, E> {
       return ImmutableQuintuple(first, second, third, fourth, fifth)
     }
 
     @JvmStatic
     fun <A, B, C, D, E, F> of(
-      first: A,
-      second: B,
-      third: C,
-      fourth: D,
-      fifth: E,
-      sixth: F
+        first: A,
+        second: B,
+        third: C,
+        fourth: D,
+        fifth: E,
+        sixth: F
     ): Sextuple<A, B, C, D, E, F> {
       return ImmutableSextuple(first, second, third, fourth, fifth, sixth)
     }
 
     @JvmStatic
     fun <A, B, C, D, E, F, G> of(
-      first: A,
-      second: B,
-      third: C,
-      fourth: D,
-      fifth: E,
-      sixth: F,
-      seventh: G
+        first: A,
+        second: B,
+        third: C,
+        fourth: D,
+        fifth: E,
+        sixth: F,
+        seventh: G
     ): Septuple<A, B, C, D, E, F, G> {
       return ImmutableSeptuple(first, second, third, fourth, fifth, sixth, seventh)
     }
 
     @JvmStatic
     fun <A, B, C, D, E, F, G, H> of(
-      first: A,
-      second: B,
-      third: C,
-      fourth: D,
-      fifth: E,
-      sixth: F,
-      seventh: G,
-      eighth: H
+        first: A,
+        second: B,
+        third: C,
+        fourth: D,
+        fifth: E,
+        sixth: F,
+        seventh: G,
+        eighth: H
     ): Octuple<A, B, C, D, E, F, G, H> {
       return ImmutableOctuple(first, second, third, fourth, fifth, sixth, seventh, eighth)
     }
 
     @JvmStatic
     fun <A, B, C, D, E, F, G, H, I> of(
-      first: A,
-      second: B,
-      third: C,
-      fourth: D,
-      fifth: E,
-      sixth: F,
-      seventh: G,
-      eighth: H,
-      ninth: I
+        first: A,
+        second: B,
+        third: C,
+        fourth: D,
+        fifth: E,
+        sixth: F,
+        seventh: G,
+        eighth: H,
+        ninth: I
     ): Nonuple<A, B, C, D, E, F, G, H, I> {
       return ImmutableNonuple(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
     }
 
     @JvmStatic
     fun <A, B, C, D, E, F, G, H, I, J> of(
-      first: A,
-      second: B,
-      third: C,
-      fourth: D,
-      fifth: E,
-      sixth: F,
-      seventh: G,
-      eighth: H,
-      ninth: I,
-      tenth: J
+        first: A,
+        second: B,
+        third: C,
+        fourth: D,
+        fifth: E,
+        sixth: F,
+        seventh: G,
+        eighth: H,
+        ninth: I,
+        tenth: J
     ): Decuple<A, B, C, D, E, F, G, H, I, J> {
       return ImmutableDecuple(
-        first,
-        second,
-        third,
-        fourth,
-        fifth,
-        sixth,
-        seventh,
-        eighth,
-        ninth,
-        tenth
+          first,
+          second,
+          third,
+          fourth,
+          fifth,
+          sixth,
+          seventh,
+          eighth,
+          ninth,
+          tenth
       )
     }
 
@@ -160,91 +160,91 @@ interface Tuple : Countable {
     @JvmStatic
     fun <T> toList(quadruple: Quadruple<out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-        quadruple.first(),
-        quadruple.second(),
-        quadruple.third(),
-        quadruple.fourth()
+          quadruple.first(),
+          quadruple.second(),
+          quadruple.third(),
+          quadruple.fourth()
       )
     }
 
     @JvmStatic
     fun <T> toList(quintuple: Quintuple<out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-        quintuple.first(),
-        quintuple.second(),
-        quintuple.third(),
-        quintuple.fourth(),
-        quintuple.fifth()
+          quintuple.first(),
+          quintuple.second(),
+          quintuple.third(),
+          quintuple.fourth(),
+          quintuple.fifth()
       )
     }
 
     @JvmStatic
     fun <T> toList(sextuple: Sextuple<out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-        sextuple.first(),
-        sextuple.second(),
-        sextuple.third(),
-        sextuple.fourth(),
-        sextuple.fifth(),
-        sextuple.sixth()
+          sextuple.first(),
+          sextuple.second(),
+          sextuple.third(),
+          sextuple.fourth(),
+          sextuple.fifth(),
+          sextuple.sixth()
       )
     }
 
     @JvmStatic
     fun <T> toList(septuple: Septuple<out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-        septuple.first(),
-        septuple.second(),
-        septuple.third(),
-        septuple.fourth(),
-        septuple.fifth(),
-        septuple.sixth(),
-        septuple.seventh()
+          septuple.first(),
+          septuple.second(),
+          septuple.third(),
+          septuple.fourth(),
+          septuple.fifth(),
+          septuple.sixth(),
+          septuple.seventh()
       )
     }
 
     @JvmStatic
     fun <T> toList(octuple: Octuple<out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-        octuple.first(),
-        octuple.second(),
-        octuple.third(),
-        octuple.fourth(),
-        octuple.fifth(),
-        octuple.sixth(),
-        octuple.seventh(),
-        octuple.eighth()
+          octuple.first(),
+          octuple.second(),
+          octuple.third(),
+          octuple.fourth(),
+          octuple.fifth(),
+          octuple.sixth(),
+          octuple.seventh(),
+          octuple.eighth()
       )
     }
 
     @JvmStatic
     fun <T> toList(nonuple: Nonuple<out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-        nonuple.first(),
-        nonuple.second(),
-        nonuple.third(),
-        nonuple.fourth(),
-        nonuple.fifth(),
-        nonuple.sixth(),
-        nonuple.seventh(),
-        nonuple.eighth(),
-        nonuple.ninth()
+          nonuple.first(),
+          nonuple.second(),
+          nonuple.third(),
+          nonuple.fourth(),
+          nonuple.fifth(),
+          nonuple.sixth(),
+          nonuple.seventh(),
+          nonuple.eighth(),
+          nonuple.ninth()
       )
     }
 
     @JvmStatic
     fun <T> toList(decuple: Decuple<out T, out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-        decuple.first(),
-        decuple.second(),
-        decuple.third(),
-        decuple.fourth(),
-        decuple.fifth(),
-        decuple.sixth(),
-        decuple.seventh(),
-        decuple.eighth(),
-        decuple.ninth(),
-        decuple.tenth()
+          decuple.first(),
+          decuple.second(),
+          decuple.third(),
+          decuple.fourth(),
+          decuple.fifth(),
+          decuple.sixth(),
+          decuple.seventh(),
+          decuple.eighth(),
+          decuple.ninth(),
+          decuple.tenth()
       )
     }
   }

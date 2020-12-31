@@ -1,7 +1,7 @@
 package omnia.data.iterate
 
 abstract class WrapperIterator<E> protected constructor(private val baseIterator: MutableIterator<E>) :
-  MutableIterator<E> {
+    MutableIterator<E> {
 
   private var hasCurrent = false
   private var current: E? = null
