@@ -186,7 +186,7 @@ object GraphAlgorithms {
       }
 
       // traverse entire sub-graph to help cluster nodes
-      val subgraphNodes: Set<DirectedNode<out T>> = findSubgraph(sourceNode)
+      val subgraphNodes: Set<DirectedNode<out T>> = findOtherNodesInSubgraphContaining(sourceNode)
       for (rootNode in subgraphNodes) {
         if (rootNode.outgoingEdges().isPopulated) {
           continue
@@ -232,8 +232,14 @@ object GraphAlgorithms {
     return resultList
   }
 
+  /**
+   *  Isolates a specific subgraph in a larger graph by starting at the provided node and traversing
+   * all neighbors and trimming all others. Returns the set of nodes contained in the subgraph, but
+   * does not return the subgraph itself. Callers need to know how to assemble a graph from the
+   * returned results.
+   */
   @JvmStatic
-  fun <T : Graph.Node<*>> findSubgraph(source: T): ImmutableSet<T> {
+  fun <T : Graph.Node<*>> findOtherNodesInSubgraphContaining(source: T): ImmutableSet<T> {
     val set: MutableSet<T> = HashSet.create()
     val queue: Queue<T> = ArrayQueue.create()
     queue.enqueue(source)
