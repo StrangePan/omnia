@@ -43,7 +43,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     }
 
     constructor(
-      nodes: Set<E>, successors: Map<E, out Set<E>>, predecessors: Map<E, out Set<E>>,
+      nodes: Set<out E>, successors: Map<E, out Set<E>>, predecessors: Map<E, out Set<E>>,
     ) {
       this.nodes = HashSet.copyOf(nodes)
       this.successors = deepCopy(successors)
@@ -412,8 +412,9 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     }
 
     @JvmStatic
-    fun <E> buildUpon(original: DirectedGraph<E>): Builder<E> {
+    fun <E> buildUpon(original: DirectedGraph<out E>): Builder<E> {
       return if (original is ImmutableDirectedGraph<*>) {
+        @Suppress("UNCHECKED_CAST")
         (original as ImmutableDirectedGraph<E>).toBuilder()
       } else Builder(
         original.contents(),

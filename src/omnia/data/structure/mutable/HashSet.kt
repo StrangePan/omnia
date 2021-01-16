@@ -10,7 +10,7 @@ import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 
 class HashSet<E>(
-  original: Collection<E>? = null,
+  original: Collection<out E>? = null,
   equalsFunction: BiPredicate<in Any?, in Any?>? = null,
   hashFunction: ToIntFunction<in Any>? = null,
 ) : MutableSet<E> {
@@ -95,9 +95,6 @@ class HashSet<E>(
 
   companion object {
 
-    private val DEFAULT_EQUALS_FUNCTION: BiPredicate<Any?, Any?> =
-      BiPredicate { a: Any?, b: Any? -> Objects.equals(a, b) }
-    private val DEFAULT_HASH_FUNCTION: ToIntFunction<Any?> = ToIntFunction(Any?::hashCode)
     private val UNWRAPPER_FUNCTION: Function<Wrapper<*>, Any?> =
       Function<Wrapper<*>, Any?> { wrapper: Wrapper<*> -> wrapper.element() }
 
@@ -106,7 +103,7 @@ class HashSet<E>(
       return HashSet()
     }
 
-    fun <E> copyOf(original: Collection<E>): HashSet<E> {
+    fun <E> copyOf(original: Collection<out E>): HashSet<E> {
       return HashSet(original)
     }
   }
