@@ -3,6 +3,7 @@ package omnia.cli.out
 import java.util.Optional
 import java.util.function.Function
 import java.util.regex.Pattern
+import java.util.stream.Collectors.joining
 import java.util.stream.Stream
 import omnia.data.stream.Collectors
 import omnia.data.structure.List
@@ -24,7 +25,7 @@ class Output private constructor(spans: List<Span<*>>) {
    * Renders the contents of this Output for the terminal, complete with formatting and color codes.
    */
   fun render(): String {
-    return render { obj: Renderable -> obj.render() }
+    return render(Renderable::render)
   }
 
   /**
@@ -32,14 +33,17 @@ class Output private constructor(spans: List<Span<*>>) {
    * codes.
    */
   fun renderWithoutCodes(): String {
-    return render { obj: Renderable -> obj.renderWithoutCodes() }
+    return render(Renderable::renderWithoutCodes)
   }
 
   private fun render(propagation: Function<in Renderable, out StringBuilder>): String {
     val output = StringBuilder()
     for (i in 0 until spans.count()) {
       val span = spans.itemAt(i)
-      if (i > 0 && spans.itemAt(i - 1) is InlineSpan && endsInNewLine((spans.itemAt(i - 1) as InlineSpan).text) && span is LineSpan) {
+      if (i > 0
+          && spans.itemAt(i - 1) is InlineSpan
+          && endsInNewLine((spans.itemAt(i - 1) as InlineSpan).text)
+          && span is LineSpan) {
         output.append(System.lineSeparator())
       }
       output.append(propagation.apply(span))
@@ -48,16 +52,15 @@ class Output private constructor(spans: List<Span<*>>) {
   }
 
   class Builder {
-
     private val spans: MutableList<Span<*>> = ArrayList.create()
-    private var color: Optional<Color16> = Optional.empty()
-    private var background: Optional<Color16> = Optional.empty()
-    private var bold: Optional<Boolean> = Optional.empty()
-    private var dim: Optional<Boolean> = Optional.empty()
-    private var underlined: Optional<Boolean> = Optional.empty()
-    private var blinking: Optional<Boolean> = Optional.empty()
-    private var inverted: Optional<Boolean> = Optional.empty()
-    private var hidden: Optional<Boolean> = Optional.empty()
+    private var color: Color16? = null
+    private var background: Color16? = null
+    private var bold: Boolean? = null
+    private var dim: Boolean? = null
+    private var underlined: Boolean? = null
+    private var blinking: Boolean? = null
+    private var inverted: Boolean? = null
+    private var hidden: Boolean? = null
     fun append(string: String): Builder {
       if (string.isNotEmpty()) {
         spans.add(InlineSpan(string, buildFormatting()))
@@ -68,8 +71,8 @@ class Output private constructor(spans: List<Span<*>>) {
     fun append(output: Output): Builder {
       val base = buildFormatting()
       output.spans.stream()
-          .map { span: Span<*> -> span.mergeFormatting(base) }
-          .forEachOrdered { element -> spans.add(element) }
+          .map { it.mergeFormatting(base) }
+          .forEachOrdered(spans::add)
       return this
     }
 
@@ -119,123 +122,124 @@ class Output private constructor(spans: List<Span<*>>) {
     }
 
     fun color(color16: Color16): Builder {
-      color = Optional.of(color16)
+      color = color16
       return this
     }
 
     fun defaultColor(): Builder {
-      color = Optional.empty()
+      color = null
       return this
     }
 
     fun background(color16: Color16): Builder {
-      background = Optional.of(color16)
+      background = color16
       return this
     }
 
     fun defaultBackground(): Builder {
-      background = Optional.empty()
+      background = null
       return this
     }
 
     fun bold(): Builder {
-      bold = Optional.of(true)
+      bold = true
       return this
     }
 
     fun notBold(): Builder {
-      bold = Optional.of(false)
+      bold = false
       return this
     }
 
     fun defaultBold(): Builder {
-      bold = Optional.empty()
+      bold = null
       return this
     }
 
     fun dim(): Builder {
-      dim = Optional.of(true)
+      dim = true
       return this
     }
 
     fun notDim(): Builder {
-      dim = Optional.of(false)
+      dim = false
       return this
     }
 
     fun defaultDim(): Builder {
-      dim = Optional.empty()
+      dim = null
       return this
     }
 
     fun underlined(): Builder {
-      underlined = Optional.of(true)
+      underlined = true
       return this
     }
 
     fun notUnderlined(): Builder {
-      underlined = Optional.of(false)
+      underlined = false
       return this
     }
 
     fun defaultUnderline(): Builder {
-      underlined = Optional.empty()
+      underlined = null
       return this
     }
 
     fun blinking(): Builder {
-      blinking = Optional.of(true)
+      blinking = true
       return this
     }
 
     fun notBlinking(): Builder {
-      blinking = Optional.of(false)
+      blinking = false
       return this
     }
 
     fun defaultBlinking(): Builder {
-      blinking = Optional.empty()
+      blinking = null
       return this
     }
 
     fun inverted(): Builder {
-      inverted = Optional.of(true)
+      inverted = true
       return this
     }
 
     fun notInverted(): Builder {
-      inverted = Optional.of(false)
+      inverted = false
       return this
     }
 
     fun defaultInverted(): Builder {
-      inverted = Optional.empty()
+      inverted = null
       return this
     }
 
     fun hidden(): Builder {
-      hidden = Optional.of(true)
+      hidden = true
       return this
     }
 
     fun notHidden(): Builder {
-      hidden = Optional.of(false)
+      hidden = false
       return this
     }
 
     fun defaultHidden(): Builder {
-      hidden = Optional.empty()
+      hidden = null
       return this
     }
 
     fun defaultFormatting(): Builder {
-      return defaultColor().defaultBackground()
-          .defaultBold()
-          .defaultDim()
-          .defaultUnderline()
-          .defaultBlinking()
-          .defaultInverted()
-          .defaultHidden()
+      return defaultColor()
+        .defaultBackground()
+        .defaultBold()
+        .defaultDim()
+        .defaultUnderline()
+        .defaultBlinking()
+        .defaultInverted()
+        .defaultHidden()
     }
 
     private fun buildFormatting(): Formatting {
@@ -249,7 +253,7 @@ class Output private constructor(spans: List<Span<*>>) {
     companion object {
 
       private fun <T : Span<T>> mergeFormatting(base: Formatting): Function<T, T> {
-        return Function { span: T -> span.mergeFormatting(base) }
+        return Function { it.mergeFormatting(base) }
       }
 
       private fun requireNonNegative(indentation: Int) {
@@ -292,11 +296,11 @@ class Output private constructor(spans: List<Span<*>>) {
     val spans: List<InlineSpan>
     val indentation: Int
     override fun render(): StringBuilder {
-      return render { obj: Renderable -> obj.render() }
+      return render(Renderable::render)
     }
 
     override fun renderWithoutCodes(): StringBuilder {
-      return render { obj: Renderable -> obj.renderWithoutCodes() }
+      return render(Renderable::renderWithoutCodes)
     }
 
     private fun render(propagation: Function<in Renderable, out StringBuilder>): StringBuilder {
@@ -304,28 +308,29 @@ class Output private constructor(spans: List<Span<*>>) {
         return StringBuilder(System.lineSeparator())
       }
       val indentation = " ".repeat(indentation)
-      return StringBuilder(indentation).append(spans.stream()
-          .map(propagation)
-          .map { obj: Any -> obj.toString() }
-          .map { rendering: String ->
-            rendering.replace(
-                Pattern.quote(System.lineSeparator())
-                    .toRegex(),
-                System.lineSeparator() + indentation
-            )
-          }
-          .collect({ StringBuilder() },
-              { obj: StringBuilder, str: String ->
-                obj.append(str)
-              }) { obj: StringBuilder, s: StringBuilder ->
-            obj.append(s)
-          }).append(System.lineSeparator())
+      return StringBuilder(indentation)
+        .append(
+          spans.stream()
+            .map(propagation)
+            .map(Any::toString)
+            .map {
+              it.replace(
+                Pattern.quote(System.lineSeparator()).toRegex(),
+                System.lineSeparator() + indentation)
+            }
+            .collect(
+              ::StringBuilder,
+              StringBuilder::append,
+              StringBuilder::append))
+        .append(System.lineSeparator())
     }
 
     override fun mergeFormatting(base: Formatting): LineSpan {
-      return LineSpan(spans.stream()
-          .map { inlineSpan: InlineSpan -> inlineSpan.mergeFormatting(base) }
-          .collect(Collectors.toList()), indentation)
+      return LineSpan(
+        spans.stream()
+          .map { it.mergeFormatting(base) }
+          .collect(Collectors.toList()),
+        indentation)
     }
 
     init {
@@ -335,41 +340,44 @@ class Output private constructor(spans: List<Span<*>>) {
   }
 
   private class Formatting(
-      private val color: Optional<Color16>,
-      private val background: Optional<Color16>,
-      private val bold: Optional<Boolean>,
-      private val dim: Optional<Boolean>,
-      private val underlined: Optional<Boolean>,
-      private val blinking: Optional<Boolean>,
-      private val inverted: Optional<Boolean>,
-      private val hidden: Optional<Boolean>,
+      private val color: Color16?,
+      private val background: Color16?,
+      private val bold: Boolean?,
+      private val dim: Boolean?,
+      private val underlined: Boolean?,
+      private val blinking: Boolean?,
+      private val inverted: Boolean?,
+      private val hidden: Boolean?,
   ) : Renderable {
 
     fun apply(other: Formatting): Formatting {
-      return Formatting(other.color.or { color },
-          other.background.or { background },
-          other.bold.or { bold },
-          other.dim.or { dim },
-          other.underlined.or { underlined },
-          other.blinking.or { blinking },
-          other.inverted.or { inverted },
-          other.hidden.or { hidden })
+      return Formatting(
+          other.color?:color,
+          other.background?:background,
+          other.bold?:bold,
+          other.dim?:dim,
+          other.underlined?:underlined,
+          other.blinking?:blinking,
+          other.inverted?:inverted,
+          other.hidden?:hidden)
     }
 
     override fun render(): StringBuilder {
-      return StringBuilder("\u001b[").append(Stream.builder<Optional<String>>()
-          .add(Optional.of("0"))
-          .add(color.map { obj: Color16 -> obj.foregroundCode() })
-          .add(background.map { obj: Color16 -> obj.backgroundCode() })
-          .add(bold.map { "1" })
-          .add(dim.map { "2" })
-          .add(underlined.map { "4" })
-          .add(blinking.map { "5" })
-          .add(inverted.map { "7" })
-          .add(hidden.map { "8" })
-          .build()
-          .flatMap { obj: Optional<String> -> obj.stream() }
-          .collect(java.util.stream.Collectors.joining(";")))
+      return StringBuilder("\u001b[")
+        .append(
+          Stream.builder<String?>()
+            .add("0")
+            .add(color?.foregroundCode())
+            .add(background?.backgroundCode())
+            .add(if (bold != null) "1" else null)
+            .add(if (dim != null) "2" else null)
+            .add(if (underlined != null) "4" else null)
+            .add(if (blinking != null) "5" else null)
+            .add(if (inverted != null) "7" else null)
+            .add(if (hidden != null) "8" else null)
+            .build()
+            .flatMap { if (it != null) Stream.of(it) else Stream.empty() }
+          .collect(joining(";")))
           .append("m")
     }
 
@@ -378,25 +386,12 @@ class Output private constructor(spans: List<Span<*>>) {
     }
 
     companion object {
-
-      val EMPTY: Formatting = Formatting(
-          Optional.empty(),
-          Optional.empty(),
-          Optional.empty(),
-          Optional.empty(),
-          Optional.empty(),
-          Optional.empty(),
-          Optional.empty(),
-          Optional.empty()
-      )
+      val EMPTY: Formatting = Formatting(null, null, null, null, null, null, null, null)
     }
   }
 
   enum class Color16(private val foreground: String, private val background: String) {
-    DEFAULT(
-        "39",
-        "49"
-    ),
+    DEFAULT("39", "49"),
     BLACK("30", "40"),
     RED("31", "41"),
     GREEN("32", "42"),
@@ -447,13 +442,7 @@ class Output private constructor(spans: List<Span<*>>) {
     @JvmStatic
     fun justLine(message: String): Output {
       return if (message.isEmpty()) empty() else Output(
-          ImmutableList.of(
-              LineSpan(
-                  ImmutableList.of(
-                      InlineSpan(message, Formatting.EMPTY)
-                  ), 0
-              )
-          )
+          ImmutableList.of(LineSpan(ImmutableList.of(InlineSpan(message, Formatting.EMPTY)), 0))
       )
     }
 
