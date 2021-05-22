@@ -1,12 +1,11 @@
 package omnia.data.structure.immutable
 
-import java.util.Optional
 import java.util.stream.Stream
 import omnia.data.structure.Collection
 import omnia.data.structure.SortedSet
 import omnia.data.structure.mutable.TreeSet
 
-/** An immutable version of [SortedSet].  */
+/** An immutable version of [SortedSet]. */
 class ImmutableSortedSet<E> private constructor(
   comparator: Comparator<in E>,
   other: Collection<out E>
@@ -14,19 +13,14 @@ class ImmutableSortedSet<E> private constructor(
 
   private val baseSet: TreeSet<E> = TreeSet.create(comparator)
 
+  init {
+    baseSet.addAll(other)
+  }
+
   override fun contains(item: E): Boolean {
     return baseSet.contains(item)
   }
 
-  /**
-   * @inheritDoc
-   *
-   * **Note:** this type-unsafe version of [contains] is inherently less performant
-   * because we cannot perform a binary search on objects of unknown types.
-   *
-   * @param item the element to search for
-   * @return true if the set contains the element, false if not
-   */
   override fun containsUnknownTyped(item: Any?): Boolean {
     return baseSet.containsUnknownTyped(item)
   }
@@ -38,12 +32,20 @@ class ImmutableSortedSet<E> private constructor(
   override val isPopulated: Boolean
     get() = baseSet.isPopulated
 
-  override fun itemPreceding(other: E): Optional<E> {
+  override fun itemPreceding(other: E): E? {
     return baseSet.itemPreceding(other)
   }
 
-  override fun itemFollowing(other: E): Optional<E> {
+  override fun itemPrecedingUnknownTyped(other: Any?): E? {
+    return baseSet.itemPrecedingUnknownTyped(other)
+  }
+
+  override fun itemFollowing(other: E): E? {
     return baseSet.itemFollowing(other)
+  }
+
+  override fun itemFollowingUnknownTyped(other: Any?): E? {
+    return baseSet.itemFollowingUnknownTyped(other)
   }
 
   override fun iterator(): Iterator<E> {
@@ -73,7 +75,4 @@ class ImmutableSortedSet<E> private constructor(
     }
   }
 
-  init {
-    baseSet.addAll(other)
-  }
 }
