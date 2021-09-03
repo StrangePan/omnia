@@ -3,6 +3,7 @@ package omnia.algorithm
 import java.util.Optional
 import omnia.data.stream.Collectors.toImmutableSet
 import omnia.data.stream.Collectors.toSet
+import omnia.data.structure.Collection
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.DirectedGraph.DirectedNode
 import omnia.data.structure.Graph
@@ -261,6 +262,73 @@ object GraphAlgorithms {
       optionalNode = queue.dequeue()
     }
     return ImmutableSet.copyOf(set)
+  }
+
+  /** Finds and returns all transitive predecessors of the specified nodes. */
+  @JvmStatic
+  fun <T : DirectedNode<*>> findAllPredecessorsOf(nodes: Collection<T>): ImmutableSet<T> {
+    val seenNodes = HashSet.copyOf(nodes)
+    val queue = ArrayQueue.create<T>()
+    for (node in nodes) {
+      queue.enqueue(node)
+    }
+    while (queue.isPopulated) {
+      val node = queue.dequeue().orElseThrow()
+      for (predecessor in node.predecessors()) {
+        @Suppress("UNCHECKED_CAST")
+        if (predecessor as T !in seenNodes) {
+          seenNodes.add(predecessor)
+          queue.enqueue(predecessor)
+        }
+      }
+    }
+    return ImmutableSet.copyOf(seenNodes)
+  }
+
+  /** Finds all transitive successors of the specified nodes. */
+  @JvmStatic
+  fun <T : DirectedNode<*>> findAllSuccessorsOf(nodes: Collection<T>): ImmutableSet<T> {
+    val seenNodes = HashSet.copyOf(nodes)
+    val queue = ArrayQueue.create<T>()
+    for (node in nodes) {
+      queue.enqueue(node)
+    }
+    while (queue.isPopulated) {
+      val node = queue.dequeue().orElseThrow()
+      for (successor in node.successors()) {
+        @Suppress("UNCHECKED_CAST")
+        if (successor as T !in seenNodes) {
+          seenNodes.add(successor)
+          queue.enqueue(successor)
+        }
+      }
+    }
+    return ImmutableSet.copyOf(seenNodes)
+  }
+
+  /**
+   * Returns all nodes that are transitive successors or transitive predecessors of the specified
+   * nodes. this differs from [findOtherNodesInSubgraphContaining] in that this will not include
+   * nodes that are not transitive successors or predecessors of the specified nodes; neighboring
+   * nodes are not intrinsically included.
+   */
+  @JvmStatic
+  fun <T : DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(nodes: Collection<T>):
+      ImmutableSet<T> {
+    return SetAlgorithms.unionOf(findAllPredecessorsOf(nodes), findAllSuccessorsOf(nodes))
+  }
+
+  /**
+   * Returns all nodes that are transitive successors or transitive predecessors of the specified
+   * nodes. this differs from [findOtherNodesInSubgraphContaining] in that this will not include
+   * nodes that are not transitive successors or predecessors of the specified nodes; neighboring
+   * nodes are not intrinsically included.
+   */
+  @JvmStatic
+  fun <T : DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(node: T):
+      ImmutableSet<T> {
+    return SetAlgorithms.unionOf(
+      findAllPredecessorsOf(ImmutableSet.of(node)), findAllSuccessorsOf(ImmutableSet.of(node)))
   }
 
   /**
