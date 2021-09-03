@@ -1,6 +1,5 @@
 package omnia.cli.out
 
-import java.util.Optional
 import java.util.function.Function
 import java.util.regex.Pattern
 import java.util.stream.Collectors.joining
@@ -363,7 +362,7 @@ class Output private constructor(spans: List<Span<*>>) {
     }
 
     override fun render(): StringBuilder {
-      return StringBuilder("\u001b[")
+      return StringBuilder(RENDER_CODE_PREFIX)
         .append(
           Stream.builder<String?>()
             .add("0")
@@ -377,8 +376,8 @@ class Output private constructor(spans: List<Span<*>>) {
             .add(if (hidden != null) "8" else null)
             .build()
             .flatMap { if (it != null) Stream.of(it) else Stream.empty() }
-          .collect(joining(";")))
-          .append("m")
+          .collect(joining(RENDER_CODE_DELIMITER)))
+          .append(RENDER_CODE_SUFFIX)
     }
 
     override fun renderWithoutCodes(): StringBuilder {
@@ -387,6 +386,9 @@ class Output private constructor(spans: List<Span<*>>) {
 
     companion object {
       val EMPTY: Formatting = Formatting(null, null, null, null, null, null, null, null)
+      const val RENDER_CODE_PREFIX = "\u001b["
+      const val RENDER_CODE_DELIMITER = ";"
+      const val RENDER_CODE_SUFFIX = "m"
     }
   }
 
@@ -454,6 +456,24 @@ class Output private constructor(spans: List<Span<*>>) {
     @JvmStatic
     fun empty(): Output {
       return EMPTY
+    }
+
+    /**
+     * Strip terminal color codes embedded from the given string and return the same string with all
+     * formatting codes removed.
+     *
+     * Uses Regex to strip console formatting codescd out of the provided string.
+     */
+    @JvmStatic
+    fun stripCodes(text: String): String {
+      val renderCodeRegex =
+        Regex.fromLiteral(
+          Regex.escape(Formatting.RENDER_CODE_PREFIX)
+              + "(\\d+"
+              + Regex.escape(Formatting.RENDER_CODE_DELIMITER)
+              + ")*"
+              + Regex.escape(Formatting.RENDER_CODE_SUFFIX))
+      return text.replace(renderCodeRegex, "")
     }
   }
 
