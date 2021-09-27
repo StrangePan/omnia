@@ -90,6 +90,10 @@ class ImmutableSet<E> : Set<E> {
     return hashCode.value()
   }
 
+  override fun toString(): String {
+    return elements.toString()
+  }
+
   private val hashCode: MemoizedInt = MemoizedInt.memoize { computeHash() }
 
   private fun computeHash(): Int {

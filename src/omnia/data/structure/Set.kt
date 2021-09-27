@@ -6,31 +6,35 @@ import omnia.data.iterate.ReadOnlyIterator
 interface Set<E> : Collection<E> {
   companion object {
 
-    fun <E> masking(javaSet: kotlin.collections.Set<E>): Set<E> {
+    fun <E> masking(kotlinSet: kotlin.collections.Set<E>): Set<E> {
       return object : Set<E> {
         override val isPopulated: Boolean
-          get() = javaSet.isNotEmpty()
+          get() = kotlinSet.isNotEmpty()
 
         override fun count(): Int {
-          return javaSet.size
+          return kotlinSet.size
         }
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return javaSet.contains(item)
+          return kotlinSet.contains(item)
         }
 
         override fun iterator(): Iterator<E> {
-          return ReadOnlyIterator(javaSet.iterator())
+          return ReadOnlyIterator(kotlinSet.iterator())
         }
 
         override fun stream(): Stream<E> {
-          return javaSet.stream()
+          return kotlinSet.stream()
+        }
+
+        override fun toString(): String {
+          return kotlinSet.toString()
         }
       }
     }
 
-    fun <E> masking(javaCollection: kotlin.collections.Collection<E>): Set<E> {
-      return masking(HashSet(javaCollection))
+    fun <E> masking(kotlinCollection: kotlin.collections.Collection<E>): Set<E> {
+      return masking(HashSet(kotlinCollection))
     }
 
     @JvmStatic

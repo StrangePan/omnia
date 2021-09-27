@@ -1,9 +1,10 @@
 package omnia.algorithm
 
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth8
+import com.google.common.truth.Truth8.assertThat
 import java.util.Arrays
 import java.util.Optional
+import omnia.algorithm.GraphAlgorithms.findAnyCycle
 import omnia.algorithm.GraphAlgorithms.findOtherNodesInSubgraphContaining
 import omnia.algorithm.GraphAlgorithms.isCyclical
 import omnia.algorithm.GraphAlgorithms.isolatedElements
@@ -16,6 +17,7 @@ import omnia.data.structure.Graph
 import omnia.data.structure.List
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
+import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.mutable.HashSet
 import omnia.data.structure.mutable.MutableSet
@@ -267,6 +269,40 @@ class GraphAlgorithmsTest {
   }
 
   @RunWith(JUnit4::class)
+  class GraphAlgorithms_FindAnyCycleTest {
+
+    @Test
+    fun findAnyCycle_whenEmpty_isEmpty() {
+      assertThat(findAnyCycle(ImmutableDirectedGraph.empty<Int>())).isEmpty()
+    }
+
+    @Test
+    fun findAnyCycle_whenSingleNode_isEmpty() {
+      assertThat(findAnyCycle(ImmutableDirectedGraph.builder<Int>().addNode(1).build())).isEmpty()
+    }
+
+    @Test
+    fun findAnyCycle_whenSingleNode_whenCyclical_containsNode() {
+      assertThat(
+              findAnyCycle(ImmutableDirectedGraph.builder<Int>().addNode(1).addEdge(1, 1).build()))
+          .hasValue(ImmutableList.of(1))
+    }
+
+    @Test
+    fun findAnyCycle_whenTwoNodes_whenCyclical_containsNodes() {
+      assertThat(
+              findAnyCycle(
+                  ImmutableDirectedGraph.builder<Int>()
+                      .addNode(1)
+                      .addNode(2)
+                      .addEdge(1, 2)
+                      .addEdge(2, 1)
+                      .build()))
+          .hasValue(ImmutableList.of(1, 2))
+    }
+  }
+
+  @RunWith(JUnit4::class)
   class GraphAlgorithms_TopologicallySortTest {
 
     @Test
@@ -446,7 +482,7 @@ class GraphAlgorithmsTest {
 
             // O(N)
             for (item in list) {
-              Truth8.assertThat(graph.nodeOf(item)).isPresent()
+              assertThat(graph.nodeOf(item)).isPresent()
             }
             val cumulativePredecessors: MutableSet<T> = HashSet.create()
 
