@@ -4,45 +4,45 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import omnia.data.structure.Collection
 
-open class MaskingSet<E, J : kotlin.collections.MutableSet<E>>(private val javaSet: J) :
+open class MaskingSet<E, J : kotlin.collections.MutableSet<E>>(private val kotlinSet: J) :
   MutableSet<E> {
 
   protected fun javaSet(): J {
-    return javaSet
+    return kotlinSet
   }
 
   override fun add(item: E) {
-    javaSet.add(item)
+    kotlinSet.add(item)
   }
 
   override fun addAll(items: Collection<out E>) {
-    javaSet.addAll(items.stream().collect(Collectors.toSet()))
+    kotlinSet.addAll(items.stream().collect(Collectors.toSet()))
   }
 
   override fun removeUnknownTyped(item: Any?): Boolean {
-    return javaSet.remove(item)
+    return kotlinSet.remove(item)
   }
 
   override fun clear() {
-    javaSet.clear()
+    kotlinSet.clear()
   }
 
   override fun iterator(): Iterator<E> {
-    return javaSet.iterator()
+    return kotlinSet.iterator()
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {
-    return javaSet.contains(item)
+    return kotlinSet.contains(item)
   }
 
   override val isPopulated: Boolean
-    get() = javaSet.isNotEmpty()
+    get() = kotlinSet.isNotEmpty()
 
   override fun count(): Int {
-    return javaSet.size
+    return kotlinSet.size
   }
 
   override fun stream(): Stream<E> {
-    return javaSet.stream()
+    return kotlinSet.stream()
   }
 }

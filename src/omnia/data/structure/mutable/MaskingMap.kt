@@ -9,45 +9,45 @@ import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 
-open class MaskingMap<K, V>(private val javaMap: kotlin.collections.MutableMap<K, V>) :
+open class MaskingMap<K, V>(private val kotlinMap: kotlin.collections.MutableMap<K, V>) :
   MutableMap<K, V> {
 
   override fun putMapping(key: K, value: V) {
-    javaMap[key] = value
+    kotlinMap[key] = value
   }
 
   override fun putMappingIfAbsent(key: K, value: Supplier<V>): V {
-    return javaMap.computeIfAbsent(key, { value.get() })
+    return kotlinMap.computeIfAbsent(key, { value.get() })
   }
 
   override fun removeUnknownTypedKey(key: Any?): Optional<V> {
-    return Optional.ofNullable(javaMap.remove(key))
+    return Optional.ofNullable(kotlinMap.remove(key))
   }
 
   override fun keys(): Set<K> {
-    return Set.masking(javaMap.keys)
+    return Set.masking(kotlinMap.keys)
   }
 
   override fun values(): Collection<V> {
-    return Collection.masking(javaMap.values)
+    return Collection.masking(kotlinMap.values)
   }
 
   override fun entries(): Set<Map.Entry<K, V>> {
     return object : Set<Map.Entry<K, V>> {
       override fun containsUnknownTyped(item: Any?): Boolean {
-        return (item is Map.Entry<*, *> && javaMap[item.key()] == item.value())
+        return (item is Map.Entry<*, *> && kotlinMap[item.key()] == item.value())
       }
 
       override fun stream(): Stream<Map.Entry<K, V>> {
-        return javaMap.entries.stream().map { javaEntry -> Map.Entry.masking(javaEntry) }
+        return kotlinMap.entries.stream().map { javaEntry -> Map.Entry.masking(javaEntry) }
       }
 
       override fun count(): Int {
-        return javaMap.size
+        return kotlinMap.size
       }
 
       override fun iterator(): Iterator<Map.Entry<K, V>> {
-        return MappingIterator(javaMap.entries.iterator()) { javaEntry ->
+        return MappingIterator(kotlinMap.entries.iterator()) { javaEntry ->
           Map.Entry.masking(
             javaEntry
           )
@@ -57,11 +57,11 @@ open class MaskingMap<K, V>(private val javaMap: kotlin.collections.MutableMap<K
   }
 
   override fun valueOfUnknownTyped(key: Any?): Optional<V> {
-    return Optional.ofNullable(javaMap[key])
+    return Optional.ofNullable(kotlinMap[key])
   }
 
   override fun keysOfUnknownTyped(value: Any?): Set<K> {
-    return javaMap.entries
+    return kotlinMap.entries
       .stream()
       .filter { e -> e.value == value }
       .map { e -> e.key }
@@ -69,6 +69,6 @@ open class MaskingMap<K, V>(private val javaMap: kotlin.collections.MutableMap<K
   }
 
   override fun toString(): String {
-    return javaMap.toString()
+    return kotlinMap.toString()
   }
 }
