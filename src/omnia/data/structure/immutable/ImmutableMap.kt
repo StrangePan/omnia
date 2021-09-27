@@ -1,7 +1,6 @@
 package omnia.data.structure.immutable
 
 import java.util.Arrays
-import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import java.util.function.Supplier
@@ -13,22 +12,22 @@ import omnia.data.structure.Set
 
 class ImmutableMap<K, V> : Map<K, V> {
 
-  private val javaMap: MutableMap<K, V> = kotlin.collections.HashMap()
+  private val kotlinMap: MutableMap<K, V> = kotlin.collections.HashMap()
   fun toBuilder(): Builder<K, V> {
     return buildUpon(this)
   }
 
   class Builder<K, V> {
 
-    val javaMap: MutableMap<K, V> = kotlin.collections.HashMap()
+    val kotlinMap: MutableMap<K, V> = kotlin.collections.HashMap()
     fun putMapping(key: K, value: V): Builder<K, V> {
-      javaMap[key] = value
+      kotlinMap[key] = value
       return this
     }
 
     fun putMappingIfAbsent(key: K, value: Supplier<out V>): Builder<K, V> {
       Objects.requireNonNull(value)
-      javaMap.computeIfAbsent(Objects.requireNonNull(key), { value.get() })
+      kotlinMap.computeIfAbsent(Objects.requireNonNull(key)) { value.get() }
       return this
     }
 
@@ -47,28 +46,28 @@ class ImmutableMap<K, V> : Map<K, V> {
     }
 
     fun removeUnknownTypedKey(key: Any?): Builder<K, V> {
-      javaMap.remove(key)
+      kotlinMap.remove(key)
       return this
     }
 
     fun build(): ImmutableMap<K, V> {
-      return if (javaMap.isEmpty()) empty() else ImmutableMap(this)
+      return if (kotlinMap.isEmpty()) empty() else ImmutableMap(this)
     }
   }
 
   private constructor()
-  private constructor(javaMap: MutableMap<K, V>) {
-    this.javaMap.putAll(javaMap)
+  private constructor(map: kotlin.collections.Map<K, V>) {
+    this.kotlinMap.putAll(map)
   }
 
-  private constructor(builder: Builder<K, V>) : this(builder.javaMap)
+  private constructor(builder: Builder<K, V>) : this(builder.kotlinMap)
 
   override fun keys(): Set<K> {
-    return Set.masking(javaMap.keys)
+    return Set.masking(kotlinMap.keys)
   }
 
   override fun values(): Collection<V> {
-    return Collection.masking(javaMap.values)
+    return Collection.masking(kotlinMap.values)
   }
 
   override fun entries(): Set<Map.Entry<K, V>> {
@@ -101,20 +100,20 @@ class ImmutableMap<K, V> : Map<K, V> {
         return key().toString() + " => " + value().toString()
       }
     }
-    return javaMap.entries.stream()
+    return kotlinMap.entries.stream()
       .map { javaEntry -> Entry(javaEntry) }
       .collect(Collectors.toImmutableSet())
   }
 
   override fun valueOfUnknownTyped(key: Any?): Optional<V> {
-    return Optional.ofNullable(javaMap.get(key))
+    return Optional.ofNullable(kotlinMap[key])
   }
 
   override fun keysOfUnknownTyped(value: Any?): Set<K> {
-    return javaMap.entries
+    return kotlinMap.entries
       .stream()
-      .filter { e -> e.value == value }
-      .map { entry -> entry.key }
+      .filter { it.value == value }
+      .map { it.key }
       .collect(Collectors.toImmutableSet())
   }
 
@@ -173,7 +172,7 @@ class ImmutableMap<K, V> : Map<K, V> {
 
     @JvmStatic
     fun <K, V> of(key: K, value: V): ImmutableMap<K, V> {
-      return ImmutableMap(Collections.singletonMap(key, value))
+      return ImmutableMap(mapOf(Pair(key, value)))
     }
 
     @JvmStatic
