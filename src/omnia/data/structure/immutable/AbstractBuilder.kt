@@ -5,7 +5,7 @@ import omnia.data.structure.mutable.MutableList
 
 abstract class AbstractBuilder<E, B : AbstractBuilder<E, B, R>, R> {
 
-  val elements: MutableList<E> = ArrayList()
+  val elements: MutableList<E> = ArrayList.create()
 
   fun add(element: E): B {
     elements.add(element)
