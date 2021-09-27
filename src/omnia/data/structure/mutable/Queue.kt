@@ -1,10 +1,9 @@
 package omnia.data.structure.mutable
 
-import java.util.Objects
 import java.util.Optional
 import omnia.contract.Countable
 
-interface Queue<E> : Countable, Iterable<E> {
+interface Queue<E: Any> : Countable, Iterable<E> {
 
   fun enqueue(item: E)
   fun dequeue(): Optional<E>
@@ -23,35 +22,35 @@ interface Queue<E> : Countable, Iterable<E> {
 
   companion object {
 
-    fun <E> masking(javaQueue: java.util.Queue<E>): Queue<E> {
+    fun <E: Any> masking(kotlinList: kotlin.collections.MutableList<E>): Queue<E> {
       return object : Queue<E> {
         override fun dequeue(): Optional<E> {
-          return Optional.ofNullable(javaQueue.poll())
+          return Optional.ofNullable(kotlinList.removeFirstOrNull())
         }
 
         override fun peek(): Optional<E> {
-          return Optional.ofNullable(javaQueue.peek())
+          return Optional.ofNullable(kotlinList.firstOrNull())
         }
 
         override fun enqueue(item: E) {
-          javaQueue.add(Objects.requireNonNull(item))
+          kotlinList.add(item)
         }
 
         override fun count(): Int {
-          return javaQueue.size
+          return kotlinList.size
         }
 
         override val isPopulated: Boolean
-          get() = !javaQueue.isEmpty()
+          get() = kotlinList.isNotEmpty()
 
         override fun iterator(): Iterator<E> {
           return object : Iterator<E> {
             override fun hasNext(): Boolean {
-              return !javaQueue.isEmpty()
+              return kotlinList.isNotEmpty()
             }
 
             override fun next(): E {
-              return javaQueue.remove()
+              return kotlinList.removeFirst()
             }
           }
         }
