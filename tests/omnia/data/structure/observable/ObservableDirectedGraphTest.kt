@@ -187,7 +187,7 @@ class ObservableDirectedGraphTest {
       event.operations().stream().findFirst().get() is ObservableGraph.AddNodeToGraph<*>
     }
     subscriber.assertValue { event ->
-      (event!!.operations().stream()
+      (event.operations().stream()
         .findFirst()
         .map { op: GraphOperation<Any>? -> op as ObservableGraph.AddNodeToGraph<Any>? }
         .get()
@@ -226,7 +226,7 @@ class ObservableDirectedGraphTest {
       event.operations().stream().findFirst().get() is ObservableGraph.RemoveNodeFromGraph<*>
     }
     testSubscriber.assertValue { event ->
-      (event!!.operations().stream()
+      (event.operations().stream()
         .findFirst()
         .map { op -> op as ObservableGraph.RemoveNodeFromGraph<Any>? }
         .get()
@@ -248,7 +248,7 @@ class ObservableDirectedGraphTest {
       event.operations().stream().findFirst().get() is ObservableGraph.RemoveEdgeFromGraph<*>
     }
     testSubscriber.assertValue { event ->
-      (event!!.operations().stream()
+      (event.operations().stream()
         .findFirst()
         .map { op -> op as ObservableGraph.RemoveEdgeFromGraph<Any> }
         .get()

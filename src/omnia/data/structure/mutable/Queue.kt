@@ -3,7 +3,7 @@ package omnia.data.structure.mutable
 import java.util.Optional
 import omnia.contract.Countable
 
-interface Queue<E: Any> : Countable, Iterable<E> {
+interface Queue<E> : Countable, Iterable<E> {
 
   fun enqueue(item: E)
   fun dequeue(): Optional<E>
@@ -22,7 +22,7 @@ interface Queue<E: Any> : Countable, Iterable<E> {
 
   companion object {
 
-    fun <E: Any> masking(kotlinList: kotlin.collections.MutableList<E>): Queue<E> {
+    fun <E> masking(kotlinList: kotlin.collections.MutableList<E>): Queue<E> {
       return object : Queue<E> {
         override fun dequeue(): Optional<E> {
           return Optional.ofNullable(kotlinList.removeFirstOrNull())
