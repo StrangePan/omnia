@@ -1,20 +1,18 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import java.util.function.DoubleSupplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import kotlin.test.Test
+
 import org.mockito.Mockito
 
-@RunWith(JUnit4::class)
 class SimpleDoubleCacherTest {
 
   @Test
   fun value_didReturnSuppliedValue() {
     val testValue = 132.0
     val testSubject: CachedDouble = SimpleDoubleCacher { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -22,7 +20,7 @@ class SimpleDoubleCacherTest {
     val testValue = 132.0
     val testSubject: CachedDouble = SimpleDoubleCacher { testValue }
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -66,7 +64,6 @@ class SimpleDoubleCacherTest {
     testSubject.value()
     Mockito.verify(supplier, Mockito.times(2)).asDouble
   }
-
 
   companion object {
 

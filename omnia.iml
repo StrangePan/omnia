@@ -13,8 +13,8 @@
     <orderEntry type="library" exported="" name="org.jetbrains.kotlin:kotlin-stdlib:1.4.21" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.truth.extensions:truth-java8-extension:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.truth:truth:1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="junit:junit:4.12" level="project" />
-    <orderEntry type="library" scope="TEST" name="org.junit.jupiter:junit-jupiter:5.5.2" level="project" />
     <orderEntry type="library" scope="TEST" name="org.mockito:mockito-core:3.2.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="jetbrains.kotlin.test" level="application" />
+    <orderEntry type="library" scope="TEST" name="jetbrains.kotlin.test.junit" level="application" />
   </component>
 </module>

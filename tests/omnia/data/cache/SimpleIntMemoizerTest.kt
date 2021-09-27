@@ -1,21 +1,19 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import java.util.function.IntSupplier
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+
+import kotlin.test.Test
+
 import org.mockito.Mockito
 
-@RunWith(JUnit4::class)
 class SimpleIntMemoizerTest {
 
   @Test
   fun value_didReturnSuppliedResult() {
     val testValue = 132
     val testSubject: MemoizedInt = SimpleIntMemoizer { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -23,7 +21,7 @@ class SimpleIntMemoizerTest {
     val testValue = 132
     val testSubject: MemoizedInt = SimpleIntMemoizer { testValue }
     testSubject.value()
-    Assert.assertEquals(testValue.toLong(), testSubject.value().toLong())
+    assertThat(testSubject.value().toLong()).isEqualTo(testValue.toLong())
   }
 
   @Test

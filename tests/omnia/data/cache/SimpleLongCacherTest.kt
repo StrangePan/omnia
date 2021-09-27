@@ -1,20 +1,18 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import java.util.function.LongSupplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import kotlin.test.Test
+
 import org.mockito.Mockito
 
-@RunWith(JUnit4::class)
 class SimpleLongCacherTest {
 
   @Test
   fun value_didReturnSuppliedValue() {
     val testValue = 132L
     val testSubject: CachedLong = SimpleLongCacher { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -22,7 +20,7 @@ class SimpleLongCacherTest {
     val testValue = 132L
     val testSubject: CachedLong = SimpleLongCacher { testValue }
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test

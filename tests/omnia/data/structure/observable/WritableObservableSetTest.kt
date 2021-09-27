@@ -1,8 +1,9 @@
 package omnia.data.structure.observable
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import io.reactivex.rxjava3.observers.TestObserver
 import java.util.function.Consumer
+import kotlin.test.Test
 import omnia.algorithm.SetAlgorithms.unionOf
 import omnia.data.stream.Collectors.toImmutableSet
 import omnia.data.structure.Set
@@ -11,26 +12,20 @@ import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.mutable.MutableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
 import omnia.data.structure.observable.writable.WritableObservableSet
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
 class WritableObservableSetTest {
 
   @Test
   fun getIsPopulated_whenInit_isEmpty() {
-    Truth.assertThat(WritableObservableSet.create<Any>().isPopulated).isFalse()
+    assertThat(WritableObservableSet.create<Any>().isPopulated).isFalse()
   }
-
 
   @Test
   fun getIsPopulated_whenItemsAdded_isPopulated() {
     val set: MutableSet<Any> = WritableObservableSet.create()
     set.add(Any())
-    Truth.assertThat(set.isPopulated).isTrue()
+    assertThat(set.isPopulated).isTrue()
   }
-
 
   @Test
   fun getIsPopulated_whenItemsAddedThenRemoved_isEmpty() {
@@ -38,9 +33,8 @@ class WritableObservableSetTest {
     val `object` = Any()
     set.add(`object`)
     set.remove(`object`)
-    Truth.assertThat(set.isPopulated).isFalse()
+    assertThat(set.isPopulated).isFalse()
   }
-
 
   @Test
   fun getIsPopulated_whenItemsAddedThenCleared_isEmpty() {
@@ -48,12 +42,12 @@ class WritableObservableSetTest {
     val set: MutableSet<Any> = WritableObservableSet.create()
     contents.forEach(Consumer { item: Any -> set.add(item) })
     set.clear()
-    Truth.assertThat(set.isPopulated).isFalse()
+    assertThat(set.isPopulated).isFalse()
   }
 
   @Test
   fun count_whenInit_isZero() {
-    Truth.assertThat(WritableObservableSet.create<Any>().count()).isEqualTo(0)
+    assertThat(WritableObservableSet.create<Any>().count()).isEqualTo(0)
   }
 
   @Test
@@ -61,7 +55,7 @@ class WritableObservableSetTest {
     val contents: Set<Any> = ImmutableSet.of(Any(), Any())
     val set: MutableSet<Any> = WritableObservableSet.create()
     contents.forEach(Consumer { item: Any -> set.add(item) })
-    Truth.assertThat(set.count()).isEqualTo(contents.count())
+    assertThat(set.count()).isEqualTo(contents.count())
   }
 
   @Test
@@ -70,7 +64,7 @@ class WritableObservableSetTest {
     val set: MutableSet<Any> = WritableObservableSet.create()
     contents.forEach(Consumer { item: Any -> set.add(item) })
     contents.forEach(Consumer { item: Any -> set.remove(item) })
-    Truth.assertThat(set.count()).isEqualTo(0)
+    assertThat(set.count()).isEqualTo(0)
   }
 
   @Test
@@ -79,7 +73,7 @@ class WritableObservableSetTest {
     val set: MutableSet<Any> = WritableObservableSet.create()
     contents.forEach(Consumer { item: Any -> set.add(item) })
     set.clear()
-    Truth.assertThat(set.count()).isEqualTo(0)
+    assertThat(set.count()).isEqualTo(0)
   }
 
   @Test
@@ -124,9 +118,9 @@ class WritableObservableSetTest {
         .flatMapIterable { s -> s }
         .test()
     testSubscriber.values().forEach { operation ->
-      Truth.assertThat(operation).isInstanceOf(ObservableSet.AddToSet::class.java)
+      assertThat(operation).isInstanceOf(ObservableSet.AddToSet::class.java)
     }
-    Truth.assertThat(
+    assertThat(
       testSubscriber.values().stream()
         .map { operation -> operation as ObservableSet.AddToSet<*> }
         .map { obj -> obj.item() }
@@ -147,9 +141,9 @@ class WritableObservableSetTest {
     addedContents.forEach(Consumer { item: Any -> set.add(item) })
     testSubscriber.assertValueCount(addedContents.count())
     testSubscriber.values().forEach { actualState: Set<Any> ->
-      Truth.assertThat(finalContents).containsAtLeastElementsIn(actualState)
+      assertThat(finalContents).containsAtLeastElementsIn(actualState)
     }
-    Truth.assertThat(testSubscriber.values()[addedContents.count() - 1])
+    assertThat(testSubscriber.values()[addedContents.count() - 1])
       .containsExactlyElementsIn(finalContents)
   }
 
@@ -166,20 +160,20 @@ class WritableObservableSetTest {
     removedContents.forEach(Consumer { item: Any -> set.remove(item) })
     testSubscriber.assertValueCount(removedContents.count())
     testSubscriber.values()
-      .forEach { event -> Truth.assertThat(event.operations().count()).isEqualTo(1) }
+      .forEach { event -> assertThat(event.operations().count()).isEqualTo(1) }
     val operations: Set<out SetOperation<Any>> =
       testSubscriber.values().stream()
         .map { obj -> obj.operations() }
         .flatMap { obj -> obj.stream() }
         .collect(toImmutableSet())
     operations.forEach { operation ->
-      Truth.assertThat(operation).isInstanceOf(ObservableSet.RemoveFromSet::class.java)
+      assertThat(operation).isInstanceOf(ObservableSet.RemoveFromSet::class.java)
     }
     val actualRemovedContents: Set<Any> = operations.stream()
       .map { operation -> operation as ObservableSet.RemoveFromSet<Any> }
       .map { obj -> obj.item() }
       .collect(toImmutableSet())
-    Truth.assertThat(actualRemovedContents).containsExactlyElementsIn(removedContents)
+    assertThat(actualRemovedContents).containsExactlyElementsIn(removedContents)
   }
 
   @Test
@@ -198,13 +192,13 @@ class WritableObservableSetTest {
       .flatMap { obj -> obj.stream() }
       .collect(toImmutableSet())
     operations.forEach { operation ->
-      Truth.assertThat(operation).isInstanceOf(ObservableSet.RemoveFromSet::class.java)
+      assertThat(operation).isInstanceOf(ObservableSet.RemoveFromSet::class.java)
     }
     val actualRemovedContents: Set<Any> = operations.stream()
       .map { operation -> operation as ObservableSet.RemoveFromSet<Any> }
       .map { obj -> obj.item() }
       .collect(toImmutableSet())
-    Truth.assertThat(actualRemovedContents).containsExactlyElementsIn(contents)
+    assertThat(actualRemovedContents).containsExactlyElementsIn(contents)
   }
 
   @Test

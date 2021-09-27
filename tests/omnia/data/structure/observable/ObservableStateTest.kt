@@ -1,12 +1,9 @@
 package omnia.data.structure.observable
 
+import kotlin.test.Test
 import omnia.data.structure.observable.ObservableState.Companion.create
 import omnia.data.structure.tuple.Tuple
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
 class ObservableStateTest {
 
   private val underTest = create(0)

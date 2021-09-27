@@ -4,6 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth8.assertThat
 import java.util.Arrays
 import java.util.Optional
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import omnia.algorithm.GraphAlgorithms.findAnyCycle
 import omnia.algorithm.GraphAlgorithms.findOtherNodesInSubgraphContaining
 import omnia.algorithm.GraphAlgorithms.isCyclical
@@ -21,13 +23,9 @@ import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.mutable.HashSet
 import omnia.data.structure.mutable.MutableSet
-import org.junit.Test
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 class GraphAlgorithmsTest {
-  @RunWith(JUnit4::class)
+
   class GraphAlgorithms_IsolatedElementsTest {
 
     @Test
@@ -62,7 +60,6 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_SourceElementsTest {
 
     @Test
@@ -104,7 +101,6 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_SinkElements {
 
     @Test
@@ -146,7 +142,6 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_IsCyclicalTest {
 
     @Test
@@ -268,7 +263,6 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_FindAnyCycleTest {
 
     @Test
@@ -302,14 +296,11 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_TopologicallySortTest {
 
     @Test
     fun topologicallySort_whenSingleNode_whenCyclical_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -321,9 +312,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun topologicallySort_whenLollipop_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -339,9 +328,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun topologicallySort_whenCycle_withTwoNodes_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -355,9 +342,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun topologicallySort_whenCycle_withThreeNodes_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -523,7 +508,6 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_FindOtherNodesInSubgraphContainingTest {
 
     @Test
@@ -542,7 +526,7 @@ class GraphAlgorithmsTest {
         .build()
 
       assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(2).orElseThrow()))
-        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3));
+        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3))
     }
 
     @Test
@@ -557,7 +541,7 @@ class GraphAlgorithmsTest {
         .build()
 
       assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(2).orElseThrow()))
-        .containsExactlyElementsIn(nodesFor(graph, 2));
+        .containsExactlyElementsIn(nodesFor(graph, 2))
     }
 
     @Test
@@ -575,7 +559,7 @@ class GraphAlgorithmsTest {
         .build()
 
       assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(1).orElseThrow()))
-        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3, 4));
+        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3, 4))
     }
 
     private fun <T> nodesFor(graph: Graph<T>, vararg items: T): List<Graph.Node<T>>  {

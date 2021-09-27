@@ -1,20 +1,18 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import java.util.function.Supplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import kotlin.test.Test
+
 import org.mockito.Mockito
 
-@RunWith(JUnit4::class)
 class SimpleMemoizerTest {
 
   @Test
   fun value_didReturnSuppliedResult() {
     val testValue = Any()
     val testSubject: Memoized<Any> = SimpleMemoizer(Supplier { testValue })
-    Truth.assertThat(testSubject.value()).isSameInstanceAs(testValue)
+    assertThat(testSubject.value()).isSameInstanceAs(testValue)
   }
 
   @Test
@@ -22,7 +20,7 @@ class SimpleMemoizerTest {
     val testValue = Any()
     val testSubject: Memoized<Any> = SimpleMemoizer(Supplier { testValue })
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isSameInstanceAs(testValue)
+    assertThat(testSubject.value()).isSameInstanceAs(testValue)
   }
 
   @Test

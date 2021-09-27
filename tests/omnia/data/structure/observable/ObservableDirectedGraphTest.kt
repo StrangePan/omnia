@@ -1,39 +1,36 @@
 package omnia.data.structure.observable
 
-import com.google.common.truth.Truth
-import com.google.common.truth.Truth8
+import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth8.assertThat
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.immutable.ImmutableDirectedGraph.UnknownNodeException
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.observable.ObservableGraph.GraphOperation
 import omnia.data.structure.observable.writable.WritableObservableDirectedGraph
 import omnia.data.structure.tuple.Couplet.Companion.of
-import org.junit.Test
-import org.junit.jupiter.api.Assertions
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
 class ObservableDirectedGraphTest {
 
   @Test
   fun contents_whenInit_areEmpty() {
-    Truth.assertThat(WritableObservableDirectedGraph.create<Any>().contents().isPopulated).isFalse()
+    assertThat(WritableObservableDirectedGraph.create<Any>().contents().isPopulated).isFalse()
   }
 
   @Test
   fun nodes_whenInit_areEmpty() {
-    Truth.assertThat(WritableObservableDirectedGraph.create<Any>().nodes().isPopulated).isFalse()
+    assertThat(WritableObservableDirectedGraph.create<Any>().nodes().isPopulated).isFalse()
   }
 
   @Test
   fun edges_whenInit_areEmpty() {
-    Truth.assertThat(WritableObservableDirectedGraph.create<Any>().edges().isPopulated).isFalse()
+    assertThat(WritableObservableDirectedGraph.create<Any>().edges().isPopulated).isFalse()
   }
 
   @Test
   fun addNode_whenNull_throwsException() {
-    Assertions.assertThrows(NullPointerException::class.java) {
+    assertFailsWith(NullPointerException::class) {
       WritableObservableDirectedGraph.create<Any?>().addNode(null)
     }
   }
@@ -43,7 +40,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    Truth.assertThat(graph.contents().count()).isEqualTo(1)
+    assertThat(graph.contents().count()).isEqualTo(1)
   }
 
   @Test
@@ -51,7 +48,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    Truth.assertThat(graph.contents().contains(item)).isTrue()
+    assertThat(graph.contents().contains(item)).isTrue()
   }
 
   @Test
@@ -59,7 +56,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    Truth.assertThat(graph.nodes().count()).isEqualTo(1)
+    assertThat(graph.nodes().count()).isEqualTo(1)
   }
 
   @Test
@@ -67,16 +64,16 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    Truth8.assertThat(
+    assertThat(
       graph.nodes().stream().findFirst().map { obj: DirectedGraph.DirectedNode<*> -> obj.item() })
       .hasValue(item)
   }
 
   @Test
   fun addEdge_unrecognizedEdges_throwsException() {
-    Assertions.assertThrows(
-      UnknownNodeException::class.java
-    ) { WritableObservableDirectedGraph.create<Any>().addEdge(Any(), Any()) }
+    assertFailsWith(UnknownNodeException::class) {
+      WritableObservableDirectedGraph.create<Any>().addEdge(Any(), Any())
+    }
   }
 
   @Test
@@ -87,7 +84,7 @@ class ObservableDirectedGraphTest {
     graph.addNode(item1)
     graph.addNode(item2)
     graph.addEdge(item1, item2)
-    Truth8.assertThat(
+    assertThat(
       graph.edges().stream().findFirst().map { edge: DirectedGraph.DirectedEdge<Any>? ->
         edge!!.endpoints().map<Any> { obj: DirectedGraph.DirectedNode<*> -> obj.item()!! }
       })
@@ -99,7 +96,7 @@ class ObservableDirectedGraphTest {
     val original = Any()
     val replacement = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
-    Assertions.assertThrows(IllegalArgumentException::class.java) {
+    assertFailsWith(IllegalArgumentException::class) {
       graph.replaceNode(
         original,
         replacement
@@ -114,7 +111,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(original)
     graph.addNode(replacement)
-    Assertions.assertThrows(IllegalArgumentException::class.java) {
+    assertFailsWith(IllegalArgumentException::class) {
       graph.replaceNode(
         original,
         replacement
@@ -129,7 +126,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any?>()
     graph.addNode(original)
     graph.replaceNode(original, replacement)
-    Truth.assertThat(graph.contents()).containsExactlyElementsIn(ImmutableSet.of<Any?>(replacement))
+    assertThat(graph.contents()).containsExactlyElementsIn(ImmutableSet.of<Any?>(replacement))
   }
 
   @Test
@@ -140,7 +137,7 @@ class ObservableDirectedGraphTest {
     graph.addNode(original)
     graph.addEdge(original, original)
     graph.replaceNode(original, replacement)
-    Truth8.assertThat(
+    assertThat(
       graph.edges().stream()
         .map { obj: DirectedGraph.DirectedEdge<*> -> obj.endpoints() }
         .map { couplet -> couplet.map<Any> { obj -> obj.item()!! } })

@@ -1,20 +1,18 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import java.util.function.LongSupplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import kotlin.test.Test
+
 import org.mockito.Mockito
 
-@RunWith(JUnit4::class)
 class SimpleLongMemoizerTest {
 
   @Test
   fun value_didReturnSuppliedResult() {
     val testValue = 132L
     val testSubject: MemoizedLong = SimpleLongMemoizer { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -22,7 +20,7 @@ class SimpleLongMemoizerTest {
     val testValue = 132L
     val testSubject: MemoizedLong = SimpleLongMemoizer { testValue }
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -48,7 +46,6 @@ class SimpleLongMemoizerTest {
     testSubject.value()
     Mockito.verify(supplier, Mockito.times(1)).asLong
   }
-
 
   companion object {
 
