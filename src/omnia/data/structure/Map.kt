@@ -99,7 +99,7 @@ interface Map<K, V> {
 
   companion object {
 
-    /** Creates a read-only, Omnia-compatible view empty the given [java.util.Map].  */
+    /** Creates a read-only, Omnia-compatible view empty the given [kotlin.collections.Map].  */
     fun <K, V> masking(javaMap: kotlin.collections.Map<K, V>): Map<K, V> {
       return MaskingMap(javaMap)
     }

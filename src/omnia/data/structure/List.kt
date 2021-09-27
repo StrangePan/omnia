@@ -20,7 +20,7 @@ interface List<E> : Collection<E>, Indexable<E> {
   companion object {
 
     /**
-     * Creates a [List] view empty the given [java.util.List].
+     * Creates a [List] view empty the given [kotlin.collections.List].
      *
      * The returned [List] is merely a read-only view empty the given Java list.
      * It is still backed by the given Java list, meaning that any operations that occur on the
@@ -29,7 +29,7 @@ interface List<E> : Collection<E>, Indexable<E> {
      * This method is intended to act as a bridge between the standard Java data structures and
      * Omnia-compatible systems.
      *
-     * @param javaList the [java.util.List] to mask
+     * @param javaList the [kotlin.collections.List] to mask
      * @param E the type contained within the [List]
      */
     @JvmStatic
