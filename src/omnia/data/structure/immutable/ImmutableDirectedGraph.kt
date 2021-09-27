@@ -2,7 +2,6 @@ package omnia.data.structure.immutable
 
 import java.util.Objects
 import java.util.Objects.requireNonNull
-import java.util.Optional
 import java.util.function.Consumer
 import java.util.function.Function
 import java.util.stream.Stream
@@ -19,7 +18,7 @@ import omnia.data.structure.tuple.Couplet
 import omnia.data.structure.tuple.Tuple
 import omnia.data.structure.tuple.Tuplet
 
-class ImmutableDirectedGraph<E> : DirectedGraph<E> {
+class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
   private val nodes: ImmutableSet<E>
   private val neighbors: ImmutableMap<E, ImmutableSet<E>>
@@ -30,7 +29,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     return Builder(nodes, successors, predecessors)
   }
 
-  class Builder<E> {
+  class Builder<E : Any> {
 
     val nodes: MutableSet<E>
     val successors: MutableMap<E, MutableSet<E>>
@@ -93,8 +92,8 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
       if (!nodes.contains(to)) {
         throw UnknownNodeException(to)
       }
-      successors.putMappingIfAbsent(from, { HashSet.create() }).add(to)
-      predecessors.putMappingIfAbsent(to, { HashSet.create() }).add(from)
+      successors.putMappingIfAbsent(from, HashSet.Companion::create).add(to)
+      predecessors.putMappingIfAbsent(to, HashSet.Companion::create).add(from)
       return this
     }
 
@@ -105,8 +104,8 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     fun removeEdgeUnknownEdge(from: Any?, to: Any?): Builder<E> {
       requireNonNull(from)
       requireNonNull(to)
-      successors.valueOfUnknownTyped(from).ifPresent { set -> set.removeUnknownTyped(to) }
-      predecessors.valueOfUnknownTyped(to).ifPresent { set -> set.removeUnknownTyped(from) }
+      successors.valueOfUnknownTyped(from)?.removeUnknownTyped(to)
+      predecessors.valueOfUnknownTyped(to)?.removeUnknownTyped(from)
       return this
     }
 
@@ -116,7 +115,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
 
     companion object {
 
-      private fun <E> deepCopy(other: Map<E, out Set<E>>): MutableMap<E, MutableSet<E>> {
+      private fun <E : Any> deepCopy(other: Map<E, out Set<E>>): MutableMap<E, MutableSet<E>> {
         return other.entries()
           .stream()
           .collect(
@@ -172,27 +171,26 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     )
   }
 
-  override fun nodeOf(item: E): Optional<out DirectedNode> {
+  override fun nodeOf(item: E): DirectedNode? {
     return nodeOfUnknownType(item)
   }
 
-  override fun nodeOfUnknownType(item: Any?): Optional<out DirectedNode> {
+  override fun nodeOfUnknownType(item: Any?): DirectedNode? {
     @Suppress("UNCHECKED_CAST")
-    return if (nodes.containsUnknownTyped(item)) Optional.of(getOrCreateNode(item as E)) else Optional.empty()
+    return if (nodes.containsUnknownTyped(item)) getOrCreateNode(item as E) else null
   }
 
-  override fun edgeOf(from: E, to: E): Optional<DirectedEdge> {
+  override fun edgeOf(from: E, to: E): DirectedEdge? {
     return edgeOfUnknownType(from, to)
   }
 
-  override fun edgeOfUnknownType(from: Any?, to: Any?): Optional<DirectedEdge> {
-    return successors.valueOfUnknownTyped(from)
-      .filter { set -> set.containsUnknownTyped(to) }
-      .map {
-        @Suppress("UNCHECKED_CAST")
-        Tuplet.of(from as E, to as E)
-      }
-      .map(toEdge())
+  override fun edgeOfUnknownType(from: Any?, to: Any?): DirectedEdge? {
+    val edges = successors.valueOfUnknownTyped(from) ?: return null
+    if (!edges.containsUnknownTyped(to)) {
+      return null
+    }
+    @Suppress("UNCHECKED_CAST")
+    return getOrCreateEdge(from as E, to as E)
   }
 
   override fun contents(): Set<E> {
@@ -226,8 +224,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     }
 
     override fun outgoingEdges(): ImmutableSet<DirectedEdge> {
-      return successors.valueOf(item)
-        .orElse(ImmutableSet.empty())
+      return (successors.valueOf(item) ?: ImmutableSet.empty())
         .stream()
         .map { to: E -> Tuplet.of(item, to) }
         .map(toEdge())
@@ -235,8 +232,7 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     }
 
     override fun incomingEdges(): ImmutableSet<DirectedEdge> {
-      return predecessors.valueOf(item)
-        .orElse(ImmutableSet.empty())
+      return (predecessors.valueOf(item) ?: ImmutableSet.empty())
         .stream()
         .map { from -> Tuplet.of(from, item) }
         .map(toEdge())
@@ -244,24 +240,21 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
     }
 
     override fun neighbors(): ImmutableSet<DirectedNode> {
-      return neighbors.valueOf(item)
-        .orElse(ImmutableSet.empty())
+      return (neighbors.valueOf(item) ?: ImmutableSet.empty())
         .stream()
         .map(toNode())
         .collect(Collectors.toImmutableSet())
     }
 
     override fun successors(): ImmutableSet<DirectedNode> {
-      return successors.valueOf(item)
-        .orElse(ImmutableSet.empty())
+      return (successors.valueOf(item) ?: ImmutableSet.empty())
         .stream()
         .map(toNode())
         .collect(Collectors.toImmutableSet())
     }
 
     override fun predecessors(): Set<DirectedNode> {
-      return predecessors.valueOf(item)
-        .orElse(ImmutableSet.empty())
+      return (predecessors.valueOf(item) ?: ImmutableSet.empty())
         .stream()
         .map(toNode())
         .collect(Collectors.toImmutableSet())
@@ -338,13 +331,16 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
 
   private fun toEdge(): Function<in Couplet<out E>, out DirectedEdge> {
     return Function<Couplet<out E>, DirectedEdge> { endpoints: Couplet<out E> ->
-      getOrCreateEdge(
-        endpoints
-      )
+      getOrCreateEdge(endpoints)
     }
   }
 
   private val edgeCache: WeakCache<Couplet<out E>, DirectedEdge> = WeakCache()
+
+  private fun getOrCreateEdge(from: E, to: E): DirectedEdge {
+    return getOrCreateEdge(Tuplet.of(from, to))
+  }
+
   private fun getOrCreateEdge(endpoints: Couplet<out E>): DirectedEdge {
     return edgeCache.getOrCache(endpoints) { DirectedEdge(endpoints) }
   }
@@ -377,18 +373,18 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
       ImmutableDirectedGraph<Any>()
 
     @JvmStatic
-    fun <E> empty(): ImmutableDirectedGraph<E> {
+    fun <E : Any> empty(): ImmutableDirectedGraph<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_IMMUTABLE_DIRECTED_GRAPH as ImmutableDirectedGraph<E>
     }
 
     @JvmStatic
-    fun <E> copyOf(original: DirectedGraph<E>): ImmutableDirectedGraph<E> {
+    fun <E : Any> copyOf(original: DirectedGraph<E>): ImmutableDirectedGraph<E> {
       return buildUpon(original).build()
     }
 
     @JvmStatic
-    fun <E, R : Any> copyOf(
+    fun <E : Any, R : Any> copyOf(
       original: DirectedGraph<E>, mapper: Function<in E, out R>,
     ): ImmutableDirectedGraph<R> {
       val builder: Builder<R> = builder()
@@ -396,23 +392,23 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
         .map { e -> Tuple.of(e, mapper.apply(e)) }
         .collect(Collectors.toImmutableMap())
       original.contents().forEach(
-        Consumer { id: E -> builder.addNode(convertedTasks.valueOf(id).orElseThrow()) })
+        Consumer { id: E -> builder.addNode(convertedTasks.valueOf(id)!!) })
       original.edges().forEach { edge: DirectedGraph.DirectedEdge<E> ->
         builder.addEdge(
-          convertedTasks.valueOf(edge.start().item()).orElseThrow(),
-          convertedTasks.valueOf(edge.end().item()).orElseThrow()
+          convertedTasks.valueOf(edge.start().item())!!,
+          convertedTasks.valueOf(edge.end().item())!!
         )
       }
       return builder.build()
     }
 
     @JvmStatic
-    fun <E> builder(): Builder<E> {
+    fun <E : Any> builder(): Builder<E> {
       return Builder()
     }
 
     @JvmStatic
-    fun <E> buildUpon(original: DirectedGraph<out E>): Builder<E> {
+    fun <E : Any> buildUpon(original: DirectedGraph<out E>): Builder<E> {
       return if (original is ImmutableDirectedGraph<*>) {
         @Suppress("UNCHECKED_CAST")
         (original as ImmutableDirectedGraph<E>).toBuilder()
@@ -445,14 +441,14 @@ class ImmutableDirectedGraph<E> : DirectedGraph<E> {
       )
     }
 
-    private fun <E> deepCopy(other: Map<E, out Set<E>>): ImmutableMap<E, ImmutableSet<E>> {
+    private fun <E : Any> deepCopy(other: Map<E, out Set<E>>): ImmutableMap<E, ImmutableSet<E>> {
       return other.entries()
         .stream()
         .map { entry -> Tuple.of(entry.key(), ImmutableSet.copyOf(entry.value())) }
         .collect(Collectors.toImmutableMap())
     }
 
-    private fun <T> toCouplets(entry: Map.Entry<T, out Set<T>>): Stream<Couplet<T>> {
+    private fun <T : Any> toCouplets(entry: Map.Entry<T, out Set<T>>): Stream<Couplet<T>> {
       return entry.value().stream().map { value -> Tuplet.of(entry.key(), value) }
     }
   }

@@ -1,23 +1,22 @@
 package omnia.data.structure
 
-import java.util.Optional
 import java.util.function.Consumer
 import omnia.data.structure.immutable.ImmutableMap
 import omnia.data.structure.mutable.HashMap
 import omnia.data.structure.mutable.MutableMap
 
-class TypedMap private constructor(map: Map<Key<*>, Any?>) {
-  class Key<V> {
+class TypedMap private constructor(map: Map<Key<*>, Any>) {
+  class Key<V : Any> {
 
-    fun <V> create(): Key<V> {
+    fun <V : Any> create(): Key<V> {
       return Key()
     }
   }
 
   class Builder {
 
-    private val map: MutableMap<Key<*>, Any?> = HashMap.create()
-    fun <V> putMapping(key: Key<V>, value: V): Builder {
+    private val map: MutableMap<Key<*>, Any> = HashMap.create()
+    fun <V : Any> putMapping(key: Key<V>, value: V): Builder {
       map.putMapping(key, value)
       return this
     }
@@ -38,12 +37,11 @@ class TypedMap private constructor(map: Map<Key<*>, Any?>) {
     }
   }
 
-  private val map: Map<Key<*>, Any?>
-  operator fun <V> get(key: Key<V>): Optional<V> {
-    return map.valueOf(key).map { v ->
-      @Suppress("UNCHECKED_CAST")
-      v as V
-    }
+  private val map: Map<Key<*>, Any>
+  operator fun <V : Any> get(key: Key<V>): V? {
+    // if user bypasses the type-safety of the generic system, we can't do anything to stop them
+    @Suppress("UNCHECKED_CAST")
+    return map.valueOf(key) as V?
   }
 
   fun toBuilder(): Builder {
@@ -60,7 +58,7 @@ class TypedMap private constructor(map: Map<Key<*>, Any?>) {
       return TypedMap(ImmutableMap.empty())
     }
 
-    fun <V> of(key: Key<V>, value: V): TypedMap {
+    fun <V : Any> of(key: Key<V>, value: V): TypedMap {
       return TypedMap(ImmutableMap.of(key, value))
     }
   }

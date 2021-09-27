@@ -1,6 +1,5 @@
 package omnia.data.structure
 
-import java.util.Optional
 import java.util.function.Function
 import omnia.data.stream.Collectors
 import omnia.data.structure.tuple.Couplet
@@ -10,9 +9,9 @@ import omnia.data.structure.tuple.Couplet
  *
  * @param E the type of item that makes up the graph's nodes
  */
-interface DirectedGraph<E> : Graph<E> {
+interface DirectedGraph<E : Any> : Graph<E> {
 
-  interface DirectedNode<E> : Graph.Node<E> {
+  interface DirectedNode<E : Any> : Graph.Node<E> {
 
     /**
      * The set of edges connected to this node.
@@ -70,7 +69,7 @@ interface DirectedGraph<E> : Graph<E> {
     fun predecessors(): Set<out DirectedNode<E>>
   }
 
-  interface DirectedEdge<E> : Graph.Edge<E> {
+  interface DirectedEdge<E : Any> : Graph.Edge<E> {
 
     /**
      * The node at the head / start of this edge.
@@ -101,9 +100,9 @@ interface DirectedGraph<E> : Graph<E> {
    * contains this item. If this graph does not contain a node for the provided item, the empty
    * Optional is returned.
    */
-  override fun nodeOf(item: E): Optional<out DirectedNode<E>>
+  override fun nodeOf(item: E): DirectedNode<E>?
 
-  override fun nodeOfUnknownType(item: Any?): Optional<out DirectedNode<E>>
+  override fun nodeOfUnknownType(item: Any?): DirectedNode<E>?
 
   /**
    * Retrieves the [DirectedEdge] representation of the given items in the graph. In a
@@ -114,9 +113,9 @@ interface DirectedGraph<E> : Graph<E> {
    * @param from the starting node of the edge
    * @param to the ending node of the edge
    */
-  fun edgeOf(from: E, to: E): Optional<out DirectedEdge<E>>
+  fun edgeOf(from: E, to: E): DirectedEdge<E>?
 
-  fun edgeOfUnknownType(from: Any?, to: Any?): Optional<out DirectedEdge<E>>
+  fun edgeOfUnknownType(from: Any?, to: Any?): DirectedEdge<E>?
 
   /** All nodes contained in the graph.  */
   override fun nodes(): Set<out DirectedNode<E>>

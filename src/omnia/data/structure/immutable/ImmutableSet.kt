@@ -10,7 +10,7 @@ import omnia.data.iterate.ReadOnlyIterator
 import omnia.data.structure.Set
 import omnia.data.structure.mutable.HashSet
 
-class ImmutableSet<E> : Set<E> {
+class ImmutableSet<E : Any> : Set<E> {
 
   private val elements: Set<E>
 
@@ -18,7 +18,7 @@ class ImmutableSet<E> : Set<E> {
     return buildUpon(this)
   }
 
-  class Builder<E> : AbstractBuilder<E, Builder<E>, ImmutableSet<E>>() {
+  class Builder<E : Any> : AbstractBuilder<E, Builder<E>, ImmutableSet<E>>() {
 
     var equalsFunction: BiPredicate<in Any?, in Any?>? = null
     var hashFunction: ToIntFunction<in Any>? = null
@@ -111,31 +111,31 @@ class ImmutableSet<E> : Set<E> {
     private val EMPTY_IMMUTABLE_SET: ImmutableSet<*> = ImmutableSet<Any>()
 
     @JvmStatic
-    fun <T> empty(): ImmutableSet<T> {
+    fun <E : Any> empty(): ImmutableSet<E> {
       @Suppress("UNCHECKED_CAST")
-      return EMPTY_IMMUTABLE_SET as ImmutableSet<T>
+      return EMPTY_IMMUTABLE_SET as ImmutableSet<E>
     }
 
     @JvmStatic
     @SafeVarargs
-    fun <E> of(firstItem: E, vararg items: E): ImmutableSet<E> {
+    fun <E : Any> of(firstItem: E, vararg items: E): ImmutableSet<E> {
       return builder<E>().add(firstItem).addAll(*items).build()
     }
 
     @JvmStatic
-    fun <E> copyOf(iterable: Iterable<E>): ImmutableSet<E> {
+    fun <E : Any> copyOf(iterable: Iterable<E>): ImmutableSet<E> {
       return if (iterable is ImmutableSet<*>) {
         iterable as ImmutableSet<E>
       } else builder<E>().addAll(iterable).build()
     }
 
     @JvmStatic
-    fun <E> builder(): Builder<E> {
+    fun <E : Any> builder(): Builder<E> {
       return Builder()
     }
 
     @JvmStatic
-    fun <E> buildUpon(other: Set<out E>): Builder<E> {
+    fun <E : Any> buildUpon(other: Set<out E>): Builder<E> {
       return builder<E>().addAll(other)
     }
   }

@@ -6,10 +6,8 @@ import omnia.data.structure.SortedSet
 import omnia.data.structure.mutable.TreeSet
 
 /** An immutable version of [SortedSet]. */
-class ImmutableSortedSet<E> private constructor(
-  comparator: Comparator<in E>,
-  other: Collection<out E>
-) : SortedSet<E> {
+class ImmutableSortedSet<E : Any>
+private constructor(comparator: Comparator<in E>, other: Collection<out E>) : SortedSet<E> {
 
   private val baseSet: TreeSet<E> = TreeSet.create(comparator)
 
@@ -62,13 +60,13 @@ class ImmutableSortedSet<E> private constructor(
       ImmutableSortedSet({ _, _ -> 0 }, ImmutableSet.empty<Any>())
 
     @JvmStatic
-    fun <E> empty(): ImmutableSortedSet<E> {
+    fun <E : Any> empty(): ImmutableSortedSet<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_SET as ImmutableSortedSet<E>
     }
 
     @JvmStatic
-    fun <E> copyOf(
+    fun <E : Any> copyOf(
       comparator: Comparator<in E>, other: Collection<out E>,
     ): ImmutableSortedSet<E> {
       return ImmutableSortedSet(comparator, other)

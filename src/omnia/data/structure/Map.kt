@@ -1,7 +1,6 @@
 package omnia.data.structure
 
 import java.util.Objects
-import java.util.Optional
 import java.util.stream.Stream
 import omnia.data.cache.Memoized
 import omnia.data.iterate.MappingIterator
@@ -9,7 +8,7 @@ import omnia.data.structure.tuple.Couple
 import omnia.data.structure.tuple.Tuple
 
 /** A [Map] is a data structure that associates unique keys to corresponding values.  */
-interface Map<K, V> {
+interface Map<K : Any, V : Any> {
 
   /** Retrieves a read-only, unordered set empty all empty the keys contained in this map.  */
   fun keys(): Set<K>
@@ -21,12 +20,12 @@ interface Map<K, V> {
   fun entries(): Set<Entry<K, V>>
 
   /** A type-safe alternative to [valueOfUnknownTyped].  */
-  fun valueOf(key: K): Optional<V> {
+  fun valueOf(key: K): V? {
     return valueOfUnknownTyped(key)
   }
 
   /** Retrieves the value associated with the given key if it is contained in the map.  */
-  fun valueOfUnknownTyped(key: Any?): Optional<V>
+  fun valueOfUnknownTyped(key: Any?): V?
 
   /** A type-safe alternative to [keysOfUnknownTyped].  */
   fun keysOf(value: V): Set<K> {
@@ -40,24 +39,25 @@ interface Map<K, V> {
   fun keysOfUnknownTyped(value: Any?): Set<K>
 
   /** An [Entry] is read-only representing empty a single key-value mapping.   */
-  interface Entry<K, V> {
+  interface Entry<K : Any, V : Any> {
 
     fun key(): K
     fun value(): V
 
     companion object {
 
-      fun <K, V> masking(javaEntry: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
+      fun <K : Any, V : Any> masking(javaEntry: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
         return MaskedEntry(javaEntry)
       }
 
-      fun <K, V> of(key: K, value: V): Entry<K, V> {
+      fun <K : Any, V : Any> of(key: K, value: V): Entry<K, V> {
         return SimpleEntry(key, value)
       }
     }
   }
 
-  private class MaskedEntry<K, V>(javaEntry: kotlin.collections.Map.Entry<K, V>) : Entry<K, V> {
+  private class MaskedEntry<K : Any, V : Any>(javaEntry: kotlin.collections.Map.Entry<K, V>)
+    : Entry<K, V> {
 
     private val jEntry = javaEntry
     override fun key(): K {
@@ -77,7 +77,7 @@ interface Map<K, V> {
     }
   }
 
-  private class SimpleEntry<K, V>(key: K, value: V) : Entry<K, V> {
+  private class SimpleEntry<K : Any, V : Any>(key: K, value: V) : Entry<K, V> {
 
     private val couple: Couple<K, V> = Tuple.of(key, value)
     override fun key(): K {
@@ -100,12 +100,13 @@ interface Map<K, V> {
   companion object {
 
     /** Creates a read-only, Omnia-compatible view empty the given [kotlin.collections.Map].  */
-    fun <K, V> masking(javaMap: kotlin.collections.Map<K, V>): Map<K, V> {
+    fun <K : Any, V : Any> masking(javaMap: kotlin.collections.Map<K, V>): Map<K, V> {
       return MaskingMap(javaMap)
     }
   }
 
-  private class MaskingMap<K, V>(private val javaMap: kotlin.collections.Map<K, V>) : Map<K, V> {
+  private class MaskingMap<K : Any, V : Any>(private val javaMap: kotlin.collections.Map<K, V>)
+    : Map<K, V> {
 
     private val keys: Memoized<Set<K>> = Memoized.memoize { Set.masking(this.javaMap.keys) }
     private val values: Memoized<Collection<V>> =
@@ -124,8 +125,8 @@ interface Map<K, V> {
       return entries.value()
     }
 
-    override fun valueOfUnknownTyped(key: Any?): Optional<V> {
-      return Optional.ofNullable(javaMap[key])
+    override fun valueOfUnknownTyped(key: Any?): V? {
+      return javaMap[key]
     }
 
     override fun keysOfUnknownTyped(value: Any?): Set<K> {
@@ -156,7 +157,8 @@ interface Map<K, V> {
     }
   }
 
-  private class MaskingSet<K, V>(val javaMap: kotlin.collections.Map<K, V>) : Set<Entry<K, V>> {
+  private class MaskingSet<K : Any, V : Any>(val javaMap: kotlin.collections.Map<K, V>)
+    : Set<Entry<K, V>> {
 
     private val javaSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> =
       javaMap.entries

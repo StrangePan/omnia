@@ -3,10 +3,10 @@ package omnia.data.structure
 import java.util.stream.Stream
 import omnia.data.iterate.ReadOnlyIterator
 
-interface Set<E> : Collection<E> {
+interface Set<E : Any> : Collection<E> {
   companion object {
 
-    fun <E> masking(kotlinSet: kotlin.collections.Set<E>): Set<E> {
+    fun <E : Any> masking(kotlinSet: kotlin.collections.Set<E>): Set<E> {
       return object : Set<E> {
         override val isPopulated: Boolean
           get() = kotlinSet.isNotEmpty()
@@ -33,12 +33,12 @@ interface Set<E> : Collection<E> {
       }
     }
 
-    fun <E> masking(kotlinCollection: kotlin.collections.Collection<E>): Set<E> {
+    fun <E : Any> masking(kotlinCollection: kotlin.collections.Collection<E>): Set<E> {
       return masking(HashSet(kotlinCollection))
     }
 
     @JvmStatic
-    fun <E> empty(): Set<E> {
+    fun <E : Any> empty(): Set<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_SET as Set<E>
     }
@@ -62,6 +62,6 @@ interface Set<E> : Collection<E> {
       return true
     }
 
-    private val EMPTY_SET: Set<*> = masking(emptySet<Any>())
+    private val EMPTY_SET: Set<*> = masking(emptySet())
   }
 }
