@@ -35,7 +35,7 @@ class WeakCacheTest {
 
   @Test
   fun get_whenNotCached_isNotPresent() {
-    assertThat(testSubject["key"]).isEmpty()
+    assertThat(testSubject["key"]).isNull()
   }
 
   @Test

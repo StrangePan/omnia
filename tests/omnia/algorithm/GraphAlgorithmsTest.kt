@@ -28,7 +28,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun isolatedElements_whenGraphEmpty_returnsEmpty() {
-      assertThat(isolatedElements(ImmutableDirectedGraph.empty())).isNull()
+      assertThat(isolatedElements(ImmutableDirectedGraph.empty())).isEmpty()
     }
 
     @Test
@@ -265,12 +265,12 @@ class GraphAlgorithmsTest {
 
     @Test
     fun findAnyCycle_whenEmpty_isEmpty() {
-      assertThat(findAnyCycle(ImmutableDirectedGraph.empty<Int>())).isEmpty()
+      assertThat(findAnyCycle(ImmutableDirectedGraph.empty<Int>())).isNull()
     }
 
     @Test
     fun findAnyCycle_whenSingleNode_isEmpty() {
-      assertThat(findAnyCycle(ImmutableDirectedGraph.builder<Int>().addNode(1).build())).isEmpty()
+      assertThat(findAnyCycle(ImmutableDirectedGraph.builder<Int>().addNode(1).build())).isNull()
     }
 
     @Test
