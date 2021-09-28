@@ -1,6 +1,6 @@
 package omnia.data.structure
 
-interface SortedSet<E> : Set<E> {
+interface SortedSet<E : Any> : Set<E> {
 
   /**
    * Returns the last item in the sorted set that comes before the given item according to this

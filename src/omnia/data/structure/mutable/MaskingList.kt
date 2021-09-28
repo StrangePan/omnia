@@ -1,11 +1,10 @@
 package omnia.data.structure.mutable
 
-import java.util.OptionalInt
 import java.util.stream.Collectors
 import java.util.stream.Stream
 import omnia.data.structure.Collection
 
-open class MaskingList<E>(private val kotlinList: kotlin.collections.MutableList<E>) :
+open class MaskingList<E : Any>(private val kotlinList: kotlin.collections.MutableList<E>) :
   MutableList<E> {
 
   override fun insertAt(index: Int, item: E) {
@@ -24,9 +23,9 @@ open class MaskingList<E>(private val kotlinList: kotlin.collections.MutableList
     return kotlinList.get(index)
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     val index: Int = kotlinList.indexOf(item)
-    return if (index < 0) OptionalInt.empty() else OptionalInt.of(index)
+    return if (index < 0) null else index
   }
 
   override fun add(item: E) {

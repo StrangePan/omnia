@@ -13,11 +13,11 @@ import omnia.data.iterate.ReadOnlyIterator
  *
  * @param E the type contained in the collection
  */
-interface Collection<E> : TypedContainer<E>, Countable, Iterable<E>, Streamable<E> {
+interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E>, Streamable<E> {
 
   companion object {
 
-    fun <E> empty(): Collection<E> {
+    fun <E : Any> empty(): Collection<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_COLLECTION as Collection<E>
     }
@@ -35,7 +35,7 @@ interface Collection<E> : TypedContainer<E>, Countable, Iterable<E>, Streamable<
      * @param kotlinCollection the [kotlin.collections.Collection] to mask
      * @param E the type contained within the [Collection]
      */
-    fun <E> masking(kotlinCollection: kotlin.collections.Collection<E>): Collection<E> {
+    fun <E : Any> masking(kotlinCollection: kotlin.collections.Collection<E>): Collection<E> {
       return object : Collection<E> {
         override val isPopulated: Boolean
           get() = kotlinCollection.isNotEmpty()

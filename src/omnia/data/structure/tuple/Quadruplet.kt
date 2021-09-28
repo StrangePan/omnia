@@ -3,9 +3,9 @@ package omnia.data.structure.tuple
 import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtMostQuadruplet
 
-interface Quadruplet<T> : Quadruple<T, T, T, T>, AtMostQuadruplet<T> {
+interface Quadruplet<T : Any> : Quadruple<T, T, T, T>, AtMostQuadruplet<T> {
 
-  override fun <R> map(mapper: Function<in T, out R>): Quadruplet<R>
+  override fun <R : Any> map(mapper: Function<in T, out R>): Quadruplet<R>
   override fun dropFirst(): Triplet<T>
   override fun dropSecond(): Triplet<T>
   override fun dropThird(): Triplet<T>
@@ -19,7 +19,7 @@ interface Quadruplet<T> : Quadruple<T, T, T, T>, AtMostQuadruplet<T> {
 
   companion object {
 
-    fun <T> of(first: T, second: T, third: T, fourth: T): Quadruplet<T> {
+    fun <T : Any> of(first: T, second: T, third: T, fourth: T): Quadruplet<T> {
       return ImmutableQuadruplet(first, second, third, fourth)
     }
   }

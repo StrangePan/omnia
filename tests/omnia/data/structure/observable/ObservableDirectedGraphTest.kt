@@ -29,13 +29,6 @@ class ObservableDirectedGraphTest {
   }
 
   @Test
-  fun addNode_whenNull_throwsException() {
-    assertFailsWith(NullPointerException::class) {
-      WritableObservableDirectedGraph.create<Any?>().addNode(null)
-    }
-  }
-
-  @Test
   fun addNode_whenInit_contentsHasOneItem() {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
@@ -86,7 +79,7 @@ class ObservableDirectedGraphTest {
     graph.addEdge(item1, item2)
     assertThat(
       graph.edges().stream().findFirst().map { edge: DirectedGraph.DirectedEdge<Any>? ->
-        edge!!.endpoints().map<Any> { obj: DirectedGraph.DirectedNode<*> -> obj.item()!! }
+        edge!!.endpoints().map<Any>(DirectedGraph.DirectedNode<*>::item)
       })
       .hasValue(of(item1, item2))
   }
@@ -123,10 +116,10 @@ class ObservableDirectedGraphTest {
   fun replaceNode_contentsContainsReplacementOnly() {
     val original = Any()
     val replacement = Any()
-    val graph = WritableObservableDirectedGraph.create<Any?>()
+    val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(original)
     graph.replaceNode(original, replacement)
-    assertThat(graph.contents()).containsExactlyElementsIn(ImmutableSet.of<Any?>(replacement))
+    assertThat(graph.contents()).containsExactlyElementsIn(ImmutableSet.of(replacement))
   }
 
   @Test
@@ -140,7 +133,7 @@ class ObservableDirectedGraphTest {
     assertThat(
       graph.edges().stream()
         .map { obj: DirectedGraph.DirectedEdge<*> -> obj.endpoints() }
-        .map { couplet -> couplet.map<Any> { obj -> obj.item()!! } })
+        .map { couplet -> couplet.map<Any> { obj -> obj.item() } })
       .containsExactlyElementsIn(ImmutableSet.of(of(replacement, replacement)))
   }
 

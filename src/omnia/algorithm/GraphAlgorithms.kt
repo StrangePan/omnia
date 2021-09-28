@@ -1,6 +1,5 @@
 package omnia.algorithm
 
-import java.util.Optional
 import omnia.data.stream.Collectors.toImmutableSet
 import omnia.data.stream.Collectors.toSet
 import omnia.data.structure.Collection
@@ -37,7 +36,7 @@ object GraphAlgorithms {
    * return the empty set.
    */
   @JvmStatic
-  fun <E> sinkElements(graph: DirectedGraph<out E>): ImmutableSet<E> {
+  fun <E : Any> sinkElements(graph: DirectedGraph<out E>): ImmutableSet<E> {
     return graph.nodes()
       .stream()
       .filter { node -> hasNoOutgoingEdges(node) }
@@ -55,7 +54,7 @@ object GraphAlgorithms {
    * return the empty set.
    */
   @JvmStatic
-  fun <E> sourceElements(graph: DirectedGraph<E>): Set<E> {
+  fun <E : Any> sourceElements(graph: DirectedGraph<E>): Set<E> {
     return graph.nodes()
       .stream()
       .filter { node -> hasNoIncomingEdges(node) }
@@ -72,7 +71,7 @@ object GraphAlgorithms {
    * @return The set of items in the graph that have no edges. May return the empty set.
    */
   @JvmStatic
-  fun <E> isolatedElements(graph: Graph<E>): Set<E> {
+  fun <E : Any> isolatedElements(graph: Graph<E>): Set<E> {
     return graph.nodes()
       .stream()
       .filter { node -> hasNoNeighbors(node) }
@@ -89,7 +88,7 @@ object GraphAlgorithms {
    */
   @JvmStatic
   fun isCyclical(graph: DirectedGraph<*>): Boolean {
-    return findAnyCycle(graph).isPresent
+    return findAnyCycle(graph) != null
   }
 
   /**
@@ -106,7 +105,7 @@ object GraphAlgorithms {
    * @return a list of nodes that form a cycle, or nothing if no cycles were found
    */
   @JvmStatic
-  fun <T> findAnyCycle(graph: DirectedGraph<T>): Optional<List<T>> {
+  fun <T : Any> findAnyCycle(graph: DirectedGraph<T>): List<T>? {
     val visitedItems: MutableSet<T> = HashSet.create()
 
     // iterate over every node, skipping over those we've already visited in another inner loop
@@ -132,13 +131,10 @@ object GraphAlgorithms {
           val nextItem = nextNode.item()
           if (itemsInStack.contains(nextItem)) {
             // navigate back up the stack, building a list representing the cycle
-            return Optional.of(
-              ListAlgorithms.sublistOf(
+            return ListAlgorithms.sublistOf(
                 itemStack,
-                itemStack.indexOf(nextItem).asInt,
-                itemStack.count()
-              )
-            )
+                itemStack.indexOf(nextItem)!!,
+                itemStack.count())
           }
           if (visitedItems.contains(nextItem)) {
             continue
@@ -155,7 +151,7 @@ object GraphAlgorithms {
         }
       }
     }
-    return Optional.empty()
+    return null
   }
 
   /**
@@ -168,11 +164,11 @@ object GraphAlgorithms {
    *
    * @param graph The graph whose nodes to topologically sort. Must be acyclic.
    * @return an ordered list containing all nodes from the given graph sorted topologically such
-   * such that every node will appear in the list before its successors
+   *   that every node will appear in the list before its successors
    * @throws IllegalArgumentException if the graph is given graph is cyclic
    */
   @JvmStatic
-  fun <T> topologicallySort(graph: DirectedGraph<out T>): ImmutableList<T> {
+  fun <T : Any> topologicallySort(graph: DirectedGraph<out T>): ImmutableList<T> {
     // iterative depth-first search with back tracking
     val result: ImmutableList.Builder<T> = ImmutableList.builder()
     val itemsInResult: MutableSet<DirectedNode<out T>> = HashSet.create()
@@ -197,9 +193,8 @@ object GraphAlgorithms {
 
         // core loop
         var frame = stack.peek()
-        while (frame.isPresent // base case
-        ) {
-          val iterator = frame.get().second()
+        while (frame != null /* base case*/) {
+          val iterator = frame.second()
           if (iterator.hasNext()) {
             val next = iterator.next()
 
@@ -214,7 +209,7 @@ object GraphAlgorithms {
               itemsInStack.add(next)
             }
           } else {
-            val current = frame.get().first()
+            val current = frame.first()
 
             // no other successors, add to result
             result.add(current.item())
@@ -244,11 +239,10 @@ object GraphAlgorithms {
     val set: MutableSet<T> = HashSet.create()
     val queue: Queue<T> = ArrayQueue.create()
     queue.enqueue(source)
-    var optionalNode = queue.dequeue()
-    while (optionalNode.isPresent) {
-      val node: T = optionalNode.get()
+    var node = queue.dequeue()
+    while (node != null) {
       if (set.contains(node)) {
-        optionalNode = queue.dequeue()
+        node = queue.dequeue()
         continue
       }
       set.add(node)
@@ -259,7 +253,7 @@ object GraphAlgorithms {
         @Suppress("UNCHECKED_CAST")
         queue.enqueue(neighbor as T)
       }
-      optionalNode = queue.dequeue()
+      node = queue.dequeue()
     }
     return ImmutableSet.copyOf(set)
   }
@@ -273,7 +267,7 @@ object GraphAlgorithms {
       queue.enqueue(node)
     }
     while (queue.isPopulated) {
-      val node = queue.dequeue().orElseThrow()
+      val node = queue.dequeue()!!
       for (predecessor in node.predecessors()) {
         @Suppress("UNCHECKED_CAST")
         if (predecessor as T !in seenNodes) {
@@ -294,7 +288,7 @@ object GraphAlgorithms {
       queue.enqueue(node)
     }
     while (queue.isPopulated) {
-      val node = queue.dequeue().orElseThrow()
+      val node = queue.dequeue()!!
       for (successor in node.successors()) {
         @Suppress("UNCHECKED_CAST")
         if (successor as T !in seenNodes) {

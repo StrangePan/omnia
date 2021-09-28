@@ -43,19 +43,12 @@ class ArrayQueueTest {
   }
 
   @Test
-  fun enqueue_null_didThrowException() {
-    val testSubject: Queue<Any?> = ArrayQueue.create()
-    assertFailsWith(NullPointerException::class) { testSubject.enqueue(null) }
-  }
-
-  @Test
   fun enqueue_thenDequeue_didReturnObject() {
     val testSubject: Queue<Any> = ArrayQueue.create()
     val item = Any()
     testSubject.enqueue(item)
     val result = testSubject.dequeue()
-    assertThat(result.isPresent).isTrue()
-    assertThat(result.get()).isSameInstanceAs(item)
+    assertThat(result).isSameInstanceAs(item)
   }
 
   @Test
@@ -78,7 +71,7 @@ class ArrayQueueTest {
 
   @Test
   fun dequeue_whenEmpty_didReturnEmpty() {
-    assertThat(ArrayQueue.create<Any>().dequeue().isPresent).isFalse()
+    assertThat(ArrayQueue.create<Any>().dequeue()).isNull()
   }
 
   @Test
@@ -86,7 +79,7 @@ class ArrayQueueTest {
     val testSubject: Queue<Any> = ArrayQueue.create()
     testSubject.enqueue(Any())
     testSubject.dequeue()
-    assertThat(testSubject.dequeue().isPresent).isFalse()
+    assertThat(testSubject.dequeue()).isNull()
   }
 
   @Test
@@ -107,7 +100,7 @@ class ArrayQueueTest {
       testSubject.enqueue(datum)
     }
     for (i in 0..499) {
-      assertThat(testSubject.dequeue().get()).isEqualTo(data.itemAt(i))
+      assertThat(testSubject.dequeue()).isEqualTo(data.itemAt(i))
     }
   }
 
@@ -119,7 +112,7 @@ class ArrayQueueTest {
       testSubject.enqueue(datum)
     }
     for (i in 0..499) {
-      testSubject.dequeue().get()
+      testSubject.dequeue()
     }
     assertThat(testSubject.count().toLong()).isEqualTo(0)
     assertThat(testSubject.isPopulated).isFalse()
@@ -132,7 +125,7 @@ class ArrayQueueTest {
     for (i in 0..499) {
       val item = data.itemAt(i)
       testSubject.enqueue(item)
-      assertThat(testSubject.dequeue().get()).isEqualTo(item)
+      assertThat(testSubject.dequeue()).isEqualTo(item)
     }
   }
 
@@ -151,7 +144,7 @@ class ArrayQueueTest {
 
   @Test
   fun peek_whenEmpty_isEmpty() {
-    assertThat(ArrayQueue.create<Any>().peek().isPresent).isFalse()
+    assertThat(ArrayQueue.create<Any>().peek()).isNull()
   }
 
   @Test
@@ -159,8 +152,7 @@ class ArrayQueueTest {
     val testSubject: Queue<Int> = ArrayQueue.create()
     testSubject.enqueue(132)
     val datum = testSubject.peek()
-    assertThat(datum.isPresent).isTrue()
-    assertThat(datum.get()).isEqualTo(Integer.valueOf(132))
+    assertThat(datum).isEqualTo(Integer.valueOf(132))
   }
 
   @Test
@@ -197,8 +189,7 @@ class ArrayQueueTest {
     }
     for (i in 0..199) {
       val result = testSubject.peek()
-      assertThat(result.isPresent).isTrue()
-      assertThat(result.get()).isEqualTo(expected)
+      assertThat(result).isEqualTo(expected)
     }
   }
 

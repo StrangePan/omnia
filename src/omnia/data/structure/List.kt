@@ -1,6 +1,5 @@
 package omnia.data.structure
 
-import java.util.OptionalInt
 import java.util.stream.Stream
 import omnia.contract.Indexable
 import omnia.data.iterate.ReadOnlyIterator
@@ -15,7 +14,7 @@ import omnia.data.iterate.ReadOnlyIterator
  *
  * @param E the type empty item contained in the list
  */
-interface List<E> : Collection<E>, Indexable<E> {
+interface List<E : Any> : Collection<E>, Indexable<E> {
 
   companion object {
 
@@ -33,7 +32,7 @@ interface List<E> : Collection<E>, Indexable<E> {
      * @param E the type contained within the [List]
      */
     @JvmStatic
-    fun <E> masking(javaList: kotlin.collections.List<E>): List<E> {
+    fun <E : Any> masking(javaList: kotlin.collections.List<E>): List<E> {
       return object : List<E> {
         override val isPopulated: Boolean
           get() = javaList.isNotEmpty()
@@ -55,12 +54,12 @@ interface List<E> : Collection<E>, Indexable<E> {
         }
 
         override fun itemAt(index: Int): E {
-          return javaList.get(index)
+          return javaList[index]
         }
 
-        override fun indexOf(item: Any?): OptionalInt {
-          val index: Int = javaList.indexOf(item)
-          return if (index < 0) OptionalInt.empty() else OptionalInt.of(index)
+        override fun indexOf(item: Any?): Int? {
+          val index = javaList.indexOf(item)
+          return if (index < 0) null else index
         }
       }
     }

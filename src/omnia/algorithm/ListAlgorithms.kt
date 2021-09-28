@@ -3,14 +3,13 @@ package omnia.algorithm
 import java.util.Comparator
 import java.util.Objects
 import java.util.Objects.requireNonNull
-import java.util.OptionalInt
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
 
 object ListAlgorithms {
 
   @JvmStatic
-  fun <T> sublistOf(other: List<T>, startingIndex: Int, endingIndex: Int): ImmutableList<T> {
+  fun <T : Any> sublistOf(other: List<T>, startingIndex: Int, endingIndex: Int): ImmutableList<T> {
     Objects.checkFromToIndex(startingIndex, endingIndex, other.count())
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
     for (i in startingIndex until endingIndex) {
@@ -20,7 +19,7 @@ object ListAlgorithms {
   }
 
   @JvmStatic
-  fun <T> reverse(other: List<T>): ImmutableList<T> {
+  fun <T : Any> reverse(other: List<T>): ImmutableList<T> {
     requireNonNull(other)
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
     for (i in other.count() - 1 downTo 0) {
@@ -38,7 +37,7 @@ object ListAlgorithms {
    * Can have any length, including 0.
    */
   @JvmStatic
-  fun <T> toArray(list: List<out T>, template: Array<T>): Array<T> {
+  fun <T : Any> toArray(list: List<out T>, template: Array<T?>): Array<T?> {
     return list.stream().toArray(template::copyOf)
   }
 
@@ -53,9 +52,7 @@ object ListAlgorithms {
    * found
    */
   @JvmStatic
-  fun <T> binarySearch(
-    haystack: List<out T>, needle: T, comparator: Comparator<in T>
-  ): OptionalInt {
+  fun <T : Any> binarySearch(haystack: List<out T>, needle: T, comparator: Comparator<in T>): Int? {
     var min = 0
     var max = haystack.count() - 1
     while (min <= max) {
@@ -63,7 +60,7 @@ object ListAlgorithms {
       val midValue = haystack.itemAt(mid)
       val comp = comparator.compare(midValue, needle)
       if (comp == 0) {
-        return OptionalInt.of(mid)
+        return mid
       }
       if (comp < 0) {
         min = mid + 1
@@ -72,6 +69,6 @@ object ListAlgorithms {
         max = mid - 1
       }
     }
-    return OptionalInt.empty()
+    return null
   }
 }

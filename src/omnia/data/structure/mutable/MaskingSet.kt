@@ -4,7 +4,7 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import omnia.data.structure.Collection
 
-open class MaskingSet<E, J : kotlin.collections.MutableSet<E>>(private val kotlinSet: J) :
+open class MaskingSet<E : Any, J : kotlin.collections.MutableSet<E>>(private val kotlinSet: J) :
   MutableSet<E> {
 
   protected fun javaSet(): J {

@@ -3,28 +3,31 @@ package omnia.data.structure.observable
 import io.reactivex.rxjava3.core.Observable
 import omnia.data.structure.Set
 
-interface ObservableSet<E> : ObservableDataStructure, Set<E> {
+interface ObservableSet<E : Any> : ObservableDataStructure, Set<E> {
 
   override fun observe(): ObservableChannels<E>
-  interface ObservableChannels<E> : ObservableDataStructure.ObservableChannels {
+
+  interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
 
     override fun states(): Observable<out Set<E>>
+
     override fun mutations(): Observable<out MutationEvent<E>>
   }
 
-  interface MutationEvent<E> : ObservableDataStructure.MutationEvent {
+  interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
 
     override fun state(): Set<E>
+
     override fun operations(): Set<out SetOperation<E>>
   }
 
-  interface SetOperation<E> {
+  interface SetOperation<E : Any> {
 
     fun item(): E
 
     companion object {
 
-      fun <E> justAddToSetOperations(
+      fun <E : Any> justAddToSetOperations(
         observable: Observable<out SetOperation<E>>
       ): Observable<AddToSet<E>> {
         return observable.flatMap { mutation: SetOperation<E> ->
@@ -34,7 +37,7 @@ interface ObservableSet<E> : ObservableDataStructure, Set<E> {
         }
       }
 
-      fun <E> justRemoveFromSetOperations(
+      fun <E : Any> justRemoveFromSetOperations(
         observable: Observable<out SetOperation<E>>
       ): Observable<RemoveFromSet<E>> {
         return observable.flatMap { mutation: SetOperation<E> ->
@@ -46,6 +49,7 @@ interface ObservableSet<E> : ObservableDataStructure, Set<E> {
     }
   }
 
-  interface AddToSet<E> : SetOperation<E>
-  interface RemoveFromSet<E> : SetOperation<E>
+  interface AddToSet<E : Any> : SetOperation<E>
+
+  interface RemoveFromSet<E : Any> : SetOperation<E>
 }

@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.Optional
 import java.util.function.Supplier
 import java.util.stream.Stream
 import omnia.data.iterate.MappingIterator
@@ -9,7 +8,7 @@ import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 
-open class MaskingMap<K, V>(private val kotlinMap: kotlin.collections.MutableMap<K, V>) :
+open class MaskingMap<K : Any, V : Any>(private val kotlinMap: kotlin.collections.MutableMap<K, V>) :
   MutableMap<K, V> {
 
   override fun putMapping(key: K, value: V) {
@@ -17,11 +16,11 @@ open class MaskingMap<K, V>(private val kotlinMap: kotlin.collections.MutableMap
   }
 
   override fun putMappingIfAbsent(key: K, value: Supplier<V>): V {
-    return kotlinMap.computeIfAbsent(key, { value.get() })
+    return kotlinMap.computeIfAbsent(key) { value.get() }
   }
 
-  override fun removeUnknownTypedKey(key: Any?): Optional<V> {
-    return Optional.ofNullable(kotlinMap.remove(key))
+  override fun removeUnknownTypedKey(key: Any?): V? {
+    return kotlinMap.remove(key)
   }
 
   override fun keys(): Set<K> {
@@ -56,8 +55,8 @@ open class MaskingMap<K, V>(private val kotlinMap: kotlin.collections.MutableMap
     }
   }
 
-  override fun valueOfUnknownTyped(key: Any?): Optional<V> {
-    return Optional.ofNullable(kotlinMap[key])
+  override fun valueOfUnknownTyped(key: Any?): V? {
+    return kotlinMap[key]
   }
 
   override fun keysOfUnknownTyped(value: Any?): Set<K> {

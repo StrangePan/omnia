@@ -3,9 +3,9 @@ package omnia.data.structure.tuple
 import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtMostDecuplet
 
-interface Decuplet<T> : Decuple<T, T, T, T, T, T, T, T, T, T>, AtMostDecuplet<T> {
+interface Decuplet<T : Any> : Decuple<T, T, T, T, T, T, T, T, T, T>, AtMostDecuplet<T> {
 
-  override fun <R> map(mapper: Function<in T, out R>): Decuplet<R>
+  override fun <R : Any> map(mapper: Function<in T, out R>): Decuplet<R>
   override fun dropFirst(): Nonuplet<T>
   override fun dropSecond(): Nonuplet<T>
   override fun dropThird(): Nonuplet<T>
@@ -19,7 +19,7 @@ interface Decuplet<T> : Decuple<T, T, T, T, T, T, T, T, T, T>, AtMostDecuplet<T>
 
   companion object {
 
-    fun <T> of(
+    fun <T : Any> of(
         first: T,
         second: T,
         third: T,

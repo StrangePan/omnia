@@ -4,7 +4,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
-import java.util.OptionalInt
 import java.util.function.BiFunction
 import java.util.function.Predicate
 import java.util.stream.Stream
@@ -15,7 +14,7 @@ import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.observable.ObservableList
 import omnia.data.structure.observable.ObservableList.ListOperation
 
-internal class WritableObservableListImpl<E> : WritableObservableList<E> {
+internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
 
   @Volatile
   private var currentState: ImmutableList<E> = ImmutableList.empty()
@@ -96,11 +95,11 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
     synchronized(this) {
       val index = state.indexOf(item)
       return mutateState(
-        { index.isPresent },
-        { state -> state.toBuilder().removeAt(index.orElseThrow()).build() }
+        { index != null },
+        { state -> state.toBuilder().removeAt(index!!).build() }
       ) { previousState, _ ->
         generateRemoveAtMutations(
-          previousState, IntRange.just(index.orElseThrow())
+          previousState, IntRange.just(index!!)
         )
       }
     }
@@ -156,7 +155,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
     return state.itemAt(index)
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     return state.indexOf(item)
   }
 
@@ -186,7 +185,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
         return this@WritableObservableListImpl.itemAt(index)
       }
 
-      override fun indexOf(item: Any?): OptionalInt {
+      override fun indexOf(item: Any?): Int? {
         return this@WritableObservableListImpl.indexOf(item)
       }
 
@@ -205,7 +204,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
       synchronized(this) { return currentState }
     }
 
-  private class AddToList<E>(private val items: List<E>, private val indices: IntRange) :
+  private class AddToList<E : Any>(private val items: List<E>, private val indices: IntRange) :
     ObservableList.AddToList<E> {
 
     override fun items(): List<E> {
@@ -217,7 +216,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
     }
   }
 
-  private class MoveInList<E>(
+  private class MoveInList<E : Any>(
     private val items: List<E>,
     private val previousIndices: IntRange,
     private val currentIndices: IntRange
@@ -236,7 +235,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
     }
   }
 
-  private class RemoveFromList<E>(private val items: List<E>, private val indices: IntRange) :
+  private class RemoveFromList<E : Any>(private val items: List<E>, private val indices: IntRange) :
     ObservableList.RemoveFromList<E> {
 
     override fun items(): List<E> {
@@ -248,7 +247,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
     }
   }
 
-  private class ReplaceInList<E>(
+  private class ReplaceInList<E : Any>(
     private val replacedItems: List<E>,
     private val newItems: List<E>,
     private val indices: IntRange
@@ -292,7 +291,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
 
   companion object {
 
-    private fun <E> generateInsertAtMutations(
+    private fun <E : Any> generateInsertAtMutations(
       state: ImmutableList<E>, range: IntRange
     ): ImmutableList<ListOperation<E>> {
       val builder: ImmutableList.Builder<ListOperation<E>> = ImmutableList.builder()
@@ -308,7 +307,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
       return builder.build()
     }
 
-    private fun <E> generateRemoveAtMutations(
+    private fun <E : Any> generateRemoveAtMutations(
       previousState: ImmutableList<E>, range: IntRange
     ): ImmutableList<ListOperation<E>> {
       val builder: ImmutableList.Builder<ListOperation<E>> = ImmutableList.builder()
@@ -326,7 +325,7 @@ internal class WritableObservableListImpl<E> : WritableObservableList<E> {
       return builder.build()
     }
 
-    private fun <E> generateReplaceAtMutations(
+    private fun <E : Any> generateReplaceAtMutations(
       previousState: ImmutableList<E>, currentState: ImmutableList<E>, range: IntRange
     ): ImmutableList<ListOperation<E>> {
       return ImmutableList.of(

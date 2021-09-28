@@ -16,7 +16,7 @@ import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.observable.ObservableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
 
-internal class WritableObservableSetImpl<E> : WritableObservableSet<E> {
+internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
   @Volatile
   private var currentState: ImmutableSet<E> = ImmutableSet.empty()
@@ -141,14 +141,14 @@ internal class WritableObservableSetImpl<E> : WritableObservableSet<E> {
       synchronized(this) { return currentState }
     }
 
-  private class AddToSet<E>(private val item: E) : ObservableSet.AddToSet<E> {
+  private class AddToSet<E : Any>(private val item: E) : ObservableSet.AddToSet<E> {
 
     override fun item(): E {
       return item
     }
   }
 
-  private class RemoveFromSet<E>(private val item: E) : ObservableSet.RemoveFromSet<E> {
+  private class RemoveFromSet<E : Any>(private val item: E) : ObservableSet.RemoveFromSet<E> {
 
     override fun item(): E {
       return item

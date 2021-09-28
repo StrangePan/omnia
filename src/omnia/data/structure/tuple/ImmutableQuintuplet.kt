@@ -1,14 +1,13 @@
 package omnia.data.structure.tuple
 
-import java.util.OptionalInt
 import java.util.function.Function
 import java.util.stream.Stream
 import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableQuintuplet<T>(first: T, second: T, third: T, fourth: T, fifth: T) :
+internal class ImmutableQuintuplet<T : Any>(first: T, second: T, third: T, fourth: T, fifth: T) :
   ImmutableQuintuple<T, T, T, T, T>(first, second, third, fourth, fifth), Quintuplet<T> {
 
-  override fun <R> map(mapper: Function<in T, out R>): Quintuplet<R> {
+  override fun <R : Any> map(mapper: Function<in T, out R>): Quintuplet<R> {
     return Tuplet.of(
       mapper.apply(first()),
       mapper.apply(second()),
@@ -96,7 +95,7 @@ internal class ImmutableQuintuplet<T>(first: T, second: T, third: T, fourth: T, 
     return toActualList().itemAt(index)
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     return toActualList().indexOf(item)
   }
 

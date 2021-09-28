@@ -61,7 +61,7 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
     return IntegerRangeIterator.create(start, end())
   }
 
-  private fun <E> asSublistOf(list: ImmutableList<E>): ImmutableList<E> {
+  private fun <E : Any> asSublistOf(list: ImmutableList<E>): ImmutableList<E> {
     return list.sublistStartingAt(start()).to(end())
   }
 

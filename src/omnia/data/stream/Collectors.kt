@@ -21,13 +21,13 @@ object Collectors {
 
   /** Creates a [Collector] that collects stream items into a [Set].  */
   @JvmStatic
-  fun <E> toSet(): Collector<E, *, Set<E>> {
+  fun <E : Any> toSet(): Collector<E, *, Set<E>> {
     return MaskingCollector(java.util.stream.Collectors.toSet(), Set.Companion::masking)
   }
 
   /** Creates a [Collector] that collects stream items into an [ImmutableSet].  */
   @JvmStatic
-  fun <E> toImmutableSet(): Collector<E, *, ImmutableSet<E>> {
+  fun <E : Any> toImmutableSet(): Collector<E, *, ImmutableSet<E>> {
     return object : Collector<E, MutableSet<E>, ImmutableSet<E>> {
       override fun supplier(): Supplier<MutableSet<E>> {
         return Supplier { HashSet.create() }
@@ -56,12 +56,12 @@ object Collectors {
   }
 
   @JvmStatic
-  fun <E> toList(): Collector<E, *, List<E>> {
+  fun <E : Any> toList(): Collector<E, *, List<E>> {
     return MaskingCollector(java.util.stream.Collectors.toList(), List.Companion::masking)
   }
 
   @JvmStatic
-  fun <E> toImmutableList(): Collector<E, *, ImmutableList<E>> {
+  fun <E : Any> toImmutableList(): Collector<E, *, ImmutableList<E>> {
     return object : Collector<E, ArrayList<E>, ImmutableList<E>> {
       override fun supplier(): Supplier<ArrayList<E>> {
         return Supplier { ArrayList.create() }
@@ -98,7 +98,7 @@ object Collectors {
    * @param V the second type of the [Couple] and the value type for the map
    */
   @JvmStatic
-  fun <K, V> toImmutableMap(): Collector<Couple<out K, out V>, *, ImmutableMap<K, V>> {
+  fun <K : Any, V : Any> toImmutableMap(): Collector<Couple<out K, out V>, *, ImmutableMap<K, V>> {
     return toImmutableMap({ obj -> obj.first() }, { obj -> obj.second() })
   }
 
@@ -112,7 +112,7 @@ object Collectors {
    * @param K the key type for the map
    */
   @JvmStatic
-  fun <E, K> toImmutableMap(
+  fun <E : Any, K : Any> toImmutableMap(
       keyExtractor: Function<in E, K>,
   ): Collector<E, *, ImmutableMap<K, E>> {
     return toImmutableMap(keyExtractor, Function.identity())
@@ -129,7 +129,7 @@ object Collectors {
    * @param V the value type for the map
    */
   @JvmStatic
-  fun <E, K, V> toImmutableMap(
+  fun <E : Any, K : Any, V : Any> toImmutableMap(
       keyExtractor: Function<in E, K>,
       valueExtractor: Function<in E, V>,
   ): Collector<E, *, ImmutableMap<K, V>> {
@@ -147,13 +147,13 @@ object Collectors {
    * @param V the value type for the map
    */
   @JvmStatic
-  fun <E, K, V> toHashMap(
+  fun <E : Any, K : Any, V : Any> toHashMap(
       keyExtractor: Function<in E, K>, valueExtractor: Function<in E, V>,
   ): Collector<E, *, HashMap<K, V>> {
     return groupBy(keyExtractor, valueExtractor, Function.identity())
   }
 
-  private fun <E, K, V, R> groupBy(
+  private fun <E : Any, K : Any, V : Any, R : Any> groupBy(
       keyExtractor: Function<in E, K>,
       valueExtractor: Function<in E, V>,
       finisher: Function<HashMap<K, V>, R>,

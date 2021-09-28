@@ -225,7 +225,7 @@ class Tuples {
   }
 
   interface AtMostDecuple
-  interface AtMostCouplet<T> : AtMostTriplet<T>, AtMostCouple {
+  interface AtMostCouplet<T : Any> : AtMostTriplet<T>, AtMostCouple {
 
     override fun concat(`object`: T): AtMostTriplet<T>
     override fun concat(other: Couple<T, T>): AtMostQuadruplet<T>
@@ -237,7 +237,7 @@ class Tuples {
     fun concat(other: Octuple<T, T, T, T, T, T, T, T>): AtMostDecuplet<T>
   }
 
-  interface AtMostTriplet<T> : AtMostQuadruplet<T>, AtMostTriple {
+  interface AtMostTriplet<T : Any> : AtMostQuadruplet<T>, AtMostTriple {
 
     override fun concat(`object`: T): AtMostQuadruplet<T>
     override fun concat(other: Couple<T, T>): AtMostQuintuplet<T>
@@ -248,7 +248,7 @@ class Tuples {
     fun concat(other: Septuple<T, T, T, T, T, T, T>): AtMostDecuplet<T>
   }
 
-  interface AtMostQuadruplet<T> : AtMostQuintuplet<T>, AtMostQuadruple {
+  interface AtMostQuadruplet<T : Any> : AtMostQuintuplet<T>, AtMostQuadruple {
 
     override fun concat(`object`: T): AtMostQuintuplet<T>
     override fun concat(other: Couple<T, T>): AtMostSextuplet<T>
@@ -258,7 +258,7 @@ class Tuples {
     fun concat(other: Sextuple<T, T, T, T, T, T>): AtMostDecuplet<T>
   }
 
-  interface AtMostQuintuplet<T> : AtMostSextuplet<T>, AtMostQuintuple {
+  interface AtMostQuintuplet<T : Any> : AtMostSextuplet<T>, AtMostQuintuple {
 
     override fun concat(`object`: T): AtMostSextuplet<T>
     override fun concat(other: Couple<T, T>): AtMostSeptuplet<T>
@@ -267,7 +267,7 @@ class Tuples {
     fun concat(other: Quintuple<T, T, T, T, T>): AtMostDecuplet<T>
   }
 
-  interface AtMostSextuplet<T> : AtMostSeptuplet<T>, AtMostSextuple {
+  interface AtMostSextuplet<T : Any> : AtMostSeptuplet<T>, AtMostSextuple {
 
     override fun concat(`object`: T): AtMostSeptuplet<T>
     override fun concat(other: Couple<T, T>): AtMostOctuplet<T>
@@ -275,23 +275,23 @@ class Tuples {
     fun concat(other: Quadruple<T, T, T, T>): AtMostDecuplet<T>
   }
 
-  interface AtMostSeptuplet<T> : AtMostOctuplet<T>, AtMostSeptuple {
+  interface AtMostSeptuplet<T : Any> : AtMostOctuplet<T>, AtMostSeptuple {
 
     override fun concat(`object`: T): AtMostOctuplet<T>
     override fun concat(other: Couple<T, T>): AtMostNonuplet<T>
     fun concat(other: Triple<T, T, T>): AtMostDecuplet<T>
   }
 
-  interface AtMostOctuplet<T> : AtMostNonuplet<T>, AtMostOctuple {
+  interface AtMostOctuplet<T : Any> : AtMostNonuplet<T>, AtMostOctuple {
 
     override fun concat(`object`: T): AtMostNonuplet<T>
     fun concat(other: Couple<T, T>): AtMostDecuplet<T>
   }
 
-  interface AtMostNonuplet<T> : AtMostDecuplet<T>, AtMostNonuple {
+  interface AtMostNonuplet<T : Any> : AtMostDecuplet<T>, AtMostNonuple {
 
     fun concat(`object`: T): AtMostDecuplet<T>
   }
 
-  interface AtMostDecuplet<T> : AtMostDecuple, Tuplet<T>
+  interface AtMostDecuplet<T : Any> : AtMostDecuple, Tuplet<T>
 }
