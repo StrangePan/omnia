@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.subjects.SingleSubject
 import java.util.Objects
 import omnia.data.structure.tuple.Couple
 
-class ObservableState<T> private constructor(initialState: T) {
+class ObservableState<T : Any> private constructor(initialState: T) {
 
   private val mutations: PublishSubject<Function<T, T>> = PublishSubject.create()
   private val observableState: Observable<T> =
@@ -68,7 +68,7 @@ class ObservableState<T> private constructor(initialState: T) {
   companion object {
 
     @JvmStatic
-    fun <T> create(initialState: T): ObservableState<T> {
+    fun <T : Any> create(initialState: T): ObservableState<T> {
       return ObservableState(initialState)
     }
   }

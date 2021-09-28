@@ -79,7 +79,7 @@ class ObservableDirectedGraphTest {
     graph.addEdge(item1, item2)
     assertThat(
       graph.edges().stream().findFirst().map { edge: DirectedGraph.DirectedEdge<Any>? ->
-        edge!!.endpoints().map<Any> { obj: DirectedGraph.DirectedNode<*> -> obj.item()!! }
+        edge!!.endpoints().map<Any>(DirectedGraph.DirectedNode<*>::item)
       })
       .hasValue(of(item1, item2))
   }
