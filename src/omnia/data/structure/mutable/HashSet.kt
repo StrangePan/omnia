@@ -9,7 +9,7 @@ import java.util.stream.Stream
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 
-class HashSet<E>(
+class HashSet<E : Any>(
   original: Collection<out E>? = null,
   equalsFunction: BiPredicate<in Any?, in Any?>? = null,
   hashFunction: ToIntFunction<in Any>? = null,
@@ -107,11 +107,11 @@ class HashSet<E>(
       Function<Wrapper<*>, Any?> { wrapper: Wrapper<*> -> wrapper.element() }
 
     @JvmStatic
-    fun <E> create(): HashSet<E> {
+    fun <E : Any> create(): HashSet<E> {
       return HashSet()
     }
 
-    fun <E> copyOf(original: Collection<out E>): HashSet<E> {
+    fun <E : Any> copyOf(original: Collection<out E>): HashSet<E> {
       return HashSet(original)
     }
   }

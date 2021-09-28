@@ -5,25 +5,28 @@ import omnia.data.structure.Graph
 import omnia.data.structure.Set
 import omnia.data.structure.tuple.Couplet
 
-interface ObservableGraph<E> : Graph<E>, ObservableDataStructure {
+interface ObservableGraph<E : Any> : Graph<E>, ObservableDataStructure {
 
   override fun observe(): ObservableChannels<E>
-  interface ObservableChannels<E> : ObservableDataStructure.ObservableChannels {
+
+  interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
 
     override fun states(): Observable<out Graph<E>>
+
     override fun mutations(): Observable<out MutationEvent<E>>
   }
 
-  interface MutationEvent<E> : ObservableDataStructure.MutationEvent {
+  interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
 
     override fun state(): Graph<E>
+
     override fun operations(): Set<out GraphOperation<E>>
   }
 
-  interface GraphOperation<E> {
+  interface GraphOperation<E : Any> {
     companion object {
 
-      fun <E> justAddNodeToGraphOperations(
+      fun <E : Any> justAddNodeToGraphOperations(
         flowable: Observable<out GraphOperation<E>>
       ): Observable<AddNodeToGraph<E>> {
         return flowable.flatMap { mutation: GraphOperation<E> ->
@@ -33,7 +36,7 @@ interface ObservableGraph<E> : Graph<E>, ObservableDataStructure {
         }
       }
 
-      fun <E> justRemoveNodeFromGraphOperations(
+      fun <E : Any> justRemoveNodeFromGraphOperations(
         flowable: Observable<out GraphOperation<E>>
       ): Observable<RemoveNodeFromGraph<E>> {
         return flowable.flatMap { mutation: GraphOperation<E> ->
@@ -43,7 +46,7 @@ interface ObservableGraph<E> : Graph<E>, ObservableDataStructure {
         }
       }
 
-      fun <E> justAddEdgeToGraphOperations(
+      fun <E : Any> justAddEdgeToGraphOperations(
         flowable: Observable<out GraphOperation<E>>
       ): Observable<AddEdgeToGraph<E>> {
         return flowable.flatMap { mutation: GraphOperation<E> ->
@@ -53,7 +56,7 @@ interface ObservableGraph<E> : Graph<E>, ObservableDataStructure {
         }
       }
 
-      fun <E> justRemoveEdgeFromGraphOperations(
+      fun <E : Any> justRemoveEdgeFromGraphOperations(
         flowable: Observable<out GraphOperation<E>>
       ): Observable<RemoveEdgeFromGraph<E>> {
         return flowable.flatMap { mutation: GraphOperation<E> ->
@@ -65,18 +68,21 @@ interface ObservableGraph<E> : Graph<E>, ObservableDataStructure {
     }
   }
 
-  interface NodeOperation<E> : GraphOperation<E> {
+  interface NodeOperation<E : Any> : GraphOperation<E> {
 
     fun item(): E
   }
 
-  interface EdgeOperation<E> : GraphOperation<E> {
+  interface EdgeOperation<E : Any> : GraphOperation<E> {
 
     fun endpoints(): Couplet<E>
   }
 
-  interface AddNodeToGraph<E> : NodeOperation<E>
-  interface RemoveNodeFromGraph<E> : NodeOperation<E>
-  interface AddEdgeToGraph<E> : EdgeOperation<E>
-  interface RemoveEdgeFromGraph<E> : EdgeOperation<E>
+  interface AddNodeToGraph<E : Any> : NodeOperation<E>
+
+  interface RemoveNodeFromGraph<E : Any> : NodeOperation<E>
+
+  interface AddEdgeToGraph<E : Any> : EdgeOperation<E>
+
+  interface RemoveEdgeFromGraph<E : Any> : EdgeOperation<E>
 }

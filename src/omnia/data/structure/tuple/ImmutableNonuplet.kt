@@ -1,11 +1,10 @@
 package omnia.data.structure.tuple
 
-import java.util.OptionalInt
 import java.util.function.Function
 import java.util.stream.Stream
 import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableNonuplet<T>(
+internal class ImmutableNonuplet<T : Any>(
   first: T,
   second: T,
   third: T,
@@ -27,7 +26,7 @@ internal class ImmutableNonuplet<T>(
   ninth
 ), Nonuplet<T> {
 
-  override fun <R> map(mapper: Function<in T, out R>): Nonuplet<R> {
+  override fun <R : Any> map(mapper: Function<in T, out R>): Nonuplet<R> {
     return Tuplet.of(
       mapper.apply(first()),
       mapper.apply(second()),
@@ -100,7 +99,7 @@ internal class ImmutableNonuplet<T>(
     return toActualList().itemAt(index)
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     return toActualList().indexOf(item)
   }
 

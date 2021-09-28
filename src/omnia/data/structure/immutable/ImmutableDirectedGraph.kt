@@ -125,15 +125,15 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
           )
       }
 
-      private fun <T> deepRemove(map: MutableMap<T, MutableSet<T>>, item: Any?) {
+      private fun <T : Any> deepRemove(map: MutableMap<T, MutableSet<T>>, item: Any?) {
         map.removeUnknownTypedKey(item)
         map.values().forEach(Consumer { list: MutableSet<T> -> list.removeUnknownTyped(item) })
       }
 
-      private fun <T> deepReplace(
+      private fun <T : Any> deepReplace(
         map: MutableMap<T, MutableSet<T>>, original: T, replacement: T,
       ) {
-        map.removeKey(original).ifPresent { set: MutableSet<T> -> map.putMapping(replacement, set) }
+        map.removeKey(original)?.let { set -> map.putMapping(replacement, set) }
         map.values().forEach(Consumer { set: MutableSet<T> ->
           if (set.removeUnknownTyped(original)) {
             set.add(replacement)
@@ -419,8 +419,8 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
           .collect(
             { HashMap.create<E, HashSet<E>>() },
             { map, edge ->
-              map.putMappingIfAbsent(edge.start().item(), { HashSet.create() })
-                .add(edge.end().item())
+              map.putMappingIfAbsent(edge.start().item()) { HashSet.create() }
+                  .add(edge.end().item())
             },
             { map1, map2 ->
               map2.entries()
@@ -431,8 +431,8 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
           .collect(
             { HashMap.create<E, HashSet<E>>() },
             { map, edge ->
-              map.putMappingIfAbsent(edge.end().item(), { HashSet.create() })
-                .add(edge.start().item())
+              map.putMappingIfAbsent(edge.end().item()) { HashSet.create() }
+                  .add(edge.start().item())
             },
             { map1, map2 ->
               map2.entries()

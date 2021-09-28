@@ -16,7 +16,7 @@ object SetAlgorithms {
    * @return a new set representing the union of sets [a] and [b]
    */
   @JvmStatic
-  fun <T> unionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
+  fun <T : Any> unionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
     return ImmutableSet.builder<T>().addAll(a).addAll(b).build()
   }
 
@@ -31,7 +31,7 @@ object SetAlgorithms {
    * @return a new set representing the intersection of sets [a] and [b]
    */
   @JvmStatic
-  fun <T> intersectionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
+  fun <T : Any> intersectionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
     val min = if (a.count() < b.count()) a else b
     val max = if (min !== a) a else b
     return min.stream().filter { element -> max.containsUnknownTyped(element) }
@@ -54,7 +54,7 @@ object SetAlgorithms {
    * set [b]
    */
   @JvmStatic
-  fun <T> differenceBetween(a: Set<out T>, b: Set<*>): ImmutableSet<T> {
+  fun <T : Any> differenceBetween(a: Set<out T>, b: Set<*>): ImmutableSet<T> {
     return a.stream().filter { item: T -> !b.containsUnknownTyped(item) }
       .collect(Collectors.toImmutableSet())
   }

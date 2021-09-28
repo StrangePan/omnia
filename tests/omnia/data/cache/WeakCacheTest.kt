@@ -1,7 +1,6 @@
 package omnia.data.cache
 
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth8.assertThat
 import kotlin.test.Test
 
 class WeakCacheTest {
@@ -43,7 +42,6 @@ class WeakCacheTest {
   fun get_whenCached_isPresent() {
     val value = "value"
     testSubject.getOrCache("key") { value }
-    assertThat(testSubject["key"]).isPresent()
-    assertThat(testSubject["key"]).hasValue(value)
+    assertThat(testSubject["key"]).isEqualTo(value)
   }
 }

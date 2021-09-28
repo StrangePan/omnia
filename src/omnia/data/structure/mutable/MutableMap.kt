@@ -1,25 +1,26 @@
 package omnia.data.structure.mutable
 
-import java.util.Optional
 import java.util.function.Supplier
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 
-interface MutableMap<K, V> : Map<K, V> {
+interface MutableMap<K : Any, V : Any> : Map<K, V> {
 
   fun putMapping(key: K, value: V)
+
   fun putMappingIfAbsent(key: K, value: Supplier<V>): V
-  fun removeKey(key: K): Optional<V> {
+
+  fun removeKey(key: K): V? {
     return removeUnknownTypedKey(key)
   }
 
-  fun removeUnknownTypedKey(key: Any?): Optional<V>
+  fun removeUnknownTypedKey(key: Any?): V?
 
   override fun entries(): Set<Map.Entry<K, V>>
 
   companion object {
 
-    fun <K, V> masking(javaMap: kotlin.collections.MutableMap<K, V>): MutableMap<K, V> {
+    fun <K : Any, V : Any> masking(javaMap: kotlin.collections.MutableMap<K, V>): MutableMap<K, V> {
       return MaskingMap(javaMap)
     }
   }

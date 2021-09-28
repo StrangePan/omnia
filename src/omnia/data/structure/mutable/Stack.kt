@@ -1,29 +1,30 @@
 package omnia.data.structure.mutable
 
 import java.util.Objects
-import java.util.Optional
 import omnia.contract.Countable
 
-interface Stack<E> : Countable, Iterable<E> {
+interface Stack<E : Any> : Countable, Iterable<E> {
 
   fun push(item: E)
-  fun pop(): Optional<E>
-  fun peek(): Optional<E>
+
+  fun pop(): E?
+
+  fun peek(): E?
 
   companion object {
 
-    fun <E> masking(javaStack: java.util.Stack<E>): Stack<E> {
+    fun <E : Any> masking(javaStack: java.util.Stack<E>): Stack<E> {
       return object : Stack<E> {
         override fun push(item: E) {
           javaStack.push(Objects.requireNonNull(item))
         }
 
-        override fun pop(): Optional<E> {
-          return if (javaStack.isEmpty()) Optional.empty() else Optional.ofNullable(javaStack.pop())
+        override fun pop(): E? {
+          return if (javaStack.isEmpty()) null else javaStack.pop()
         }
 
-        override fun peek(): Optional<E> {
-          return if (javaStack.isEmpty()) Optional.empty() else Optional.ofNullable(javaStack.peek())
+        override fun peek(): E? {
+          return if (javaStack.isEmpty()) null else javaStack.peek()
         }
 
         override fun count(): Int {
