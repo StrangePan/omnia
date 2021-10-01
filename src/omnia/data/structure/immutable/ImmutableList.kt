@@ -198,6 +198,12 @@ class ImmutableList<E : Any> : List<E> {
     }
 
     @JvmStatic
+    fun <E : Any> Iterable<E>.toImmutableList(): ImmutableList<E> {
+      return copyOf(this);
+    }
+
+
+    @JvmStatic
     fun <E : Any> builder(): Builder<E> {
       return Builder()
     }

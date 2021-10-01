@@ -130,6 +130,11 @@ class ImmutableSet<E : Any> : Set<E> {
     }
 
     @JvmStatic
+    fun <E : Any> Iterable<E>.toImmutableSet(): ImmutableSet<E> {
+      return copyOf(this);
+    }
+
+    @JvmStatic
     fun <E : Any> builder(): Builder<E> {
       return Builder()
     }

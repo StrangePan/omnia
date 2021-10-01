@@ -8,6 +8,7 @@ import omnia.data.stream.Collectors
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
+import omnia.data.structure.tuple.Couple
 
 class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
@@ -190,6 +191,21 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     @JvmStatic
     fun <K : Any, V : Any> copyOf(iterable: Iterable<Map.Entry<out K, out V>>): ImmutableMap<K, V> {
       return builder<K, V>().putAll(iterable).build()
+    }
+
+    @JvmStatic
+    fun <K : Any, V : Any, E> Iterable<E>.toImmutableMap(
+      keyMapper: (E) -> K,
+      valueMapper: (E) -> V
+    ): ImmutableMap<K, V> {
+      val builder = builder<K, V>()
+      this.forEach { builder.putMapping(keyMapper(it), valueMapper(it)) }
+      return builder.build()
+    }
+
+    @JvmStatic
+    fun <K : Any, V : Any> Iterable<Couple<out K, out V>>.toImmutableMap(): ImmutableMap<K, V> {
+      return this.toImmutableMap({ it.first() }, { it.second() })
     }
 
     @JvmStatic
