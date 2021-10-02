@@ -1,6 +1,5 @@
 package omnia.data.structure
 
-import java.util.stream.Stream
 import omnia.data.iterate.ReadOnlyIterator
 
 interface Set<E : Any> : Collection<E> {
@@ -21,10 +20,6 @@ interface Set<E : Any> : Collection<E> {
 
         override fun iterator(): Iterator<E> {
           return ReadOnlyIterator(kotlinSet.iterator())
-        }
-
-        override fun stream(): Stream<E> {
-          return kotlinSet.stream()
         }
 
         override fun toString(): String {

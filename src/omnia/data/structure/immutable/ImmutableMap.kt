@@ -4,10 +4,10 @@ import java.util.Arrays
 import java.util.Objects
 import java.util.function.Supplier
 import omnia.data.cache.MemoizedInt
-import omnia.data.stream.Collectors
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.tuple.Couple
 
 class ImmutableMap<K : Any, V : Any> : Map<K, V> {
@@ -32,7 +32,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     }
 
     fun putAll(otherMap: Map<out K, out V>): Builder<K, V> {
-      otherMap.entries().stream().forEach { e -> putMapping(e.key(), e.value()) }
+      otherMap.entries().forEach { putMapping(it.key(), it.value()) }
       return this
     }
 
@@ -70,7 +70,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     return Collection.masking(kotlinMap.values)
   }
 
-  override fun entries(): Set<Map.Entry<K, V>> {
+  override fun entries(): ImmutableSet<Map.Entry<K, V>> {
     class Entry(private val javaEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
 
       override fun key(): K {
@@ -100,21 +100,15 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
         return key().toString() + " => " + value().toString()
       }
     }
-    return kotlinMap.entries.stream()
-      .map { javaEntry -> Entry(javaEntry) }
-      .collect(Collectors.toImmutableSet())
+    return kotlinMap.entries.map { Entry(it) }.toImmutableSet()
   }
 
   override fun valueOfUnknownTyped(key: Any?): V? {
     return kotlinMap[key]
   }
 
-  override fun keysOfUnknownTyped(value: Any?): Set<K> {
-    return kotlinMap.entries
-      .stream()
-      .filter { it.value == value }
-      .map { it.key }
-      .collect(Collectors.toImmutableSet())
+  override fun keysOfUnknownTyped(value: Any?): ImmutableSet<K> {
+    return kotlinMap.entries.filter { it.value == value }.map { it.key }.toImmutableSet()
   }
 
   override fun equals(other: Any?): Boolean {
@@ -153,11 +147,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
   }
 
   override fun toString(): String {
-    return (javaClass.simpleName
-        + "["
-        + entries().stream().map { obj: Map.Entry<K, V> -> obj.toString() }
-      .map { s: String -> "{$s}" }.collect(java.util.stream.Collectors.joining(", "))
-        + "]")
+    return "${javaClass.simpleName}[${entries().joinToString { "{$it}" }}]"
   }
 
   companion object {

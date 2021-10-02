@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
 import java.util.function.Function
-import java.util.stream.Stream
 import omnia.data.structure.immutable.ImmutableList
 
 internal class ImmutableQuintuplet<T : Any>(first: T, second: T, third: T, fourth: T, fifth: T) :
@@ -97,10 +96,6 @@ internal class ImmutableQuintuplet<T : Any>(first: T, second: T, third: T, fourt
 
   override fun indexOf(item: Any?): Int? {
     return toActualList().indexOf(item)
-  }
-
-  override fun stream(): Stream<T> {
-    return toActualList().stream()
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {

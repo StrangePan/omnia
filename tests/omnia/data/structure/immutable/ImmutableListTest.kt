@@ -82,16 +82,6 @@ class ImmutableListTest {
   }
 
   @Test
-  fun stream_didStreamAll() {
-    val stream = createTestSubject().stream()
-    val contents = stream.toArray()
-    assertThat(contents.size.toLong()).isEqualTo(3)
-    assertThat(contents[0]).isSameInstanceAs(TEST_ITEM_1)
-    assertThat(contents[1]).isSameInstanceAs(TEST_ITEM_2)
-    assertThat(contents[2]).isSameInstanceAs(TEST_ITEM_3)
-  }
-
-  @Test
   fun equals_whenEmpty_didEqual() {
     assertThat(ImmutableList.builder<Any>().build()).isEqualTo(ImmutableList.builder<Any>().build())
   }

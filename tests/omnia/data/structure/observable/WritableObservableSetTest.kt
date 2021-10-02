@@ -5,10 +5,10 @@ import io.reactivex.rxjava3.observers.TestObserver
 import java.util.function.Consumer
 import kotlin.test.Test
 import omnia.algorithm.SetAlgorithms.unionOf
-import omnia.data.stream.Collectors.toImmutableSet
 import omnia.data.structure.Set
 import omnia.data.structure.Set.Companion.areEqual
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.mutable.MutableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
 import omnia.data.structure.observable.writable.WritableObservableSet
@@ -121,10 +121,10 @@ class WritableObservableSetTest {
       assertThat(operation).isInstanceOf(ObservableSet.AddToSet::class.java)
     }
     assertThat(
-      testSubscriber.values().stream()
-        .map { operation -> operation as ObservableSet.AddToSet<*> }
-        .map { obj -> obj.item() }
-        .collect(toImmutableSet()))
+      testSubscriber.values()
+        .map { it as ObservableSet.AddToSet<*> }
+        .map { it.item() }
+        .toImmutableSet())
       .containsExactlyElementsIn(contents)
   }
 
@@ -159,20 +159,16 @@ class WritableObservableSetTest {
     val testSubscriber = set.observe().mutations().skip(1).test()
     removedContents.forEach(Consumer { item: Any -> set.remove(item) })
     testSubscriber.assertValueCount(removedContents.count())
-    testSubscriber.values()
-      .forEach { event -> assertThat(event.operations().count()).isEqualTo(1) }
+    testSubscriber.values().forEach { assertThat(it.operations().count()).isEqualTo(1) }
     val operations: Set<out SetOperation<Any>> =
-      testSubscriber.values().stream()
-        .map { obj -> obj.operations() }
-        .flatMap { obj -> obj.stream() }
-        .collect(toImmutableSet())
+      testSubscriber.values().flatMap { it.operations() }.toImmutableSet()
     operations.forEach { operation ->
       assertThat(operation).isInstanceOf(ObservableSet.RemoveFromSet::class.java)
     }
-    val actualRemovedContents: Set<Any> = operations.stream()
-      .map { operation -> operation as ObservableSet.RemoveFromSet<Any> }
-      .map { obj -> obj.item() }
-      .collect(toImmutableSet())
+    val actualRemovedContents: Set<Any> = operations
+      .map { it as ObservableSet.RemoveFromSet<Any> }
+      .map { it.item() }
+      .toImmutableSet()
     assertThat(actualRemovedContents).containsExactlyElementsIn(removedContents)
   }
 
@@ -187,17 +183,16 @@ class WritableObservableSetTest {
     set.clear()
     testSubscriber.assertValueCount(1)
     testSubscriber.assertValue { event -> event.operations().count() == contents.count() }
-    val operations: Set<out SetOperation<Any>> = testSubscriber.values().stream()
-      .map { obj -> obj.operations() }
-      .flatMap { obj -> obj.stream() }
-      .collect(toImmutableSet())
+    val operations: Set<out SetOperation<Any>> = testSubscriber.values()
+      .flatMap { obj -> obj.operations() }
+      .toImmutableSet()
     operations.forEach { operation ->
       assertThat(operation).isInstanceOf(ObservableSet.RemoveFromSet::class.java)
     }
-    val actualRemovedContents: Set<Any> = operations.stream()
-      .map { operation -> operation as ObservableSet.RemoveFromSet<Any> }
-      .map { obj -> obj.item() }
-      .collect(toImmutableSet())
+    val actualRemovedContents: Set<Any> = operations
+      .map { it as ObservableSet.RemoveFromSet<Any> }
+      .map { it.item() }
+      .toImmutableSet()
     assertThat(actualRemovedContents).containsExactlyElementsIn(contents)
   }
 

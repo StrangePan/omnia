@@ -7,12 +7,11 @@ import io.reactivex.rxjava3.subjects.Subject
 import java.util.function.BiFunction
 import java.util.function.Function
 import java.util.function.Predicate
-import java.util.stream.Stream
 import omnia.algorithm.SetAlgorithms
-import omnia.data.stream.Collectors
 import omnia.data.structure.Collection
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.observable.ObservableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
 
@@ -33,13 +32,12 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
   override fun addAll(items: Collection<out E>) {
     mutateState(
-      { state -> items.stream().anyMatch { e: E -> !state.contains(e) } },
+      { state -> items.any { !state.contains(it) } },
       { state -> state.toBuilder().addAll(items).build() }
     ) { previousState, currentState ->
       SetAlgorithms.differenceBetween(previousState, currentState)
-        .stream()
-        .map { item: E -> AddToSet(item) }
-        .collect(Collectors.toImmutableSet())
+        .map { AddToSet(it) }
+        .toImmutableSet()
     }
   }
 
@@ -64,9 +62,7 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
     mutateState({ obj: ImmutableSet<E> -> obj.isPopulated },
       { ImmutableSet.empty() }
     ) { previousState, _ ->
-      previousState.stream()
-        .map { item: E -> RemoveFromSet(item) }
-        .collect(Collectors.toSet())
+      previousState.map { RemoveFromSet(it) }.toImmutableSet()
     }
   }
 
@@ -121,15 +117,7 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
       override fun count(): Int {
         return this@WritableObservableSetImpl.count()
       }
-
-      override fun stream(): Stream<E> {
-        return this@WritableObservableSetImpl.stream()
-      }
     }
-  }
-
-  override fun stream(): Stream<E> {
-    return state.stream()
   }
 
   override fun observe(): ObservableChannels {
@@ -173,9 +161,6 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
   private fun generateMutationEventForNewSubscription(): MutationEvent {
     val state: Set<E> = state
-    return MutationEvent(
-      state,
-      state.stream().map { item: E -> AddToSet(item) }.collect(Collectors.toSet())
-    )
+    return MutationEvent(state, state.map { AddToSet(it) }.toImmutableSet())
   }
 }

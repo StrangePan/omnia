@@ -57,21 +57,6 @@ class ImmutableSetTest {
     assertThat(found2).isTrue()
   }
 
-  @Test
-  fun stream_didStreamAll() {
-    val stream = createTestSubjectWithDuplicates().stream()
-    val contents = stream.toArray()
-    var found1 = false
-    var found2 = false
-    for (item in contents) {
-      found1 = found1 or (item === TEST_ITEM_1)
-      found2 = found2 or (item === TEST_ITEM_2)
-    }
-    assertThat(contents.size.toLong()).isEqualTo(2)
-    assertThat(found1).isTrue()
-    assertThat(found2).isTrue()
-  }
-
   companion object {
 
     private const val TEST_ITEM_1 = "first"

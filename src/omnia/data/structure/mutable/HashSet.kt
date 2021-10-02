@@ -4,13 +4,11 @@ import java.util.Objects
 import java.util.function.BiPredicate
 import java.util.function.Function
 import java.util.function.ToIntFunction
-import java.util.stream.Collectors
-import java.util.stream.Stream
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 
 class HashSet<E : Any>(
-  original: Collection<out E>? = null,
+  original: Iterable<E>? = null,
   equalsFunction: BiPredicate<in Any?, in Any?>? = null,
   hashFunction: ToIntFunction<in Any>? = null,
 ) : MutableSet<E> {
@@ -24,9 +22,7 @@ class HashSet<E : Any>(
   private val kotlinSet: kotlin.collections.MutableSet<Wrapper<E>> =
     kotlin.collections.HashSet(
       (original ?: Collection.empty())
-        .stream()
-        .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) }
-        .collect(Collectors.toSet()))
+        .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) })
 
   private class Wrapper<out E>(
     private val element: E?,
@@ -56,9 +52,7 @@ class HashSet<E : Any>(
   }
 
   override fun addAll(items: Collection<out E>) {
-    kotlinSet.addAll(
-      items.stream().map { element -> wrap(element) }.collect(Collectors.toList())
-    )
+    kotlinSet.addAll(items.map { element -> wrap(element) })
   }
 
   override fun removeUnknownTyped(item: Any?): Boolean {
@@ -84,10 +78,6 @@ class HashSet<E : Any>(
   override val isPopulated: Boolean
     get() = kotlinSet.isNotEmpty()
 
-  override fun stream(): Stream<E> {
-    return kotlinSet.stream().map(unwrap())
-  }
-
   override fun toString(): String {
     return kotlinSet.toString()
   }
@@ -111,8 +101,13 @@ class HashSet<E : Any>(
       return HashSet()
     }
 
-    fun <E : Any> copyOf(original: Collection<out E>): HashSet<E> {
+    fun <E : Any> copyOf(original: Iterable<E>): HashSet<E> {
       return HashSet(original)
+    }
+
+    @JvmStatic
+    fun <E : Any> Iterable<E>.toHashSet(): HashSet<E> {
+      return copyOf(this)
     }
   }
 }

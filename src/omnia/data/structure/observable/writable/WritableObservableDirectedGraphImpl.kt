@@ -7,13 +7,11 @@ import java.util.Objects
 import java.util.function.BiFunction
 import java.util.function.Function
 import java.util.function.Predicate
-import java.util.stream.Stream
-import omnia.data.stream.Collectors
-import omnia.data.stream.Streams
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.observable.ObservableDirectedGraph
 import omnia.data.structure.observable.ObservableGraph
 import omnia.data.structure.observable.ObservableGraph.GraphOperation
@@ -53,28 +51,27 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
       },
       { currentState -> currentState.toBuilder().replaceNode(original, replacement).build() }
     ) { previousState, newState ->
-      Streams.concat(
-          (previousState.nodeOf(original)?.edges() ?: ImmutableSet.empty())
-              .stream()
-              .map { it.endpoints() }
-              .map { couplet -> couplet.map(Function { it.item() }) }
-              .map { RemoveEdgeFromGraph.create(it) },
+      listOfNotNull(
           previousState.nodeOf(original)
-              ?.item()
-              ?.let { RemoveNodeFromGraph.create(it) }
-              ?.let { Stream.of(it) }
-              ?: Stream.empty(),
+            ?.edges()
+            ?.map { it.endpoints() }
+            ?.map { couplet -> couplet.map(Function { it.item() }) }
+            ?.map { RemoveEdgeFromGraph.create(it) },
+          previousState.nodeOf(original)
+            ?.item()
+            ?.let { RemoveNodeFromGraph.create(it) }
+            ?.let { listOf(it) },
           newState.nodeOf(replacement)
-              ?.item()
-              ?.let { AddNodeToGraph.create(it) }
-              ?.let { Stream.of(it) }
-              ?: Stream.empty(),
-          (newState.nodeOf(replacement)?.edges() ?: ImmutableSet.empty())
-              .stream()
-              .map { it.endpoints() }
-              .map { couplet -> couplet.map(Function { it.item() }) }
-              .map { AddEdgeToGraph.create(it) })
-        .collect(Collectors.toSet())
+            ?.item()
+            ?.let { AddNodeToGraph.create(it) }
+            ?.let { listOf(it) },
+          newState.nodeOf(replacement)
+            ?.edges()
+            ?.map { it.endpoints() }
+            ?.map { couplet -> couplet.map(Function { it.item() }) }
+            ?.map { AddEdgeToGraph.create(it) })
+        .flatten()
+        .toImmutableSet()
     }
   }
 
@@ -83,18 +80,18 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
       { currentState -> currentState.contents().containsUnknownTyped(item) },
       { currentState -> currentState.toBuilder().removeUnknownTypedNode(item).build() }
     ) { previousState, _ ->
-      Streams.concat(
-          (previousState.nodeOfUnknownType(item)?.edges() ?: ImmutableSet.empty())
-              .stream()
-              .map { it.endpoints() }
-              .map { couplet -> couplet.map(Function { it.item() }) }
-              .map { RemoveEdgeFromGraph.create(it) },
+      listOfNotNull(
+          previousState.nodeOfUnknownType(item)
+            ?.edges()
+            ?.map { it.endpoints() }
+            ?.map { couplet -> couplet.map(Function { it.item() }) }
+            ?.map { RemoveEdgeFromGraph.create(it) },
           previousState.nodeOfUnknownType(item)
               ?.item()
               ?.let { RemoveNodeFromGraph.create(it) }
-              ?.let { Stream.of(it) }
-              ?: Stream.empty())
-        .collect(Collectors.toSet())
+              ?.let { listOf(it) })
+        .flatten()
+        .toImmutableSet()
     }
   }
 
@@ -244,15 +241,11 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
           synchronized(this) {
             val state = getState()
             val operations: Set<GraphOperation<E>> =
-              Streams.concat(
-                state.nodes().stream()
-                  .map { it.item() }
-                  .map { AddNodeToGraph.create(it) },
-                state.edges().stream()
-                  .map { it.endpoints() }
-                  .map { couplet -> couplet.map(Function { it.item() }) }
-                  .map { AddEdgeToGraph.create(it) })
-                .collect(Collectors.toImmutableSet())
+              state.nodes().map { AddNodeToGraph.create(it.item()) }
+                .plus(
+                  state.edges()
+                    .map { AddEdgeToGraph.create(it.endpoints().map(Function { i -> i.item() }))})
+                .toImmutableSet()
             emitter.onNext(object : MutationEvent<E> {
               override fun state(): DirectedGraph<E> {
                 return state

@@ -6,7 +6,6 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
 import java.util.function.BiFunction
 import java.util.function.Predicate
-import java.util.stream.Stream
 import omnia.data.structure.Collection
 import omnia.data.structure.IntRange
 import omnia.data.structure.List
@@ -159,10 +158,6 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
     return state.indexOf(item)
   }
 
-  override fun stream(): Stream<E> {
-    return state.stream()
-  }
-
   override fun toReadOnly(): ObservableList<E> {
     return object : ObservableList<E> {
       override fun observe(): ObservableList.ObservableChannels<E> {
@@ -187,10 +182,6 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
 
       override fun indexOf(item: Any?): Int? {
         return this@WritableObservableListImpl.indexOf(item)
-      }
-
-      override fun stream(): Stream<E> {
-        return this@WritableObservableListImpl.stream()
       }
     }
   }

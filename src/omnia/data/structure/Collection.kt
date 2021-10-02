@@ -1,8 +1,6 @@
 package omnia.data.structure
 
-import java.util.stream.Stream
 import omnia.contract.Countable
-import omnia.contract.Streamable
 import omnia.contract.TypedContainer
 import omnia.data.iterate.EmptyIterator
 import omnia.data.iterate.ReadOnlyIterator
@@ -13,7 +11,7 @@ import omnia.data.iterate.ReadOnlyIterator
  *
  * @param E the type contained in the collection
  */
-interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E>, Streamable<E> {
+interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E> {
 
   companion object {
 
@@ -39,10 +37,6 @@ interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E>, Strea
       return object : Collection<E> {
         override val isPopulated: Boolean
           get() = kotlinCollection.isNotEmpty()
-
-        override fun stream(): Stream<E> {
-          return kotlinCollection.stream().map { e: E? -> e!! }
-        }
 
         override fun count(): Int {
           return kotlinCollection.size
@@ -73,10 +67,6 @@ interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E>, Strea
 
       override val isPopulated: Boolean
         get() = false
-
-      override fun stream(): Stream<Any> {
-        return Stream.empty()
-      }
     }
   }
 }

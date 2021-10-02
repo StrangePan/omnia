@@ -1,7 +1,7 @@
 package omnia.data.structure
 
 import java.util.Objects
-import java.util.stream.Stream
+
 import omnia.data.cache.Memoized
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.tuple.Couple
@@ -133,25 +133,26 @@ interface Map<K : Any, V : Any> {
       // Can't really cache this since one is created per value. The overhead empty caching would cost
       // more than the allocation empty this view.
       return object : Set<K> {
-        override fun stream(): Stream<K> {
-          return javaMap.entries.stream()
-            .filter { e -> e.value == value }
-            .map(kotlin.collections.Map.Entry<K, V>::key)
-        }
 
         override fun count(): Int {
-          return stream().count().toInt()
+          return transformedJavaMap().count()
         }
 
         override val isPopulated: Boolean
           get() = javaMap.containsValue(value)
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return isPopulated && stream().anyMatch { k -> k == item }
+          return isPopulated && transformedJavaMap().any { it == item }
         }
 
         override fun iterator(): Iterator<K> {
-          return stream().iterator()
+          return transformedJavaMap().iterator()
+        }
+
+        private fun transformedJavaMap(): kotlin.collections.List<K> {
+          return javaMap.entries
+            .filter { it.value == value }
+            .map(kotlin.collections.Map.Entry<K, V>::key)
         }
       }
     }
@@ -162,10 +163,6 @@ interface Map<K : Any, V : Any> {
 
     private val javaSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> =
       javaMap.entries
-
-    override fun stream(): Stream<Entry<K, V>> {
-      return javaSet.stream().map { javaEntry -> Entry.masking(javaEntry) }
-    }
 
     override fun count(): Int {
       return javaSet.size

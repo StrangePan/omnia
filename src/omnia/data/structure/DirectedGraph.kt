@@ -1,7 +1,7 @@
 package omnia.data.structure
 
 import java.util.function.Function
-import omnia.data.stream.Collectors
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.tuple.Couplet
 
 /**
@@ -137,14 +137,14 @@ interface DirectedGraph<E : Any> : Graph<E> {
       return (a === b
           || (a != null && b != null && Set.areEqual(a.contents(), b.contents())
           && Set.areEqual(
-        a.edges().stream()
-          .map { edge -> edge!!.endpoints() }
-          .map { couplet -> couplet.map(Function { node -> node.item() }) }
-          .collect(Collectors.toSet()),
-        b.edges().stream()
-          .map { edge -> edge!!.endpoints() }
-          .map { couplet -> couplet.map(Function { node -> node.item() }) }
-          .collect(Collectors.toSet()))))
+              a.edges()
+                .map { it.endpoints() }
+                .map { it.map(Function { node -> node.item() }) }
+                .toImmutableSet(),
+              b.edges()
+                .map { it.endpoints() }
+                .map { it.map(Function { node -> node.item() }) }
+                .toImmutableSet())))
     }
   }
 }

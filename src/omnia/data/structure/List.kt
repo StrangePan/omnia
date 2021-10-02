@@ -1,6 +1,6 @@
 package omnia.data.structure
 
-import java.util.stream.Stream
+
 import omnia.contract.Indexable
 import omnia.data.iterate.ReadOnlyIterator
 
@@ -36,10 +36,6 @@ interface List<E : Any> : Collection<E>, Indexable<E> {
       return object : List<E> {
         override val isPopulated: Boolean
           get() = javaList.isNotEmpty()
-
-        override fun stream(): Stream<E> {
-          return javaList.stream()
-        }
 
         override fun count(): Int {
           return javaList.size

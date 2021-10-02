@@ -4,7 +4,6 @@ import java.util.Arrays
 import java.util.Objects
 import java.util.function.BiPredicate
 import java.util.function.ToIntFunction
-import java.util.stream.Stream
 import omnia.data.cache.MemoizedInt
 import omnia.data.iterate.ReadOnlyIterator
 import omnia.data.structure.Set
@@ -62,10 +61,6 @@ class ImmutableSet<E : Any> : Set<E> {
 
   override fun count(): Int {
     return elements.count()
-  }
-
-  override fun stream(): Stream<E> {
-    return elements.stream()
   }
 
   override fun equals(other: Any?): Boolean {

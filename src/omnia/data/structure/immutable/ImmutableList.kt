@@ -1,9 +1,6 @@
 package omnia.data.structure.immutable
 
-import java.util.Arrays
 import java.util.Objects
-import java.util.stream.Collectors
-import java.util.stream.Stream
 import omnia.data.iterate.ArrayIterator
 import omnia.data.iterate.IntegerRangeIterator
 import omnia.data.iterate.MappingIterator
@@ -97,10 +94,6 @@ class ImmutableList<E : Any> : List<E> {
     return elements.size
   }
 
-  override fun stream(): Stream<E> {
-    return Stream.of(*elements)
-  }
-
   override fun equals(other: Any?): Boolean {
     if (other !is ImmutableList<*>) {
       return false
@@ -118,11 +111,8 @@ class ImmutableList<E : Any> : List<E> {
   }
 
   override fun toString(): String {
-    return ("ImmutableList("
-        + elements.size
-        + ")"
-        + Arrays.stream(elements).map { o: E -> Objects.toString(o) }
-      .collect(Collectors.joining(",", "{", "}")))
+    return "ImmutableList(${elements.size})" +
+        elements.joinToString(",", "{", "}") { Objects.toString(it) }
   }
 
   override fun hashCode(): Int {

@@ -38,7 +38,9 @@ object ListAlgorithms {
    */
   @JvmStatic
   fun <T : Any> toArray(list: List<out T>, template: Array<T?>): Array<T?> {
-    return list.stream().toArray(template::copyOf)
+    val copy = template.copyOf(list.count())
+    list.forEachIndexed { index, item -> copy[index] = item }
+    return copy
   }
 
   /**

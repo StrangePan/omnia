@@ -1,7 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.stream.Collectors
-import java.util.stream.Stream
 import omnia.data.structure.Collection
 
 open class MaskingList<E : Any>(private val kotlinList: kotlin.collections.MutableList<E>) :
@@ -33,7 +31,7 @@ open class MaskingList<E : Any>(private val kotlinList: kotlin.collections.Mutab
   }
 
   override fun addAll(items: Collection<out E>) {
-    kotlinList.addAll(items.stream().collect(Collectors.toList()))
+    kotlinList.addAll(items)
   }
 
   override fun removeUnknownTyped(item: Any?): Boolean {
@@ -57,9 +55,5 @@ open class MaskingList<E : Any>(private val kotlinList: kotlin.collections.Mutab
 
   override fun count(): Int {
     return kotlinList.size
-  }
-
-  override fun stream(): Stream<E> {
-    return kotlinList.stream()
   }
 }

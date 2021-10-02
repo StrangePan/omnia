@@ -8,12 +8,12 @@ import java.util.Objects
 import java.util.function.BiFunction
 import java.util.function.Predicate
 import java.util.function.Supplier
-import omnia.data.stream.Collectors
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableMap
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.observable.ObservableMap
 import omnia.data.structure.observable.ObservableMap.MapOperation
 
@@ -162,9 +162,8 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
     return MutationEvent(
       state,
       state.entries()
-        .stream()
-        .map<MapOperation<K, V>> { entry: Map.Entry<K, V> -> AddToMap(entry.key(), entry.value()) }
-        .collect(Collectors.toSet()))
+        .map { AddToMap(it.key(), it.value()) }
+        .toImmutableSet())
   }
 
   inner class MutationEvent(state: Map<K, V>, operations: Set<MapOperation<K, V>>) :

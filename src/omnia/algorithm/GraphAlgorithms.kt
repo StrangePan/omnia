@@ -1,7 +1,5 @@
 package omnia.algorithm
 
-import omnia.data.stream.Collectors.toImmutableSet
-import omnia.data.stream.Collectors.toSet
 import omnia.data.structure.Collection
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.DirectedGraph.DirectedNode
@@ -10,6 +8,7 @@ import omnia.data.structure.List
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.mutable.ArrayList
 import omnia.data.structure.mutable.ArrayQueue
 import omnia.data.structure.mutable.ArrayStack
@@ -38,11 +37,10 @@ object GraphAlgorithms {
   @JvmStatic
   fun <E : Any> sinkElements(graph: DirectedGraph<out E>): ImmutableSet<E> {
     return graph.nodes()
-      .stream()
-      .filter { node -> hasNoOutgoingEdges(node) }
-      .filter { node -> hasIncomingEdges(node) }
-      .map { node -> node.item() }
-      .collect(toImmutableSet())
+        .filter { hasNoOutgoingEdges(it) }
+        .filter { hasIncomingEdges(it) }
+        .map { it.item() }
+        .toImmutableSet()
   }
 
   /**
@@ -56,11 +54,10 @@ object GraphAlgorithms {
   @JvmStatic
   fun <E : Any> sourceElements(graph: DirectedGraph<E>): Set<E> {
     return graph.nodes()
-      .stream()
-      .filter { node -> hasNoIncomingEdges(node) }
-      .filter { node -> hasOutgoingEdges(node) }
-      .map { node -> node.item() }
-      .collect(toSet())
+        .filter { hasNoIncomingEdges(it) }
+        .filter { hasOutgoingEdges(it) }
+        .map { it.item() }
+        .toImmutableSet()
   }
 
   /**
@@ -73,10 +70,9 @@ object GraphAlgorithms {
   @JvmStatic
   fun <E : Any> isolatedElements(graph: Graph<E>): Set<E> {
     return graph.nodes()
-      .stream()
-      .filter { node -> hasNoNeighbors(node) }
-      .map { node -> node.item() }
-      .collect(toSet())
+      .filter { hasNoNeighbors(it) }
+      .map { it.item() }
+      .toImmutableSet()
   }
 
   /**

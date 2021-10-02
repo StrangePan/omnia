@@ -1,7 +1,6 @@
 package omnia.algorithm
 
 import com.google.common.truth.Truth.assertThat
-import java.util.Arrays
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import omnia.algorithm.GraphAlgorithms.findAnyCycle
@@ -11,13 +10,13 @@ import omnia.algorithm.GraphAlgorithms.isolatedElements
 import omnia.algorithm.GraphAlgorithms.sinkElements
 import omnia.algorithm.GraphAlgorithms.sourceElements
 import omnia.algorithm.GraphAlgorithms.topologicallySort
-import omnia.data.stream.Collectors.toList
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Graph
 import omnia.data.structure.List
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
 import omnia.data.structure.immutable.ImmutableList
+import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.mutable.HashSet
 import omnia.data.structure.mutable.MutableSet
@@ -474,21 +473,14 @@ class GraphAlgorithmsTest {
 
               // predecessors of item exist in cumulative predecessors: O(N)
               (graph.nodeOf(item)?.predecessors() ?: Set.empty())
-                .stream()
-                .map { obj: DirectedGraph.DirectedNode<*> -> obj.item() }
-                .forEach { directPredecessor ->
-                  assertThat(cumulativePredecessors.contains(directPredecessor))
-                    .isTrue()
-                }
+                  .map { it.item() }
+                  .forEach { assertThat(cumulativePredecessors).contains(it) }
 
               // successors of item do NOT exist in cumulative predecessors yet: O(N)
               (graph.nodeOf(item)?.successors() ?: Set.empty())
-                .stream()
-                .map { obj: DirectedGraph.DirectedNode<*> -> obj.item() }
-                .forEach { directPredecessor ->
-                  assertThat(directPredecessor in cumulativePredecessors)
-                    .isFalse()
-                }
+                .map { it.item() }
+                .forEach { assertThat(cumulativePredecessors).doesNotContain(it) }
+
               cumulativePredecessors.add(item)
             }
 
@@ -556,12 +548,9 @@ class GraphAlgorithmsTest {
         .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3, 4))
     }
 
-    private fun <T : Any> nodesFor(graph: Graph<T>, vararg items: T): List<Graph.Node<T>>  {
-      return Arrays.stream(items)
-          .map(graph::nodeOf)
-          .filter { it != null }
-          .map { it!! }
-          .collect(toList())
+    private fun <T : Any> nodesFor(graph: Graph<T>, vararg items: T):
+        ImmutableList<Graph.Node<T>>  {
+      return items.asIterable().mapNotNull(graph::nodeOf).toImmutableList()
     }
   }
 }

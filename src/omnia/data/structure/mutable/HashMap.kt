@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.stream.Collectors
 import omnia.data.structure.Map
 
 class HashMap<K : Any, V : Any> : MaskingMap<K, V> {
@@ -17,11 +16,17 @@ class HashMap<K : Any, V : Any> : MaskingMap<K, V> {
 
     @JvmStatic
     fun <K : Any, V : Any> copyOf(original: Map<out K, out V>): HashMap<K, V> {
-      return HashMap(
-        original.entries().stream().collect(
-          Collectors.toMap(Map.Entry<out K, out V>::key, Map.Entry<out K, out V>::value)
-        )
-      )
+      return original.entries().toHashMap({ it.key() }, { it.value() })
+    }
+
+    @JvmStatic
+    fun <K : Any, V : Any, E> Iterable<E>.toHashMap(
+      keyMapper: (E) -> K,
+      valueMapper: (E) -> V
+    ): HashMap<K, V> {
+      val map = create<K, V>()
+      this.forEach { map.putMapping(keyMapper(it), valueMapper(it)) }
+      return map
     }
   }
 }

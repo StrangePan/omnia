@@ -1,6 +1,5 @@
 package omnia.data.structure.immutable
 
-import java.util.stream.Stream
 import omnia.data.structure.Collection
 import omnia.data.structure.SortedSet
 import omnia.data.structure.mutable.TreeSet
@@ -48,10 +47,6 @@ private constructor(comparator: Comparator<in E>, other: Collection<out E>) : So
 
   override fun iterator(): Iterator<E> {
     return baseSet.iterator()
-  }
-
-  override fun stream(): Stream<E> {
-    return baseSet.stream()
   }
 
   companion object {
