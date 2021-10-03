@@ -1,6 +1,7 @@
 package omnia.algorithm
 
 import omnia.data.structure.List
+import omnia.data.structure.mutable.MutableList
 import omnia.data.structure.immutable.ImmutableList
 
 object ListAlgorithms {
@@ -53,21 +54,45 @@ object ListAlgorithms {
   @JvmStatic
   fun <T : Any> binarySearch(haystack: List<out T>, needle: T, comparator: Comparator<in T>): Int? {
     var min = 0
+    var max = haystack.count()
+    while (min < max) {
+      val mid = (min + max - 1) / 2
+      val midValue = haystack.itemAt(mid)
+      val comp = comparator.compare(midValue, needle)
+      when {
+        comp == 0 -> return mid
+        comp < 0 -> min = mid + 1
+        comp > 0 -> max = mid
+      }
+    }
+    return null
+  }
+
+  /**
+   * Searches for a specific item in a sorted list of items or inserts it in the appropriate spot.
+   *
+   * @param haystack the sorted list to search through
+   * @param needle the needle to search for
+   * @param comparator the [Comparator] to use when searching through the haystack
+   * @param T the type of the item to search for
+   * @return the index of the needle within the haystack
+   */
+  @JvmStatic
+  fun <T : Any> binarySearchOrInsert(
+      haystack: MutableList<T>, needle: T, comparator: Comparator<in T>): Int {
+    var min = 0
     var max = haystack.count() - 1
     while (min <= max) {
       val mid = (min + max) / 2
       val midValue = haystack.itemAt(mid)
       val comp = comparator.compare(midValue, needle)
-      if (comp == 0) {
-        return mid
-      }
-      if (comp < 0) {
-        min = mid + 1
-      }
-      if (comp > 0) {
-        max = mid - 1
+      when {
+        comp == 0 -> return mid
+        comp < 0 -> min = mid + 1
+        comp > 0 -> max = mid - 1
       }
     }
-    return null
+    haystack.insertAt(min, needle)
+    return min
   }
 }

@@ -18,7 +18,7 @@ open class MaskingList<E : Any>(private val kotlinList: kotlin.collections.Mutab
   }
 
   override fun itemAt(index: Int): E {
-    return kotlinList.get(index)
+    return kotlinList[index]
   }
 
   override fun indexOf(item: Any?): Int? {

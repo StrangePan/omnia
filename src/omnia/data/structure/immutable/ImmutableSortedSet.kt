@@ -2,13 +2,13 @@ package omnia.data.structure.immutable
 
 import omnia.data.structure.Collection
 import omnia.data.structure.SortedSet
-import omnia.data.structure.mutable.TreeSet
+import omnia.data.structure.mutable.SortedArraySet
 
 /** An immutable version of [SortedSet]. */
 class ImmutableSortedSet<E : Any>
 private constructor(comparator: Comparator<in E>, other: Collection<out E>) : SortedSet<E> {
 
-  private val baseSet: TreeSet<E> = TreeSet.create(comparator)
+  private val baseSet: SortedArraySet<E> = SortedArraySet.create(comparator)
 
   init {
     baseSet.addAll(other)
@@ -22,12 +22,9 @@ private constructor(comparator: Comparator<in E>, other: Collection<out E>) : So
     return baseSet.containsUnknownTyped(item)
   }
 
-  override fun count(): Int {
-    return baseSet.count()
-  }
+  override fun count() = baseSet.count()
 
-  override val isPopulated: Boolean
-    get() = baseSet.isPopulated
+  override val isPopulated get() = baseSet.isPopulated
 
   override fun itemPreceding(other: E): E? {
     return baseSet.itemPreceding(other)
