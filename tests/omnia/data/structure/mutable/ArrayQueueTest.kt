@@ -152,7 +152,7 @@ class ArrayQueueTest {
     val testSubject: Queue<Int> = ArrayQueue.create()
     testSubject.enqueue(132)
     val datum = testSubject.peek()
-    assertThat(datum).isEqualTo(Integer.valueOf(132))
+    assertThat(datum).isEqualTo(132)
   }
 
   @Test
