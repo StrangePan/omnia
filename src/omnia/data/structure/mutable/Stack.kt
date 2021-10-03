@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.Objects
 import omnia.contract.Countable
 
 interface Stack<E : Any> : Countable, Iterable<E> {
@@ -13,35 +12,34 @@ interface Stack<E : Any> : Countable, Iterable<E> {
 
   companion object {
 
-    fun <E : Any> masking(javaStack: java.util.Stack<E>): Stack<E> {
+    fun <E : Any> masking(kotlinList: kotlin.collections.MutableList<E>): Stack<E> {
       return object : Stack<E> {
         override fun push(item: E) {
-          javaStack.push(Objects.requireNonNull(item))
+          kotlinList.add(item)
         }
 
         override fun pop(): E? {
-          return if (javaStack.isEmpty()) null else javaStack.pop()
+          return kotlinList.removeLastOrNull()
         }
 
         override fun peek(): E? {
-          return if (javaStack.isEmpty()) null else javaStack.peek()
+          return kotlinList.lastOrNull()
         }
 
         override fun count(): Int {
-          return javaStack.size
+          return kotlinList.size
         }
 
-        override val isPopulated: Boolean
-          get() = !javaStack.isEmpty()
+        override val isPopulated: Boolean get() = kotlinList.isNotEmpty()
 
         override fun iterator(): Iterator<E> {
           return object : Iterator<E> {
             override fun hasNext(): Boolean {
-              return !javaStack.empty()
+              return kotlinList.isNotEmpty()
             }
 
             override fun next(): E {
-              return javaStack.pop()
+              return kotlinList.removeLast()
             }
           }
         }

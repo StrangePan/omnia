@@ -1,9 +1,9 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
+import omnia.algorithm.HashAlgorithms.Companion.hash
 
-internal open class ImmutableCouple<A, B>(private val first: A, private val second: B) :
-    Couple<A, B> {
+internal open class ImmutableCouple<A, B>(private val first: A, private val second: B)
+  : Couple<A, B> {
 
   override fun equals(other: Any?): Boolean {
     return other is ImmutableCouple<*, *>
@@ -11,13 +11,9 @@ internal open class ImmutableCouple<A, B>(private val first: A, private val seco
         && second() == other.second()
   }
 
-  override fun hashCode(): Int {
-    return Objects.hash(first(), second())
-  }
+  override fun hashCode() = hash(first(), second())
 
-  override fun toString(): String {
-    return "Tuple{" + first() + "," + second() + "}"
-  }
+  override fun toString() = """Tuple{${first()},${second()}}"""
 
   override fun first(): A {
     return first

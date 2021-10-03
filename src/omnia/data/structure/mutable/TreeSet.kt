@@ -1,8 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.Comparator
-import java.util.Objects
-
 class TreeSet<E : Any> private constructor(comparator: Comparator<in E>) :
   MaskingSet<E, java.util.TreeSet<E>>(java.util.TreeSet<E>(comparator)), MutableSortedSet<E> {
 
@@ -44,7 +41,6 @@ class TreeSet<E : Any> private constructor(comparator: Comparator<in E>) :
 
   companion object {
     fun <E : Any> create(comparator: Comparator<in E>): TreeSet<E> {
-      Objects.requireNonNull(comparator)
       return TreeSet(comparator)
     }
   }

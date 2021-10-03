@@ -1,6 +1,6 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
+import omnia.algorithm.HashAlgorithms.Companion.hash
 
 internal open class ImmutableNonuple<A, B, C, D, E, F, G, H, I>(
     private val first: A,
@@ -28,21 +28,22 @@ internal open class ImmutableNonuple<A, B, C, D, E, F, G, H, I>(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(
-        first(),
-        second(),
-        third(),
-        fourth(),
-        fifth(),
-        sixth(),
-        seventh(),
-        eighth(),
-        ninth()
+    return hash(
+      first(),
+      second(),
+      third(),
+      fourth(),
+      fifth(),
+      sixth(),
+      seventh(),
+      eighth(),
+      ninth()
     )
   }
 
   override fun toString(): String {
-    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "," + fifth() + "," + sixth() + "," + seventh() + "," + eighth() + "," + ninth() + "}"
+    return """Tuple{${first()},${second()},${third()},${fourth()},${fifth()},${sixth()},
+      |${seventh()},${eighth()},${ninth()}}""".trimMargin()
   }
 
   override fun first(): A {

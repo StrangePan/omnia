@@ -1,7 +1,6 @@
 package omnia.data.structure.immutable
 
-import java.util.Objects
-import java.util.Objects.requireNonNull
+import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.cache.WeakCache
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Map
@@ -50,7 +49,6 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     }
 
     fun addNode(element: E): Builder<E> {
-      requireNonNull(element)
       nodes.add(element)
       return this
     }
@@ -60,7 +58,6 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     }
 
     fun removeUnknownTypedNode(element: Any?): Builder<E> {
-      requireNonNull(element)
       nodes.removeUnknownTyped(element)
       deepRemove(successors, element)
       deepRemove(predecessors, element)
@@ -68,8 +65,6 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     }
 
     fun replaceNode(original: E, replacement: E): Builder<E> {
-      requireNonNull(original)
-      requireNonNull(replacement)
       if (!nodes.contains(original)) {
         throw UnknownNodeException(original)
       }
@@ -84,8 +79,6 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     }
 
     fun addEdge(from: E, to: E): Builder<E> {
-      requireNonNull(from)
-      requireNonNull(to)
       if (!nodes.contains(from)) {
         throw UnknownNodeException(from)
       }
@@ -102,8 +95,6 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     }
 
     fun removeEdgeUnknownEdge(from: Any?, to: Any?): Builder<E> {
-      requireNonNull(from)
-      requireNonNull(to)
       successors.valueOfUnknownTyped(from)?.removeUnknownTyped(to)
       predecessors.valueOfUnknownTyped(to)?.removeUnknownTyped(from)
       return this
@@ -121,18 +112,18 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
       private fun <T : Any> deepRemove(map: MutableMap<T, MutableSet<T>>, item: Any?) {
         map.removeUnknownTypedKey(item)
-        map.values().forEach({ list: MutableSet<T> -> list.removeUnknownTyped(item) })
+        map.values().forEach { it.removeUnknownTyped(item) }
       }
 
       private fun <T : Any> deepReplace(
         map: MutableMap<T, MutableSet<T>>, original: T, replacement: T,
       ) {
         map.removeKey(original)?.let { set -> map.putMapping(replacement, set) }
-        map.values().forEach({ set: MutableSet<T> ->
-          if (set.removeUnknownTyped(original)) {
-            set.add(replacement)
+        map.values().forEach {
+          if (it.removeUnknownTyped(original)) {
+            it.add(replacement)
           }
-        })
+        }
       }
     }
   }
@@ -239,17 +230,11 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
           && item == other.item
     }
 
-    override fun hashCode(): Int {
-      return Objects.hash(item)
-    }
+    override fun hashCode() = hash(item)
 
-    override fun toString(): String {
-      return String.format("ImmutableDirectedNode{%s}", item)
-    }
+    override fun toString() = "ImmutableDirectedNode{$item}"
 
-    private fun graph(): ImmutableDirectedGraph<E> {
-      return this@ImmutableDirectedGraph
-    }
+    private fun graph() = this@ImmutableDirectedGraph
   }
 
   inner class DirectedEdge internal constructor(private val endpoints: Couplet<out E>) :
@@ -276,9 +261,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
           && endpoints == other.endpoints
     }
 
-    override fun hashCode(): Int {
-      return Objects.hash(endpoints)
-    }
+    override fun hashCode() = hash(endpoints)
 
     override fun toString(): String {
       return String.format(
@@ -288,9 +271,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
       )
     }
 
-    private fun graph(): ImmutableDirectedGraph<E> {
-      return this@ImmutableDirectedGraph
-    }
+    private fun graph() = this@ImmutableDirectedGraph
   }
 
   private fun toNode(): (E) -> DirectedNode {

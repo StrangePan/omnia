@@ -1,7 +1,5 @@
 package omnia.data.structure
 
-import java.util.Objects
-
 import omnia.data.cache.Memoized
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.tuple.Couple
@@ -72,9 +70,7 @@ interface Map<K : Any, V : Any> {
       return other is MaskedEntry<*, *> && other.jEntry == jEntry
     }
 
-    override fun hashCode(): Int {
-      return Objects.hash(jEntry)
-    }
+    override fun hashCode() = 7 * 31 + jEntry.hashCode()
   }
 
   private class SimpleEntry<K : Any, V : Any>(key: K, value: V) : Entry<K, V> {
@@ -92,9 +88,7 @@ interface Map<K : Any, V : Any> {
       return other === this || other is SimpleEntry<*, *> && other.couple == couple
     }
 
-    override fun hashCode(): Int {
-      return Objects.hash(couple)
-    }
+    override fun hashCode() = 7 * 31 + couple.hashCode()
   }
 
   companion object {

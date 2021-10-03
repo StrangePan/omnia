@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.Objects
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 
@@ -11,10 +10,9 @@ class HashSet<E : Any>(
 ) : MutableSet<E> {
 
   private val equalsFunction: (Any?, Any?) -> Boolean =
-    equalsFunction ?: { a, b -> Objects.equals(a, b) }
+    equalsFunction ?: { a, b -> a == b }
 
-  private val hashFunction: (Any) -> Int =
-    hashFunction ?: { Objects.hashCode(it) }
+  private val hashFunction: (Any) -> Int = hashFunction ?: Any::hashCode
 
   private val kotlinSet: kotlin.collections.MutableSet<Wrapper<E>> =
     kotlin.collections.HashSet(

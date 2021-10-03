@@ -1,6 +1,6 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
+import omnia.algorithm.HashAlgorithms.Companion.hash
 
 internal open class ImmutableTriple<A, B, C>(
     private val first: A,
@@ -16,23 +16,23 @@ internal open class ImmutableTriple<A, B, C>(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(first(), second(), third())
+    return hash(first(), second(), third())
   }
 
   override fun toString(): String {
-    return "Tuple{" + first() + "," + second() + "," + third() + "}"
+    return """Tuple{${first()},${second()},${third()}}"""
   }
 
   override fun first(): A {
-    return Objects.requireNonNull(first)
+    return first
   }
 
   override fun second(): B {
-    return Objects.requireNonNull(second)
+    return second
   }
 
   override fun third(): C {
-    return Objects.requireNonNull(third)
+    return third
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Triple<R, B, C> {

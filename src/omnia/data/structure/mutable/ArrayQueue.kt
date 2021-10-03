@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.Objects
 import kotlin.math.max
 
 class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) : Queue<E> {
@@ -9,7 +8,6 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
   private var subQueue: FixedArrayQueue<E>
 
   override fun enqueue(item: E) {
-    Objects.requireNonNull(item)
     if (subQueue.capacity() == subQueue.count()) {
       subQueue = FixedArrayQueue(subQueue.capacity() * 2, subQueue)
     }
@@ -57,7 +55,6 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
     }
 
     override fun enqueue(item: E) {
-      Objects.requireNonNull(item)
       check(items[tail] == null) {
         String.format(
           "Attempted to enqueue an item into a full queue (size %d)",

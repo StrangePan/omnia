@@ -1,7 +1,5 @@
 package omnia.data.iterate
 
-import java.util.NoSuchElementException
-
 class FilterIterator<E>(private val source: Iterator<E>, private val filter: (E) -> Boolean) :
     Iterator<E> {
 

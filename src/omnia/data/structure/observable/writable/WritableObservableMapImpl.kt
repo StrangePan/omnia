@@ -4,7 +4,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
-import java.util.Objects
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
@@ -97,7 +96,7 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
       if (!shouldChange(previousState)) {
         return false
       }
-      val nextState = Objects.requireNonNull(mutateState(previousState))
+      val nextState = mutateState(previousState)
       currentState = nextState
       val operations = mutationOperations(previousState, nextState)
       mutationEvents.onNext(MutationEvent(nextState, operations))

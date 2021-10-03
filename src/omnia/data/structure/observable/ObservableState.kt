@@ -5,7 +5,6 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.functions.Function
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.SingleSubject
-import java.util.Objects
 import omnia.data.structure.tuple.Couple
 
 class ObservableState<T : Any> private constructor(initialState: T) {
@@ -25,12 +24,11 @@ class ObservableState<T : Any> private constructor(initialState: T) {
 
   /** Mutates the state asynchronously and returns the result of the mutation.  */
   fun mutate(mutator: Function<in T, out T>): Single<T> {
-    Objects.requireNonNull(mutator)
     val result: SingleSubject<T> = SingleSubject.create()
     mutations.onNext(
       Function { state: T ->
         val newState: T = try {
-          Objects.requireNonNull(mutator.apply(state))
+          mutator.apply(state)
         } catch (t: Throwable) {
           result.onError(t)
           state
@@ -49,12 +47,11 @@ class ObservableState<T : Any> private constructor(initialState: T) {
   fun <R> mutateAndReturn(
     mutator: Function<in T, out Couple<out T, out R>>
   ): Single<Couple<out T, out R>> {
-    Objects.requireNonNull(mutator)
     val result: SingleSubject<Couple<out T, out R>> = SingleSubject.create()
     mutations.onNext(
       Function { state: T ->
         val newState: Couple<out T, out R> = try {
-          Objects.requireNonNull(mutator.apply(state))
+          mutator.apply(state)
         } catch (t: Throwable) {
           result.onError(t)
           return@Function state

@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
 import omnia.contract.Countable
 import omnia.data.structure.immutable.ImmutableList
 
@@ -116,7 +115,6 @@ interface Tuple : Countable {
 
     @JvmStatic
     fun toList(tuple: Tuple): ImmutableList<*> {
-      Objects.requireNonNull(tuple)
       if (tuple is Couple<*, *>) {
         return toList(tuple)
       }

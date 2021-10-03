@@ -1,6 +1,6 @@
 package omnia.data.structure
 
-import java.util.Objects
+import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.contract.Countable
 import omnia.data.iterate.IntegerRangeIterator
 import omnia.data.structure.immutable.ImmutableList
@@ -12,7 +12,6 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
   private val length: Int
 
   interface Builder {
-
     fun endingAt(end: Int): IntRange
     fun endingAtInclusive(inclusiveEnd: Int): IntRange
     fun withLength(length: Int): IntRange
@@ -54,8 +53,7 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
     return start <= n && n < start + length
   }
 
-  override val isPopulated: Boolean
-    get() = length > 0
+  override val isPopulated get() = length > 0
 
   override fun iterator(): Iterator<Int> {
     return IntegerRangeIterator.create(start, end())
@@ -65,17 +63,13 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
     return list.sublistStartingAt(start()).to(end())
   }
 
-  override fun hashCode(): Int {
-    return Objects.hash(start, length)
-  }
+  override fun hashCode() = hash(start, length)
 
   override fun equals(other: Any?): Boolean {
     return other is IntRange && other.start == start && other.length == length
   }
 
-  override fun toString(): String {
-    return "[${start()}–${end()})"
-  }
+  override fun toString() = "[${start()}–${end()})"
 
   companion object {
 

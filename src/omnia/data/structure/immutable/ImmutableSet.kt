@@ -1,7 +1,6 @@
 package omnia.data.structure.immutable
 
-import java.util.Arrays
-import java.util.Objects
+import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.cache.MemoizedInt
 import omnia.data.iterate.ReadOnlyIterator
 import omnia.data.structure.Set
@@ -79,24 +78,17 @@ class ImmutableSet<E : Any> : Set<E> {
     return true
   }
 
-  override fun hashCode(): Int {
-    return hashCode.value()
-  }
+  override fun hashCode() = hashCode.value()
 
-  override fun toString(): String {
-    return elements.toString()
-  }
+  override fun toString() = elements.toString()
 
   private val hashCode: MemoizedInt = MemoizedInt.memoize { computeHash() }
 
   private fun computeHash(): Int {
     val elementCodes = IntArray(count())
-    var i = 0
-    for (element in elements) {
-      elementCodes[i++] = element.hashCode()
-    }
-    Arrays.sort(elementCodes)
-    return Objects.hash(elementCodes.contentHashCode())
+    elements.forEachIndexed { index, element -> elementCodes[index] = element.hashCode() }
+    elementCodes.sort()
+    return hash(elementCodes.contentHashCode())
   }
 
   companion object {
@@ -124,7 +116,7 @@ class ImmutableSet<E : Any> : Set<E> {
 
     @JvmStatic
     fun <E : Any> Iterable<E>.toImmutableSet(): ImmutableSet<E> {
-      return copyOf(this);
+      return copyOf(this)
     }
 
     @JvmStatic

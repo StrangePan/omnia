@@ -2,10 +2,8 @@ package omnia.data.structure.mutable
 
 import omnia.data.structure.Map
 
-class HashMap<K : Any, V : Any> : MaskingMap<K, V> {
-  private constructor() : super(java.util.HashMap<K, V>())
-  private constructor(original: kotlin.collections.Map<K, V>)
-      : super(java.util.HashMap<K, V>(original))
+class HashMap<K : Any, V : Any> private constructor() :
+  MaskingMap<K, V>(kotlin.collections.HashMap()) {
 
   companion object {
 

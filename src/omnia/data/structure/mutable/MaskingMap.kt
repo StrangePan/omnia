@@ -6,8 +6,9 @@ import omnia.data.structure.Map
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 
-open class MaskingMap<K : Any, V : Any>(private val kotlinMap: kotlin.collections.MutableMap<K, V>) :
-  MutableMap<K, V> {
+open class MaskingMap<K : Any, V : Any>(
+  private val kotlinMap: kotlin.collections.MutableMap<K, V>)
+  : MutableMap<K, V> {
 
   override fun putMapping(key: K, value: V) {
     kotlinMap[key] = value

@@ -1,7 +1,6 @@
 package omnia.data.structure.immutable
 
-import java.util.Arrays
-import java.util.Objects
+import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.cache.MemoizedInt
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
@@ -25,8 +24,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     }
 
     fun putMappingIfAbsent(key: K, value: () -> V): Builder<K, V> {
-      Objects.requireNonNull(value)
-      kotlinMap.computeIfAbsent(Objects.requireNonNull(key)) { value() }
+      kotlinMap.computeIfAbsent(key) { value() }
       return this
     }
 
@@ -91,9 +89,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
             && value() == other.value())
       }
 
-      override fun hashCode(): Int {
-        return Objects.hash(key(), value())
-      }
+      override fun hashCode() = hash(key(), value())
 
       override fun toString(): String {
         return key().toString() + " => " + value().toString()
@@ -137,12 +133,9 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
   private fun computeHash(): Int {
     val entries: Set<out Map.Entry<*, *>> = entries()
     val entryCodes = IntArray(entries.count())
-    var i = 0
-    for (entry in entries) {
-      entryCodes[i++] = entry.hashCode()
-    }
-    Arrays.sort(entryCodes)
-    return Objects.hash(entryCodes.contentHashCode())
+    entries.forEachIndexed { index, entry -> entryCodes[index] = entry.hashCode() }
+    entryCodes.sort()
+    return hash(entryCodes.contentHashCode())
   }
 
   override fun toString(): String {

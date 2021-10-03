@@ -1,6 +1,5 @@
 package omnia.cli.out
 
-import java.util.regex.Pattern
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
@@ -104,7 +103,7 @@ class Output private constructor(spans: List<Span<*>>) {
           }
           spans.add(
               LineSpan(
-                  span.spans.map({ it.mergeFormatting(baseFormatting) }).toImmutableList(),
+                  span.spans.map { it.mergeFormatting(baseFormatting) }.toImmutableList(),
                   span.indentation + indentation)
           )
         }
@@ -305,7 +304,7 @@ class Output private constructor(spans: List<Span<*>>) {
                 .map(Any::toString)
                 .map {
                   it.replace(
-                    Pattern.quote(System.lineSeparator()).toRegex(),
+                    Regex.escape(System.lineSeparator()).toRegex(),
                     System.lineSeparator() + indentation)
                 }
                 .fold(StringBuilder(), StringBuilder::append))

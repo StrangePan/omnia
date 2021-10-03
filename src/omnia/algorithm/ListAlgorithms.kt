@@ -1,8 +1,5 @@
 package omnia.algorithm
 
-import java.util.Comparator
-import java.util.Objects
-import java.util.Objects.requireNonNull
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
 
@@ -10,7 +7,8 @@ object ListAlgorithms {
 
   @JvmStatic
   fun <T : Any> sublistOf(other: List<T>, startingIndex: Int, endingIndex: Int): ImmutableList<T> {
-    Objects.checkFromToIndex(startingIndex, endingIndex, other.count())
+    require(startingIndex in 0..endingIndex)
+    require(endingIndex in startingIndex..other.count())
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
     for (i in startingIndex until endingIndex) {
       sublist.add(other.itemAt(i))
@@ -20,7 +18,6 @@ object ListAlgorithms {
 
   @JvmStatic
   fun <T : Any> reverse(other: List<T>): ImmutableList<T> {
-    requireNonNull(other)
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
     for (i in other.count() - 1 downTo 0) {
       sublist.add(other.itemAt(i))

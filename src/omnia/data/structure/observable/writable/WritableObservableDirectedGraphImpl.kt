@@ -3,7 +3,6 @@ package omnia.data.structure.observable.writable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
-import java.util.Objects
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
@@ -52,7 +51,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
           previousState.nodeOf(original)
             ?.edges()
             ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map({ it.item() }) }
+            ?.map { couplet -> couplet.map { it.item() } }
             ?.map { RemoveEdgeFromGraph.create(it) },
           previousState.nodeOf(original)
             ?.item()
@@ -65,7 +64,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
           newState.nodeOf(replacement)
             ?.edges()
             ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map({ it.item() }) }
+            ?.map { couplet -> couplet.map { it.item() } }
             ?.map { AddEdgeToGraph.create(it) })
         .flatten()
         .toImmutableSet()
@@ -81,12 +80,12 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
           previousState.nodeOfUnknownType(item)
             ?.edges()
             ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map({ it.item() }) }
+            ?.map { couplet -> couplet.map { it.item() } }
             ?.map { RemoveEdgeFromGraph.create(it) },
           previousState.nodeOfUnknownType(item)
-              ?.item()
-              ?.let { RemoveNodeFromGraph.create(it) }
-              ?.let { listOf(it) })
+            ?.item()
+            ?.let { RemoveNodeFromGraph.create(it) }
+            ?.let { listOf(it) })
         .flatten()
         .toImmutableSet()
     }
@@ -98,11 +97,11 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
       { currentState -> currentState.toBuilder().addEdge(from, to).build() }
     ) { _, newState ->
       newState.edgeOf(from, to)
-          ?.endpoints()
-          ?.map({ it.item() })
-          ?.let { AddEdgeToGraph.create(it) }
-          ?.let { ImmutableSet.of(it) }
-          ?: ImmutableSet.empty()
+        ?.endpoints()
+        ?.map { it.item() }
+        ?.let { AddEdgeToGraph.create(it) }
+        ?.let { ImmutableSet.of(it) }
+        ?: ImmutableSet.empty()
     }
   }
 
@@ -116,11 +115,11 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
       { currentState -> currentState.toBuilder().removeEdgeUnknownEdge(from, to).build() }
     ) { previousState, _ ->
       previousState.edgeOfUnknownType(from, to)
-          ?.endpoints()
-          ?.map({ it.item() })
-          ?.let { RemoveEdgeFromGraph.create(it) }
-          ?.let { ImmutableSet.of(it) }
-          ?: ImmutableSet.empty()
+        ?.endpoints()
+        ?.map { it.item() }
+        ?.let { RemoveEdgeFromGraph.create(it) }
+        ?.let { ImmutableSet.of(it) }
+        ?: ImmutableSet.empty()
     }
   }
 
@@ -136,7 +135,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
       if (!shouldChange(previousState)) {
         return false
       }
-      nextState = Objects.requireNonNull(mutateState(previousState))
+      nextState = mutateState(previousState)
       state = nextState
       val operations = mutationOperations(previousState, nextState)
       mutationEvents.onNext(

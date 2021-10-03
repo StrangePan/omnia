@@ -1,14 +1,10 @@
 package omnia.data.iterate
 
-import java.util.Objects
-
 /**
  * An [Iterator] that delegates to another source [Iterator], but does not support
  * any operations that would mutate the underlying data structure.
  */
-class ReadOnlyIterator<E>(maskedIterator: Iterator<E>) : Iterator<E> {
-
-  private val maskedIterator: Iterator<E> = Objects.requireNonNull(maskedIterator)
+class ReadOnlyIterator<E>(private val maskedIterator: Iterator<E>) : Iterator<E> {
 
   override fun hasNext(): Boolean {
     return maskedIterator.hasNext()

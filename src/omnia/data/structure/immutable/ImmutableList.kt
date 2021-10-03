@@ -1,6 +1,5 @@
 package omnia.data.structure.immutable
 
-import java.util.Objects
 import omnia.data.iterate.ArrayIterator
 import omnia.data.iterate.IntegerRangeIterator
 import omnia.data.iterate.MappingIterator
@@ -110,14 +109,9 @@ class ImmutableList<E : Any> : List<E> {
     return true
   }
 
-  override fun toString(): String {
-    return "ImmutableList(${elements.size})" +
-        elements.joinToString(",", "{", "}") { Objects.toString(it) }
-  }
+  override fun toString() = "ImmutableList(${elements.size})${elements.joinToString(",", "{", "}")}"
 
-  override fun hashCode(): Int {
-    return elements.contentHashCode()
-  }
+  override fun hashCode() = elements.contentHashCode()
 
   fun getSublist(intRange: IntRange): ImmutableList<E> {
     return sublistStartingAt(intRange.start()).length(intRange.count())
@@ -189,7 +183,7 @@ class ImmutableList<E : Any> : List<E> {
 
     @JvmStatic
     fun <E : Any> Iterable<E>.toImmutableList(): ImmutableList<E> {
-      return copyOf(this);
+      return copyOf(this)
     }
 
 
