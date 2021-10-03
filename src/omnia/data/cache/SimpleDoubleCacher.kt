@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.DoubleSupplier
 
 /**
  * A [CachedDouble] implementation that uses the given [DoubleSupplier] to provide the
@@ -8,12 +7,12 @@ import java.util.function.DoubleSupplier
  *
  * The given [DoubleSupplier.getAsDouble] method is never invoked if the value is cached.
  */
-internal class SimpleDoubleCacher(private val supplier: DoubleSupplier) : CachedDouble {
+internal class SimpleDoubleCacher(private val supplier: () -> Double) : CachedDouble {
 
   private var isValid = false
   private var value = 0.0
   override fun value(): Double {
-    val value = if (isValid) this.value else supplier.asDouble
+    val value = if (isValid) this.value else supplier()
     isValid = true
     this.value = value
     return value

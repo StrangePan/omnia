@@ -2,8 +2,6 @@ package omnia.data.structure.immutable
 
 import java.util.Arrays
 import java.util.Objects
-import java.util.function.BiPredicate
-import java.util.function.ToIntFunction
 import omnia.data.cache.MemoizedInt
 import omnia.data.iterate.ReadOnlyIterator
 import omnia.data.structure.Set
@@ -19,15 +17,15 @@ class ImmutableSet<E : Any> : Set<E> {
 
   class Builder<E : Any> : AbstractBuilder<E, Builder<E>, ImmutableSet<E>>() {
 
-    var equalsFunction: BiPredicate<in Any?, in Any?>? = null
-    var hashFunction: ToIntFunction<in Any>? = null
+    var equalsFunction: ((Any?, Any?) -> Boolean)? = null
+    var hashFunction: ((Any) -> Int)? = null
 
-    fun equalsFunction(equalsFunction: BiPredicate<in Any?, in Any?>): Builder<E> {
+    fun equalsFunction(equalsFunction: (Any?, Any?) -> Boolean): Builder<E> {
       this.equalsFunction = equalsFunction
       return self
     }
 
-    fun hashFunction(hashFunction: ToIntFunction<in Any>): Builder<E> {
+    fun hashFunction(hashFunction: (Any) -> Int): Builder<E> {
       this.hashFunction = hashFunction
       return self
     }

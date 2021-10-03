@@ -2,7 +2,6 @@ package omnia.data.structure.immutable
 
 import java.util.Arrays
 import java.util.Objects
-import java.util.function.Supplier
 import omnia.data.cache.MemoizedInt
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
@@ -25,9 +24,9 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       return this
     }
 
-    fun putMappingIfAbsent(key: K, value: Supplier<out V>): Builder<K, V> {
+    fun putMappingIfAbsent(key: K, value: () -> V): Builder<K, V> {
       Objects.requireNonNull(value)
-      kotlinMap.computeIfAbsent(Objects.requireNonNull(key)) { value.get() }
+      kotlinMap.computeIfAbsent(Objects.requireNonNull(key)) { value() }
       return this
     }
 

@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastTriple
 import omnia.data.structure.tuple.Tuples.AtMostTriple
 
@@ -10,9 +9,9 @@ interface Triple<A, B, C> : AtLeastTriple<A, B, C>, AtMostTriple {
     return 3
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Triple<R, B, C>
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Triple<A, R, C>
-  override fun <R> mapThird(mapper: Function<in C, out R>): Triple<A, B, R>
+  override fun <R> mapFirst(mapper: (A) -> R): Triple<R, B, C>
+  override fun <R> mapSecond(mapper: (B) -> R): Triple<A, R, C>
+  override fun <R> mapThird(mapper: (C) -> R): Triple<A, B, R>
   override fun dropFirst(): Couple<B, C>
   override fun dropSecond(): Couple<A, C>
   override fun dropThird(): Couple<A, B>

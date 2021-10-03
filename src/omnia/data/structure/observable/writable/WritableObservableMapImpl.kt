@@ -5,9 +5,6 @@ import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
 import java.util.Objects
-import java.util.function.BiFunction
-import java.util.function.Predicate
-import java.util.function.Supplier
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
@@ -44,11 +41,11 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
     }
   }
 
-  override fun putMappingIfAbsent(key: K, value: Supplier<V>): V {
+  override fun putMappingIfAbsent(key: K, value: () -> V): V {
     synchronized(this) {
       mutateState(
         { currentState -> currentState.valueOf(key) == null },
-        { currentState -> currentState.toBuilder().putMapping(key, value.get()).build() }
+        { currentState -> currentState.toBuilder().putMapping(key, value()).build() }
       ) { _, newState -> ImmutableSet.of(AddToMap(key, newState.valueOf(key)!!)) }
       return currentState.valueOf(key)!!
     }
@@ -91,18 +88,18 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
   }
 
   private fun mutateState(
-    shouldChange: Predicate<in ImmutableMap<K, V>>,
-    mutateState: java.util.function.Function<in ImmutableMap<K, V>, out ImmutableMap<K, V>>,
-    mutationOperations: BiFunction<in ImmutableMap<K, V>, in ImmutableMap<K, V>, out Set<MapOperation<K, V>>>
+    shouldChange: (ImmutableMap<K, V>) -> Boolean,
+    mutateState: (ImmutableMap<K, V>) -> ImmutableMap<K, V>,
+    mutationOperations: (ImmutableMap<K, V>, ImmutableMap<K, V>) -> Set<MapOperation<K, V>>
   ): Boolean {
     synchronized(this) {
       val previousState = currentState
-      if (!shouldChange.test(previousState)) {
+      if (!shouldChange(previousState)) {
         return false
       }
-      val nextState = Objects.requireNonNull(mutateState.apply(previousState))
+      val nextState = Objects.requireNonNull(mutateState(previousState))
       currentState = nextState
-      val operations = mutationOperations.apply(previousState, nextState)
+      val operations = mutationOperations(previousState, nextState)
       mutationEvents.onNext(MutationEvent(nextState, operations))
       return true
     }

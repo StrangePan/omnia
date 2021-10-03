@@ -1,7 +1,6 @@
 package omnia.data.iterate
 
 import java.util.Objects
-import java.util.function.Consumer
 
 /**
  * An [Iterator] that delegates to another source [Iterator], but does not support
@@ -17,9 +16,5 @@ class ReadOnlyIterator<E>(maskedIterator: Iterator<E>) : Iterator<E> {
 
   override fun next(): E {
     return maskedIterator.next()
-  }
-
-  override fun forEachRemaining(action: Consumer<in E>) {
-    maskedIterator.forEachRemaining(action)
   }
 }

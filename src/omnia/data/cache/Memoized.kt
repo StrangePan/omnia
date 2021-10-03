@@ -1,9 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.DoubleSupplier
-import java.util.function.IntSupplier
-import java.util.function.LongSupplier
-import java.util.function.Supplier
 import omnia.contract.Holder
 
 /**
@@ -50,7 +46,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @return a new [Memoized] instance that will memoize the created value
      */
     @JvmStatic
-    fun <T : Any> memoize(supplier: Supplier<out T>): Memoized<T> {
+    fun <T : Any> memoize(supplier: () -> T): Memoized<T> {
       return SimpleMemoizer(supplier)
     }
 
@@ -62,7 +58,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @return a new [MemoizedInt] instance that will memoize the created value
      */
     @JvmStatic
-    fun memoizeInt(supplier: IntSupplier): MemoizedInt {
+    fun memoizeInt(supplier: () -> Int): MemoizedInt {
       return SimpleIntMemoizer(supplier)
     }
 
@@ -74,7 +70,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @return a new [MemoizedLong] instance that will memoize the created value
      */
     @JvmStatic
-    fun memoizeLong(supplier: LongSupplier): MemoizedLong {
+    fun memoizeLong(supplier: () -> Long): MemoizedLong {
       return SimpleLongMemoizer(supplier)
     }
 
@@ -86,7 +82,7 @@ interface Memoized<T : Any> : Holder<T> {
      * @return a new [MemoizedDouble] instance that will memoize the created value
      */
     @JvmStatic
-    fun memoizeDouble(supplier: DoubleSupplier): MemoizedDouble {
+    fun memoizeDouble(supplier: () -> Double): MemoizedDouble {
       return SimpleDoubleMemoizer(supplier)
     }
   }

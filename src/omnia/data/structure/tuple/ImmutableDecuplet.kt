@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.immutable.ImmutableList
 
 internal class ImmutableDecuplet<T : Any>(
@@ -27,18 +26,18 @@ internal class ImmutableDecuplet<T : Any>(
   tenth
 ), Decuplet<T> {
 
-  override fun <R : Any> map(mapper: Function<in T, out R>): Decuplet<R> {
+  override fun <R : Any> map(mapper: (T) -> R): Decuplet<R> {
     return Tuplet.of(
-      mapper.apply(first()),
-      mapper.apply(second()),
-      mapper.apply(third()),
-      mapper.apply(fourth()),
-      mapper.apply(fifth()),
-      mapper.apply(sixth()),
-      mapper.apply(seventh()),
-      mapper.apply(eighth()),
-      mapper.apply(ninth()),
-      mapper.apply(tenth())
+      mapper(first()),
+      mapper(second()),
+      mapper(third()),
+      mapper(fourth()),
+      mapper(fifth()),
+      mapper(sixth()),
+      mapper(seventh()),
+      mapper(eighth()),
+      mapper(ninth()),
+      mapper(tenth())
     )
   }
 

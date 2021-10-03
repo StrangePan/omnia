@@ -1,7 +1,6 @@
 package omnia.data.iterate
 
 import com.google.common.truth.Truth.assertThat
-import java.util.function.Consumer
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -11,7 +10,7 @@ import org.mockito.MockitoAnnotations
 
 class EmptyIteratorTest {
 
-  @Mock private lateinit var consumer: Consumer<Any>
+  @Mock private lateinit var consumer: (Any) -> Unit
 
   @BeforeTest
   fun setUp() {

@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.Supplier
 
 /**
  * A [Memoized] implementation that uses a client-given [Supplier] to lazily compute
@@ -16,7 +15,7 @@ import java.util.function.Supplier
 internal class SimpleMemoizer<T : Any> : Memoized<T> {
 
   @Volatile
-  private var supplier: Supplier<out T>? = null
+  private var supplier: (() -> T)? = null
 
   @Volatile
   private var value: T? = null
@@ -25,7 +24,7 @@ internal class SimpleMemoizer<T : Any> : Memoized<T> {
     this.value = value
   }
 
-  constructor(supplier: Supplier<out T>) {
+  constructor(supplier: () -> T) {
     this.supplier = supplier
   }
 
@@ -35,7 +34,7 @@ internal class SimpleMemoizer<T : Any> : Memoized<T> {
       synchronized(this) {
         localValue = value
         if (localValue == null) {
-          localValue = supplier!!.get()
+          localValue = supplier!!()
           value = localValue
           supplier = null
         }

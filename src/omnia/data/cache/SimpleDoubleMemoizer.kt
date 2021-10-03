@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.DoubleSupplier
 
 /**
  * A [MemoizedDouble] implementation that uses a client-given [DoubleSupplier] to
@@ -10,10 +9,10 @@ import java.util.function.DoubleSupplier
  * ever again. The given [DoubleSupplier.getAsDouble] method is never invoked more than
  * once.
  */
-internal class SimpleDoubleMemoizer(supplier: DoubleSupplier) : MemoizedDouble {
+internal class SimpleDoubleMemoizer(supplier: () -> Double) : MemoizedDouble {
 
   @Volatile
-  private var supplier: DoubleSupplier? = supplier
+  private var supplier: (() -> Double)? = supplier
 
   @Volatile
   private var value = 0.0
@@ -21,7 +20,7 @@ internal class SimpleDoubleMemoizer(supplier: DoubleSupplier) : MemoizedDouble {
     if (supplier != null) {
       synchronized(this) {
         if (supplier != null) {
-          value = supplier!!.asDouble
+          value = supplier!!()
           supplier = null
         }
       }

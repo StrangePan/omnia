@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
 import java.util.Objects
-import java.util.function.Function
 
 internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
     private val first: A,
@@ -66,9 +65,9 @@ internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
     return eighth
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Octuple<R, B, C, D, E, F, G, H> {
+  override fun <R> mapFirst(mapper: (A) -> R): Octuple<R, B, C, D, E, F, G, H> {
     return Tuple.of(
-        mapper.apply(first()),
+        mapper(first()),
         second(),
         third(),
         fourth(),
@@ -79,10 +78,10 @@ internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
     )
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Octuple<A, R, C, D, E, F, G, H> {
+  override fun <R> mapSecond(mapper: (B) -> R): Octuple<A, R, C, D, E, F, G, H> {
     return Tuple.of(
         first(),
-        mapper.apply(second()),
+        mapper(second()),
         third(),
         fourth(),
         fifth(),
@@ -92,11 +91,11 @@ internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
     )
   }
 
-  override fun <R> mapThird(mapper: Function<in C, out R>): Octuple<A, B, R, D, E, F, G, H> {
+  override fun <R> mapThird(mapper: (C) -> R): Octuple<A, B, R, D, E, F, G, H> {
     return Tuple.of(
         first(),
         second(),
-        mapper.apply(third()),
+        mapper(third()),
         fourth(),
         fifth(),
         sixth(),
@@ -105,12 +104,12 @@ internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
     )
   }
 
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Octuple<A, B, C, R, E, F, G, H> {
+  override fun <R> mapFourth(mapper: (D) -> R): Octuple<A, B, C, R, E, F, G, H> {
     return Tuple.of(
         first(),
         second(),
         third(),
-        mapper.apply(fourth()),
+        mapper(fourth()),
         fifth(),
         sixth(),
         seventh(),
@@ -118,46 +117,33 @@ internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
     )
   }
 
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Octuple<A, B, C, D, R, F, G, H> {
+  override fun <R> mapFifth(mapper: (E) -> R): Octuple<A, B, C, D, R, F, G, H> {
     return Tuple.of(
         first(),
         second(),
         third(),
         fourth(),
-        mapper.apply(fifth()),
+        mapper(fifth()),
         sixth(),
         seventh(),
         eighth()
     )
   }
 
-  override fun <R> mapSixth(mapper: Function<in F, out R>): Octuple<A, B, C, D, E, R, G, H> {
+  override fun <R> mapSixth(mapper: (F) -> R): Octuple<A, B, C, D, E, R, G, H> {
     return Tuple.of(
         first(),
         second(),
         third(),
         fourth(),
         fifth(),
-        mapper.apply(sixth()),
+        mapper(sixth()),
         seventh(),
         eighth()
     )
   }
 
-  override fun <R> mapSeventh(mapper: Function<in G, out R>): Octuple<A, B, C, D, E, F, R, H> {
-    return Tuple.of(
-        first(),
-        second(),
-        third(),
-        fourth(),
-        fifth(),
-        sixth(),
-        mapper.apply(seventh()),
-        eighth()
-    )
-  }
-
-  override fun <R> mapEighth(mapper: Function<in H, out R>): Octuple<A, B, C, D, E, F, G, R> {
+  override fun <R> mapSeventh(mapper: (G) -> R): Octuple<A, B, C, D, E, F, R, H> {
     return Tuple.of(
         first(),
         second(),
@@ -165,8 +151,21 @@ internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
         fourth(),
         fifth(),
         sixth(),
+        mapper(seventh()),
+        eighth()
+    )
+  }
+
+  override fun <R> mapEighth(mapper: (H) -> R): Octuple<A, B, C, D, E, F, G, R> {
+    return Tuple.of(
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
         seventh(),
-        mapper.apply(eighth())
+        mapper(eighth())
     )
   }
 

@@ -1,6 +1,5 @@
 package omnia.cli.out
 
-import java.util.function.Function
 import java.util.regex.Pattern
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
@@ -33,7 +32,7 @@ class Output private constructor(spans: List<Span<*>>) {
     return render(Renderable::renderWithoutCodes)
   }
 
-  private fun render(propagation: Function<in Renderable, out StringBuilder>): String {
+  private fun render(propagation: (Renderable) -> StringBuilder): String {
     val output = StringBuilder()
     for (i in 0 until spans.count()) {
       val span = spans.itemAt(i)
@@ -43,7 +42,7 @@ class Output private constructor(spans: List<Span<*>>) {
           && span is LineSpan) {
         output.append(System.lineSeparator())
       }
-      output.append(propagation.apply(span))
+      output.append(propagation(span))
     }
     return output.toString()
   }

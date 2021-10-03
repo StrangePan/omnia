@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.function.Supplier
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
@@ -14,8 +13,8 @@ open class MaskingMap<K : Any, V : Any>(private val kotlinMap: kotlin.collection
     kotlinMap[key] = value
   }
 
-  override fun putMappingIfAbsent(key: K, value: Supplier<V>): V {
-    return kotlinMap.computeIfAbsent(key) { value.get() }
+  override fun putMappingIfAbsent(key: K, value: () -> V): V {
+    return kotlinMap.computeIfAbsent(key) { value() }
   }
 
   override fun removeUnknownTypedKey(key: Any?): V? {

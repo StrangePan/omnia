@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.immutable.ImmutableList
 
 internal class ImmutableSeptuplet<T : Any>(
@@ -14,15 +13,15 @@ internal class ImmutableSeptuplet<T : Any>(
 ) : ImmutableSeptuple<T, T, T, T, T, T, T>(first, second, third, fourth, fifth, sixth, seventh),
   Septuplet<T> {
 
-  override fun <R : Any> map(mapper: Function<in T, out R>): Septuplet<R> {
+  override fun <R : Any> map(mapper: (T) -> R): Septuplet<R> {
     return Tuplet.of(
-      mapper.apply(first()),
-      mapper.apply(second()),
-      mapper.apply(third()),
-      mapper.apply(fourth()),
-      mapper.apply(fifth()),
-      mapper.apply(sixth()),
-      mapper.apply(seventh())
+      mapper(first()),
+      mapper(second()),
+      mapper(third()),
+      mapper(fourth()),
+      mapper(fifth()),
+      mapper(sixth()),
+      mapper(seventh())
     )
   }
 

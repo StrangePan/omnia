@@ -1,11 +1,10 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtMostSeptuplet
 
 interface Septuplet<T : Any> : Septuple<T, T, T, T, T, T, T>, AtMostSeptuplet<T> {
 
-  override fun <R : Any> map(mapper: Function<in T, out R>): Septuplet<R>
+  override fun <R : Any> map(mapper: (T) -> R): Septuplet<R>
   override fun dropFirst(): Sextuplet<T>
   override fun dropSecond(): Sextuplet<T>
   override fun dropThird(): Sextuplet<T>

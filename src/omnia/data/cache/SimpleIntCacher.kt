@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.IntSupplier
 
 /**
  * A [CachedInt] implementation that uses the given [IntSupplier] to provide the value
@@ -8,13 +7,13 @@ import java.util.function.IntSupplier
  *
  * The given [IntSupplier.getAsInt] method is never invoked if the value is cached.
  */
-internal class SimpleIntCacher(private val supplier: IntSupplier) : CachedInt {
+internal class SimpleIntCacher(private val supplier: () -> Int) : CachedInt {
 
   private var isValid = false
   private var value = 0
   override fun value(): Int {
     if (!isValid) {
-      value = supplier.asInt
+      value = supplier()
       isValid = true
     }
     return value

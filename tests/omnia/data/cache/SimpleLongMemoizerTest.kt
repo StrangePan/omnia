@@ -1,10 +1,10 @@
 package omnia.data.cache
 
 import com.google.common.truth.Truth.assertThat
-import java.util.function.LongSupplier
 import kotlin.test.Test
 
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
 
 class SimpleLongMemoizerTest {
 
@@ -28,14 +28,14 @@ class SimpleLongMemoizerTest {
     val supplier = setUpSupplier()
     val testSubject: MemoizedLong = SimpleLongMemoizer(supplier)
     testSubject.value()
-    Mockito.verify(supplier).asLong
+    Mockito.verify(supplier).invoke()
   }
 
   @Test
   fun new_didNotInvokeSupplier() {
     val supplier = setUpSupplier()
     SimpleLongMemoizer(supplier)
-    Mockito.verify(supplier, Mockito.never()).asLong
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -44,14 +44,14 @@ class SimpleLongMemoizerTest {
     val testSubject: MemoizedLong = SimpleLongMemoizer(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).asLong
+    Mockito.verify(supplier, Mockito.times(1)).invoke()
   }
 
   companion object {
 
-    private fun setUpSupplier(): LongSupplier {
-      val supplier = Mockito.mock(LongSupplier::class.java)
-      Mockito.`when`(supplier.asLong).thenReturn(132L)
+    private fun setUpSupplier(): () -> Long {
+      val supplier = mock<() -> Long>()
+      Mockito.`when`(supplier()).thenReturn(132L)
       return supplier
     }
   }

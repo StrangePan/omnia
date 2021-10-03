@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastCouple
 import omnia.data.structure.tuple.Tuples.AtMostCouple
 
@@ -10,8 +9,8 @@ interface Couple<A, B> : AtLeastCouple<A, B>, AtMostCouple {
     return 2
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Couple<R, B>
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Couple<A, R>
+  override fun <R> mapFirst(mapper: (A) -> R): Couple<R, B>
+  override fun <R> mapSecond(mapper: (B) -> R): Couple<A, R>
   override fun <T> append(`object`: T): Triple<A, B, T>
   override fun <C, D> append(other: Couple<C, D>): Quadruple<A, B, C, D>
   override fun <C, D, E> append(other: Triple<C, D, E>): Quintuple<A, B, C, D, E>

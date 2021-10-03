@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
 import java.util.Objects
-import java.util.function.Function
 
 internal open class ImmutableSeptuple<A, B, C, D, E, F, G>(
   private val first: A,
@@ -60,32 +59,32 @@ internal open class ImmutableSeptuple<A, B, C, D, E, F, G>(
     return seventh
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Septuple<R, B, C, D, E, F, G> {
-    return Tuple.of(mapper.apply(first()), second(), third(), fourth(), fifth(), sixth(), seventh())
+  override fun <R> mapFirst(mapper: (A) -> R): Septuple<R, B, C, D, E, F, G> {
+    return Tuple.of(mapper(first()), second(), third(), fourth(), fifth(), sixth(), seventh())
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Septuple<A, R, C, D, E, F, G> {
-    return Tuple.of(first(), mapper.apply(second()), third(), fourth(), fifth(), sixth(), seventh())
+  override fun <R> mapSecond(mapper: (B) -> R): Septuple<A, R, C, D, E, F, G> {
+    return Tuple.of(first(), mapper(second()), third(), fourth(), fifth(), sixth(), seventh())
   }
 
-  override fun <R> mapThird(mapper: Function<in C, out R>): Septuple<A, B, R, D, E, F, G> {
-    return Tuple.of(first(), second(), mapper.apply(third()), fourth(), fifth(), sixth(), seventh())
+  override fun <R> mapThird(mapper: (C) -> R): Septuple<A, B, R, D, E, F, G> {
+    return Tuple.of(first(), second(), mapper(third()), fourth(), fifth(), sixth(), seventh())
   }
 
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Septuple<A, B, C, R, E, F, G> {
-    return Tuple.of(first(), second(), third(), mapper.apply(fourth()), fifth(), sixth(), seventh())
+  override fun <R> mapFourth(mapper: (D) -> R): Septuple<A, B, C, R, E, F, G> {
+    return Tuple.of(first(), second(), third(), mapper(fourth()), fifth(), sixth(), seventh())
   }
 
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Septuple<A, B, C, D, R, F, G> {
-    return Tuple.of(first(), second(), third(), fourth(), mapper.apply(fifth()), sixth(), seventh())
+  override fun <R> mapFifth(mapper: (E) -> R): Septuple<A, B, C, D, R, F, G> {
+    return Tuple.of(first(), second(), third(), fourth(), mapper(fifth()), sixth(), seventh())
   }
 
-  override fun <R> mapSixth(mapper: Function<in F, out R>): Septuple<A, B, C, D, E, R, G> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), mapper.apply(sixth()), seventh())
+  override fun <R> mapSixth(mapper: (F) -> R): Septuple<A, B, C, D, E, R, G> {
+    return Tuple.of(first(), second(), third(), fourth(), fifth(), mapper(sixth()), seventh())
   }
 
-  override fun <R> mapSeventh(mapper: Function<in G, out R>): Septuple<A, B, C, D, E, F, R> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), mapper.apply(seventh()))
+  override fun <R> mapSeventh(mapper: (G) -> R): Septuple<A, B, C, D, E, F, R> {
+    return Tuple.of(first(), second(), third(), fourth(), fifth(), sixth(), mapper(seventh()))
   }
 
   override fun dropFirst(): Sextuple<B, C, D, E, F, G> {

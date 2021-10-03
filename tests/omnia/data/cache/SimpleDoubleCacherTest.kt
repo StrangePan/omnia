@@ -1,10 +1,10 @@
 package omnia.data.cache
 
 import com.google.common.truth.Truth.assertThat
-import java.util.function.DoubleSupplier
 import kotlin.test.Test
 
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
 
 class SimpleDoubleCacherTest {
 
@@ -27,7 +27,7 @@ class SimpleDoubleCacherTest {
   fun new_didNotInvokeSupplier() {
     val supplier = setUpMockSupplier()
     SimpleDoubleCacher(supplier)
-    Mockito.verify(supplier, Mockito.never()).asDouble
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -35,7 +35,7 @@ class SimpleDoubleCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedDouble = SimpleDoubleCacher(supplier)
     testSubject.invalidate()
-    Mockito.verify(supplier, Mockito.never()).asDouble
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -43,7 +43,7 @@ class SimpleDoubleCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedDouble = SimpleDoubleCacher(supplier)
     testSubject.value()
-    Mockito.verify(supplier).asDouble
+    Mockito.verify(supplier).invoke()
   }
 
   @Test
@@ -52,7 +52,7 @@ class SimpleDoubleCacherTest {
     val testSubject: CachedDouble = SimpleDoubleCacher(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).asDouble
+    Mockito.verify(supplier, Mockito.times(1)).invoke()
   }
 
   @Test
@@ -62,14 +62,14 @@ class SimpleDoubleCacherTest {
     testSubject.value()
     testSubject.invalidate()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(2)).asDouble
+    Mockito.verify(supplier, Mockito.times(2)).invoke()
   }
 
   companion object {
 
-    private fun setUpMockSupplier(): DoubleSupplier {
-      val supplier = Mockito.mock(DoubleSupplier::class.java)
-      Mockito.`when`(supplier.asDouble).thenReturn(132.0)
+    private fun setUpMockSupplier(): () -> Double {
+      val supplier = mock<() -> Double>()
+      Mockito.`when`(supplier()).thenReturn(132.0)
       return supplier
     }
   }

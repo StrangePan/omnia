@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.LongSupplier
 import omnia.contract.LongHolder
 
 /**
@@ -26,7 +25,7 @@ interface MemoizedLong : LongHolder {
      * @return a new [MemoizedLong] instance that will memoize the created value
      */
     @JvmStatic
-    fun memoize(supplier: LongSupplier): MemoizedLong {
+    fun memoize(supplier: () -> Long): MemoizedLong {
       return SimpleLongMemoizer(supplier)
     }
   }

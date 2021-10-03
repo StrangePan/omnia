@@ -2,8 +2,6 @@ package omnia.data.structure.immutable
 
 import java.util.Objects
 import java.util.Objects.requireNonNull
-import java.util.function.Consumer
-import java.util.function.Function
 import omnia.data.cache.WeakCache
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Map
@@ -123,14 +121,14 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
       private fun <T : Any> deepRemove(map: MutableMap<T, MutableSet<T>>, item: Any?) {
         map.removeUnknownTypedKey(item)
-        map.values().forEach(Consumer { list: MutableSet<T> -> list.removeUnknownTyped(item) })
+        map.values().forEach({ list: MutableSet<T> -> list.removeUnknownTyped(item) })
       }
 
       private fun <T : Any> deepReplace(
         map: MutableMap<T, MutableSet<T>>, original: T, replacement: T,
       ) {
         map.removeKey(original)?.let { set -> map.putMapping(replacement, set) }
-        map.values().forEach(Consumer { set: MutableSet<T> ->
+        map.values().forEach({ set: MutableSet<T> ->
           if (set.removeUnknownTyped(original)) {
             set.add(replacement)
           }
@@ -358,11 +356,11 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
     @JvmStatic
     fun <E : Any, R : Any> copyOf(
-      original: DirectedGraph<E>, mapper: Function<in E, out R>,
+      original: DirectedGraph<E>, mapper: (E) -> R,
     ): ImmutableDirectedGraph<R> {
       val builder: Builder<R> = builder()
       val convertedTasks: Map<E, R> = original.contents()
-        .map { Tuple.of(it, mapper.apply(it)) }
+        .map { Tuple.of(it, mapper(it)) }
         .toImmutableMap()
       original.contents().forEach { id -> builder.addNode(convertedTasks.valueOf(id)!!) }
       original.edges().forEach {

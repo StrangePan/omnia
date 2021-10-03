@@ -1,7 +1,6 @@
 package omnia.data.structure.observable
 
 import com.google.common.truth.Truth.assertThat
-import java.util.function.Function
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import omnia.data.structure.DirectedGraph
@@ -74,7 +73,7 @@ class ObservableDirectedGraphTest {
     graph.addNode(item1)
     graph.addNode(item2)
     graph.addEdge(item1, item2)
-    assertThat(graph.edges().firstOrNull()?.endpoints()?.map(Function { it.item() }))
+    assertThat(graph.edges().firstOrNull()?.endpoints()?.map({ it.item() }))
         .isEqualTo(of(item1, item2))
   }
 

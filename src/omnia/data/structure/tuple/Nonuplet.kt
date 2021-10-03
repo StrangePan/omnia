@@ -1,11 +1,10 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtMostNonuplet
 
 interface Nonuplet<T : Any> : Nonuple<T, T, T, T, T, T, T, T, T>, AtMostNonuplet<T> {
 
-  override fun <R : Any> map(mapper: Function<in T, out R>): Nonuplet<R>
+  override fun <R : Any> map(mapper: (T) -> R): Nonuplet<R>
   override fun dropFirst(): Octuplet<T>
   override fun dropSecond(): Octuplet<T>
   override fun dropThird(): Octuplet<T>

@@ -1,10 +1,9 @@
 package omnia.data.cache
 
 import com.google.common.truth.Truth.assertThat
-import java.util.function.IntSupplier
 import kotlin.test.Test
-
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
 
 class SimpleIntCacherTest {
 
@@ -27,7 +26,7 @@ class SimpleIntCacherTest {
   fun new_didNotInvokeSupplier() {
     val supplier = setUpMockSupplier()
     SimpleIntCacher(supplier)
-    Mockito.verify(supplier, Mockito.never()).asInt
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -35,7 +34,7 @@ class SimpleIntCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedInt = SimpleIntCacher(supplier)
     testSubject.invalidate()
-    Mockito.verify(supplier, Mockito.never()).asInt
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -43,7 +42,7 @@ class SimpleIntCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedInt = SimpleIntCacher(supplier)
     testSubject.value()
-    Mockito.verify(supplier).asInt
+    Mockito.verify(supplier).invoke()
   }
 
   @Test
@@ -52,7 +51,7 @@ class SimpleIntCacherTest {
     val testSubject: CachedInt = SimpleIntCacher(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).asInt
+    Mockito.verify(supplier, Mockito.times(1)).invoke()
   }
 
   @Test
@@ -62,14 +61,14 @@ class SimpleIntCacherTest {
     testSubject.value()
     testSubject.invalidate()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(2)).asInt
+    Mockito.verify(supplier, Mockito.times(2)).invoke()
   }
 
   companion object {
 
-    private fun setUpMockSupplier(): IntSupplier {
-      val supplier = Mockito.mock(IntSupplier::class.java)
-      Mockito.`when`(supplier.asInt).thenReturn(132)
+    private fun setUpMockSupplier(): () -> Int {
+      val supplier = mock<() -> Int>()
+      Mockito.`when`(supplier()).thenReturn(132)
       return supplier
     }
   }

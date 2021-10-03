@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastQuintuple
 import omnia.data.structure.tuple.Tuples.AtMostQuintuple
 
@@ -10,11 +9,11 @@ interface Quintuple<A, B, C, D, E> : AtLeastQuintuple<A, B, C, D, E>, AtMostQuin
     return 5
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Quintuple<R, B, C, D, E>
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Quintuple<A, R, C, D, E>
-  override fun <R> mapThird(mapper: Function<in C, out R>): Quintuple<A, B, R, D, E>
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Quintuple<A, B, C, R, E>
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Quintuple<A, B, C, D, R>
+  override fun <R> mapFirst(mapper: (A) -> R): Quintuple<R, B, C, D, E>
+  override fun <R> mapSecond(mapper: (B) -> R): Quintuple<A, R, C, D, E>
+  override fun <R> mapThird(mapper: (C) -> R): Quintuple<A, B, R, D, E>
+  override fun <R> mapFourth(mapper: (D) -> R): Quintuple<A, B, C, R, E>
+  override fun <R> mapFifth(mapper: (E) -> R): Quintuple<A, B, C, D, R>
   override fun dropFirst(): Quadruple<B, C, D, E>
   override fun dropSecond(): Quadruple<A, C, D, E>
   override fun dropThird(): Quadruple<A, B, D, E>

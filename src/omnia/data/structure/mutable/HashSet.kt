@@ -1,45 +1,42 @@
 package omnia.data.structure.mutable
 
 import java.util.Objects
-import java.util.function.BiPredicate
-import java.util.function.Function
-import java.util.function.ToIntFunction
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 
 class HashSet<E : Any>(
   original: Iterable<E>? = null,
-  equalsFunction: BiPredicate<in Any?, in Any?>? = null,
-  hashFunction: ToIntFunction<in Any>? = null,
+  equalsFunction: ((Any?, Any?) -> Boolean)? = null,
+  hashFunction: ((Any) -> Int)? = null,
 ) : MutableSet<E> {
 
-  private val equalsFunction: BiPredicate<in Any?, in Any?> =
-    equalsFunction ?: BiPredicate<Any?, Any?> { a, b -> Objects.equals(a, b) }
+  private val equalsFunction: (Any?, Any?) -> Boolean =
+    equalsFunction ?: { a, b -> Objects.equals(a, b) }
 
-  private val hashFunction: ToIntFunction<in Any> =
-    hashFunction ?: ToIntFunction<Any> { obj -> Objects.hashCode(obj) }
+  private val hashFunction: (Any) -> Int =
+    hashFunction ?: { Objects.hashCode(it) }
 
   private val kotlinSet: kotlin.collections.MutableSet<Wrapper<E>> =
     kotlin.collections.HashSet(
       (original ?: Collection.empty())
         .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) })
 
-  private class Wrapper<out E>(
-    private val element: E?,
-    private val equalsFunction: BiPredicate<in Any?, in Any?>,
-    private val hashFunction: ToIntFunction<in Any>,
+  private class Wrapper<out E : Any>(
+    private val element: E,
+    private val equalsFunction: (Any?, Any?) -> Boolean,
+    private val hashFunction: (Any) -> Int,
   ) {
 
-    fun element(): E? {
+    fun element(): E {
       return element
     }
 
     override fun equals(other: Any?): Boolean {
-      return other is Wrapper<*> && equalsFunction.test(element, other.element)
+      return other is Wrapper<*> && equalsFunction(element, other.element)
     }
 
     override fun hashCode(): Int {
-      return hashFunction.applyAsInt(element)
+      return hashFunction(element)
     }
 
     override fun toString(): String {
@@ -56,7 +53,7 @@ class HashSet<E : Any>(
   }
 
   override fun removeUnknownTyped(item: Any?): Boolean {
-    return kotlinSet.remove(wrap(item) as Wrapper<*>)
+    return if (item != null) kotlinSet.remove(wrap(item) as Wrapper<*>) else false
   }
 
   override fun clear() {
@@ -68,7 +65,7 @@ class HashSet<E : Any>(
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {
-    return kotlinSet.contains(wrap(item) as Wrapper<*>)
+    return if (item != null) kotlinSet.contains(wrap(item) as Wrapper<*>) else false
   }
 
   override fun count(): Int {
@@ -82,19 +79,18 @@ class HashSet<E : Any>(
     return kotlinSet.toString()
   }
 
-  private fun <T> wrap(element: T?): Wrapper<T> {
+  private fun <T : Any> wrap(element: T): Wrapper<T> {
     return Wrapper(element, equalsFunction, hashFunction)
   }
 
-  private fun <T> unwrap(): Function<Wrapper<T>, T> {
+  private fun <T : Any> unwrap(): (Wrapper<T>) -> T {
     @Suppress("UNCHECKED_CAST")
-    return UNWRAPPER_FUNCTION as Function<Wrapper<T>, T>
+    return UNWRAPPER_FUNCTION as (Wrapper<T>) -> T
   }
 
   companion object {
 
-    private val UNWRAPPER_FUNCTION: Function<Wrapper<*>, Any?> =
-      Function<Wrapper<*>, Any?> { wrapper: Wrapper<*> -> wrapper.element() }
+    private val UNWRAPPER_FUNCTION: (Wrapper<*>) -> Any? = { it.element() }
 
     @JvmStatic
     fun <E : Any> create(): HashSet<E> {

@@ -4,9 +4,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
-import java.util.function.BiFunction
-import java.util.function.Function
-import java.util.function.Predicate
 import omnia.algorithm.SetAlgorithms
 import omnia.data.structure.Collection
 import omnia.data.structure.Set
@@ -67,19 +64,19 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
   }
 
   private fun mutateState(
-    shouldMutate: Predicate<ImmutableSet<E>>,
-    mutator: Function<ImmutableSet<E>, ImmutableSet<E>>,
-    mutationsGenerator: BiFunction<ImmutableSet<E>, ImmutableSet<E>, Set<SetOperation<E>>>
+    shouldMutate: (ImmutableSet<E>) -> Boolean,
+    mutator: (ImmutableSet<E>) -> ImmutableSet<E>,
+    mutationsGenerator: (ImmutableSet<E>, ImmutableSet<E>) -> Set<SetOperation<E>>
   ): Boolean {
     synchronized(this) {
       val previousState = currentState
-      if (!shouldMutate.test(previousState)) {
+      if (!shouldMutate(previousState)) {
         return false
       }
-      val newState = mutator.apply(previousState)
+      val newState = mutator(previousState)
       currentState = newState
       mutationEvents.onNext(
-        MutationEvent(newState, mutationsGenerator.apply(previousState, newState))
+        MutationEvent(newState, mutationsGenerator(previousState, newState))
       )
       return true
     }

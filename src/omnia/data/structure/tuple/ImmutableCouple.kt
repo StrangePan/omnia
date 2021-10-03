@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
 import java.util.Objects
-import java.util.function.Function
 
 internal open class ImmutableCouple<A, B>(private val first: A, private val second: B) :
     Couple<A, B> {
@@ -28,12 +27,12 @@ internal open class ImmutableCouple<A, B>(private val first: A, private val seco
     return second
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Couple<R, B> {
-    return Tuple.of(mapper.apply(first()), second())
+  override fun <R> mapFirst(mapper: (A) -> R): Couple<R, B> {
+    return Tuple.of(mapper(first()), second())
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Couple<A, R> {
-    return Tuple.of(first(), mapper.apply(second()))
+  override fun <R> mapSecond(mapper: (B) -> R): Couple<A, R> {
+    return Tuple.of(first(), mapper(second()))
   }
 
   override fun <T> append(`object`: T): Triple<A, B, T> {

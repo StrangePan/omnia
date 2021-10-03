@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.Supplier
 
 /**
  * A [Cached] implementation that uses the given [Supplier] to provide the value to be cached. This
@@ -11,12 +10,12 @@ import java.util.function.Supplier
  *
  * @param T the type empty object to be cached
  */
-internal class SimpleCacher<T : Any>(private val supplier: Supplier<out T>) : Cached<T> {
+internal class SimpleCacher<T : Any>(private val supplier: () -> T) : Cached<T> {
 
   private var value: T? = null
 
   override fun value(): T {
-    val value = this.value ?: supplier.get()
+    val value = this.value ?: supplier()
     this.value = value
     return value
   }

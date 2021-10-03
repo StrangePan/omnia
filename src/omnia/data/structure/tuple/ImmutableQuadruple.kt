@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
 import java.util.Objects
-import java.util.function.Function
 
 internal open class ImmutableQuadruple<A, B, C, D>(
   private val first: A,
@@ -42,20 +41,20 @@ internal open class ImmutableQuadruple<A, B, C, D>(
     return fourth
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Quadruple<R, B, C, D> {
-    return Tuple.of(mapper.apply(first()), second(), third(), fourth())
+  override fun <R> mapFirst(mapper: (A) -> R): Quadruple<R, B, C, D> {
+    return Tuple.of(mapper(first()), second(), third(), fourth())
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Quadruple<A, R, C, D> {
-    return Tuple.of(first(), mapper.apply(second()), third(), fourth())
+  override fun <R> mapSecond(mapper: (B) -> R): Quadruple<A, R, C, D> {
+    return Tuple.of(first(), mapper(second()), third(), fourth())
   }
 
-  override fun <R> mapThird(mapper: Function<in C, out R>): Quadruple<A, B, R, D> {
-    return Tuple.of(first(), second(), mapper.apply(third()), fourth())
+  override fun <R> mapThird(mapper: (C) -> R): Quadruple<A, B, R, D> {
+    return Tuple.of(first(), second(), mapper(third()), fourth())
   }
 
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Quadruple<A, B, C, R> {
-    return Tuple.of(first(), second(), third(), mapper.apply(fourth()))
+  override fun <R> mapFourth(mapper: (D) -> R): Quadruple<A, B, C, R> {
+    return Tuple.of(first(), second(), third(), mapper(fourth()))
   }
 
   override fun dropFirst(): Triple<B, C, D> {

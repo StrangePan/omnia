@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
 import java.util.Objects
-import java.util.function.Function
 
 internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     private val first: A,
@@ -79,9 +78,9 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     return tenth
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Decuple<R, B, C, D, E, F, G, H, I, J> {
+  override fun <R> mapFirst(mapper: (A) -> R): Decuple<R, B, C, D, E, F, G, H, I, J> {
     return Tuple.of(
-        mapper.apply(first()),
+        mapper(first()),
         second(),
         third(),
         fourth(),
@@ -94,10 +93,10 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     )
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Decuple<A, R, C, D, E, F, G, H, I, J> {
+  override fun <R> mapSecond(mapper: (B) -> R): Decuple<A, R, C, D, E, F, G, H, I, J> {
     return Tuple.of(
         first(),
-        mapper.apply(second()),
+        mapper(second()),
         third(),
         fourth(),
         fifth(),
@@ -109,11 +108,11 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     )
   }
 
-  override fun <R> mapThird(mapper: Function<in C, out R>): Decuple<A, B, R, D, E, F, G, H, I, J> {
+  override fun <R> mapThird(mapper: (C) -> R): Decuple<A, B, R, D, E, F, G, H, I, J> {
     return Tuple.of(
         first(),
         second(),
-        mapper.apply(third()),
+        mapper(third()),
         fourth(),
         fifth(),
         sixth(),
@@ -124,12 +123,12 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     )
   }
 
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Decuple<A, B, C, R, E, F, G, H, I, J> {
+  override fun <R> mapFourth(mapper: (D) -> R): Decuple<A, B, C, R, E, F, G, H, I, J> {
     return Tuple.of(
         first(),
         second(),
         third(),
-        mapper.apply(fourth()),
+        mapper(fourth()),
         fifth(),
         sixth(),
         seventh(),
@@ -139,13 +138,13 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     )
   }
 
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Decuple<A, B, C, D, R, F, G, H, I, J> {
+  override fun <R> mapFifth(mapper: (E) -> R): Decuple<A, B, C, D, R, F, G, H, I, J> {
     return Tuple.of(
         first(),
         second(),
         third(),
         fourth(),
-        mapper.apply(fifth()),
+        mapper(fifth()),
         sixth(),
         seventh(),
         eighth(),
@@ -154,14 +153,14 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     )
   }
 
-  override fun <R> mapSixth(mapper: Function<in F, out R>): Decuple<A, B, C, D, E, R, G, H, I, J> {
+  override fun <R> mapSixth(mapper: (F) -> R): Decuple<A, B, C, D, E, R, G, H, I, J> {
     return Tuple.of(
         first(),
         second(),
         third(),
         fourth(),
         fifth(),
-        mapper.apply(sixth()),
+        mapper(sixth()),
         seventh(),
         eighth(),
         ninth(),
@@ -169,7 +168,7 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
     )
   }
 
-  override fun <R> mapSeventh(mapper: Function<in G, out R>): Decuple<A, B, C, D, E, F, R, H, I, J> {
+  override fun <R> mapSeventh(mapper: (G) -> R): Decuple<A, B, C, D, E, F, R, H, I, J> {
     return Tuple.of(
         first(),
         second(),
@@ -177,29 +176,14 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
         fourth(),
         fifth(),
         sixth(),
-        mapper.apply(seventh()),
+        mapper(seventh()),
         eighth(),
         ninth(),
         tenth()
     )
   }
 
-  override fun <R> mapEighth(mapper: Function<in H, out R>): Decuple<A, B, C, D, E, F, G, R, I, J> {
-    return Tuple.of(
-        first(),
-        second(),
-        third(),
-        fourth(),
-        fifth(),
-        sixth(),
-        seventh(),
-        mapper.apply(eighth()),
-        ninth(),
-        tenth()
-    )
-  }
-
-  override fun <R> mapNinth(mapper: Function<in I, out R>): Decuple<A, B, C, D, E, F, G, H, R, J> {
+  override fun <R> mapEighth(mapper: (H) -> R): Decuple<A, B, C, D, E, F, G, R, I, J> {
     return Tuple.of(
         first(),
         second(),
@@ -208,13 +192,13 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
         fifth(),
         sixth(),
         seventh(),
-        eighth(),
-        mapper.apply(ninth()),
+        mapper(eighth()),
+        ninth(),
         tenth()
     )
   }
 
-  override fun <R> mapTenth(mapper: Function<in J, out R>): Decuple<A, B, C, D, E, F, G, H, I, R> {
+  override fun <R> mapNinth(mapper: (I) -> R): Decuple<A, B, C, D, E, F, G, H, R, J> {
     return Tuple.of(
         first(),
         second(),
@@ -224,8 +208,23 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
         sixth(),
         seventh(),
         eighth(),
+        mapper(ninth()),
+        tenth()
+    )
+  }
+
+  override fun <R> mapTenth(mapper: (J) -> R): Decuple<A, B, C, D, E, F, G, H, I, R> {
+    return Tuple.of(
+        first(),
+        second(),
+        third(),
+        fourth(),
+        fifth(),
+        sixth(),
+        seventh(),
+        eighth(),
         ninth(),
-        mapper.apply(tenth())
+        mapper(tenth())
     )
   }
 

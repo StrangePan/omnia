@@ -1,11 +1,10 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtMostTriplet
 
 interface Triplet<T : Any> : Triple<T, T, T>, AtMostTriplet<T> {
 
-  override fun <R : Any> map(mapper: Function<in T, out R>): Triplet<R>
+  override fun <R : Any> map(mapper: (T) -> R): Triplet<R>
   override fun dropFirst(): Couplet<T>
   override fun dropSecond(): Couplet<T>
   override fun dropThird(): Couplet<T>

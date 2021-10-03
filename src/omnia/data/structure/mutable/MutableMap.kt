@@ -1,6 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.function.Supplier
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 
@@ -8,7 +7,7 @@ interface MutableMap<K : Any, V : Any> : Map<K, V> {
 
   fun putMapping(key: K, value: V)
 
-  fun putMappingIfAbsent(key: K, value: Supplier<V>): V
+  fun putMappingIfAbsent(key: K, value: () -> V): V
 
   fun removeKey(key: K): V? {
     return removeUnknownTypedKey(key)

@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.IntSupplier
 
 /**
  * A [MemoizedInt] implementation that uses a client-given [IntSupplier] to lazily
@@ -9,10 +8,10 @@ import java.util.function.IntSupplier
  * Once computed and memoized, the [IntSupplier] reference is forgotten and never invoked ever
  * again. The given [IntSupplier.getAsInt] method is never invoked more than once.
  */
-internal class SimpleIntMemoizer(supplier: IntSupplier) : MemoizedInt {
+internal class SimpleIntMemoizer(supplier: () -> Int) : MemoizedInt {
 
   @Volatile
-  private var supplier: IntSupplier? = supplier
+  private var supplier: (() -> Int)? = supplier
 
   @Volatile
   private var value = 0
@@ -20,7 +19,7 @@ internal class SimpleIntMemoizer(supplier: IntSupplier) : MemoizedInt {
     if (supplier != null) {
       synchronized(this) {
         if (supplier != null) {
-          value = supplier!!.asInt
+          value = supplier!!()
           supplier = null
         }
       }

@@ -4,9 +4,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.Objects
-import java.util.function.BiFunction
-import java.util.function.Function
-import java.util.function.Predicate
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
@@ -55,7 +52,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
           previousState.nodeOf(original)
             ?.edges()
             ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map(Function { it.item() }) }
+            ?.map { couplet -> couplet.map({ it.item() }) }
             ?.map { RemoveEdgeFromGraph.create(it) },
           previousState.nodeOf(original)
             ?.item()
@@ -68,7 +65,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
           newState.nodeOf(replacement)
             ?.edges()
             ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map(Function { it.item() }) }
+            ?.map { couplet -> couplet.map({ it.item() }) }
             ?.map { AddEdgeToGraph.create(it) })
         .flatten()
         .toImmutableSet()
@@ -84,7 +81,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
           previousState.nodeOfUnknownType(item)
             ?.edges()
             ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map(Function { it.item() }) }
+            ?.map { couplet -> couplet.map({ it.item() }) }
             ?.map { RemoveEdgeFromGraph.create(it) },
           previousState.nodeOfUnknownType(item)
               ?.item()
@@ -102,7 +99,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     ) { _, newState ->
       newState.edgeOf(from, to)
           ?.endpoints()
-          ?.map(Function { it.item() })
+          ?.map({ it.item() })
           ?.let { AddEdgeToGraph.create(it) }
           ?.let { ImmutableSet.of(it) }
           ?: ImmutableSet.empty()
@@ -120,7 +117,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     ) { previousState, _ ->
       previousState.edgeOfUnknownType(from, to)
           ?.endpoints()
-          ?.map(Function { it.item() })
+          ?.map({ it.item() })
           ?.let { RemoveEdgeFromGraph.create(it) }
           ?.let { ImmutableSet.of(it) }
           ?: ImmutableSet.empty()
@@ -128,20 +125,20 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
   }
 
   private fun mutateState(
-    shouldChange: Predicate<in ImmutableDirectedGraph<E>>,
-    mutateState: Function<in ImmutableDirectedGraph<E>, out ImmutableDirectedGraph<E>>,
-    mutationOperations: BiFunction<in ImmutableDirectedGraph<E>, in ImmutableDirectedGraph<E>, out Set<GraphOperation<E>>>
+    shouldChange: (ImmutableDirectedGraph<E>) -> Boolean,
+    mutateState: (ImmutableDirectedGraph<E>) -> ImmutableDirectedGraph<E>,
+    mutationOperations: (ImmutableDirectedGraph<E>, ImmutableDirectedGraph<E>) -> Set<GraphOperation<E>>
   ): Boolean {
     var previousState: ImmutableDirectedGraph<E>
     var nextState: ImmutableDirectedGraph<E>
     synchronized(this) {
       previousState = state
-      if (!shouldChange.test(previousState)) {
+      if (!shouldChange(previousState)) {
         return false
       }
-      nextState = Objects.requireNonNull(mutateState.apply(previousState))
+      nextState = Objects.requireNonNull(mutateState(previousState))
       state = nextState
-      val operations = mutationOperations.apply(previousState, nextState)
+      val operations = mutationOperations(previousState, nextState)
       mutationEvents.onNext(
         object : MutationEvent<E> {
           override fun state(): DirectedGraph<E> {
@@ -244,7 +241,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
               state.nodes().map { AddNodeToGraph.create(it.item()) }
                 .plus(
                   state.edges()
-                    .map { AddEdgeToGraph.create(it.endpoints().map(Function { i -> i.item() }))})
+                    .map { AddEdgeToGraph.create(it.endpoints().map({ i -> i.item() }))})
                 .toImmutableSet()
             emitter.onNext(object : MutationEvent<E> {
               override fun state(): DirectedGraph<E> {

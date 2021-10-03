@@ -1,6 +1,5 @@
 package omnia.data.structure
 
-import java.util.function.Consumer
 import omnia.data.structure.immutable.ImmutableMap
 import omnia.data.structure.mutable.HashMap
 import omnia.data.structure.mutable.MutableMap
@@ -23,7 +22,7 @@ class TypedMap private constructor(map: Map<Key<*>, Any>) {
 
     fun putMappings(map: TypedMap): Builder {
       map.map.entries()
-        .forEach(Consumer { entry -> this.map.putMapping(entry.key(), entry.value()) })
+        .forEach({ entry -> this.map.putMapping(entry.key(), entry.value()) })
       return this
     }
 

@@ -1,11 +1,10 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.List
 
 interface Tuplet<T : Any> : Tuple, List<T> {
 
-  fun <R : Any> map(mapper: Function<in T, out R>): Tuplet<R>
+  fun <R : Any> map(mapper: (T) -> R): Tuplet<R>
 
   companion object {
 

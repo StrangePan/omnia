@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.immutable.ImmutableList
 
 internal class ImmutableTriplet<T : Any>(first: T, second: T, third: T) :
@@ -10,8 +9,8 @@ internal class ImmutableTriplet<T : Any>(first: T, second: T, third: T) :
     return Tuplet.of(second(), third())
   }
 
-  override fun <R : Any> map(mapper: Function<in T, out R>): Triplet<R> {
-    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()))
+  override fun <R : Any> map(mapper: (T) -> R): Triplet<R> {
+    return Tuplet.of(mapper(first()), mapper(second()), mapper(third()))
   }
 
   override fun dropSecond(): Couplet<T> {

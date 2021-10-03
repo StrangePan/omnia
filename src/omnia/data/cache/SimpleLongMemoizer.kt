@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.LongSupplier
 
 /**
  * A [MemoizedLong] implementation that uses a client-given [LongSupplier] to
@@ -10,10 +9,10 @@ import java.util.function.LongSupplier
  * ever again. The given [LongSupplier.getAsLong] method is never invoked more than
  * once.
  */
-internal class SimpleLongMemoizer(supplier: LongSupplier) : MemoizedLong {
+internal class SimpleLongMemoizer(supplier: () -> Long) : MemoizedLong {
 
   @Volatile
-  private var supplier: LongSupplier? = supplier
+  private var supplier: (() -> Long)? = supplier
 
   @Volatile
   private var value: Long = 0
@@ -21,7 +20,7 @@ internal class SimpleLongMemoizer(supplier: LongSupplier) : MemoizedLong {
     if (supplier != null) {
       synchronized(this) {
         if (supplier != null) {
-          value = supplier!!.asLong
+          value = supplier!!()
           supplier = null
         }
       }

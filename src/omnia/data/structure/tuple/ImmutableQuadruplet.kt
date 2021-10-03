@@ -1,17 +1,16 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.immutable.ImmutableList
 
 internal class ImmutableQuadruplet<T : Any>(first: T, second: T, third: T, fourth: T) :
   ImmutableQuadruple<T, T, T, T>(first, second, third, fourth), Quadruplet<T> {
 
-  override fun <R : Any> map(mapper: Function<in T, out R>): Quadruplet<R> {
+  override fun <R : Any> map(mapper: (T) -> R): Quadruplet<R> {
     return Tuplet.of(
-      mapper.apply(first()),
-      mapper.apply(second()),
-      mapper.apply(third()),
-      mapper.apply(fourth())
+      mapper(first()),
+      mapper(second()),
+      mapper(third()),
+      mapper(fourth())
     )
   }
 

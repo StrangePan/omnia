@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
 import java.util.Objects
-import java.util.function.Function
 
 internal open class ImmutableSextuple<A, B, C, D, E, F>(
   private val first: A,
@@ -54,28 +53,28 @@ internal open class ImmutableSextuple<A, B, C, D, E, F>(
     return sixth
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Sextuple<R, B, C, D, E, F> {
-    return Tuple.of(mapper.apply(first()), second(), third(), fourth(), fifth(), sixth())
+  override fun <R> mapFirst(mapper: (A) -> R): Sextuple<R, B, C, D, E, F> {
+    return Tuple.of(mapper(first()), second(), third(), fourth(), fifth(), sixth())
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Sextuple<A, R, C, D, E, F> {
-    return Tuple.of(first(), mapper.apply(second()), third(), fourth(), fifth(), sixth())
+  override fun <R> mapSecond(mapper: (B) -> R): Sextuple<A, R, C, D, E, F> {
+    return Tuple.of(first(), mapper(second()), third(), fourth(), fifth(), sixth())
   }
 
-  override fun <R> mapThird(mapper: Function<in C, out R>): Sextuple<A, B, R, D, E, F> {
-    return Tuple.of(first(), second(), mapper.apply(third()), fourth(), fifth(), sixth())
+  override fun <R> mapThird(mapper: (C) -> R): Sextuple<A, B, R, D, E, F> {
+    return Tuple.of(first(), second(), mapper(third()), fourth(), fifth(), sixth())
   }
 
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Sextuple<A, B, C, R, E, F> {
-    return Tuple.of(first(), second(), third(), mapper.apply(fourth()), fifth(), sixth())
+  override fun <R> mapFourth(mapper: (D) -> R): Sextuple<A, B, C, R, E, F> {
+    return Tuple.of(first(), second(), third(), mapper(fourth()), fifth(), sixth())
   }
 
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Sextuple<A, B, C, D, R, F> {
-    return Tuple.of(first(), second(), third(), fourth(), mapper.apply(fifth()), sixth())
+  override fun <R> mapFifth(mapper: (E) -> R): Sextuple<A, B, C, D, R, F> {
+    return Tuple.of(first(), second(), third(), fourth(), mapper(fifth()), sixth())
   }
 
-  override fun <R> mapSixth(mapper: Function<in F, out R>): Sextuple<A, B, C, D, E, R> {
-    return Tuple.of(first(), second(), third(), fourth(), fifth(), mapper.apply(sixth()))
+  override fun <R> mapSixth(mapper: (F) -> R): Sextuple<A, B, C, D, E, R> {
+    return Tuple.of(first(), second(), third(), fourth(), fifth(), mapper(sixth()))
   }
 
   override fun dropFirst(): Quintuple<B, C, D, E, F> {

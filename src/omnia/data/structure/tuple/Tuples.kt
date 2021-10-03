@@ -1,22 +1,21 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 
 class Tuples {
   interface AtLeastCouple<A, B> : Tuple {
 
     fun first(): A
     fun second(): B
-    fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastCouple<R, B>
-    fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastCouple<A, R>
+    fun <R> mapFirst(mapper: (A) -> R): AtLeastCouple<R, B>
+    fun <R> mapSecond(mapper: (B) -> R): AtLeastCouple<A, R>
   }
 
   interface AtLeastTriple<A, B, C> : AtLeastCouple<A, B> {
 
     fun third(): C
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastTriple<R, B, C>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastTriple<A, R, C>
-    fun <R> mapThird(mapper: Function<in C, out R>): AtLeastTriple<A, B, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastTriple<R, B, C>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastTriple<A, R, C>
+    fun <R> mapThird(mapper: (C) -> R): AtLeastTriple<A, B, R>
     fun dropFirst(): AtLeastCouple<B, C>
     fun dropSecond(): AtLeastCouple<A, C>
     fun dropThird(): AtLeastCouple<A, B>
@@ -25,10 +24,10 @@ class Tuples {
   interface AtLeastQuadruple<A, B, C, D> : AtLeastTriple<A, B, C> {
 
     fun fourth(): D
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastQuadruple<R, B, C, D>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastQuadruple<A, R, C, D>
-    override fun <R> mapThird(mapper: Function<in C, out R>): AtLeastQuadruple<A, B, R, D>
-    fun <R> mapFourth(mapper: Function<in D, out R>): AtLeastQuadruple<A, B, C, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastQuadruple<R, B, C, D>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastQuadruple<A, R, C, D>
+    override fun <R> mapThird(mapper: (C) -> R): AtLeastQuadruple<A, B, R, D>
+    fun <R> mapFourth(mapper: (D) -> R): AtLeastQuadruple<A, B, C, R>
     override fun dropFirst(): AtLeastTriple<B, C, D>
     override fun dropSecond(): AtLeastTriple<A, C, D>
     override fun dropThird(): AtLeastTriple<A, B, D>
@@ -38,11 +37,11 @@ class Tuples {
   interface AtLeastQuintuple<A, B, C, D, E> : AtLeastQuadruple<A, B, C, D> {
 
     fun fifth(): E
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastQuintuple<R, B, C, D, E>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastQuintuple<A, R, C, D, E>
-    override fun <R> mapThird(mapper: Function<in C, out R>): AtLeastQuintuple<A, B, R, D, E>
-    override fun <R> mapFourth(mapper: Function<in D, out R>): AtLeastQuintuple<A, B, C, R, E>
-    fun <R> mapFifth(mapper: Function<in E, out R>): AtLeastQuintuple<A, B, C, D, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastQuintuple<R, B, C, D, E>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastQuintuple<A, R, C, D, E>
+    override fun <R> mapThird(mapper: (C) -> R): AtLeastQuintuple<A, B, R, D, E>
+    override fun <R> mapFourth(mapper: (D) -> R): AtLeastQuintuple<A, B, C, R, E>
+    fun <R> mapFifth(mapper: (E) -> R): AtLeastQuintuple<A, B, C, D, R>
     override fun dropFirst(): AtLeastQuadruple<B, C, D, E>
     override fun dropSecond(): AtLeastQuadruple<A, C, D, E>
     override fun dropThird(): AtLeastQuadruple<A, B, D, E>
@@ -53,12 +52,12 @@ class Tuples {
   interface AtLeastSextuple<A, B, C, D, E, F> : AtLeastQuintuple<A, B, C, D, E> {
 
     fun sixth(): F
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastSextuple<R, B, C, D, E, F>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastSextuple<A, R, C, D, E, F>
-    override fun <R> mapThird(mapper: Function<in C, out R>): AtLeastSextuple<A, B, R, D, E, F>
-    override fun <R> mapFourth(mapper: Function<in D, out R>): AtLeastSextuple<A, B, C, R, E, F>
-    override fun <R> mapFifth(mapper: Function<in E, out R>): AtLeastSextuple<A, B, C, D, R, F>
-    fun <R> mapSixth(mapper: Function<in F, out R>): AtLeastSextuple<A, B, C, D, E, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastSextuple<R, B, C, D, E, F>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastSextuple<A, R, C, D, E, F>
+    override fun <R> mapThird(mapper: (C) -> R): AtLeastSextuple<A, B, R, D, E, F>
+    override fun <R> mapFourth(mapper: (D) -> R): AtLeastSextuple<A, B, C, R, E, F>
+    override fun <R> mapFifth(mapper: (E) -> R): AtLeastSextuple<A, B, C, D, R, F>
+    fun <R> mapSixth(mapper: (F) -> R): AtLeastSextuple<A, B, C, D, E, R>
     override fun dropFirst(): AtLeastQuintuple<B, C, D, E, F>
     override fun dropSecond(): AtLeastQuintuple<A, C, D, E, F>
     override fun dropThird(): AtLeastQuintuple<A, B, D, E, F>
@@ -70,13 +69,13 @@ class Tuples {
   interface AtLeastSeptuple<A, B, C, D, E, F, G> : AtLeastSextuple<A, B, C, D, E, F> {
 
     fun seventh(): G
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastSeptuple<R, B, C, D, E, F, G>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastSeptuple<A, R, C, D, E, F, G>
-    override fun <R> mapThird(mapper: Function<in C, out R>): AtLeastSeptuple<A, B, R, D, E, F, G>
-    override fun <R> mapFourth(mapper: Function<in D, out R>): AtLeastSeptuple<A, B, C, R, E, F, G>
-    override fun <R> mapFifth(mapper: Function<in E, out R>): AtLeastSeptuple<A, B, C, D, R, F, G>
-    override fun <R> mapSixth(mapper: Function<in F, out R>): AtLeastSeptuple<A, B, C, D, E, R, G>
-    fun <R> mapSeventh(mapper: Function<in G, out R>): AtLeastSeptuple<A, B, C, D, E, F, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastSeptuple<R, B, C, D, E, F, G>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastSeptuple<A, R, C, D, E, F, G>
+    override fun <R> mapThird(mapper: (C) -> R): AtLeastSeptuple<A, B, R, D, E, F, G>
+    override fun <R> mapFourth(mapper: (D) -> R): AtLeastSeptuple<A, B, C, R, E, F, G>
+    override fun <R> mapFifth(mapper: (E) -> R): AtLeastSeptuple<A, B, C, D, R, F, G>
+    override fun <R> mapSixth(mapper: (F) -> R): AtLeastSeptuple<A, B, C, D, E, R, G>
+    fun <R> mapSeventh(mapper: (G) -> R): AtLeastSeptuple<A, B, C, D, E, F, R>
     override fun dropFirst(): AtLeastSextuple<B, C, D, E, F, G>
     override fun dropSecond(): AtLeastSextuple<A, C, D, E, F, G>
     override fun dropThird(): AtLeastSextuple<A, B, D, E, F, G>
@@ -89,14 +88,14 @@ class Tuples {
   interface AtLeastOctuple<A, B, C, D, E, F, G, H> : AtLeastSeptuple<A, B, C, D, E, F, G> {
 
     fun eighth(): H
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastOctuple<R, B, C, D, E, F, G, H>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastOctuple<A, R, C, D, E, F, G, H>
-    override fun <R> mapThird(mapper: Function<in C, out R>): AtLeastOctuple<A, B, R, D, E, F, G, H>
-    override fun <R> mapFourth(mapper: Function<in D, out R>): AtLeastOctuple<A, B, C, R, E, F, G, H>
-    override fun <R> mapFifth(mapper: Function<in E, out R>): AtLeastOctuple<A, B, C, D, R, F, G, H>
-    override fun <R> mapSixth(mapper: Function<in F, out R>): AtLeastOctuple<A, B, C, D, E, R, G, H>
-    override fun <R> mapSeventh(mapper: Function<in G, out R>): AtLeastOctuple<A, B, C, D, E, F, R, H>
-    fun <R> mapEighth(mapper: Function<in H, out R>): AtLeastOctuple<A, B, C, D, E, F, G, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastOctuple<R, B, C, D, E, F, G, H>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastOctuple<A, R, C, D, E, F, G, H>
+    override fun <R> mapThird(mapper: (C) -> R): AtLeastOctuple<A, B, R, D, E, F, G, H>
+    override fun <R> mapFourth(mapper: (D) -> R): AtLeastOctuple<A, B, C, R, E, F, G, H>
+    override fun <R> mapFifth(mapper: (E) -> R): AtLeastOctuple<A, B, C, D, R, F, G, H>
+    override fun <R> mapSixth(mapper: (F) -> R): AtLeastOctuple<A, B, C, D, E, R, G, H>
+    override fun <R> mapSeventh(mapper: (G) -> R): AtLeastOctuple<A, B, C, D, E, F, R, H>
+    fun <R> mapEighth(mapper: (H) -> R): AtLeastOctuple<A, B, C, D, E, F, G, R>
     override fun dropFirst(): AtLeastSeptuple<B, C, D, E, F, G, H>
     override fun dropSecond(): AtLeastSeptuple<A, C, D, E, F, G, H>
     override fun dropThird(): AtLeastSeptuple<A, B, D, E, F, G, H>
@@ -110,15 +109,15 @@ class Tuples {
   interface AtLeastNonuple<A, B, C, D, E, F, G, H, I> : AtLeastOctuple<A, B, C, D, E, F, G, H> {
 
     fun ninth(): I
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastNonuple<R, B, C, D, E, F, G, H, I>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastNonuple<A, R, C, D, E, F, G, H, I>
-    override fun <R> mapThird(mapper: Function<in C, out R>): AtLeastNonuple<A, B, R, D, E, F, G, H, I>
-    override fun <R> mapFourth(mapper: Function<in D, out R>): AtLeastNonuple<A, B, C, R, E, F, G, H, I>
-    override fun <R> mapFifth(mapper: Function<in E, out R>): AtLeastNonuple<A, B, C, D, R, F, G, H, I>
-    override fun <R> mapSixth(mapper: Function<in F, out R>): AtLeastNonuple<A, B, C, D, E, R, G, H, I>
-    override fun <R> mapSeventh(mapper: Function<in G, out R>): AtLeastNonuple<A, B, C, D, E, F, R, H, I>
-    override fun <R> mapEighth(mapper: Function<in H, out R>): AtLeastNonuple<A, B, C, D, E, F, G, R, I>
-    fun <R> mapNinth(mapper: Function<in I, out R>): AtLeastNonuple<A, B, C, D, E, F, G, H, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastNonuple<R, B, C, D, E, F, G, H, I>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastNonuple<A, R, C, D, E, F, G, H, I>
+    override fun <R> mapThird(mapper: (C) -> R): AtLeastNonuple<A, B, R, D, E, F, G, H, I>
+    override fun <R> mapFourth(mapper: (D) -> R): AtLeastNonuple<A, B, C, R, E, F, G, H, I>
+    override fun <R> mapFifth(mapper: (E) -> R): AtLeastNonuple<A, B, C, D, R, F, G, H, I>
+    override fun <R> mapSixth(mapper: (F) -> R): AtLeastNonuple<A, B, C, D, E, R, G, H, I>
+    override fun <R> mapSeventh(mapper: (G) -> R): AtLeastNonuple<A, B, C, D, E, F, R, H, I>
+    override fun <R> mapEighth(mapper: (H) -> R): AtLeastNonuple<A, B, C, D, E, F, G, R, I>
+    fun <R> mapNinth(mapper: (I) -> R): AtLeastNonuple<A, B, C, D, E, F, G, H, R>
     override fun dropFirst(): AtLeastOctuple<B, C, D, E, F, G, H, I>
     override fun dropSecond(): AtLeastOctuple<A, C, D, E, F, G, H, I>
     override fun dropThird(): AtLeastOctuple<A, B, D, E, F, G, H, I>
@@ -134,16 +133,16 @@ class Tuples {
       AtLeastNonuple<A, B, C, D, E, F, G, H, I> {
 
     fun tenth(): J
-    override fun <R> mapFirst(mapper: Function<in A, out R>): AtLeastDecuple<R, B, C, D, E, F, G, H, I, J>
-    override fun <R> mapSecond(mapper: Function<in B, out R>): AtLeastDecuple<A, R, C, D, E, F, G, H, I, J>
-    override fun <R> mapThird(mapper: Function<in C, out R>): AtLeastDecuple<A, B, R, D, E, F, G, H, I, J>
-    override fun <R> mapFourth(mapper: Function<in D, out R>): AtLeastDecuple<A, B, C, R, E, F, G, H, I, J>
-    override fun <R> mapFifth(mapper: Function<in E, out R>): AtLeastDecuple<A, B, C, D, R, F, G, H, I, J>
-    override fun <R> mapSixth(mapper: Function<in F, out R>): AtLeastDecuple<A, B, C, D, E, R, G, H, I, J>
-    override fun <R> mapSeventh(mapper: Function<in G, out R>): AtLeastDecuple<A, B, C, D, E, F, R, H, I, J>
-    override fun <R> mapEighth(mapper: Function<in H, out R>): AtLeastDecuple<A, B, C, D, E, F, G, R, I, J>
-    override fun <R> mapNinth(mapper: Function<in I, out R>): AtLeastDecuple<A, B, C, D, E, F, G, H, R, J>
-    fun <R> mapTenth(mapper: Function<in J, out R>): AtLeastDecuple<A, B, C, D, E, F, G, H, I, R>
+    override fun <R> mapFirst(mapper: (A) -> R): AtLeastDecuple<R, B, C, D, E, F, G, H, I, J>
+    override fun <R> mapSecond(mapper: (B) -> R): AtLeastDecuple<A, R, C, D, E, F, G, H, I, J>
+    override fun <R> mapThird(mapper: (C) -> R): AtLeastDecuple<A, B, R, D, E, F, G, H, I, J>
+    override fun <R> mapFourth(mapper: (D) -> R): AtLeastDecuple<A, B, C, R, E, F, G, H, I, J>
+    override fun <R> mapFifth(mapper: (E) -> R): AtLeastDecuple<A, B, C, D, R, F, G, H, I, J>
+    override fun <R> mapSixth(mapper: (F) -> R): AtLeastDecuple<A, B, C, D, E, R, G, H, I, J>
+    override fun <R> mapSeventh(mapper: (G) -> R): AtLeastDecuple<A, B, C, D, E, F, R, H, I, J>
+    override fun <R> mapEighth(mapper: (H) -> R): AtLeastDecuple<A, B, C, D, E, F, G, R, I, J>
+    override fun <R> mapNinth(mapper: (I) -> R): AtLeastDecuple<A, B, C, D, E, F, G, H, R, J>
+    fun <R> mapTenth(mapper: (J) -> R): AtLeastDecuple<A, B, C, D, E, F, G, H, I, R>
     override fun dropFirst(): AtLeastNonuple<B, C, D, E, F, G, H, I, J>
     override fun dropSecond(): AtLeastNonuple<A, C, D, E, F, G, H, I, J>
     override fun dropThird(): AtLeastNonuple<A, B, D, E, F, G, H, I, J>
