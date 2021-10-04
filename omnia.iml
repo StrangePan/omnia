@@ -11,6 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="io.reactivex.rxjava3:rxjava:3.0.8" level="project" />
     <orderEntry type="library" exported="" name="com.badoo.reaktive:reaktive:1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="com.badoo.reaktive:reaktive-jvm:1.2.0" level="project" />
     <orderEntry type="library" exported="" name="org.jetbrains.kotlin:kotlin-stdlib:1.5.31" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.truth:truth:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="org.mockito:mockito-core:3.2.0" level="project" />
@@ -18,7 +19,6 @@
     <orderEntry type="library" scope="TEST" name="com.google.truth.extensions:truth-java8-extension:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="org.jetbrains.kotlin:kotlin-test-junit:1.5.31" level="project" />
     <orderEntry type="library" scope="TEST" name="org.jetbrains.kotlin:kotlin-test:1.5.31" level="project" />
-    <orderEntry type="library" scope="TEST" name="com.badoo.reaktive:reaktive-jvm:1.2.0" level="project" />
     <orderEntry type="library" scope="TEST" name="com.badoo.reaktive:reaktive-testing:1.2.0" level="project" />
   </component>
 </module>
