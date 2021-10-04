@@ -1,35 +1,31 @@
 package omnia.data.iterate
 
 import com.google.common.truth.Truth.assertThat
-import java.util.NoSuchElementException
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
-@RunWith(JUnit4::class)
 class ArrayIteratorTest {
 
   @Test
   fun hasNext_whenEmptyArray_isFalse() {
-    Assert.assertFalse(ArrayIterator(arrayOfNulls<Any>(0)).hasNext())
+    assertThat(ArrayIterator(arrayOfNulls<Any>(0)).hasNext()).isFalse()
   }
 
-  @Test(expected = NoSuchElementException::class)
+  @Test
   fun next_whenEmptyArray_didThrowNoSuchElementException() {
-    ArrayIterator(arrayOfNulls<Any>(0)).next()
+    assertFailsWith(NoSuchElementException::class) { ArrayIterator(arrayOfNulls<Any>(0)).next() }
   }
 
   @Test
   fun hasNext_whenAtStart_isTrue() {
-    Assert.assertTrue(ArrayIterator(setUpTestArray()).hasNext())
+    assertThat(ArrayIterator(setUpTestArray()).hasNext()).isTrue()
   }
 
   @Test
   fun hasNext_whenInMiddle_isTrue() {
     val testSubject: Iterator<*> = ArrayIterator(setUpTestArray())
     testSubject.next()
-    Assert.assertTrue(testSubject.hasNext())
+    assertThat(testSubject.hasNext()).isTrue()
   }
 
   @Test
@@ -39,14 +35,14 @@ class ArrayIteratorTest {
     for (i in testData.indices) {
       testSubject.next()
     }
-    Assert.assertFalse(testSubject.hasNext())
+    assertThat(testSubject.hasNext()).isFalse()
   }
 
   @Test
   fun next_whenAtStart_didReturnFirstItem() {
     val testData: Array<out Any> = setUpTestArray()
     val testSubject: Iterator<*> = ArrayIterator(testData)
-    Assert.assertEquals(testData[0], testSubject.next())
+    assertThat(testSubject.next()).isEqualTo(testData[0])
   }
 
   @Test
@@ -54,7 +50,7 @@ class ArrayIteratorTest {
     val testData: Array<out Any> = setUpTestArray()
     val testSubject: Iterator<*> = ArrayIterator(testData)
     testSubject.next()
-    Assert.assertEquals(testData[1], testSubject.next())
+    assertThat(testSubject.next()).isEqualTo(testData[1])
   }
 
   @Test
@@ -63,21 +59,22 @@ class ArrayIteratorTest {
     val testSubject: Iterator<*> = ArrayIterator(testData)
     testSubject.next()
     testSubject.next()
-    Assert.assertEquals(testData[2], testSubject.next())
+    assertThat(testSubject.next()).isEqualTo(testData[2])
   }
 
-  @Test(expected = NoSuchElementException::class)
+  @Test
   fun next_whenAtEnd_didThrowException() {
     val testData: Array<out Any> = setUpTestArray()
     val testSubject: Iterator<*> = ArrayIterator(testData)
     for (i in testData.indices) {
       testSubject.next()
     }
-    testSubject.next()
+    assertFailsWith(NoSuchElementException::class) { testSubject.next() }
   }
 
+  @Test
   fun iterator_isNotMutable() {
-    assertThat(ArrayIterator(setUpTestArray())).isNotInstanceOf(MutableIterator::class.java)
+    assertThat(ArrayIterator(setUpTestArray())).isInstanceOf(MutableIterator::class.java)
   }
 
   companion object {

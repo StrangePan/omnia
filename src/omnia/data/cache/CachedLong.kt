@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.LongSupplier
 import omnia.contract.LongHolder
 
 /**
@@ -29,7 +28,7 @@ interface CachedLong : CachedValue, LongHolder {
      * @return a new [CachedLong] instance that will cache the created value
      */
     @JvmStatic
-    fun cache(supplier: LongSupplier): CachedLong {
+    fun cache(supplier: () -> Long): CachedLong {
       return SimpleLongCacher(supplier)
     }
   }

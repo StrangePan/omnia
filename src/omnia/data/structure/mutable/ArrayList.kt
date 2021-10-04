@@ -2,26 +2,32 @@ package omnia.data.structure.mutable
 
 import omnia.data.structure.List
 
-class ArrayList<E> private constructor(javaList: java.util.ArrayList<E> = java.util.ArrayList()) :
-  MaskingList<E>(javaList) {
+class ArrayList<E : Any> private constructor(
+    kotlinList: kotlin.collections.List<E> = kotlin.collections.ArrayList()) :
+    MaskingList<E>(toArrayList(kotlinList)) {
 
   companion object {
 
     @SafeVarargs
-    fun <E> of(vararg items: E): ArrayList<E> {
-      return ArrayList(java.util.ArrayList(listOf(*items)))
+    fun <E : Any> of(vararg items: E): ArrayList<E> {
+      return ArrayList(mutableListOf(*items))
     }
 
     @JvmStatic
-    fun <E> copyOf(otherList: List<out E>): ArrayList<E> {
+    fun <E : Any> copyOf(otherList: List<out E>): ArrayList<E> {
       val newList: ArrayList<E> = create()
       otherList.iterator().forEachRemaining { element: E -> newList.add(element) }
       return newList
     }
 
     @JvmStatic
-    fun <E> create(): ArrayList<E> {
+    fun <E : Any> create(): ArrayList<E> {
       return ArrayList()
+    }
+
+    @JvmStatic
+    fun <E : Any> toArrayList(list: kotlin.collections.List<E>): kotlin.collections.ArrayList<E> {
+      return if (list is kotlin.collections.ArrayList) list else kotlin.collections.ArrayList(list)
     }
   }
 }

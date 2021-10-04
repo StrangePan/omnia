@@ -1,19 +1,16 @@
 package omnia.data.structure.tuple
 
-import java.util.OptionalInt
-import java.util.function.Function
-import java.util.stream.Stream
 import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableQuadruplet<T>(first: T, second: T, third: T, fourth: T) :
+internal class ImmutableQuadruplet<T : Any>(first: T, second: T, third: T, fourth: T) :
   ImmutableQuadruple<T, T, T, T>(first, second, third, fourth), Quadruplet<T> {
 
-  override fun <R> map(mapper: Function<in T, out R>): Quadruplet<R> {
+  override fun <R : Any> map(mapper: (T) -> R): Quadruplet<R> {
     return Tuplet.of(
-      mapper.apply(first()),
-      mapper.apply(second()),
-      mapper.apply(third()),
-      mapper.apply(fourth())
+      mapper(first()),
+      mapper(second()),
+      mapper(third()),
+      mapper(fourth())
     )
   }
 
@@ -103,12 +100,8 @@ internal class ImmutableQuadruplet<T>(first: T, second: T, third: T, fourth: T) 
     return toActualList().itemAt(index)
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     return toActualList().indexOf(item)
-  }
-
-  override fun stream(): Stream<T> {
-    return toActualList().stream()
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {

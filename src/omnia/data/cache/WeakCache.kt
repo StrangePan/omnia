@@ -1,8 +1,6 @@
 package omnia.data.cache
 
 import java.lang.ref.WeakReference
-import java.util.Optional
-import java.util.function.Supplier
 import omnia.contract.TypedContainer
 
 /**
@@ -12,7 +10,7 @@ import omnia.contract.TypedContainer
  * @param K the key type
  * @param V the value type
  */
-class WeakCache<K, V> : TypedContainer<K> {
+class WeakCache<K : Any, V : Any> : TypedContainer<K> {
 
   private val cache: MutableMap<K, WeakReference<V>> = HashMap()
 
@@ -31,14 +29,14 @@ class WeakCache<K, V> : TypedContainer<K> {
    * @return the cached value if it exists or else the result empty invoking [Supplier.get] on
    * `factory`
    */
-  fun getOrCache(key: K, factory: Supplier<V>): V {
-    val cachedResult = cache[key]?.get() ?: factory.get()
+  fun getOrCache(key: K, factory: () -> V): V {
+    val cachedResult = cache[key]?.get() ?: factory()
     cache[key] = WeakReference(cachedResult)
     return cachedResult
   }
 
   /** Retrieves the cached value associated with `key` if it exists.  */
-  operator fun get(key: K): Optional<V> {
-    return Optional.ofNullable(cache[key]?.get())
+  operator fun get(key: K): V? {
+    return cache[key]?.get()
   }
 }

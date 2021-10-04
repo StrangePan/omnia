@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.DoubleSupplier
 import omnia.contract.DoubleHolder
 
 /**
@@ -29,7 +28,7 @@ interface CachedDouble : CachedValue, DoubleHolder {
      * @return a new [CachedDouble] instance that will cache the created value
      */
     @JvmStatic
-    fun cache(supplier: DoubleSupplier): CachedDouble {
+    fun cache(supplier: () -> Double): CachedDouble {
       return SimpleDoubleCacher(supplier)
     }
   }

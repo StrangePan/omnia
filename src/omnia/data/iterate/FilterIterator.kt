@@ -1,9 +1,6 @@
 package omnia.data.iterate
 
-import java.util.NoSuchElementException
-import java.util.function.Predicate
-
-class FilterIterator<E>(private val source: Iterator<E>, private val filter: Predicate<in E>) :
+class FilterIterator<E>(private val source: Iterator<E>, private val filter: (E) -> Boolean) :
     Iterator<E> {
 
   private var didPeekNext = false
@@ -32,7 +29,7 @@ class FilterIterator<E>(private val source: Iterator<E>, private val filter: Pre
     while (source.hasNext()) {
       val next = source.next()
       peekedNext = next
-      if (filter.test(next)) {
+      if (filter(next)) {
         hasNext = true
         break
       }

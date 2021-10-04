@@ -1,33 +1,30 @@
 package omnia.data.iterate
 
-import com.google.common.truth.Truth
-import java.util.NoSuchElementException
-import java.util.function.Consumer
-import org.junit.Rule
-import org.junit.Test
-import org.junit.jupiter.api.Assertions
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import com.google.common.truth.Truth.assertThat
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.junit.MockitoJUnit
-import org.mockito.junit.MockitoRule
+import org.mockito.MockitoAnnotations
 
-@RunWith(JUnit4::class)
 class EmptyIteratorTest {
 
-  @Rule @JvmField val rule: MockitoRule = MockitoJUnit.rule()
+  @Mock private lateinit var consumer: (Any) -> Unit
 
-  @Mock private lateinit var consumer: Consumer<Any>
+  @BeforeTest
+  fun setUp() {
+    MockitoAnnotations.initMocks(this)
+  }
 
   @Test
   fun hasNext_isFalse() {
-    Truth.assertThat(EmptyIterator.create<Any>().hasNext()).isFalse()
+    assertThat(EmptyIterator.create<Any>().hasNext()).isFalse()
   }
 
   @Test
   fun next_throwsNoSuchElementException() {
-    Assertions.assertThrows(NoSuchElementException::class.java) {
+    assertFailsWith(NoSuchElementException::class) {
       EmptyIterator.create<Any>().next()
     }
   }

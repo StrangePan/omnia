@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.DoubleSupplier
 import omnia.contract.DoubleHolder
 
 /**
@@ -26,7 +25,7 @@ interface MemoizedDouble : DoubleHolder {
      * @return a new [MemoizedDouble] instance that will memoize the created value
      */
     @JvmStatic
-    fun memoize(supplier: DoubleSupplier): MemoizedDouble {
+    fun memoize(supplier: () -> Double): MemoizedDouble {
       return SimpleDoubleMemoizer(supplier)
     }
   }

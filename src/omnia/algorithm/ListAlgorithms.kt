@@ -1,17 +1,15 @@
 package omnia.algorithm
 
-import java.util.Comparator
-import java.util.Objects
-import java.util.Objects.requireNonNull
-import java.util.OptionalInt
 import omnia.data.structure.List
+import omnia.data.structure.mutable.MutableList
 import omnia.data.structure.immutable.ImmutableList
 
 object ListAlgorithms {
 
   @JvmStatic
-  fun <T> sublistOf(other: List<T>, startingIndex: Int, endingIndex: Int): ImmutableList<T> {
-    Objects.checkFromToIndex(startingIndex, endingIndex, other.count())
+  fun <T : Any> sublistOf(other: List<T>, startingIndex: Int, endingIndex: Int): ImmutableList<T> {
+    require(startingIndex in 0..endingIndex)
+    require(endingIndex in startingIndex..other.count())
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
     for (i in startingIndex until endingIndex) {
       sublist.add(other.itemAt(i))
@@ -20,8 +18,7 @@ object ListAlgorithms {
   }
 
   @JvmStatic
-  fun <T> reverse(other: List<T>): ImmutableList<T> {
-    requireNonNull(other)
+  fun <T : Any> reverse(other: List<T>): ImmutableList<T> {
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
     for (i in other.count() - 1 downTo 0) {
       sublist.add(other.itemAt(i))
@@ -38,8 +35,10 @@ object ListAlgorithms {
    * Can have any length, including 0.
    */
   @JvmStatic
-  fun <T> toArray(list: List<out T>, template: Array<T>): Array<T> {
-    return list.stream().toArray(template::copyOf)
+  fun <T : Any> toArray(list: List<out T>, template: Array<T?>): Array<T?> {
+    val copy = template.copyOf(list.count())
+    list.forEachIndexed { index, item -> copy[index] = item }
+    return copy
   }
 
   /**
@@ -53,25 +52,47 @@ object ListAlgorithms {
    * found
    */
   @JvmStatic
-  fun <T> binarySearch(
-    haystack: List<out T>, needle: T, comparator: Comparator<in T>
-  ): OptionalInt {
+  fun <T : Any> binarySearch(haystack: List<out T>, needle: T, comparator: Comparator<in T>): Int? {
+    var min = 0
+    var max = haystack.count()
+    while (min < max) {
+      val mid = (min + max - 1) / 2
+      val midValue = haystack.itemAt(mid)
+      val comp = comparator.compare(midValue, needle)
+      when {
+        comp == 0 -> return mid
+        comp < 0 -> min = mid + 1
+        comp > 0 -> max = mid
+      }
+    }
+    return null
+  }
+
+  /**
+   * Searches for a specific item in a sorted list of items or inserts it in the appropriate spot.
+   *
+   * @param haystack the sorted list to search through
+   * @param needle the needle to search for
+   * @param comparator the [Comparator] to use when searching through the haystack
+   * @param T the type of the item to search for
+   * @return the index of the needle within the haystack
+   */
+  @JvmStatic
+  fun <T : Any> binarySearchOrInsert(
+      haystack: MutableList<T>, needle: T, comparator: Comparator<in T>): Int {
     var min = 0
     var max = haystack.count() - 1
     while (min <= max) {
       val mid = (min + max) / 2
       val midValue = haystack.itemAt(mid)
       val comp = comparator.compare(midValue, needle)
-      if (comp == 0) {
-        return OptionalInt.of(mid)
-      }
-      if (comp < 0) {
-        min = mid + 1
-      }
-      if (comp > 0) {
-        max = mid - 1
+      when {
+        comp == 0 -> return mid
+        comp < 0 -> min = mid + 1
+        comp > 0 -> max = mid - 1
       }
     }
-    return OptionalInt.empty()
+    haystack.insertAt(min, needle)
+    return min
   }
 }

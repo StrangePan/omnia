@@ -1,21 +1,18 @@
 package omnia.data.structure.tuple
 
-import java.util.OptionalInt
-import java.util.function.Function
-import java.util.stream.Stream
 import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableSextuplet<T>(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T) :
+internal class ImmutableSextuplet<T : Any>(first: T, second: T, third: T, fourth: T, fifth: T, sixth: T) :
   ImmutableSextuple<T, T, T, T, T, T>(first, second, third, fourth, fifth, sixth), Sextuplet<T> {
 
-  override fun <R> map(mapper: Function<in T, out R>): Sextuplet<R> {
+  override fun <R : Any> map(mapper: (T) -> R): Sextuplet<R> {
     return Tuplet.of(
-      mapper.apply(first()),
-      mapper.apply(second()),
-      mapper.apply(third()),
-      mapper.apply(fourth()),
-      mapper.apply(fifth()),
-      mapper.apply(sixth())
+      mapper(first()),
+      mapper(second()),
+      mapper(third()),
+      mapper(fourth()),
+      mapper(fifth()),
+      mapper(sixth())
     )
   }
 
@@ -97,12 +94,8 @@ internal class ImmutableSextuplet<T>(first: T, second: T, third: T, fourth: T, f
     return toActualList().itemAt(index)
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     return toActualList().indexOf(item)
-  }
-
-  override fun stream(): Stream<T> {
-    return toActualList().stream()
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {

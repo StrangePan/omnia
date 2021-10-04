@@ -1,15 +1,12 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import com.google.common.truth.Truth.assertThat
+import kotlin.test.Test
 
-@RunWith(JUnit4::class)
 class MemoizedIntTest {
 
   @Test
   fun memoize_didReturnSimpleIntMemoizer() {
-    Truth.assertThat(MemoizedInt.memoize { 132 }).isInstanceOf(SimpleIntMemoizer::class.java)
+    assertThat(MemoizedInt.memoize { 132 }).isInstanceOf(SimpleIntMemoizer::class.java)
   }
 }

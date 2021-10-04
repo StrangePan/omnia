@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.IntSupplier
 import omnia.contract.IntHolder
 
 /**
@@ -29,7 +28,7 @@ interface CachedInt : CachedValue, IntHolder {
      * @return a new [CachedInt] instance that will cache the created value
      */
     @JvmStatic
-    fun cache(supplier: IntSupplier): CachedInt {
+    fun cache(supplier: () -> Int): CachedInt {
       return SimpleIntCacher(supplier)
     }
   }

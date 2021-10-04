@@ -1,17 +1,14 @@
 package omnia.data.structure.immutable
 
-import java.util.stream.Stream
 import omnia.data.structure.Collection
 import omnia.data.structure.SortedSet
-import omnia.data.structure.mutable.TreeSet
+import omnia.data.structure.mutable.SortedArraySet
 
 /** An immutable version of [SortedSet]. */
-class ImmutableSortedSet<E> private constructor(
-  comparator: Comparator<in E>,
-  other: Collection<out E>
-) : SortedSet<E> {
+class ImmutableSortedSet<E : Any>
+private constructor(comparator: Comparator<in E>, other: Collection<out E>) : SortedSet<E> {
 
-  private val baseSet: TreeSet<E> = TreeSet.create(comparator)
+  private val baseSet: SortedArraySet<E> = SortedArraySet.create(comparator)
 
   init {
     baseSet.addAll(other)
@@ -25,12 +22,9 @@ class ImmutableSortedSet<E> private constructor(
     return baseSet.containsUnknownTyped(item)
   }
 
-  override fun count(): Int {
-    return baseSet.count()
-  }
+  override fun count() = baseSet.count()
 
-  override val isPopulated: Boolean
-    get() = baseSet.isPopulated
+  override val isPopulated get() = baseSet.isPopulated
 
   override fun itemPreceding(other: E): E? {
     return baseSet.itemPreceding(other)
@@ -52,23 +46,19 @@ class ImmutableSortedSet<E> private constructor(
     return baseSet.iterator()
   }
 
-  override fun stream(): Stream<E> {
-    return baseSet.stream()
-  }
-
   companion object {
 
     private val EMPTY_SET: ImmutableSortedSet<*> =
       ImmutableSortedSet({ _, _ -> 0 }, ImmutableSet.empty<Any>())
 
     @JvmStatic
-    fun <E> empty(): ImmutableSortedSet<E> {
+    fun <E : Any> empty(): ImmutableSortedSet<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_SET as ImmutableSortedSet<E>
     }
 
     @JvmStatic
-    fun <E> copyOf(
+    fun <E : Any> copyOf(
       comparator: Comparator<in E>, other: Collection<out E>,
     ): ImmutableSortedSet<E> {
       return ImmutableSortedSet(comparator, other)

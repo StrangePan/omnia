@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastOctuple
 import omnia.data.structure.tuple.Tuples.AtMostOctuple
 
@@ -10,14 +9,14 @@ interface Octuple<A, B, C, D, E, F, G, H> : AtLeastOctuple<A, B, C, D, E, F, G, 
     return 8
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Octuple<R, B, C, D, E, F, G, H>
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Octuple<A, R, C, D, E, F, G, H>
-  override fun <R> mapThird(mapper: Function<in C, out R>): Octuple<A, B, R, D, E, F, G, H>
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Octuple<A, B, C, R, E, F, G, H>
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Octuple<A, B, C, D, R, F, G, H>
-  override fun <R> mapSixth(mapper: Function<in F, out R>): Octuple<A, B, C, D, E, R, G, H>
-  override fun <R> mapSeventh(mapper: Function<in G, out R>): Octuple<A, B, C, D, E, F, R, H>
-  override fun <R> mapEighth(mapper: Function<in H, out R>): Octuple<A, B, C, D, E, F, G, R>
+  override fun <R> mapFirst(mapper: (A) -> R): Octuple<R, B, C, D, E, F, G, H>
+  override fun <R> mapSecond(mapper: (B) -> R): Octuple<A, R, C, D, E, F, G, H>
+  override fun <R> mapThird(mapper: (C) -> R): Octuple<A, B, R, D, E, F, G, H>
+  override fun <R> mapFourth(mapper: (D) -> R): Octuple<A, B, C, R, E, F, G, H>
+  override fun <R> mapFifth(mapper: (E) -> R): Octuple<A, B, C, D, R, F, G, H>
+  override fun <R> mapSixth(mapper: (F) -> R): Octuple<A, B, C, D, E, R, G, H>
+  override fun <R> mapSeventh(mapper: (G) -> R): Octuple<A, B, C, D, E, F, R, H>
+  override fun <R> mapEighth(mapper: (H) -> R): Octuple<A, B, C, D, E, F, G, R>
   override fun dropFirst(): Septuple<B, C, D, E, F, G, H>
   override fun dropSecond(): Septuple<A, C, D, E, F, G, H>
   override fun dropThird(): Septuple<A, B, D, E, F, G, H>

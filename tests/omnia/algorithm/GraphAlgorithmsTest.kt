@@ -1,53 +1,50 @@
 package omnia.algorithm
 
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth8
-import java.util.Arrays
-import java.util.Optional
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import omnia.algorithm.GraphAlgorithms.findAnyCycle
 import omnia.algorithm.GraphAlgorithms.findOtherNodesInSubgraphContaining
 import omnia.algorithm.GraphAlgorithms.isCyclical
 import omnia.algorithm.GraphAlgorithms.isolatedElements
 import omnia.algorithm.GraphAlgorithms.sinkElements
 import omnia.algorithm.GraphAlgorithms.sourceElements
 import omnia.algorithm.GraphAlgorithms.topologicallySort
-import omnia.data.stream.Collectors.toList
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Graph
 import omnia.data.structure.List
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
+import omnia.data.structure.immutable.ImmutableList
+import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.mutable.HashSet
 import omnia.data.structure.mutable.MutableSet
-import org.junit.Test
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 class GraphAlgorithmsTest {
-  @RunWith(JUnit4::class)
+
   class GraphAlgorithms_IsolatedElementsTest {
 
     @Test
     fun isolatedElements_whenGraphEmpty_returnsEmpty() {
-      assertThat(isolatedElements(ImmutableDirectedGraph.empty<Any?>())).isEmpty()
+      assertThat(isolatedElements(ImmutableDirectedGraph.empty())).isEmpty()
     }
 
     @Test
     fun isolatedElements_whenAllIsolated_returnsAll() {
       assertThat(
         isolatedElements(
-          ImmutableDirectedGraph.builder<Int?>().addNode(1).addNode(2).addNode(3).build()
+          ImmutableDirectedGraph.builder<Int>().addNode(1).addNode(2).addNode(3).build()
         )
       )
-        .containsExactlyElementsIn(ImmutableSet.of<Int?>(1, 2, 3))
+        .containsExactlyElementsIn(ImmutableSet.of(1, 2, 3))
     }
 
     @Test
     fun isolatedElements_whenAllConnected_returnsNone() {
       assertThat(
         isolatedElements(
-          ImmutableDirectedGraph.builder<Int?>()
+          ImmutableDirectedGraph.builder<Int>()
             .addNode(1)
             .addNode(2)
             .addNode(3)
@@ -60,19 +57,18 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_SourceElementsTest {
 
     @Test
     fun sourceElements_whenGraphEmpty_returnsEmpty() {
-      assertThat(sourceElements(ImmutableDirectedGraph.empty<Any?>())).isEmpty()
+      assertThat(sourceElements(ImmutableDirectedGraph.empty<Any>())).isEmpty()
     }
 
     @Test
     fun sourceElements_whenGraphHasOneSource_returnsSource() {
       assertThat(
         sourceElements(
-          ImmutableDirectedGraph.builder<Any?>()
+          ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
             .addNode(2)
             .addNode(3)
@@ -88,7 +84,7 @@ class GraphAlgorithmsTest {
     fun sourceElements_whenGraphIsLoop_returnsEmpty() {
       assertThat(
         sourceElements(
-          ImmutableDirectedGraph.builder<Any?>()
+          ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
             .addNode(2)
             .addNode(3)
@@ -102,19 +98,18 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_SinkElements {
 
     @Test
     fun sinkElements_whenGraphEmpty_returnsEmpty() {
-      assertThat(sinkElements(ImmutableDirectedGraph.empty<Any?>())).isEmpty()
+      assertThat(sinkElements(ImmutableDirectedGraph.empty<Any>())).isEmpty()
     }
 
     @Test
     fun sinkElements_whenGraphHasOneSink_returnsSink() {
       assertThat(
         sinkElements(
-          ImmutableDirectedGraph.builder<Any?>()
+          ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
             .addNode(2)
             .addNode(3)
@@ -130,7 +125,7 @@ class GraphAlgorithmsTest {
     fun sinkElements_whenGraphIsLoop_returnsSink() {
       assertThat(
         sinkElements(
-          ImmutableDirectedGraph.builder<Any?>()
+          ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
             .addNode(2)
             .addNode(3)
@@ -144,31 +139,30 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_IsCyclicalTest {
 
     @Test
     fun isCyclical_whenEmpty_isFalse() {
-      val graph: DirectedGraph<Any?> = ImmutableDirectedGraph.empty()
+      val graph: DirectedGraph<Any> = ImmutableDirectedGraph.empty()
       assertThat(isCyclical(graph)).isFalse()
     }
 
     @Test
     fun isCyclical_whenSingleNode_isFalse() {
-      val graph: DirectedGraph<Any?> = ImmutableDirectedGraph.builder<Any?>().addNode(Any()).build()
+      val graph: DirectedGraph<Any> = ImmutableDirectedGraph.builder<Any>().addNode(Any()).build()
       assertThat(isCyclical(graph)).isFalse()
     }
 
     @Test
     fun isCyclical_whenSingleNode_edgePointsTowardsSelf_isTrue() {
-      val graph: DirectedGraph<Int?> =
-        ImmutableDirectedGraph.builder<Int?>().addNode(1).addEdge(1, 1).build()
+      val graph: DirectedGraph<Int> =
+        ImmutableDirectedGraph.builder<Int>().addNode(1).addEdge(1, 1).build()
       assertThat(isCyclical(graph)).isTrue()
     }
 
     @Test
     fun isCyclical_whenChainOfTwoNodes_isFalse() {
-      val graph: DirectedGraph<Int?> = ImmutableDirectedGraph.builder<Int?>()
+      val graph: DirectedGraph<Int> = ImmutableDirectedGraph.builder<Int>()
         .addNode(1)
         .addNode(2)
         .addEdge(1, 2)
@@ -178,7 +172,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun isCyclical_whenLoopOfTwoNodes_isTrue() {
-      val graph: DirectedGraph<Int?> = ImmutableDirectedGraph.builder<Int?>()
+      val graph: DirectedGraph<Int> = ImmutableDirectedGraph.builder<Int>()
         .addNode(1)
         .addNode(2)
         .addEdge(1, 2)
@@ -189,7 +183,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun isCyclical_whenChainOfTenNodes_isFalse() {
-      val graph: DirectedGraph<Int?> = ImmutableDirectedGraph.builder<Int?>()
+      val graph: DirectedGraph<Int> = ImmutableDirectedGraph.builder<Int>()
         .addNode(1)
         .addNode(2)
         .addNode(3)
@@ -215,7 +209,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun isCyclical_whenLoopOfTenNodes_isTrue() {
-      val graph: DirectedGraph<Int?> = ImmutableDirectedGraph.builder<Int?>()
+      val graph: DirectedGraph<Int> = ImmutableDirectedGraph.builder<Int>()
         .addNode(1)
         .addNode(2)
         .addNode(3)
@@ -242,7 +236,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun isCyclical_whenDisjointChains_isFalse() {
-      val graph: DirectedGraph<Int?> = ImmutableDirectedGraph.builder<Int?>()
+      val graph: DirectedGraph<Int> = ImmutableDirectedGraph.builder<Int>()
         .addNode(1)
         .addNode(2)
         .addNode(3)
@@ -266,14 +260,44 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
+  class GraphAlgorithms_FindAnyCycleTest {
+
+    @Test
+    fun findAnyCycle_whenEmpty_isEmpty() {
+      assertThat(findAnyCycle(ImmutableDirectedGraph.empty<Int>())).isNull()
+    }
+
+    @Test
+    fun findAnyCycle_whenSingleNode_isEmpty() {
+      assertThat(findAnyCycle(ImmutableDirectedGraph.builder<Int>().addNode(1).build())).isNull()
+    }
+
+    @Test
+    fun findAnyCycle_whenSingleNode_whenCyclical_containsNode() {
+      assertThat(
+              findAnyCycle(ImmutableDirectedGraph.builder<Int>().addNode(1).addEdge(1, 1).build()))
+          .isEqualTo(ImmutableList.of(1))
+    }
+
+    @Test
+    fun findAnyCycle_whenTwoNodes_whenCyclical_containsNodes() {
+      assertThat(
+              findAnyCycle(
+                  ImmutableDirectedGraph.builder<Int>()
+                      .addNode(1)
+                      .addNode(2)
+                      .addEdge(1, 2)
+                      .addEdge(2, 1)
+                      .build()))
+          .isEqualTo(ImmutableList.of(1, 2))
+    }
+  }
+
   class GraphAlgorithms_TopologicallySortTest {
 
     @Test
     fun topologicallySort_whenSingleNode_whenCyclical_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -285,9 +309,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun topologicallySort_whenLollipop_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -303,9 +325,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun topologicallySort_whenCycle_withTwoNodes_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -319,9 +339,7 @@ class GraphAlgorithmsTest {
 
     @Test
     fun topologicallySort_whenCycle_withThreeNodes_throwsException() {
-      assertThrows(
-        IllegalArgumentException::class.java
-      ) {
+      assertFailsWith(IllegalArgumentException::class) {
         topologicallySort(
           ImmutableDirectedGraph.builder<Any>()
             .addNode(1)
@@ -431,14 +449,14 @@ class GraphAlgorithmsTest {
       assertThat(topologicallySort(graph)).isATopologicalSortOf(graph)
     }
 
-    private interface TopologicalAssertion<T> {
+    private interface TopologicalAssertion<T : Any> {
 
       fun isATopologicalSortOf(graph: DirectedGraph<T>)
     }
 
     companion object {
 
-      private fun <T> assertThat(list: List<T>): TopologicalAssertion<T> {
+      private fun <T : Any> assertThat(list: List<T>): TopologicalAssertion<T> {
         // O(N^2)
         return object : TopologicalAssertion<T> {
           override fun isATopologicalSortOf(graph: DirectedGraph<T>) {
@@ -446,7 +464,7 @@ class GraphAlgorithmsTest {
 
             // O(N)
             for (item in list) {
-              Truth8.assertThat(graph.nodeOf(item)).isPresent()
+              assertThat(graph.nodeOf(item)).isNotNull()
             }
             val cumulativePredecessors: MutableSet<T> = HashSet.create()
 
@@ -454,26 +472,15 @@ class GraphAlgorithmsTest {
             for (item in list) {
 
               // predecessors of item exist in cumulative predecessors: O(N)
-              graph.nodeOf(item)
-                .map { obj: DirectedGraph.DirectedNode<*> -> obj.predecessors() }
-                .orElse(Set.empty())
-                .stream()
-                .map { obj: DirectedGraph.DirectedNode<*> -> obj.item() }
-                .forEach { directPredecessor ->
-                  assertThat(cumulativePredecessors.contains(directPredecessor))
-                    .isTrue()
-                }
+              (graph.nodeOf(item)?.predecessors() ?: Set.empty())
+                  .map { it.item() }
+                  .forEach { assertThat(cumulativePredecessors).contains(it) }
 
               // successors of item do NOT exist in cumulative predecessors yet: O(N)
-              graph.nodeOf(item)
-                .map { obj: DirectedGraph.DirectedNode<*> -> obj.successors() }
-                .orElse(Set.empty())
-                .stream()
-                .map { obj: DirectedGraph.DirectedNode<*> -> obj.item() }
-                .forEach { directPredecessor ->
-                  assertThat(directPredecessor in cumulativePredecessors)
-                    .isFalse()
-                }
+              (graph.nodeOf(item)?.successors() ?: Set.empty())
+                .map { it.item() }
+                .forEach { assertThat(cumulativePredecessors).doesNotContain(it) }
+
               cumulativePredecessors.add(item)
             }
 
@@ -487,7 +494,6 @@ class GraphAlgorithmsTest {
     }
   }
 
-  @RunWith(JUnit4::class)
   class GraphAlgorithms_FindOtherNodesInSubgraphContainingTest {
 
     @Test
@@ -505,8 +511,8 @@ class GraphAlgorithmsTest {
         .addEdge(5, 6)
         .build()
 
-      assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(2).orElseThrow()))
-        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3));
+      assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(2)!!))
+        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3))
     }
 
     @Test
@@ -520,8 +526,8 @@ class GraphAlgorithmsTest {
         .addNode(6)
         .build()
 
-      assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(2).orElseThrow()))
-        .containsExactlyElementsIn(nodesFor(graph, 2));
+      assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(2)!!))
+        .containsExactlyElementsIn(nodesFor(graph, 2))
     }
 
     @Test
@@ -538,15 +544,13 @@ class GraphAlgorithmsTest {
         .addEdge(3, 4)
         .build()
 
-      assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(1).orElseThrow()))
-        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3, 4));
+      assertThat(findOtherNodesInSubgraphContaining(graph.nodeOf(1)!!))
+        .containsExactlyElementsIn(nodesFor(graph, 1, 2, 3, 4))
     }
 
-    private fun <T> nodesFor(graph: Graph<T>, vararg items: T): List<Graph.Node<T>>  {
-      return Arrays.stream(items)
-        .map(graph::nodeOf)
-        .flatMap(Optional<out Graph.Node<T>>::stream)
-        .collect(toList())
+    private fun <T : Any> nodesFor(graph: Graph<T>, vararg items: T):
+        ImmutableList<Graph.Node<T>>  {
+      return items.asIterable().mapNotNull(graph::nodeOf).toImmutableList()
     }
   }
 }

@@ -1,20 +1,18 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
-import java.util.function.LongSupplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.mockito.Mockito
+import com.google.common.truth.Truth.assertThat
+import kotlin.test.Test
 
-@RunWith(JUnit4::class)
+import org.mockito.Mockito
+import org.mockito.kotlin.mock
+
 class SimpleLongCacherTest {
 
   @Test
   fun value_didReturnSuppliedValue() {
     val testValue = 132L
     val testSubject: CachedLong = SimpleLongCacher { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -22,14 +20,14 @@ class SimpleLongCacherTest {
     val testValue = 132L
     val testSubject: CachedLong = SimpleLongCacher { testValue }
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
   fun new_didNotInvokeSupplier() {
     val supplier = setUpMockSupplier()
     SimpleLongCacher(supplier)
-    Mockito.verify(supplier, Mockito.never()).asLong
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -37,7 +35,7 @@ class SimpleLongCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedLong = SimpleLongCacher(supplier)
     testSubject.invalidate()
-    Mockito.verify(supplier, Mockito.never()).asLong
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -45,7 +43,7 @@ class SimpleLongCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedLong = SimpleLongCacher(supplier)
     testSubject.value()
-    Mockito.verify(supplier).asLong
+    Mockito.verify(supplier).invoke()
   }
 
   @Test
@@ -54,7 +52,7 @@ class SimpleLongCacherTest {
     val testSubject: CachedLong = SimpleLongCacher(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).asLong
+    Mockito.verify(supplier, Mockito.times(1)).invoke()
   }
 
   @Test
@@ -64,14 +62,14 @@ class SimpleLongCacherTest {
     testSubject.value()
     testSubject.invalidate()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(2)).asLong
+    Mockito.verify(supplier, Mockito.times(2)).invoke()
   }
 
   companion object {
 
-    private fun setUpMockSupplier(): LongSupplier {
-      val supplier = Mockito.mock(LongSupplier::class.java)
-      Mockito.`when`(supplier.asLong).thenReturn(132L)
+    private fun setUpMockSupplier(): () -> Long {
+      val supplier = mock<() -> Long>()
+      Mockito.`when`(supplier()).thenReturn(132L)
       return supplier
     }
   }

@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
-import java.util.function.Function
+import omnia.algorithm.HashAlgorithms.Companion.hash
 
 internal open class ImmutableQuintuple<A, B, C, D, E>(
   private val first: A,
@@ -21,11 +20,11 @@ internal open class ImmutableQuintuple<A, B, C, D, E>(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(first(), second(), third(), fourth(), fifth())
+    return hash(first(), second(), third(), fourth(), fifth())
   }
 
   override fun toString(): String {
-    return "Tuple{" + first() + "," + second() + "," + third() + "," + fourth() + "," + fifth() + "}"
+    return """Tuple{${first()},${second()},${third()},${fourth()},${fifth()}}"""
   }
 
   override fun first(): A {
@@ -48,24 +47,24 @@ internal open class ImmutableQuintuple<A, B, C, D, E>(
     return fifth
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Quintuple<R, B, C, D, E> {
-    return Tuple.of(mapper.apply(first()), second(), third(), fourth(), fifth())
+  override fun <R> mapFirst(mapper: (A) -> R): Quintuple<R, B, C, D, E> {
+    return Tuple.of(mapper(first()), second(), third(), fourth(), fifth())
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Quintuple<A, R, C, D, E> {
-    return Tuple.of(first(), mapper.apply(second()), third(), fourth(), fifth())
+  override fun <R> mapSecond(mapper: (B) -> R): Quintuple<A, R, C, D, E> {
+    return Tuple.of(first(), mapper(second()), third(), fourth(), fifth())
   }
 
-  override fun <R> mapThird(mapper: Function<in C, out R>): Quintuple<A, B, R, D, E> {
-    return Tuple.of(first(), second(), mapper.apply(third()), fourth(), fifth())
+  override fun <R> mapThird(mapper: (C) -> R): Quintuple<A, B, R, D, E> {
+    return Tuple.of(first(), second(), mapper(third()), fourth(), fifth())
   }
 
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Quintuple<A, B, C, R, E> {
-    return Tuple.of(first(), second(), third(), mapper.apply(fourth()), fifth())
+  override fun <R> mapFourth(mapper: (D) -> R): Quintuple<A, B, C, R, E> {
+    return Tuple.of(first(), second(), third(), mapper(fourth()), fifth())
   }
 
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Quintuple<A, B, C, D, R> {
-    return Tuple.of(first(), second(), third(), fourth(), mapper.apply(fifth()))
+  override fun <R> mapFifth(mapper: (E) -> R): Quintuple<A, B, C, D, R> {
+    return Tuple.of(first(), second(), third(), fourth(), mapper(fifth()))
   }
 
   override fun dropFirst(): Quadruple<B, C, D, E> {

@@ -1,10 +1,9 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
-import java.util.function.Function
+import omnia.algorithm.HashAlgorithms.Companion.hash
 
-internal open class ImmutableCouple<A, B>(private val first: A, private val second: B) :
-    Couple<A, B> {
+internal open class ImmutableCouple<A, B>(private val first: A, private val second: B)
+  : Couple<A, B> {
 
   override fun equals(other: Any?): Boolean {
     return other is ImmutableCouple<*, *>
@@ -12,13 +11,9 @@ internal open class ImmutableCouple<A, B>(private val first: A, private val seco
         && second() == other.second()
   }
 
-  override fun hashCode(): Int {
-    return Objects.hash(first(), second())
-  }
+  override fun hashCode() = hash(first(), second())
 
-  override fun toString(): String {
-    return "Tuple{" + first() + "," + second() + "}"
-  }
+  override fun toString() = """Tuple{${first()},${second()}}"""
 
   override fun first(): A {
     return first
@@ -28,12 +23,12 @@ internal open class ImmutableCouple<A, B>(private val first: A, private val seco
     return second
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Couple<R, B> {
-    return Tuple.of(mapper.apply(first()), second())
+  override fun <R> mapFirst(mapper: (A) -> R): Couple<R, B> {
+    return Tuple.of(mapper(first()), second())
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Couple<A, R> {
-    return Tuple.of(first(), mapper.apply(second()))
+  override fun <R> mapSecond(mapper: (B) -> R): Couple<A, R> {
+    return Tuple.of(first(), mapper(second()))
   }
 
   override fun <T> append(`object`: T): Triple<A, B, T> {

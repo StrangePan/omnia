@@ -1,39 +1,35 @@
 package omnia.data.structure.immutable
 
-import java.util.Arrays
-import java.util.Collections
-import java.util.Objects
-import java.util.Optional
-import java.util.function.Supplier
+import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.cache.MemoizedInt
-import omnia.data.stream.Collectors
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
+import omnia.data.structure.tuple.Couple
 
-class ImmutableMap<K, V> : Map<K, V> {
+class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
-  private val javaMap: MutableMap<K, V> = kotlin.collections.HashMap()
+  private val kotlinMap: MutableMap<K, V> = kotlin.collections.HashMap()
   fun toBuilder(): Builder<K, V> {
     return buildUpon(this)
   }
 
-  class Builder<K, V> {
+  class Builder<K : Any, V : Any> {
 
-    val javaMap: MutableMap<K, V> = kotlin.collections.HashMap()
+    val kotlinMap: MutableMap<K, V> = kotlin.collections.HashMap()
     fun putMapping(key: K, value: V): Builder<K, V> {
-      javaMap[key] = value
+      kotlinMap[key] = value
       return this
     }
 
-    fun putMappingIfAbsent(key: K, value: Supplier<out V>): Builder<K, V> {
-      Objects.requireNonNull(value)
-      javaMap.computeIfAbsent(Objects.requireNonNull(key), { value.get() })
+    fun putMappingIfAbsent(key: K, value: () -> V): Builder<K, V> {
+      kotlinMap.computeIfAbsent(key) { value() }
       return this
     }
 
     fun putAll(otherMap: Map<out K, out V>): Builder<K, V> {
-      otherMap.entries().stream().forEach { e -> putMapping(e.key(), e.value()) }
+      otherMap.entries().forEach { putMapping(it.key(), it.value()) }
       return this
     }
 
@@ -47,31 +43,31 @@ class ImmutableMap<K, V> : Map<K, V> {
     }
 
     fun removeUnknownTypedKey(key: Any?): Builder<K, V> {
-      javaMap.remove(key)
+      kotlinMap.remove(key)
       return this
     }
 
     fun build(): ImmutableMap<K, V> {
-      return if (javaMap.isEmpty()) empty() else ImmutableMap(this)
+      return if (kotlinMap.isEmpty()) empty() else ImmutableMap(this)
     }
   }
 
   private constructor()
-  private constructor(javaMap: MutableMap<K, V>) {
-    this.javaMap.putAll(javaMap)
+  private constructor(map: kotlin.collections.Map<K, V>) {
+    this.kotlinMap.putAll(map)
   }
 
-  private constructor(builder: Builder<K, V>) : this(builder.javaMap)
+  private constructor(builder: Builder<K, V>) : this(builder.kotlinMap)
 
   override fun keys(): Set<K> {
-    return Set.masking(javaMap.keys)
+    return Set.masking(kotlinMap.keys)
   }
 
   override fun values(): Collection<V> {
-    return Collection.masking(javaMap.values)
+    return Collection.masking(kotlinMap.values)
   }
 
-  override fun entries(): Set<Map.Entry<K, V>> {
+  override fun entries(): ImmutableSet<Map.Entry<K, V>> {
     class Entry(private val javaEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
 
       override fun key(): K {
@@ -93,29 +89,21 @@ class ImmutableMap<K, V> : Map<K, V> {
             && value() == other.value())
       }
 
-      override fun hashCode(): Int {
-        return Objects.hash(key(), value())
-      }
+      override fun hashCode() = hash(key(), value())
 
       override fun toString(): String {
         return key().toString() + " => " + value().toString()
       }
     }
-    return javaMap.entries.stream()
-      .map { javaEntry -> Entry(javaEntry) }
-      .collect(Collectors.toImmutableSet())
+    return kotlinMap.entries.map { Entry(it) }.toImmutableSet()
   }
 
-  override fun valueOfUnknownTyped(key: Any?): Optional<V> {
-    return Optional.ofNullable(javaMap.get(key))
+  override fun valueOfUnknownTyped(key: Any?): V? {
+    return kotlinMap[key]
   }
 
-  override fun keysOfUnknownTyped(value: Any?): Set<K> {
-    return javaMap.entries
-      .stream()
-      .filter { e -> e.value == value }
-      .map { entry -> entry.key }
-      .collect(Collectors.toImmutableSet())
+  override fun keysOfUnknownTyped(value: Any?): ImmutableSet<K> {
+    return kotlinMap.entries.filter { it.value == value }.map { it.key }.toImmutableSet()
   }
 
   override fun equals(other: Any?): Boolean {
@@ -129,8 +117,8 @@ class ImmutableMap<K, V> : Map<K, V> {
       return false
     }
     for (entry in entries()) {
-      val otherValue: Optional<*> = other.valueOfUnknownTyped(entry.key())
-      if (otherValue.isEmpty || otherValue.get() != entry.value()) {
+      val otherValue = other.valueOfUnknownTyped(entry.key())
+      if (otherValue != entry.value()) {
         return false
       }
     }
@@ -145,20 +133,13 @@ class ImmutableMap<K, V> : Map<K, V> {
   private fun computeHash(): Int {
     val entries: Set<out Map.Entry<*, *>> = entries()
     val entryCodes = IntArray(entries.count())
-    var i = 0
-    for (entry in entries) {
-      entryCodes[i++] = entry.hashCode()
-    }
-    Arrays.sort(entryCodes)
-    return Objects.hash(entryCodes.contentHashCode())
+    entries.forEachIndexed { index, entry -> entryCodes[index] = entry.hashCode() }
+    entryCodes.sort()
+    return hash(entryCodes.contentHashCode())
   }
 
   override fun toString(): String {
-    return (javaClass.simpleName
-        + "["
-        + entries().stream().map { obj: Map.Entry<K, V> -> obj.toString() }
-      .map { s: String -> "{$s}" }.collect(java.util.stream.Collectors.joining(", "))
-        + "]")
+    return "${javaClass.simpleName}[${entries().joinToString { "{$it}" }}]"
   }
 
   companion object {
@@ -166,23 +147,23 @@ class ImmutableMap<K, V> : Map<K, V> {
     private val EMPTY_IMMUTABLE_MAP: ImmutableMap<*, *> = ImmutableMap<Any, Any>()
 
     @JvmStatic
-    fun <K, V> empty(): ImmutableMap<K, V> {
+    fun <K : Any, V : Any> empty(): ImmutableMap<K, V> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_IMMUTABLE_MAP as ImmutableMap<K, V>
     }
 
     @JvmStatic
-    fun <K, V> of(key: K, value: V): ImmutableMap<K, V> {
-      return ImmutableMap(Collections.singletonMap(key, value))
+    fun <K : Any, V : Any> of(key: K, value: V): ImmutableMap<K, V> {
+      return ImmutableMap(mapOf(Pair(key, value)))
     }
 
     @JvmStatic
-    fun <K, V> copyOf(otherMap: kotlin.collections.Map<out K, V>): ImmutableMap<K, V> {
+    fun <K : Any, V : Any> copyOf(otherMap: kotlin.collections.Map<out K, V>): ImmutableMap<K, V> {
       return copyOf(Map.masking(otherMap))
     }
 
     @JvmStatic
-    fun <K, V> copyOf(otherMap: Map<out K, out V>): ImmutableMap<K, V> {
+    fun <K : Any, V : Any> copyOf(otherMap: Map<out K, out V>): ImmutableMap<K, V> {
       return if (otherMap is ImmutableMap<*, *>) {
         @Suppress("UNCHECKED_CAST")
         otherMap as ImmutableMap<K, V>
@@ -190,17 +171,32 @@ class ImmutableMap<K, V> : Map<K, V> {
     }
 
     @JvmStatic
-    fun <K, V> copyOf(iterable: Iterable<Map.Entry<out K, out V>>): ImmutableMap<K, V> {
+    fun <K : Any, V : Any> copyOf(iterable: Iterable<Map.Entry<out K, out V>>): ImmutableMap<K, V> {
       return builder<K, V>().putAll(iterable).build()
     }
 
     @JvmStatic
-    fun <K, V> builder(): Builder<K, V> {
+    fun <K : Any, V : Any, E> Iterable<E>.toImmutableMap(
+      keyMapper: (E) -> K,
+      valueMapper: (E) -> V
+    ): ImmutableMap<K, V> {
+      val builder = builder<K, V>()
+      this.forEach { builder.putMapping(keyMapper(it), valueMapper(it)) }
+      return builder.build()
+    }
+
+    @JvmStatic
+    fun <K : Any, V : Any> Iterable<Couple<out K, out V>>.toImmutableMap(): ImmutableMap<K, V> {
+      return this.toImmutableMap({ it.first() }, { it.second() })
+    }
+
+    @JvmStatic
+    fun <K : Any, V : Any> builder(): Builder<K, V> {
       return Builder()
     }
 
     @JvmStatic
-    fun <K, V> buildUpon(other: Map<out K, out V>): Builder<K, V> {
+    fun <K : Any, V : Any> buildUpon(other: Map<out K, out V>): Builder<K, V> {
       return builder<K, V>().putAll(other)
     }
   }

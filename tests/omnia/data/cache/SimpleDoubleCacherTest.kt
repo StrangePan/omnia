@@ -1,20 +1,18 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
-import java.util.function.DoubleSupplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.mockito.Mockito
+import com.google.common.truth.Truth.assertThat
+import kotlin.test.Test
 
-@RunWith(JUnit4::class)
+import org.mockito.Mockito
+import org.mockito.kotlin.mock
+
 class SimpleDoubleCacherTest {
 
   @Test
   fun value_didReturnSuppliedValue() {
     val testValue = 132.0
     val testSubject: CachedDouble = SimpleDoubleCacher { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -22,14 +20,14 @@ class SimpleDoubleCacherTest {
     val testValue = 132.0
     val testSubject: CachedDouble = SimpleDoubleCacher { testValue }
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
   fun new_didNotInvokeSupplier() {
     val supplier = setUpMockSupplier()
     SimpleDoubleCacher(supplier)
-    Mockito.verify(supplier, Mockito.never()).asDouble
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -37,7 +35,7 @@ class SimpleDoubleCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedDouble = SimpleDoubleCacher(supplier)
     testSubject.invalidate()
-    Mockito.verify(supplier, Mockito.never()).asDouble
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -45,7 +43,7 @@ class SimpleDoubleCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: CachedDouble = SimpleDoubleCacher(supplier)
     testSubject.value()
-    Mockito.verify(supplier).asDouble
+    Mockito.verify(supplier).invoke()
   }
 
   @Test
@@ -54,7 +52,7 @@ class SimpleDoubleCacherTest {
     val testSubject: CachedDouble = SimpleDoubleCacher(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).asDouble
+    Mockito.verify(supplier, Mockito.times(1)).invoke()
   }
 
   @Test
@@ -64,15 +62,14 @@ class SimpleDoubleCacherTest {
     testSubject.value()
     testSubject.invalidate()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(2)).asDouble
+    Mockito.verify(supplier, Mockito.times(2)).invoke()
   }
-
 
   companion object {
 
-    private fun setUpMockSupplier(): DoubleSupplier {
-      val supplier = Mockito.mock(DoubleSupplier::class.java)
-      Mockito.`when`(supplier.asDouble).thenReturn(132.0)
+    private fun setUpMockSupplier(): () -> Double {
+      val supplier = mock<() -> Double>()
+      Mockito.`when`(supplier()).thenReturn(132.0)
       return supplier
     }
   }

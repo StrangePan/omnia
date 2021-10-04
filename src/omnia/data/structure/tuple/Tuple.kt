@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
 import omnia.contract.Countable
 import omnia.data.structure.immutable.ImmutableList
 
@@ -116,7 +115,6 @@ interface Tuple : Countable {
 
     @JvmStatic
     fun toList(tuple: Tuple): ImmutableList<*> {
-      Objects.requireNonNull(tuple)
       if (tuple is Couple<*, *>) {
         return toList(tuple)
       }
@@ -148,17 +146,17 @@ interface Tuple : Countable {
     }
 
     @JvmStatic
-    fun <T> toList(couple: Couple<out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(couple: Couple<out T, out T>): ImmutableList<T> {
       return ImmutableList.of(couple.first(), couple.second())
     }
 
     @JvmStatic
-    fun <T> toList(triple: Triple<out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(triple: Triple<out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(triple.first(), triple.second(), triple.third())
     }
 
     @JvmStatic
-    fun <T> toList(quadruple: Quadruple<out T, out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(quadruple: Quadruple<out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
           quadruple.first(),
           quadruple.second(),
@@ -168,7 +166,7 @@ interface Tuple : Countable {
     }
 
     @JvmStatic
-    fun <T> toList(quintuple: Quintuple<out T, out T, out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(quintuple: Quintuple<out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
           quintuple.first(),
           quintuple.second(),
@@ -179,7 +177,7 @@ interface Tuple : Countable {
     }
 
     @JvmStatic
-    fun <T> toList(sextuple: Sextuple<out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(sextuple: Sextuple<out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
           sextuple.first(),
           sextuple.second(),
@@ -191,7 +189,7 @@ interface Tuple : Countable {
     }
 
     @JvmStatic
-    fun <T> toList(septuple: Septuple<out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(septuple: Septuple<out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
           septuple.first(),
           septuple.second(),
@@ -204,7 +202,7 @@ interface Tuple : Countable {
     }
 
     @JvmStatic
-    fun <T> toList(octuple: Octuple<out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(octuple: Octuple<out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
           octuple.first(),
           octuple.second(),
@@ -218,7 +216,7 @@ interface Tuple : Countable {
     }
 
     @JvmStatic
-    fun <T> toList(nonuple: Nonuple<out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(nonuple: Nonuple<out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
           nonuple.first(),
           nonuple.second(),
@@ -233,7 +231,7 @@ interface Tuple : Countable {
     }
 
     @JvmStatic
-    fun <T> toList(decuple: Decuple<out T, out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
+    fun <T : Any> toList(decuple: Decuple<out T, out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
           decuple.first(),
           decuple.second(),

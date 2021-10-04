@@ -1,8 +1,5 @@
 package omnia.data.iterate
 
-import java.util.Objects
-import java.util.function.Consumer
-
 class EmptyIterator<out E> private constructor() : Iterator<E> {
 
   override fun hasNext(): Boolean {
@@ -11,10 +8,6 @@ class EmptyIterator<out E> private constructor() : Iterator<E> {
 
   override fun next(): E {
     throw NoSuchElementException("iterator is empty")
-  }
-
-  override fun forEachRemaining(action: Consumer<in E>) {
-    Objects.requireNonNull(action)
   }
 
   companion object {

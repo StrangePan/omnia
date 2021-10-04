@@ -1,20 +1,18 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
-import java.util.function.DoubleSupplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.mockito.Mockito
+import com.google.common.truth.Truth.assertThat
+import kotlin.test.Test
 
-@RunWith(JUnit4::class)
+import org.mockito.Mockito
+import org.mockito.kotlin.mock
+
 class SimpleDoubleMemoizerTest {
 
   @Test
   fun value_didReturnSuppliedResult() {
     val testValue = 132.0
     val testSubject: MemoizedDouble = SimpleDoubleMemoizer { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -22,7 +20,7 @@ class SimpleDoubleMemoizerTest {
     val testValue = 132.0
     val testSubject: MemoizedDouble = SimpleDoubleMemoizer { testValue }
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -30,14 +28,14 @@ class SimpleDoubleMemoizerTest {
     val supplier = setUpSupplier()
     val testSubject: MemoizedDouble = SimpleDoubleMemoizer(supplier)
     testSubject.value()
-    Mockito.verify(supplier).asDouble
+    Mockito.verify(supplier).invoke()
   }
 
   @Test
   fun new_didNotInvokeSupplier() {
     val supplier = setUpSupplier()
     SimpleDoubleMemoizer(supplier)
-    Mockito.verify(supplier, Mockito.never()).asDouble
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -46,14 +44,14 @@ class SimpleDoubleMemoizerTest {
     val testSubject: MemoizedDouble = SimpleDoubleMemoizer(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).asDouble
+    Mockito.verify(supplier, Mockito.times(1)).invoke()
   }
 
   companion object {
 
-    private fun setUpSupplier(): DoubleSupplier {
-      val supplier = Mockito.mock(DoubleSupplier::class.java)
-      Mockito.`when`(supplier.asDouble).thenReturn(132.0)
+    private fun setUpSupplier(): () -> Double {
+      val supplier = mock<() -> Double>()
+      Mockito.`when`(supplier()).thenReturn(132.0)
       return supplier
     }
   }

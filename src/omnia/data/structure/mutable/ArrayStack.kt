@@ -1,7 +1,5 @@
 package omnia.data.structure.mutable
 
-import java.util.Optional
-
 /** A [Stack] implementation backed by arrays.  */
 class ArrayStack<E : Any> private constructor() : Stack<E> {
 
@@ -11,12 +9,12 @@ class ArrayStack<E : Any> private constructor() : Stack<E> {
     list.add(item)
   }
 
-  override fun pop(): Optional<E> {
-    return if (list.isPopulated) Optional.of(list.removeAt(list.count() - 1)) else Optional.empty()
+  override fun pop(): E? {
+    return if (list.isPopulated) list.removeAt(list.count() - 1) else null
   }
 
-  override fun peek(): Optional<E> {
-    return if (list.isPopulated) Optional.of(list.itemAt(list.count() - 1)) else Optional.empty()
+  override fun peek(): E? {
+    return if (list.isPopulated) list.itemAt(list.count() - 1) else null
   }
 
   override fun iterator(): Iterator<E> {

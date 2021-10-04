@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastSextuple
 import omnia.data.structure.tuple.Tuples.AtMostSextuple
 
@@ -10,12 +9,12 @@ interface Sextuple<A, B, C, D, E, F> : AtLeastSextuple<A, B, C, D, E, F>, AtMost
     return 6
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Sextuple<R, B, C, D, E, F>
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Sextuple<A, R, C, D, E, F>
-  override fun <R> mapThird(mapper: Function<in C, out R>): Sextuple<A, B, R, D, E, F>
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Sextuple<A, B, C, R, E, F>
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Sextuple<A, B, C, D, R, F>
-  override fun <R> mapSixth(mapper: Function<in F, out R>): Sextuple<A, B, C, D, E, R>
+  override fun <R> mapFirst(mapper: (A) -> R): Sextuple<R, B, C, D, E, F>
+  override fun <R> mapSecond(mapper: (B) -> R): Sextuple<A, R, C, D, E, F>
+  override fun <R> mapThird(mapper: (C) -> R): Sextuple<A, B, R, D, E, F>
+  override fun <R> mapFourth(mapper: (D) -> R): Sextuple<A, B, C, R, E, F>
+  override fun <R> mapFifth(mapper: (E) -> R): Sextuple<A, B, C, D, R, F>
+  override fun <R> mapSixth(mapper: (F) -> R): Sextuple<A, B, C, D, E, R>
   override fun dropFirst(): Quintuple<B, C, D, E, F>
   override fun dropSecond(): Quintuple<A, C, D, E, F>
   override fun dropThird(): Quintuple<A, B, D, E, F>

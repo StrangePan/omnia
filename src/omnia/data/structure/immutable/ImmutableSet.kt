@@ -1,16 +1,12 @@
 package omnia.data.structure.immutable
 
-import java.util.Arrays
-import java.util.Objects
-import java.util.function.BiPredicate
-import java.util.function.ToIntFunction
-import java.util.stream.Stream
+import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.cache.MemoizedInt
 import omnia.data.iterate.ReadOnlyIterator
 import omnia.data.structure.Set
 import omnia.data.structure.mutable.HashSet
 
-class ImmutableSet<E> : Set<E> {
+class ImmutableSet<E : Any> : Set<E> {
 
   private val elements: Set<E>
 
@@ -18,17 +14,17 @@ class ImmutableSet<E> : Set<E> {
     return buildUpon(this)
   }
 
-  class Builder<E> : AbstractBuilder<E, Builder<E>, ImmutableSet<E>>() {
+  class Builder<E : Any> : AbstractBuilder<E, Builder<E>, ImmutableSet<E>>() {
 
-    var equalsFunction: BiPredicate<in Any?, in Any?>? = null
-    var hashFunction: ToIntFunction<in Any>? = null
+    var equalsFunction: ((Any?, Any?) -> Boolean)? = null
+    var hashFunction: ((Any) -> Int)? = null
 
-    fun equalsFunction(equalsFunction: BiPredicate<in Any?, in Any?>): Builder<E> {
+    fun equalsFunction(equalsFunction: (Any?, Any?) -> Boolean): Builder<E> {
       this.equalsFunction = equalsFunction
       return self
     }
 
-    fun hashFunction(hashFunction: ToIntFunction<in Any>): Builder<E> {
+    fun hashFunction(hashFunction: (Any) -> Int): Builder<E> {
       this.hashFunction = hashFunction
       return self
     }
@@ -64,10 +60,6 @@ class ImmutableSet<E> : Set<E> {
     return elements.count()
   }
 
-  override fun stream(): Stream<E> {
-    return elements.stream()
-  }
-
   override fun equals(other: Any?): Boolean {
     if (other === this) {
       return true
@@ -86,20 +78,17 @@ class ImmutableSet<E> : Set<E> {
     return true
   }
 
-  override fun hashCode(): Int {
-    return hashCode.value()
-  }
+  override fun hashCode() = hashCode.value()
+
+  override fun toString() = elements.toString()
 
   private val hashCode: MemoizedInt = MemoizedInt.memoize { computeHash() }
 
   private fun computeHash(): Int {
     val elementCodes = IntArray(count())
-    var i = 0
-    for (element in elements) {
-      elementCodes[i++] = element.hashCode()
-    }
-    Arrays.sort(elementCodes)
-    return Objects.hash(elementCodes.contentHashCode())
+    elements.forEachIndexed { index, element -> elementCodes[index] = element.hashCode() }
+    elementCodes.sort()
+    return hash(elementCodes.contentHashCode())
   }
 
   companion object {
@@ -107,31 +96,36 @@ class ImmutableSet<E> : Set<E> {
     private val EMPTY_IMMUTABLE_SET: ImmutableSet<*> = ImmutableSet<Any>()
 
     @JvmStatic
-    fun <T> empty(): ImmutableSet<T> {
+    fun <E : Any> empty(): ImmutableSet<E> {
       @Suppress("UNCHECKED_CAST")
-      return EMPTY_IMMUTABLE_SET as ImmutableSet<T>
+      return EMPTY_IMMUTABLE_SET as ImmutableSet<E>
     }
 
     @JvmStatic
     @SafeVarargs
-    fun <E> of(firstItem: E, vararg items: E): ImmutableSet<E> {
+    fun <E : Any> of(firstItem: E, vararg items: E): ImmutableSet<E> {
       return builder<E>().add(firstItem).addAll(*items).build()
     }
 
     @JvmStatic
-    fun <E> copyOf(iterable: Iterable<E>): ImmutableSet<E> {
+    fun <E : Any> copyOf(iterable: Iterable<E>): ImmutableSet<E> {
       return if (iterable is ImmutableSet<*>) {
         iterable as ImmutableSet<E>
       } else builder<E>().addAll(iterable).build()
     }
 
     @JvmStatic
-    fun <E> builder(): Builder<E> {
+    fun <E : Any> Iterable<E>.toImmutableSet(): ImmutableSet<E> {
+      return copyOf(this)
+    }
+
+    @JvmStatic
+    fun <E : Any> builder(): Builder<E> {
       return Builder()
     }
 
     @JvmStatic
-    fun <E> buildUpon(other: Set<out E>): Builder<E> {
+    fun <E : Any> buildUpon(other: Set<out E>): Builder<E> {
       return builder<E>().addAll(other)
     }
   }

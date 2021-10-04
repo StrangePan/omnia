@@ -1,8 +1,8 @@
 package omnia.algorithm
 
-import omnia.data.stream.Collectors
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 
 object SetAlgorithms {
 
@@ -16,7 +16,7 @@ object SetAlgorithms {
    * @return a new set representing the union of sets [a] and [b]
    */
   @JvmStatic
-  fun <T> unionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
+  fun <T : Any> unionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
     return ImmutableSet.builder<T>().addAll(a).addAll(b).build()
   }
 
@@ -31,11 +31,10 @@ object SetAlgorithms {
    * @return a new set representing the intersection of sets [a] and [b]
    */
   @JvmStatic
-  fun <T> intersectionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
-    val min = if (a.count() < b.count()) a else b
-    val max = if (min !== a) a else b
-    return min.stream().filter { element -> max.containsUnknownTyped(element) }
-      .collect(Collectors.toImmutableSet())
+  fun <T : Any> intersectionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
+    val smaller = if (a.count() < b.count()) a else b
+    val larger = if (smaller !== a) a else b
+    return smaller.filter(larger::containsUnknownTyped).toImmutableSet()
   }
 
   /**
@@ -54,9 +53,8 @@ object SetAlgorithms {
    * set [b]
    */
   @JvmStatic
-  fun <T> differenceBetween(a: Set<out T>, b: Set<*>): ImmutableSet<T> {
-    return a.stream().filter { item: T -> !b.containsUnknownTyped(item) }
-      .collect(Collectors.toImmutableSet())
+  fun <T : Any> differenceBetween(a: Set<out T>, b: Set<*>): ImmutableSet<T> {
+    return a.filterNot(b::containsUnknownTyped).toImmutableSet()
   }
 
   /**
@@ -72,8 +70,8 @@ object SetAlgorithms {
    */
   @JvmStatic
   fun areDisjoint(a: Set<*>, b: Set<*>): Boolean {
-    val min = if (a.count() < b.count()) a else b
-    val max = if (min !== a) a else b
-    return min.stream().anyMatch { element -> max.containsUnknownTyped(element) }
+    val smaller = if (a.count() < b.count()) a else b
+    val larger = if (smaller !== a) a else b
+    return smaller.any(larger::containsUnknownTyped)
   }
 }

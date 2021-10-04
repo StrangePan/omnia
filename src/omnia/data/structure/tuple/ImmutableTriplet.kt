@@ -1,19 +1,16 @@
 package omnia.data.structure.tuple
 
-import java.util.OptionalInt
-import java.util.function.Function
-import java.util.stream.Stream
 import omnia.data.structure.immutable.ImmutableList
 
-internal class ImmutableTriplet<T>(first: T, second: T, third: T) :
+internal class ImmutableTriplet<T : Any>(first: T, second: T, third: T) :
     ImmutableTriple<T, T, T>(first, second, third), Triplet<T> {
 
   override fun dropFirst(): Couplet<T> {
     return Tuplet.of(second(), third())
   }
 
-  override fun <R> map(mapper: Function<in T, out R>): Triplet<R> {
-    return Tuplet.of(mapper.apply(first()), mapper.apply(second()), mapper.apply(third()))
+  override fun <R : Any> map(mapper: (T) -> R): Triplet<R> {
+    return Tuplet.of(mapper(first()), mapper(second()), mapper(third()))
   }
 
   override fun dropSecond(): Couplet<T> {
@@ -98,12 +95,8 @@ internal class ImmutableTriplet<T>(first: T, second: T, third: T) :
     return toActualList().itemAt(index)
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     return toActualList().indexOf(item)
-  }
-
-  override fun stream(): Stream<T> {
-    return toActualList().stream()
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {

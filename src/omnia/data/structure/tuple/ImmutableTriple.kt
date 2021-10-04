@@ -1,7 +1,6 @@
 package omnia.data.structure.tuple
 
-import java.util.Objects
-import java.util.function.Function
+import omnia.algorithm.HashAlgorithms.Companion.hash
 
 internal open class ImmutableTriple<A, B, C>(
     private val first: A,
@@ -17,35 +16,35 @@ internal open class ImmutableTriple<A, B, C>(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(first(), second(), third())
+    return hash(first(), second(), third())
   }
 
   override fun toString(): String {
-    return "Tuple{" + first() + "," + second() + "," + third() + "}"
+    return """Tuple{${first()},${second()},${third()}}"""
   }
 
   override fun first(): A {
-    return Objects.requireNonNull(first)
+    return first
   }
 
   override fun second(): B {
-    return Objects.requireNonNull(second)
+    return second
   }
 
   override fun third(): C {
-    return Objects.requireNonNull(third)
+    return third
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Triple<R, B, C> {
-    return Tuple.of(mapper.apply(first()), second(), third())
+  override fun <R> mapFirst(mapper: (A) -> R): Triple<R, B, C> {
+    return Tuple.of(mapper(first()), second(), third())
   }
 
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Triple<A, R, C> {
-    return Tuple.of(first(), mapper.apply(second()), third())
+  override fun <R> mapSecond(mapper: (B) -> R): Triple<A, R, C> {
+    return Tuple.of(first(), mapper(second()), third())
   }
 
-  override fun <R> mapThird(mapper: Function<in C, out R>): Triple<A, B, R> {
-    return Tuple.of(first(), second(), mapper.apply(third()))
+  override fun <R> mapThird(mapper: (C) -> R): Triple<A, B, R> {
+    return Tuple.of(first(), second(), mapper(third()))
   }
 
   override fun dropFirst(): Couple<B, C> {

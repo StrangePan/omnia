@@ -1,46 +1,45 @@
 package omnia.data.structure.mutable
 
-import java.util.Objects
-import java.util.Optional
 import omnia.contract.Countable
 
-interface Stack<E> : Countable, Iterable<E> {
+interface Stack<E : Any> : Countable, Iterable<E> {
 
   fun push(item: E)
-  fun pop(): Optional<E>
-  fun peek(): Optional<E>
+
+  fun pop(): E?
+
+  fun peek(): E?
 
   companion object {
 
-    fun <E> masking(javaStack: java.util.Stack<E>): Stack<E> {
+    fun <E : Any> masking(kotlinList: kotlin.collections.MutableList<E>): Stack<E> {
       return object : Stack<E> {
         override fun push(item: E) {
-          javaStack.push(Objects.requireNonNull(item))
+          kotlinList.add(item)
         }
 
-        override fun pop(): Optional<E> {
-          return if (javaStack.isEmpty()) Optional.empty() else Optional.ofNullable(javaStack.pop())
+        override fun pop(): E? {
+          return kotlinList.removeLastOrNull()
         }
 
-        override fun peek(): Optional<E> {
-          return if (javaStack.isEmpty()) Optional.empty() else Optional.ofNullable(javaStack.peek())
+        override fun peek(): E? {
+          return kotlinList.lastOrNull()
         }
 
         override fun count(): Int {
-          return javaStack.size
+          return kotlinList.size
         }
 
-        override val isPopulated: Boolean
-          get() = !javaStack.isEmpty()
+        override val isPopulated: Boolean get() = kotlinList.isNotEmpty()
 
         override fun iterator(): Iterator<E> {
           return object : Iterator<E> {
             override fun hasNext(): Boolean {
-              return !javaStack.empty()
+              return kotlinList.isNotEmpty()
             }
 
             override fun next(): E {
-              return javaStack.pop()
+              return kotlinList.removeLast()
             }
           }
         }

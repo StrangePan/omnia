@@ -1,24 +1,20 @@
 package omnia.data.structure.immutable
 
-import java.util.Arrays
-import java.util.Objects
-import java.util.OptionalInt
-import java.util.stream.Collectors
-import java.util.stream.Stream
 import omnia.data.iterate.ArrayIterator
 import omnia.data.iterate.IntegerRangeIterator
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.IntRange
 import omnia.data.structure.List
 
-class ImmutableList<E> : List<E> {
+class ImmutableList<E : Any> : List<E> {
 
   private val elements: Array<E>
+
   fun toBuilder(): Builder<E> {
     return builder<E>().addAll(this)
   }
 
-  class Builder<E> : AbstractBuilder<E, Builder<E>, ImmutableList<E>>() {
+  class Builder<E : Any> : AbstractBuilder<E, Builder<E>, ImmutableList<E>>() {
 
     fun insertAt(index: Int, item: E): Builder<E> {
       elements.insertAt(index, item)
@@ -52,7 +48,7 @@ class ImmutableList<E> : List<E> {
   private constructor(builder: Builder<E>) {
     @Suppress("UNCHECKED_CAST")
     this.elements =
-      Array(builder.elements.count()) { i: Int -> builder.elements.itemAt(i) as Any } as Array<E>
+      Array<Any>(builder.elements.count()) { builder.elements.itemAt(it) } as Array<E>
   }
 
   override fun itemAt(index: Int): E {
@@ -68,13 +64,13 @@ class ImmutableList<E> : List<E> {
     return elements[index]
   }
 
-  override fun indexOf(item: Any?): OptionalInt {
+  override fun indexOf(item: Any?): Int? {
     for (i in elements.indices) {
       if (item == elements[i]) {
-        return OptionalInt.of(i)
+        return i
       }
     }
-    return OptionalInt.empty()
+    return null
   }
 
   override fun iterator(): Iterator<E> {
@@ -97,10 +93,6 @@ class ImmutableList<E> : List<E> {
     return elements.size
   }
 
-  override fun stream(): Stream<E> {
-    return Stream.of(*elements)
-  }
-
   override fun equals(other: Any?): Boolean {
     if (other !is ImmutableList<*>) {
       return false
@@ -117,17 +109,9 @@ class ImmutableList<E> : List<E> {
     return true
   }
 
-  override fun toString(): String {
-    return ("ImmutableList("
-        + elements.size
-        + ")"
-        + Arrays.stream(elements).map { o: E -> Objects.toString(o) }
-      .collect(Collectors.joining(",", "{", "}")))
-  }
+  override fun toString() = "ImmutableList(${elements.size})${elements.joinToString(",", "{", "}")}"
 
-  override fun hashCode(): Int {
-    return elements.contentHashCode()
-  }
+  override fun hashCode() = elements.contentHashCode()
 
   fun getSublist(intRange: IntRange): ImmutableList<E> {
     return sublistStartingAt(intRange.start()).length(intRange.count())
@@ -164,7 +148,7 @@ class ImmutableList<E> : List<E> {
     private val EMPTY_LIST: ImmutableList<*> = ImmutableList<Any>()
 
     @JvmStatic
-    fun <E> empty(): ImmutableList<E> {
+    fun <E : Any> empty(): ImmutableList<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_LIST as ImmutableList<E>
     }
@@ -175,7 +159,7 @@ class ImmutableList<E> : List<E> {
      */
     @JvmStatic
     @SafeVarargs
-    fun <E> of(firstItem: E, vararg items: E): ImmutableList<E> {
+    fun <E : Any> of(firstItem: E, vararg items: E): ImmutableList<E> {
       return builder<E>().add(firstItem).addAll(*items).build()
     }
 
@@ -185,7 +169,7 @@ class ImmutableList<E> : List<E> {
      * original list without creating a copy.
      */
     @JvmStatic
-    fun <E> copyOf(iterable: Iterable<E>): ImmutableList<E> {
+    fun <E : Any> copyOf(iterable: Iterable<E>): ImmutableList<E> {
       return if (iterable is ImmutableList<*>) {
         iterable as ImmutableList<E>
       } else builder<E>().addAll(iterable).build()
@@ -193,12 +177,18 @@ class ImmutableList<E> : List<E> {
 
     /** Copies the items from the provided array into a new [ImmutableList] instance.  */
     @JvmStatic
-    fun <E> copyOf(items: Array<out E>): ImmutableList<E> {
+    fun <E : Any> copyOf(items: Array<out E>): ImmutableList<E> {
       return builder<E>().addAll(*items).build()
     }
 
     @JvmStatic
-    fun <E> builder(): Builder<E> {
+    fun <E : Any> Iterable<E>.toImmutableList(): ImmutableList<E> {
+      return copyOf(this)
+    }
+
+
+    @JvmStatic
+    fun <E : Any> builder(): Builder<E> {
       return Builder()
     }
   }

@@ -1,40 +1,39 @@
 package omnia.data.structure
 
-import java.util.stream.Stream
 import omnia.data.iterate.ReadOnlyIterator
 
-interface Set<E> : Collection<E> {
+interface Set<E : Any> : Collection<E> {
   companion object {
 
-    fun <E> masking(javaSet: kotlin.collections.Set<E>): Set<E> {
+    fun <E : Any> masking(kotlinSet: kotlin.collections.Set<E>): Set<E> {
       return object : Set<E> {
         override val isPopulated: Boolean
-          get() = javaSet.isNotEmpty()
+          get() = kotlinSet.isNotEmpty()
 
         override fun count(): Int {
-          return javaSet.size
+          return kotlinSet.size
         }
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return javaSet.contains(item)
+          return kotlinSet.contains(item)
         }
 
         override fun iterator(): Iterator<E> {
-          return ReadOnlyIterator(javaSet.iterator())
+          return ReadOnlyIterator(kotlinSet.iterator())
         }
 
-        override fun stream(): Stream<E> {
-          return javaSet.stream()
+        override fun toString(): String {
+          return kotlinSet.toString()
         }
       }
     }
 
-    fun <E> masking(javaCollection: kotlin.collections.Collection<E>): Set<E> {
-      return masking(HashSet(javaCollection))
+    fun <E : Any> masking(kotlinCollection: kotlin.collections.Collection<E>): Set<E> {
+      return masking(HashSet(kotlinCollection))
     }
 
     @JvmStatic
-    fun <E> empty(): Set<E> {
+    fun <E : Any> empty(): Set<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_SET as Set<E>
     }
@@ -58,6 +57,6 @@ interface Set<E> : Collection<E> {
       return true
     }
 
-    private val EMPTY_SET: Set<*> = masking(emptySet<Any>())
+    private val EMPTY_SET: Set<*> = masking(emptySet())
   }
 }

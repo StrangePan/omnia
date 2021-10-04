@@ -1,12 +1,8 @@
 package omnia.cli.out
 
-import java.util.function.Function
-import java.util.regex.Pattern
-import java.util.stream.Collectors.joining
-import java.util.stream.Stream
-import omnia.data.stream.Collectors
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
+import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 import omnia.data.structure.mutable.ArrayList
 import omnia.data.structure.mutable.MutableList
 
@@ -35,7 +31,7 @@ class Output private constructor(spans: List<Span<*>>) {
     return render(Renderable::renderWithoutCodes)
   }
 
-  private fun render(propagation: Function<in Renderable, out StringBuilder>): String {
+  private fun render(propagation: (Renderable) -> StringBuilder): String {
     val output = StringBuilder()
     for (i in 0 until spans.count()) {
       val span = spans.itemAt(i)
@@ -45,7 +41,7 @@ class Output private constructor(spans: List<Span<*>>) {
           && span is LineSpan) {
         output.append(System.lineSeparator())
       }
-      output.append(propagation.apply(span))
+      output.append(propagation(span))
     }
     return output.toString()
   }
@@ -69,9 +65,9 @@ class Output private constructor(spans: List<Span<*>>) {
 
     fun append(output: Output): Builder {
       val base = buildFormatting()
-      output.spans.stream()
+      output.spans
           .map { it.mergeFormatting(base) }
-          .forEachOrdered(spans::add)
+          .forEach(spans::add)
       return this
     }
 
@@ -107,10 +103,8 @@ class Output private constructor(spans: List<Span<*>>) {
           }
           spans.add(
               LineSpan(
-                  span.spans.stream()
-                      .map(mergeFormatting(baseFormatting))
-                      .collect(Collectors.toList()), span.indentation + indentation
-              )
+                  span.spans.map { it.mergeFormatting(baseFormatting) }.toImmutableList(),
+                  span.indentation + indentation)
           )
         }
       }
@@ -251,10 +245,6 @@ class Output private constructor(spans: List<Span<*>>) {
 
     companion object {
 
-      private fun <T : Span<T>> mergeFormatting(base: Formatting): Function<T, T> {
-        return Function { it.mergeFormatting(base) }
-      }
-
       private fun requireNonNegative(indentation: Int) {
         require(indentation >= 0) { "indentation cannot be negative: $indentation" }
       }
@@ -302,34 +292,27 @@ class Output private constructor(spans: List<Span<*>>) {
       return render(Renderable::renderWithoutCodes)
     }
 
-    private fun render(propagation: Function<in Renderable, out StringBuilder>): StringBuilder {
+    private fun render(propagation: (Renderable) -> StringBuilder): StringBuilder {
       if (!spans.isPopulated) {
         return StringBuilder(System.lineSeparator())
       }
       val indentation = " ".repeat(indentation)
       return StringBuilder(indentation)
         .append(
-          spans.stream()
-            .map(propagation)
-            .map(Any::toString)
-            .map {
-              it.replace(
-                Pattern.quote(System.lineSeparator()).toRegex(),
-                System.lineSeparator() + indentation)
-            }
-            .collect(
-              ::StringBuilder,
-              StringBuilder::append,
-              StringBuilder::append))
+            spans
+                .map(propagation)
+                .map(Any::toString)
+                .map {
+                  it.replace(
+                    Regex.escape(System.lineSeparator()).toRegex(),
+                    System.lineSeparator() + indentation)
+                }
+                .fold(StringBuilder(), StringBuilder::append))
         .append(System.lineSeparator())
     }
 
     override fun mergeFormatting(base: Formatting): LineSpan {
-      return LineSpan(
-        spans.stream()
-          .map { it.mergeFormatting(base) }
-          .collect(Collectors.toList()),
-        indentation)
+      return LineSpan(spans.map { it.mergeFormatting(base) }.toImmutableList(), indentation)
     }
 
     init {
@@ -364,19 +347,17 @@ class Output private constructor(spans: List<Span<*>>) {
     override fun render(): StringBuilder {
       return StringBuilder(RENDER_CODE_PREFIX)
         .append(
-          Stream.builder<String?>()
-            .add("0")
-            .add(color?.foregroundCode())
-            .add(background?.backgroundCode())
-            .add(if (bold != null) "1" else null)
-            .add(if (dim != null) "2" else null)
-            .add(if (underlined != null) "4" else null)
-            .add(if (blinking != null) "5" else null)
-            .add(if (inverted != null) "7" else null)
-            .add(if (hidden != null) "8" else null)
-            .build()
-            .flatMap { if (it != null) Stream.of(it) else Stream.empty() }
-          .collect(joining(RENDER_CODE_DELIMITER)))
+          listOfNotNull(
+            "0",
+            color?.foregroundCode(),
+            background?.backgroundCode(),
+            bold?.let { "1" },
+            dim?.let { "2" },
+            underlined?.let { "4" },
+            blinking?.let { "5" },
+            inverted?.let { "7" },
+            hidden?.let { "8" })
+            .joinToString(RENDER_CODE_DELIMITER))
           .append(RENDER_CODE_SUFFIX)
     }
 

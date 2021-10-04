@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.IntSupplier
 import omnia.contract.IntHolder
 
 /**
@@ -26,7 +25,7 @@ interface MemoizedInt : IntHolder {
      * @return a new [MemoizedInt] instance that will memoize the created value
      */
     @JvmStatic
-    fun memoize(supplier: IntSupplier): MemoizedInt {
+    fun memoize(supplier: () -> Int): MemoizedInt {
       return SimpleIntMemoizer(supplier)
     }
   }

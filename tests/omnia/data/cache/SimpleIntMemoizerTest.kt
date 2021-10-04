@@ -1,21 +1,19 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
-import java.util.function.IntSupplier
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.mockito.Mockito
+import com.google.common.truth.Truth.assertThat
 
-@RunWith(JUnit4::class)
+import kotlin.test.Test
+
+import org.mockito.Mockito
+import org.mockito.kotlin.mock
+
 class SimpleIntMemoizerTest {
 
   @Test
   fun value_didReturnSuppliedResult() {
     val testValue = 132
     val testSubject: MemoizedInt = SimpleIntMemoizer { testValue }
-    Truth.assertThat(testSubject.value()).isEqualTo(testValue)
+    assertThat(testSubject.value()).isEqualTo(testValue)
   }
 
   @Test
@@ -23,7 +21,7 @@ class SimpleIntMemoizerTest {
     val testValue = 132
     val testSubject: MemoizedInt = SimpleIntMemoizer { testValue }
     testSubject.value()
-    Assert.assertEquals(testValue.toLong(), testSubject.value().toLong())
+    assertThat(testSubject.value().toLong()).isEqualTo(testValue.toLong())
   }
 
   @Test
@@ -31,14 +29,14 @@ class SimpleIntMemoizerTest {
     val supplier = setUpSupplier()
     val testSubject: MemoizedInt = SimpleIntMemoizer(supplier)
     testSubject.value()
-    Mockito.verify(supplier).asInt
+    Mockito.verify(supplier).invoke()
   }
 
   @Test
   fun new_didNotInvokeSupplier() {
     val supplier = setUpSupplier()
     SimpleIntMemoizer(supplier)
-    Mockito.verify(supplier, Mockito.never()).asInt
+    Mockito.verify(supplier, Mockito.never()).invoke()
   }
 
   @Test
@@ -47,14 +45,14 @@ class SimpleIntMemoizerTest {
     val testSubject: MemoizedInt = SimpleIntMemoizer(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).asInt
+    Mockito.verify(supplier, Mockito.times(1)).invoke()
   }
 
   companion object {
 
-    private fun setUpSupplier(): IntSupplier {
-      val supplier = Mockito.mock(IntSupplier::class.java)
-      Mockito.`when`(supplier.asInt).thenReturn(132)
+    private fun setUpSupplier(): () -> Int {
+      val supplier = mock<() -> Int>()
+      Mockito.`when`(supplier()).thenReturn(132)
       return supplier
     }
   }

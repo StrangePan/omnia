@@ -1,6 +1,5 @@
 package omnia.data.structure.tuple
 
-import java.util.function.Function
 import omnia.data.structure.tuple.Tuples.AtLeastSeptuple
 import omnia.data.structure.tuple.Tuples.AtMostSeptuple
 
@@ -10,13 +9,13 @@ interface Septuple<A, B, C, D, E, F, G> : AtLeastSeptuple<A, B, C, D, E, F, G>, 
     return 7
   }
 
-  override fun <R> mapFirst(mapper: Function<in A, out R>): Septuple<R, B, C, D, E, F, G>
-  override fun <R> mapSecond(mapper: Function<in B, out R>): Septuple<A, R, C, D, E, F, G>
-  override fun <R> mapThird(mapper: Function<in C, out R>): Septuple<A, B, R, D, E, F, G>
-  override fun <R> mapFourth(mapper: Function<in D, out R>): Septuple<A, B, C, R, E, F, G>
-  override fun <R> mapFifth(mapper: Function<in E, out R>): Septuple<A, B, C, D, R, F, G>
-  override fun <R> mapSixth(mapper: Function<in F, out R>): Septuple<A, B, C, D, E, R, G>
-  override fun <R> mapSeventh(mapper: Function<in G, out R>): Septuple<A, B, C, D, E, F, R>
+  override fun <R> mapFirst(mapper: (A) -> R): Septuple<R, B, C, D, E, F, G>
+  override fun <R> mapSecond(mapper: (B) -> R): Septuple<A, R, C, D, E, F, G>
+  override fun <R> mapThird(mapper: (C) -> R): Septuple<A, B, R, D, E, F, G>
+  override fun <R> mapFourth(mapper: (D) -> R): Septuple<A, B, C, R, E, F, G>
+  override fun <R> mapFifth(mapper: (E) -> R): Septuple<A, B, C, D, R, F, G>
+  override fun <R> mapSixth(mapper: (F) -> R): Septuple<A, B, C, D, E, R, G>
+  override fun <R> mapSeventh(mapper: (G) -> R): Septuple<A, B, C, D, E, F, R>
   override fun dropFirst(): Sextuple<B, C, D, E, F, G>
   override fun dropSecond(): Sextuple<A, C, D, E, F, G>
   override fun dropThird(): Sextuple<A, B, D, E, F, G>

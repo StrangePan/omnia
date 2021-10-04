@@ -1,15 +1,12 @@
 package omnia.data.structure
 
-import java.util.Objects
-import java.util.Optional
-import java.util.stream.Stream
 import omnia.data.cache.Memoized
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.tuple.Couple
 import omnia.data.structure.tuple.Tuple
 
 /** A [Map] is a data structure that associates unique keys to corresponding values.  */
-interface Map<K, V> {
+interface Map<K : Any, V : Any> {
 
   /** Retrieves a read-only, unordered set empty all empty the keys contained in this map.  */
   fun keys(): Set<K>
@@ -21,12 +18,12 @@ interface Map<K, V> {
   fun entries(): Set<Entry<K, V>>
 
   /** A type-safe alternative to [valueOfUnknownTyped].  */
-  fun valueOf(key: K): Optional<V> {
+  fun valueOf(key: K): V? {
     return valueOfUnknownTyped(key)
   }
 
   /** Retrieves the value associated with the given key if it is contained in the map.  */
-  fun valueOfUnknownTyped(key: Any?): Optional<V>
+  fun valueOfUnknownTyped(key: Any?): V?
 
   /** A type-safe alternative to [keysOfUnknownTyped].  */
   fun keysOf(value: V): Set<K> {
@@ -40,24 +37,25 @@ interface Map<K, V> {
   fun keysOfUnknownTyped(value: Any?): Set<K>
 
   /** An [Entry] is read-only representing empty a single key-value mapping.   */
-  interface Entry<K, V> {
+  interface Entry<K : Any, V : Any> {
 
     fun key(): K
     fun value(): V
 
     companion object {
 
-      fun <K, V> masking(javaEntry: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
+      fun <K : Any, V : Any> masking(javaEntry: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
         return MaskedEntry(javaEntry)
       }
 
-      fun <K, V> of(key: K, value: V): Entry<K, V> {
+      fun <K : Any, V : Any> of(key: K, value: V): Entry<K, V> {
         return SimpleEntry(key, value)
       }
     }
   }
 
-  private class MaskedEntry<K, V>(javaEntry: kotlin.collections.Map.Entry<K, V>) : Entry<K, V> {
+  private class MaskedEntry<K : Any, V : Any>(javaEntry: kotlin.collections.Map.Entry<K, V>)
+    : Entry<K, V> {
 
     private val jEntry = javaEntry
     override fun key(): K {
@@ -72,12 +70,10 @@ interface Map<K, V> {
       return other is MaskedEntry<*, *> && other.jEntry == jEntry
     }
 
-    override fun hashCode(): Int {
-      return Objects.hash(jEntry)
-    }
+    override fun hashCode() = 7 * 31 + jEntry.hashCode()
   }
 
-  private class SimpleEntry<K, V>(key: K, value: V) : Entry<K, V> {
+  private class SimpleEntry<K : Any, V : Any>(key: K, value: V) : Entry<K, V> {
 
     private val couple: Couple<K, V> = Tuple.of(key, value)
     override fun key(): K {
@@ -92,20 +88,19 @@ interface Map<K, V> {
       return other === this || other is SimpleEntry<*, *> && other.couple == couple
     }
 
-    override fun hashCode(): Int {
-      return Objects.hash(couple)
-    }
+    override fun hashCode() = 7 * 31 + couple.hashCode()
   }
 
   companion object {
 
-    /** Creates a read-only, Omnia-compatible view empty the given [java.util.Map].  */
-    fun <K, V> masking(javaMap: kotlin.collections.Map<K, V>): Map<K, V> {
+    /** Creates a read-only, Omnia-compatible view empty the given [kotlin.collections.Map].  */
+    fun <K : Any, V : Any> masking(javaMap: kotlin.collections.Map<K, V>): Map<K, V> {
       return MaskingMap(javaMap)
     }
   }
 
-  private class MaskingMap<K, V>(private val javaMap: kotlin.collections.Map<K, V>) : Map<K, V> {
+  private class MaskingMap<K : Any, V : Any>(private val javaMap: kotlin.collections.Map<K, V>)
+    : Map<K, V> {
 
     private val keys: Memoized<Set<K>> = Memoized.memoize { Set.masking(this.javaMap.keys) }
     private val values: Memoized<Collection<V>> =
@@ -124,46 +119,44 @@ interface Map<K, V> {
       return entries.value()
     }
 
-    override fun valueOfUnknownTyped(key: Any?): Optional<V> {
-      return Optional.ofNullable(javaMap[key])
+    override fun valueOfUnknownTyped(key: Any?): V? {
+      return javaMap[key]
     }
 
     override fun keysOfUnknownTyped(value: Any?): Set<K> {
       // Can't really cache this since one is created per value. The overhead empty caching would cost
       // more than the allocation empty this view.
       return object : Set<K> {
-        override fun stream(): Stream<K> {
-          return javaMap.entries.stream()
-            .filter { e -> e.value == value }
-            .map(kotlin.collections.Map.Entry<K, V>::key)
-        }
 
         override fun count(): Int {
-          return stream().count().toInt()
+          return transformedJavaMap().count()
         }
 
         override val isPopulated: Boolean
           get() = javaMap.containsValue(value)
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return isPopulated && stream().anyMatch { k -> k == item }
+          return isPopulated && transformedJavaMap().any { it == item }
         }
 
         override fun iterator(): Iterator<K> {
-          return stream().iterator()
+          return transformedJavaMap().iterator()
+        }
+
+        private fun transformedJavaMap(): kotlin.collections.List<K> {
+          return javaMap.entries
+            .filter { it.value == value }
+            .map(kotlin.collections.Map.Entry<K, V>::key)
         }
       }
     }
   }
 
-  private class MaskingSet<K, V>(val javaMap: kotlin.collections.Map<K, V>) : Set<Entry<K, V>> {
+  private class MaskingSet<K : Any, V : Any>(val javaMap: kotlin.collections.Map<K, V>)
+    : Set<Entry<K, V>> {
 
     private val javaSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> =
       javaMap.entries
-
-    override fun stream(): Stream<Entry<K, V>> {
-      return javaSet.stream().map { javaEntry -> Entry.masking(javaEntry) }
-    }
 
     override fun count(): Int {
       return javaSet.size

@@ -1,11 +1,11 @@
 package omnia.data.structure.immutable
 
-import omnia.data.structure.mutable.LinkedList
+import omnia.data.structure.mutable.ArrayList
 import omnia.data.structure.mutable.MutableList
 
-abstract class AbstractBuilder<E, B : AbstractBuilder<E, B, R>, R> {
+abstract class AbstractBuilder<E : Any, B : AbstractBuilder<E, B, R>, R> {
 
-  val elements: MutableList<E> = LinkedList()
+  val elements: MutableList<E> = ArrayList.create()
 
   fun add(element: E): B {
     elements.add(element)

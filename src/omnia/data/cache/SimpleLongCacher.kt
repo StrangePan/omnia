@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.LongSupplier
 
 /**
  * A [CachedLong] implementation that uses the given [LongSupplier] to provide the
@@ -8,13 +7,13 @@ import java.util.function.LongSupplier
  *
  * The given [LongSupplier.getAsLong] method is never invoked if the value is cached.
  */
-internal class SimpleLongCacher(private val supplier: LongSupplier) : CachedLong {
+internal class SimpleLongCacher(private val supplier: () -> Long) : CachedLong {
 
   private var isValid = false
   private var value: Long = 0
   override fun value(): Long {
     if (!isValid) {
-      value = supplier.asLong
+      value = supplier()
       isValid = true
     }
     return value

@@ -3,23 +3,17 @@ package omnia.data.structure.observable.writable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
-import java.util.Objects
-import java.util.Optional
-import java.util.function.BiFunction
-import java.util.function.Function
-import java.util.function.Predicate
-import omnia.data.stream.Collectors
-import omnia.data.stream.Streams
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.observable.ObservableDirectedGraph
 import omnia.data.structure.observable.ObservableGraph
 import omnia.data.structure.observable.ObservableGraph.GraphOperation
 import omnia.data.structure.tuple.Couplet
 
-internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirectedGraph<E> {
+internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservableDirectedGraph<E> {
 
   @Volatile
   private var state: ImmutableDirectedGraph<E>
@@ -53,30 +47,27 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
       },
       { currentState -> currentState.toBuilder().replaceNode(original, replacement).build() }
     ) { previousState, newState ->
-      Streams.concat(
-        previousState.nodeOf(original)
-          .stream()
-          .map { obj -> obj.edges() }
-          .flatMap { obj -> obj.stream() }
-          .map { obj -> obj.endpoints() }
-          .map { couplet -> couplet.map(Function { obj -> obj.item() }) }
-          .map { endpoints -> RemoveEdgeFromGraph.create(endpoints) },
-        previousState.nodeOf(original)
-          .stream()
-          .map { obj -> obj.item() }
-          .map { item -> RemoveNodeFromGraph.create(item) },
-        newState.nodeOf(replacement)
-          .stream()
-          .map { obj -> obj.item() }
-          .map { item -> AddNodeToGraph.create(item) },
-        newState.nodeOf(replacement)
-          .stream()
-          .map { obj -> obj.edges() }
-          .flatMap { obj -> obj.stream() }
-          .map { obj -> obj.endpoints() }
-          .map { couplet -> couplet.map(Function { obj -> obj.item() }) }
-          .map { endpoints -> AddEdgeToGraph.create(endpoints) })
-        .collect(Collectors.toSet())
+      listOfNotNull(
+          previousState.nodeOf(original)
+            ?.edges()
+            ?.map { it.endpoints() }
+            ?.map { couplet -> couplet.map { it.item() } }
+            ?.map { RemoveEdgeFromGraph.create(it) },
+          previousState.nodeOf(original)
+            ?.item()
+            ?.let { RemoveNodeFromGraph.create(it) }
+            ?.let { listOf(it) },
+          newState.nodeOf(replacement)
+            ?.item()
+            ?.let { AddNodeToGraph.create(it) }
+            ?.let { listOf(it) },
+          newState.nodeOf(replacement)
+            ?.edges()
+            ?.map { it.endpoints() }
+            ?.map { couplet -> couplet.map { it.item() } }
+            ?.map { AddEdgeToGraph.create(it) })
+        .flatten()
+        .toImmutableSet()
     }
   }
 
@@ -85,30 +76,32 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
       { currentState -> currentState.contents().containsUnknownTyped(item) },
       { currentState -> currentState.toBuilder().removeUnknownTypedNode(item).build() }
     ) { previousState, _ ->
-      Streams.concat(
-        previousState.nodeOfUnknownType(item).stream()
-          .map { obj -> obj.edges() }
-          .flatMap { obj -> obj.stream() }
-          .map { obj -> obj.endpoints() }
-          .map { couplet -> couplet.map(Function { obj -> obj.item() }) }
-          .map { endpoints -> RemoveEdgeFromGraph.create(endpoints) },
-        previousState.nodeOfUnknownType(item).stream()
-          .map { obj -> obj.item() }
-          .map { item: E -> RemoveNodeFromGraph.create(item) })
-        .collect(Collectors.toSet())
+      listOfNotNull(
+          previousState.nodeOfUnknownType(item)
+            ?.edges()
+            ?.map { it.endpoints() }
+            ?.map { couplet -> couplet.map { it.item() } }
+            ?.map { RemoveEdgeFromGraph.create(it) },
+          previousState.nodeOfUnknownType(item)
+            ?.item()
+            ?.let { RemoveNodeFromGraph.create(it) }
+            ?.let { listOf(it) })
+        .flatten()
+        .toImmutableSet()
     }
   }
 
   override fun addEdge(from: E, to: E) {
     mutateState(
-      { currentState -> currentState.edgeOf(from, to).isEmpty },
+      { currentState -> currentState.edgeOf(from, to) == null },
       { currentState -> currentState.toBuilder().addEdge(from, to).build() }
     ) { _, newState ->
-      newState.edgeOf(from, to).stream()
-        .map { obj -> obj.endpoints() }
-        .map { couplet -> couplet.map(Function { obj -> obj.item() }) }
-        .map { endpoints -> AddEdgeToGraph.create(endpoints) }
-        .collect(Collectors.toSet())
+      newState.edgeOf(from, to)
+        ?.endpoints()
+        ?.map { it.item() }
+        ?.let { AddEdgeToGraph.create(it) }
+        ?.let { ImmutableSet.of(it) }
+        ?: ImmutableSet.empty()
     }
   }
 
@@ -118,32 +111,33 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
 
   override fun removeEdgeUnknownTyped(from: Any?, to: Any?): Boolean {
     return mutateState(
-      { currentState -> currentState.edgeOfUnknownType(from, to).isPresent },
+      { currentState -> currentState.edgeOfUnknownType(from, to) != null },
       { currentState -> currentState.toBuilder().removeEdgeUnknownEdge(from, to).build() }
     ) { previousState, _ ->
-      previousState.edgeOfUnknownType(from, to).stream()
-        .map { obj -> obj.endpoints() }
-        .map { couplet -> couplet.map(Function { obj -> obj.item() }) }
-        .map { endpoints -> RemoveEdgeFromGraph.create(endpoints) }
-        .collect(Collectors.toSet())
+      previousState.edgeOfUnknownType(from, to)
+        ?.endpoints()
+        ?.map { it.item() }
+        ?.let { RemoveEdgeFromGraph.create(it) }
+        ?.let { ImmutableSet.of(it) }
+        ?: ImmutableSet.empty()
     }
   }
 
   private fun mutateState(
-    shouldChange: Predicate<in ImmutableDirectedGraph<E>>,
-    mutateState: Function<in ImmutableDirectedGraph<E>, out ImmutableDirectedGraph<E>>,
-    mutationOperations: BiFunction<in ImmutableDirectedGraph<E>, in ImmutableDirectedGraph<E>, out Set<GraphOperation<E>>>
+    shouldChange: (ImmutableDirectedGraph<E>) -> Boolean,
+    mutateState: (ImmutableDirectedGraph<E>) -> ImmutableDirectedGraph<E>,
+    mutationOperations: (ImmutableDirectedGraph<E>, ImmutableDirectedGraph<E>) -> Set<GraphOperation<E>>
   ): Boolean {
     var previousState: ImmutableDirectedGraph<E>
     var nextState: ImmutableDirectedGraph<E>
     synchronized(this) {
       previousState = state
-      if (!shouldChange.test(previousState)) {
+      if (!shouldChange(previousState)) {
         return false
       }
-      nextState = Objects.requireNonNull(mutateState.apply(previousState))
+      nextState = mutateState(previousState)
       state = nextState
-      val operations = mutationOperations.apply(previousState, nextState)
+      val operations = mutationOperations(previousState, nextState)
       mutationEvents.onNext(
         object : MutationEvent<E> {
           override fun state(): DirectedGraph<E> {
@@ -158,22 +152,19 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
     return true
   }
 
-  override fun nodeOf(item: E): Optional<out DirectedGraph.DirectedNode<E>> {
+  override fun nodeOf(item: E): DirectedGraph.DirectedNode<E>? {
     return nodeOfUnknownType(item)
   }
 
-  override fun nodeOfUnknownType(item: Any?): Optional<out DirectedGraph.DirectedNode<E>> {
+  override fun nodeOfUnknownType(item: Any?): DirectedGraph.DirectedNode<E>? {
     return getState().nodeOfUnknownType(item)
   }
 
-  override fun edgeOf(from: E, to: E): Optional<out DirectedGraph.DirectedEdge<E>> {
+  override fun edgeOf(from: E, to: E): DirectedGraph.DirectedEdge<E>? {
     return edgeOfUnknownType(from, to)
   }
 
-  override fun edgeOfUnknownType(
-    from: Any?,
-    to: Any?
-  ): Optional<out DirectedGraph.DirectedEdge<E>> {
+  override fun edgeOfUnknownType(from: Any?, to: Any?): DirectedGraph.DirectedEdge<E>? {
     return getState().edgeOfUnknownType(from, to)
   }
 
@@ -195,22 +186,19 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
         return this@WritableObservableDirectedGraphImpl.observe()
       }
 
-      override fun nodeOf(item: E): Optional<out DirectedGraph.DirectedNode<E>> {
+      override fun nodeOf(item: E): DirectedGraph.DirectedNode<E>? {
         return nodeOfUnknownType(item)
       }
 
-      override fun nodeOfUnknownType(item: Any?): Optional<out DirectedGraph.DirectedNode<E>> {
+      override fun nodeOfUnknownType(item: Any?): DirectedGraph.DirectedNode<E>? {
         return this@WritableObservableDirectedGraphImpl.nodeOfUnknownType(item)
       }
 
-      override fun edgeOf(from: E, to: E): Optional<out DirectedGraph.DirectedEdge<E>> {
+      override fun edgeOf(from: E, to: E): DirectedGraph.DirectedEdge<E>? {
         return edgeOfUnknownType(from, to)
       }
 
-      override fun edgeOfUnknownType(
-        from: Any?,
-        to: Any?
-      ): Optional<out DirectedGraph.DirectedEdge<E>> {
+      override fun edgeOfUnknownType(from: Any?, to: Any?): DirectedGraph.DirectedEdge<E>? {
         return this@WritableObservableDirectedGraphImpl.edgeOfUnknownType(from, to)
       }
 
@@ -237,8 +225,9 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
             emitter.setDisposable(
               mutationEvents.map { obj: MutationEvent<E> -> obj.state() }
                 .subscribe(
-                  { value: DirectedGraph<E> -> emitter.onNext(value) },
-                  { error: Throwable -> emitter.onError(error) }) { emitter.onComplete() })
+                    { emitter.onNext(it) },
+                    { emitter.onError(it) },
+                    { emitter.onComplete() }))
           }
         }
       }
@@ -248,15 +237,11 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
           synchronized(this) {
             val state = getState()
             val operations: Set<GraphOperation<E>> =
-              Streams.concat(
-                state.nodes().stream()
-                  .map { obj -> obj.item() }
-                  .map { item -> AddNodeToGraph.create(item) },
-                state.edges().stream()
-                  .map { obj -> obj.endpoints() }
-                  .map { couplet -> couplet.map(Function { obj -> obj.item() }) }
-                  .map { endpoints -> AddEdgeToGraph.create(endpoints) })
-                .collect(Collectors.toImmutableSet())
+              state.nodes().map { AddNodeToGraph.create(it.item()) }
+                .plus(
+                  state.edges()
+                    .map { AddEdgeToGraph.create(it.endpoints().map({ i -> i.item() }))})
+                .toImmutableSet()
             emitter.onNext(object : MutationEvent<E> {
               override fun state(): DirectedGraph<E> {
                 return state
@@ -269,8 +254,9 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
             emitter.setDisposable(
               mutationEvents
                 .subscribe(
-                  { value: MutationEvent<E> -> emitter.onNext(value) },
-                  { error: Throwable -> emitter.onError(error) }) { emitter.onComplete() })
+                    { emitter.onNext(it) },
+                    { emitter.onError(it) },
+                    { emitter.onComplete() }))
           }
         }
       }
@@ -281,42 +267,44 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
     synchronized(this) { return state }
   }
 
-  internal interface MutationEvent<E> : ObservableDirectedGraph.MutationEvent<E> {
+  internal interface MutationEvent<E : Any> : ObservableDirectedGraph.MutationEvent<E> {
 
     override fun state(): DirectedGraph<E>
+
     override fun operations(): Set<GraphOperation<E>>
   }
 
-  private abstract class NodeOperation<E>(private val item: E) : ObservableGraph.NodeOperation<E> {
+  private abstract class NodeOperation<E : Any>(private val item: E) :
+      ObservableGraph.NodeOperation<E> {
 
     override fun item(): E {
       return item
     }
   }
 
-  private class AddNodeToGraph<E> private constructor(item: E) : NodeOperation<E>(item),
+  private class AddNodeToGraph<E : Any> private constructor(item: E) : NodeOperation<E>(item),
     ObservableGraph.AddNodeToGraph<E> {
 
     companion object {
 
-      fun <E> create(item: E): AddNodeToGraph<E> {
+      fun <E : Any> create(item: E): AddNodeToGraph<E> {
         return AddNodeToGraph(item)
       }
     }
   }
 
-  private class RemoveNodeFromGraph<E> private constructor(item: E) : NodeOperation<E>(item),
+  private class RemoveNodeFromGraph<E : Any> private constructor(item: E) : NodeOperation<E>(item),
     ObservableGraph.RemoveNodeFromGraph<E> {
 
     companion object {
 
-      fun <E> create(item: E): RemoveNodeFromGraph<E> {
+      fun <E : Any> create(item: E): RemoveNodeFromGraph<E> {
         return RemoveNodeFromGraph(item)
       }
     }
   }
 
-  private abstract class EdgeOperation<E>(private val endpoints: Couplet<E>) :
+  private abstract class EdgeOperation<E : Any>(private val endpoints: Couplet<E>) :
     ObservableGraph.EdgeOperation<E> {
 
     override fun endpoints(): Couplet<E> {
@@ -324,23 +312,23 @@ internal class WritableObservableDirectedGraphImpl<E> : WritableObservableDirect
     }
   }
 
-  private class AddEdgeToGraph<E> private constructor(endpoints: Couplet<E>) :
+  private class AddEdgeToGraph<E : Any> private constructor(endpoints: Couplet<E>) :
     EdgeOperation<E>(endpoints), ObservableGraph.AddEdgeToGraph<E> {
 
     companion object {
 
-      fun <E> create(endpoints: Couplet<E>): AddEdgeToGraph<E> {
+      fun <E : Any> create(endpoints: Couplet<E>): AddEdgeToGraph<E> {
         return AddEdgeToGraph(endpoints)
       }
     }
   }
 
-  private class RemoveEdgeFromGraph<E> private constructor(endpoints: Couplet<E>) :
+  private class RemoveEdgeFromGraph<E : Any> private constructor(endpoints: Couplet<E>) :
     EdgeOperation<E>(endpoints), ObservableGraph.RemoveEdgeFromGraph<E> {
 
     companion object {
 
-      fun <E> create(endpoints: Couplet<E>): RemoveEdgeFromGraph<E> {
+      fun <E : Any> create(endpoints: Couplet<E>): RemoveEdgeFromGraph<E> {
         return RemoveEdgeFromGraph(endpoints)
       }
     }

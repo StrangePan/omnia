@@ -1,27 +1,30 @@
 package omnia.data.structure.mutable
 
-import java.util.stream.Collectors
 import omnia.data.structure.Map
 
-class HashMap<K, V> : MaskingMap<K, V> {
-  private constructor() : super(java.util.HashMap<K, V>())
-  private constructor(original: kotlin.collections.Map<K, V>)
-      : super(java.util.HashMap<K, V>(original))
+class HashMap<K : Any, V : Any> private constructor() :
+  MaskingMap<K, V>(kotlin.collections.HashMap()) {
 
   companion object {
 
     @JvmStatic
-    fun <K, V> create(): HashMap<K, V> {
+    fun <K : Any, V : Any> create(): HashMap<K, V> {
       return HashMap()
     }
 
     @JvmStatic
-    fun <K, V> copyOf(original: Map<out K, out V>): HashMap<K, V> {
-      return HashMap(
-        original.entries().stream().collect(
-          Collectors.toMap(Map.Entry<out K, out V>::key, Map.Entry<out K, out V>::value)
-        )
-      )
+    fun <K : Any, V : Any> copyOf(original: Map<out K, out V>): HashMap<K, V> {
+      return original.entries().toHashMap({ it.key() }, { it.value() })
+    }
+
+    @JvmStatic
+    fun <K : Any, V : Any, E> Iterable<E>.toHashMap(
+      keyMapper: (E) -> K,
+      valueMapper: (E) -> V
+    ): HashMap<K, V> {
+      val map = create<K, V>()
+      this.forEach { map.putMapping(keyMapper(it), valueMapper(it)) }
+      return map
     }
   }
 }

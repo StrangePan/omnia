@@ -4,21 +4,16 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
-import java.util.Objects
-import java.util.Optional
-import java.util.function.BiFunction
-import java.util.function.Predicate
-import java.util.function.Supplier
-import omnia.data.stream.Collectors
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableMap
 import omnia.data.structure.immutable.ImmutableSet
+import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.observable.ObservableMap
 import omnia.data.structure.observable.ObservableMap.MapOperation
 
-internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
+internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableMap<K, V> {
 
   @Volatile
   private var currentState: ImmutableMap<K, V>
@@ -35,37 +30,37 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
 
   override fun putMapping(key: K, value: V) {
     mutateState(
-      { currentState -> currentState.valueOf(key).map { v: V -> v != value }.orElse(true) },
+      { currentState -> currentState.valueOf(key)?.let { it != value } ?: true },
       { currentState -> currentState.toBuilder().putMapping(key, value).build() }
     ) { previousState, _ ->
       ImmutableSet.of(
         previousState.valueOf(key)
-          .map<MapOperation<K, V>> { previous: V -> ReplaceInMap(key, previous, value) }
-          .orElseGet { AddToMap(key, value) })
+            ?.let { ReplaceInMap(key, it, value) }
+            ?: AddToMap(key, value))
     }
   }
 
-  override fun putMappingIfAbsent(key: K, value: Supplier<V>): V {
+  override fun putMappingIfAbsent(key: K, value: () -> V): V {
     synchronized(this) {
       mutateState(
-        { currentState -> currentState.valueOf(key).isEmpty },
-        { currentState -> currentState.toBuilder().putMapping(key, value.get()).build() }
-      ) { _, newState -> ImmutableSet.of(AddToMap(key, newState.valueOf(key).orElseThrow())) }
-      return currentState.valueOf(key).orElseThrow()
+        { currentState -> currentState.valueOf(key) == null },
+        { currentState -> currentState.toBuilder().putMapping(key, value()).build() }
+      ) { _, newState -> ImmutableSet.of(AddToMap(key, newState.valueOf(key)!!)) }
+      return currentState.valueOf(key)!!
     }
   }
 
-  override fun removeKey(key: K): Optional<V> {
+  override fun removeKey(key: K): V? {
     synchronized(this) {
       val removedValue = currentState.valueOf(key)
       mutateState(
-        { currentState -> currentState.valueOf(key).isPresent },
+        { currentState -> currentState.valueOf(key) != null },
         { currentState -> currentState.toBuilder().removeKey(key).build() }
       ) { previousState, _ ->
         ImmutableSet.of(
           RemoveFromMap(
             key,
-            previousState.valueOf(key).orElseThrow()
+            previousState.valueOf(key)!!
           )
         )
       }
@@ -73,17 +68,17 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
     }
   }
 
-  override fun removeUnknownTypedKey(key: Any?): Optional<V> {
+  override fun removeUnknownTypedKey(key: Any?): V? {
     synchronized(this) {
       val removedValue = currentState.valueOfUnknownTyped(key)
       mutateState(
-        { currentState -> currentState.valueOfUnknownTyped(key).isPresent },
+        { currentState -> currentState.valueOfUnknownTyped(key) != null },
         { currentState -> currentState.toBuilder().removeUnknownTypedKey(key).build() }
       ) { previousState, _ ->
         @Suppress("UNCHECKED_CAST")
         ImmutableSet.of(
           RemoveFromMap(
-            key as K, previousState.valueOfUnknownTyped(key).orElseThrow()
+            key as K, previousState.valueOfUnknownTyped(key)!!
           )
         )
       }
@@ -92,18 +87,18 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
   }
 
   private fun mutateState(
-    shouldChange: Predicate<in ImmutableMap<K, V>>,
-    mutateState: java.util.function.Function<in ImmutableMap<K, V>, out ImmutableMap<K, V>>,
-    mutationOperations: BiFunction<in ImmutableMap<K, V>, in ImmutableMap<K, V>, out Set<MapOperation<K, V>>>
+    shouldChange: (ImmutableMap<K, V>) -> Boolean,
+    mutateState: (ImmutableMap<K, V>) -> ImmutableMap<K, V>,
+    mutationOperations: (ImmutableMap<K, V>, ImmutableMap<K, V>) -> Set<MapOperation<K, V>>
   ): Boolean {
     synchronized(this) {
       val previousState = currentState
-      if (!shouldChange.test(previousState)) {
+      if (!shouldChange(previousState)) {
         return false
       }
-      val nextState = Objects.requireNonNull(mutateState.apply(previousState))
+      val nextState = mutateState(previousState)
       currentState = nextState
-      val operations = mutationOperations.apply(previousState, nextState)
+      val operations = mutationOperations(previousState, nextState)
       mutationEvents.onNext(MutationEvent(nextState, operations))
       return true
     }
@@ -121,11 +116,11 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
     return state.values()
   }
 
-  override fun valueOf(key: K): Optional<V> {
+  override fun valueOf(key: K): V? {
     return state.valueOf(key)
   }
 
-  override fun valueOfUnknownTyped(key: Any?): Optional<V> {
+  override fun valueOfUnknownTyped(key: Any?): V? {
     return state.valueOfUnknownTyped(key)
   }
 
@@ -163,9 +158,8 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
     return MutationEvent(
       state,
       state.entries()
-        .stream()
-        .map<MapOperation<K, V>> { entry: Map.Entry<K, V> -> AddToMap(entry.key(), entry.value()) }
-        .collect(Collectors.toSet()))
+        .map { AddToMap(it.key(), it.value()) }
+        .toImmutableSet())
   }
 
   inner class MutationEvent(state: Map<K, V>, operations: Set<MapOperation<K, V>>) :
@@ -190,7 +184,7 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
         return this@WritableObservableMapImpl.entries()
       }
 
-      override fun valueOfUnknownTyped(key: Any?): Optional<V> {
+      override fun valueOfUnknownTyped(key: Any?): V? {
         return this@WritableObservableMapImpl.valueOfUnknownTyped(key)
       }
 
@@ -200,7 +194,7 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
     }
   }
 
-  private class AddToMap<K, V>(private val key: K, private val value: V) :
+  private class AddToMap<K : Any, V : Any>(private val key: K, private val value: V) :
     ObservableMap.AddToMap<K, V> {
 
     override fun key(): K {
@@ -212,7 +206,7 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
     }
   }
 
-  private class RemoveFromMap<K, V>(private val key: K, private val value: V) :
+  private class RemoveFromMap<K : Any, V : Any>(private val key: K, private val value: V) :
     ObservableMap.RemoveFromMap<K, V> {
 
     override fun key(): K {
@@ -224,7 +218,7 @@ internal class WritableObservableMapImpl<K, V> : WritableObservableMap<K, V> {
     }
   }
 
-  private class ReplaceInMap<K, V>(
+  private class ReplaceInMap<K : Any, V : Any>(
     private val key: K,
     private val replacedValue: V,
     private val newValue: V

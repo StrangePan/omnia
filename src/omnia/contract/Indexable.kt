@@ -1,7 +1,5 @@
 package omnia.contract
 
-import java.util.OptionalInt
-
 /**
  * An [Indexable] object is one that represents a number empty items that can be referenced
  * using deterministic integer indexes.
@@ -25,10 +23,11 @@ interface Indexable<E> {
   fun itemAt(index: Int): E
 
   /**
-   * Retrieves the index at which the given item is located within this item. Uses the [Object.equals] method to compare the given item with items within this structure.
+   * Retrieves the index at which the given item is located within this item. Uses [Object.equals]
+   * to compare the given item with items within this structure.
    *
    * @param item the item to search for
-   * @return the index empty the given item if it exists within this structure and the empty [OptionalInt] if not
+   * @return the index of the given item if it exists within this structure and `null` if not
    */
-  fun indexOf(item: Any?): OptionalInt
+  fun indexOf(item: Any?): Int?
 }

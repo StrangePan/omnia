@@ -1,6 +1,5 @@
 package omnia.data.cache
 
-import java.util.function.Supplier
 import omnia.contract.Holder
 
 /**
@@ -39,7 +38,7 @@ interface Cached<T : Any> : Holder<T>, CachedValue {
      * @return a new [Cached] instance that will cache the created value
      */
     @JvmStatic
-    fun <T : Any> cache(supplier: Supplier<out T>): Cached<T> {
+    fun <T : Any> cache(supplier: () -> T): Cached<T> {
       return SimpleCacher(supplier)
     }
   }

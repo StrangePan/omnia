@@ -1,22 +1,20 @@
 package omnia.data.structure.mutable
 
-import java.util.Objects
-import java.util.Optional
 import kotlin.math.max
 
-class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queue<E> {
+class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) : Queue<E> {
 
   private val minimumCapacity: Int
   private var subQueue: FixedArrayQueue<E>
+
   override fun enqueue(item: E) {
-    Objects.requireNonNull(item)
     if (subQueue.capacity() == subQueue.count()) {
       subQueue = FixedArrayQueue(subQueue.capacity() * 2, subQueue)
     }
     subQueue.enqueue(item)
   }
 
-  override fun dequeue(): Optional<E> {
+  override fun dequeue(): E? {
     val item = subQueue.dequeue()
     if (subQueue.capacity() > minimumCapacity && subQueue.count() <= subQueue.capacity() / 4) {
       subQueue = FixedArrayQueue(max(subQueue.capacity() / 2, minimumCapacity), subQueue)
@@ -24,7 +22,7 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
     return item
   }
 
-  override fun peek(): Optional<E> {
+  override fun peek(): E? {
     return subQueue.peek()
   }
 
@@ -35,7 +33,7 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
   override val isPopulated: Boolean
     get() = subQueue.isPopulated
 
-  private class FixedArrayQueue<E>(capacity: Int) : Queue<E> {
+  private class FixedArrayQueue<E : Any>(capacity: Int) : Queue<E> {
 
     private val items: Array<Any?>
     private var head = 0
@@ -50,14 +48,13 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
         )
       }
       var item = other.dequeue()
-      while (item.isPresent) {
-        enqueue(item.get())
+      while (item != null) {
+        enqueue(item)
         item = other.dequeue()
       }
     }
 
     override fun enqueue(item: E) {
-      Objects.requireNonNull(item)
       check(items[tail] == null) {
         String.format(
           "Attempted to enqueue an item into a full queue (size %d)",
@@ -68,19 +65,19 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
       tail = (tail + 1) % items.size
     }
 
-    override fun dequeue(): Optional<E> {
+    override fun dequeue(): E? {
       val item = items[head]
       items[head] = null
       if (item != null) {
         head = (head + 1) % items.size
       }
       @Suppress("UNCHECKED_CAST")
-      return Optional.ofNullable(item as E)
+      return item as E?
     }
 
-    override fun peek(): Optional<E> {
+    override fun peek(): E? {
       @Suppress("UNCHECKED_CAST")
-      return Optional.ofNullable(items[head] as E)
+      return items[head] as E?
     }
 
     override fun count(): Int {
@@ -115,12 +112,12 @@ class ArrayQueue<E> private constructor(capacity: Int = INITIAL_CAPACITY) : Queu
     private const val INITIAL_CAPACITY = 16
 
     @JvmStatic
-    fun <E> create(): ArrayQueue<E> {
+    fun <E : Any> create(): ArrayQueue<E> {
       return ArrayQueue()
     }
 
     @JvmStatic
-    fun <E> createWithInitialCapacity(capacity: Int): ArrayQueue<E> {
+    fun <E : Any> createWithInitialCapacity(capacity: Int): ArrayQueue<E> {
       return ArrayQueue(capacity)
     }
   }

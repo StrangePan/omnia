@@ -1,20 +1,17 @@
 package omnia.data.cache
 
-import com.google.common.truth.Truth
-import java.util.function.Supplier
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import com.google.common.truth.Truth.assertThat
+import kotlin.test.Test
+
 import org.mockito.Mockito
 
-@RunWith(JUnit4::class)
 class SimpleCacherTest {
 
   @Test
   fun value_didReturnSuppliedValue() {
     val testValue = Any()
     val testSubject: Cached<Any> = SimpleCacher { testValue }
-    Truth.assertThat(testSubject.value()).isSameInstanceAs(testValue)
+    assertThat(testSubject.value()).isSameInstanceAs(testValue)
   }
 
   @Test
@@ -22,14 +19,14 @@ class SimpleCacherTest {
     val testValue = Any()
     val testSubject: Cached<Any> = SimpleCacher { testValue }
     testSubject.value()
-    Truth.assertThat(testSubject.value()).isSameInstanceAs(testValue)
+    assertThat(testSubject.value()).isSameInstanceAs(testValue)
   }
 
   @Test
   fun new_didNotInvokeSupplier() {
     val supplier = setUpMockSupplier()
     SimpleCacher(supplier)
-    Mockito.verify(supplier, Mockito.never()).get()
+    Mockito.verify(supplier, Mockito.never())()
   }
 
   @Test
@@ -37,7 +34,7 @@ class SimpleCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: Cached<Any> = SimpleCacher(supplier)
     testSubject.invalidate()
-    Mockito.verify(supplier, Mockito.never()).get()
+    Mockito.verify(supplier, Mockito.never())()
   }
 
   @Test
@@ -45,7 +42,7 @@ class SimpleCacherTest {
     val supplier = setUpMockSupplier()
     val testSubject: Cached<Any> = SimpleCacher(supplier)
     testSubject.value()
-    Mockito.verify(supplier).get()
+    Mockito.verify(supplier)()
   }
 
   @Test
@@ -54,7 +51,7 @@ class SimpleCacherTest {
     val testSubject: Cached<Any> = SimpleCacher(supplier)
     testSubject.value()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(1)).get()
+    Mockito.verify(supplier, Mockito.times(1))()
   }
 
   @Test
@@ -64,16 +61,16 @@ class SimpleCacherTest {
     testSubject.value()
     testSubject.invalidate()
     testSubject.value()
-    Mockito.verify(supplier, Mockito.times(2)).get()
+    Mockito.verify(supplier, Mockito.times(2))()
   }
 
-  internal interface ObjectSupplier : Supplier<Any>
+  internal interface ObjectSupplier : () -> Any
 
   companion object {
 
-    private fun setUpMockSupplier(): Supplier<Any> {
-      val supplier: Supplier<Any> = Mockito.mock(ObjectSupplier::class.java)
-      Mockito.`when`(supplier.get()).thenReturn(Any())
+    private fun setUpMockSupplier(): () -> Any {
+      val supplier: () -> Any = Mockito.mock(ObjectSupplier::class.java)
+      Mockito.`when`(supplier()).thenReturn(Any())
       return supplier
     }
   }

@@ -1,43 +1,43 @@
 package omnia.data.structure.immutable
 
-import org.junit.Assert
-import org.junit.Test
+import com.google.common.truth.Truth.assertThat
+import kotlin.test.Test
 
 class ImmutableSetTest {
 
   @Test
   fun count_whenEmpty_didReturnCount() {
-    Assert.assertEquals(0, ImmutableSet.builder<Any>().build().count().toLong())
+    assertThat(ImmutableSet.builder<Any>().build().count().toLong()).isEqualTo(0)
   }
 
   @Test
   fun count_didReturnCount() {
-    Assert.assertEquals(3, createTestSubject().count().toLong())
+    assertThat(createTestSubject().count().toLong()).isEqualTo(3)
   }
 
   @Test
   fun count_withDuplicates_didReturnCount_withoutDuplicates() {
-    Assert.assertEquals(2, createTestSubjectWithDuplicates().count().toLong())
+    assertThat(createTestSubjectWithDuplicates().count().toLong()).isEqualTo(2)
   }
 
   @Test
   fun contains_whenFirst_didReturnTrue() {
-    Assert.assertTrue(createTestSubject().contains(TEST_ITEM_1))
+    assertThat(createTestSubject().contains(TEST_ITEM_1)).isTrue()
   }
 
   @Test
   fun contains_whenMiddle_didReturnTrue() {
-    Assert.assertTrue(createTestSubject().contains(TEST_ITEM_2))
+    assertThat(createTestSubject().contains(TEST_ITEM_2)).isTrue()
   }
 
   @Test
   fun contains_whenLast_didReturnTrue() {
-    Assert.assertTrue(createTestSubject().contains(TEST_ITEM_3))
+    assertThat(createTestSubject().contains(TEST_ITEM_3)).isTrue()
   }
 
   @Test
   fun contains_whenUnknown_didReturnFalse() {
-    Assert.assertFalse(createTestSubject().contains("unknown"))
+    assertThat(createTestSubject().contains("unknown")).isFalse()
   }
 
   @Test
@@ -52,24 +52,9 @@ class ImmutableSetTest {
       found2 = found2 or (item === TEST_ITEM_2)
       count++
     }
-    Assert.assertEquals(2, count.toLong())
-    Assert.assertTrue(found1)
-    Assert.assertTrue(found2)
-  }
-
-  @Test
-  fun stream_didStreamAll() {
-    val stream = createTestSubjectWithDuplicates().stream()
-    val contents = stream.toArray()
-    var found1 = false
-    var found2 = false
-    for (item in contents) {
-      found1 = found1 or (item === TEST_ITEM_1)
-      found2 = found2 or (item === TEST_ITEM_2)
-    }
-    Assert.assertEquals(2, contents.size.toLong())
-    Assert.assertTrue(found1)
-    Assert.assertTrue(found2)
+    assertThat(count.toLong()).isEqualTo(2)
+    assertThat(found1).isTrue()
+    assertThat(found2).isTrue()
   }
 
   companion object {
