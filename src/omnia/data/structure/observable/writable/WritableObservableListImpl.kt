@@ -1,5 +1,6 @@
 package omnia.data.structure.observable.writable
 
+import com.badoo.reaktive.rxjavainterop.asReaktiveObservable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -259,12 +260,15 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
       flowableEmitter.onNext(state)
       flowableEmitter.onComplete()
     }
-      .concatWith(mutationEvents.map { obj: MutationEvent -> obj.state() }),
+      .concatWith(mutationEvents.map { obj: MutationEvent -> obj.state() })
+      .asReaktiveObservable(),
     Observable.create { flowableEmitter: ObservableEmitter<MutationEvent> ->
       flowableEmitter.onNext(generateMutationEventForNewSubscription())
       flowableEmitter.onComplete()
     }
-      .concatWith(mutationEvents)), ObservableList.ObservableChannels<E>
+      .concatWith(mutationEvents)
+      .asReaktiveObservable()),
+    ObservableList.ObservableChannels<E>
 
   inner class MutationEvent(state: List<E>, operations: List<ListOperation<E>>) :
     GenericMutationEvent<List<E>, List<ListOperation<E>>>(state, operations),

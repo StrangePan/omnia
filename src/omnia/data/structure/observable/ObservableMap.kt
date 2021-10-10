@@ -1,6 +1,7 @@
 package omnia.data.structure.observable
 
-import io.reactivex.rxjava3.core.Observable
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.mapNotNull
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 
@@ -10,9 +11,9 @@ interface ObservableMap<K : Any, V : Any> : Map<K, V>, ObservableDataStructure {
 
   interface ObservableChannels<K : Any, V : Any> : ObservableDataStructure.ObservableChannels {
 
-    override fun states(): Observable<out Map<K, V>>
+    override fun states(): Observable<Map<K, V>>
 
-    override fun mutations(): Observable<out MutationEvent<K, V>>
+    override fun mutations(): Observable<MutationEvent<K, V>>
   }
 
   interface MutationEvent<K : Any, V : Any> : ObservableDataStructure.MutationEvent {
@@ -33,34 +34,19 @@ interface ObservableMap<K : Any, V : Any> : Map<K, V>, ObservableDataStructure {
 
     companion object {
 
-      fun <K : Any, V : Any> justAddToMapOperations(
-        observable: Observable<out MapOperation<K, V>>
-      ): Observable<AddToMap<K, V>> {
-        return observable.flatMap { mutation: MapOperation<K, V> ->
-          if (mutation is AddToMap<*, *>) Observable.just(
-            mutation as AddToMap<K, V>
-          ) else Observable.empty()
-        }
+      fun <K : Any, V : Any> justAddToMapOperations(operations: Observable<MapOperation<K, V>>):
+          Observable<AddToMap<K, V>> {
+        return operations.mapNotNull { it as AddToMap<K, V> }
       }
 
-      fun <K : Any, V : Any> justRemoveFromMapOperations(
-        observable: Observable<out MapOperation<K, V>>
-      ): Observable<RemoveFromMap<K, V>> {
-        return observable.flatMap { mutation: MapOperation<K, V> ->
-          if (mutation is RemoveFromMap<*, *>) Observable.just(
-            mutation as RemoveFromMap<K, V>
-          ) else Observable.empty()
-        }
+      fun <K : Any, V : Any> justRemoveFromMapOperations(operations: Observable<MapOperation<K, V>>):
+          Observable<RemoveFromMap<K, V>> {
+        return operations.mapNotNull { it as RemoveFromMap<K, V> }
       }
 
-      fun <K : Any, V : Any> justReplaceInMapOperations(
-        observable: Observable<out MapOperation<K, V>>
-      ): Observable<ReplaceInMap<K, V>> {
-        return observable.flatMap { mutation: MapOperation<K, V> ->
-          if (mutation is ReplaceInMap<*, *>) Observable.just(
-            mutation as ReplaceInMap<K, V>
-          ) else Observable.empty()
-        }
+      fun <K : Any, V : Any> justReplaceInMapOperations(operations: Observable<MapOperation<K, V>>):
+          Observable<ReplaceInMap<K, V>> {
+        return operations.mapNotNull { it as ReplaceInMap<K, V> }
       }
     }
   }

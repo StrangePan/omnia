@@ -1,6 +1,7 @@
 package omnia.data.structure.observable
 
-import io.reactivex.rxjava3.core.Observable
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.mapNotNull
 import omnia.data.structure.IntRange
 import omnia.data.structure.List
 
@@ -10,9 +11,9 @@ interface ObservableList<E : Any> : List<E>, ObservableDataStructure {
 
   interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
 
-    override fun states(): Observable<out List<E>>
+    override fun states(): Observable<List<E>>
 
-    override fun mutations(): Observable<out MutationEvent<E>>
+    override fun mutations(): Observable<MutationEvent<E>>
   }
 
   interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
@@ -34,56 +35,36 @@ interface ObservableList<E : Any> : List<E>, ObservableDataStructure {
        * Returns a mapping function for use in [Observable.flatMap] operations that
        * reduces a [ListOperation] stream to only the [AddToList] operations.
        */
-      fun <E : Any> justAddToListOperations(
-        observable: Observable<out ListOperation<E>>
-      ): Observable<AddToList<E>> {
-        return observable.flatMap { mutation: ListOperation<E> ->
-          if (mutation is AddToList<*>) Observable.just(
-            mutation as AddToList<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justAddToListOperations(operations: Observable<ListOperation<E>>):
+          Observable<AddToList<E>> {
+        return operations.mapNotNull { it as? AddToList<E> }
       }
 
       /**
        * Returns a mapping function for use in [Observable.flatMap] operations that
        * reduces a [ListOperation] stream to only the [MoveInList] operations.
        */
-      fun <E : Any> justMoveInListOperations(
-        observable: Observable<out ListOperation<E>>
-      ): Observable<MoveInList<E>> {
-        return observable.flatMap { mutation: ListOperation<E> ->
-          if (mutation is MoveInList<*>) Observable.just(
-            mutation as MoveInList<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justMoveInListOperations(operations: Observable<ListOperation<E>>):
+          Observable<MoveInList<E>> {
+        return operations.mapNotNull { it as MoveInList<E> }
       }
 
       /**
        * Returns a mapping function for use in [Observable.flatMap] operations that
        * reduces a [ListOperation] stream to only the [RemoveFromList] operations.
        */
-      fun <E : Any> justRemoveFromListOperations(
-        observable: Observable<out ListOperation<E>>
-      ): Observable<RemoveFromList<E>> {
-        return observable.flatMap { mutation: ListOperation<E> ->
-          if (mutation is RemoveFromList<*>) Observable.just(
-            mutation as RemoveFromList<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justRemoveFromListOperations(operations: Observable<ListOperation<E>>):
+          Observable<RemoveFromList<E>> {
+        return operations.mapNotNull { it as RemoveFromList<E> }
       }
 
       /**
        * Returns a mapping function for use in [Observable.flatMap] operations that
        * reduces a [ListOperation] stream to only the [ReplaceInList] operations.
        */
-      fun <E : Any> justReplaceInListOperations(
-        observable: Observable<out ListOperation<E>>
-      ): Observable<ReplaceInList<E>> {
-        return observable.flatMap { mutation: ListOperation<E> ->
-          if (mutation is ReplaceInList<*>) Observable.just(
-            mutation as ReplaceInList<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justReplaceInListOperations(operations: Observable<ListOperation<E>>):
+          Observable<ReplaceInList<E>> {
+        return operations.mapNotNull { it as ReplaceInList<E> }
       }
     }
   }

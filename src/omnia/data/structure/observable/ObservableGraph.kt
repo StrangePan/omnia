@@ -1,6 +1,7 @@
 package omnia.data.structure.observable
 
-import io.reactivex.rxjava3.core.Observable
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.mapNotNull
 import omnia.data.structure.Graph
 import omnia.data.structure.Set
 import omnia.data.structure.tuple.Couplet
@@ -11,9 +12,9 @@ interface ObservableGraph<E : Any> : Graph<E>, ObservableDataStructure {
 
   interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
 
-    override fun states(): Observable<out Graph<E>>
+    override fun states(): Observable<Graph<E>>
 
-    override fun mutations(): Observable<out MutationEvent<E>>
+    override fun mutations(): Observable<MutationEvent<E>>
   }
 
   interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
@@ -26,44 +27,24 @@ interface ObservableGraph<E : Any> : Graph<E>, ObservableDataStructure {
   interface GraphOperation<E : Any> {
     companion object {
 
-      fun <E : Any> justAddNodeToGraphOperations(
-        flowable: Observable<out GraphOperation<E>>
-      ): Observable<AddNodeToGraph<E>> {
-        return flowable.flatMap { mutation: GraphOperation<E> ->
-          if (mutation is AddNodeToGraph<*>) Observable.just(
-            mutation as AddNodeToGraph<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justAddNodeToGraphOperations(operations: Observable<GraphOperation<E>>):
+          Observable<AddNodeToGraph<E>> {
+        return operations.mapNotNull { it as? AddNodeToGraph<E> }
       }
 
-      fun <E : Any> justRemoveNodeFromGraphOperations(
-        flowable: Observable<out GraphOperation<E>>
-      ): Observable<RemoveNodeFromGraph<E>> {
-        return flowable.flatMap { mutation: GraphOperation<E> ->
-          if (mutation is RemoveNodeFromGraph<*>) Observable.just(
-            mutation as RemoveNodeFromGraph<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justRemoveNodeFromGraphOperations(operations: Observable<GraphOperation<E>>):
+          Observable<RemoveNodeFromGraph<E>> {
+        return operations.mapNotNull { it as? RemoveNodeFromGraph<E> }
       }
 
-      fun <E : Any> justAddEdgeToGraphOperations(
-        flowable: Observable<out GraphOperation<E>>
-      ): Observable<AddEdgeToGraph<E>> {
-        return flowable.flatMap { mutation: GraphOperation<E> ->
-          if (mutation is AddEdgeToGraph<*>) Observable.just(
-            mutation as AddEdgeToGraph<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justAddEdgeToGraphOperations(operations: Observable<GraphOperation<E>>):
+          Observable<AddEdgeToGraph<E>> {
+        return operations.mapNotNull { it as? AddEdgeToGraph<E> }
       }
 
-      fun <E : Any> justRemoveEdgeFromGraphOperations(
-        flowable: Observable<out GraphOperation<E>>
-      ): Observable<RemoveEdgeFromGraph<E>> {
-        return flowable.flatMap { mutation: GraphOperation<E> ->
-          if (mutation is RemoveEdgeFromGraph<*>) Observable.just(
-            mutation as RemoveEdgeFromGraph<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justRemoveEdgeFromGraphOperations(operations: Observable<GraphOperation<E>>):
+          Observable<RemoveEdgeFromGraph<E>> {
+        return operations.mapNotNull { it as? RemoveEdgeFromGraph<E> }
       }
     }
   }
