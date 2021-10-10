@@ -2,7 +2,6 @@ package omnia.data.structure.mutable
 
 import omnia.algorithm.ListAlgorithms.binarySearch
 import omnia.algorithm.ListAlgorithms.binarySearchOrInsert
-import omnia.data.structure.Collection
 
 class SortedArraySet<E : Any> private constructor(private val comparator: Comparator<in E>)
   : MutableSortedSet<E> {
@@ -15,7 +14,7 @@ class SortedArraySet<E : Any> private constructor(private val comparator: Compar
     binarySearchOrInsert(elements, item, comparator)
   }
 
-  override fun addAll(items: Collection<out E>) {
+  override fun addAll(items: Iterable<E>) {
     items.forEach(::add)
   }
 

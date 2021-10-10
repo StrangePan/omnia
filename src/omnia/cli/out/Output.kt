@@ -12,6 +12,10 @@ class Output private constructor(spans: List<Span<*>>) {
   val isPopulated: Boolean
     get() = spans.isPopulated
 
+  init {
+    this.spans = ImmutableList.copyOf(spans)
+  }
+
   override fun toString(): String {
     return renderWithoutCodes()
   }
@@ -456,9 +460,5 @@ class Output private constructor(spans: List<Span<*>>) {
               + Regex.escape(Formatting.RENDER_CODE_SUFFIX))
       return text.replace(renderCodeRegex, "")
     }
-  }
-
-  init {
-    this.spans = ImmutableList.copyOf(spans)
   }
 }

@@ -1,7 +1,5 @@
 package omnia.data.structure.mutable
 
-import omnia.data.structure.Collection
-
 open class MaskingList<E : Any>(private val kotlinList: kotlin.collections.MutableList<E>) :
   MutableList<E> {
 
@@ -30,7 +28,7 @@ open class MaskingList<E : Any>(private val kotlinList: kotlin.collections.Mutab
     kotlinList.add(item)
   }
 
-  override fun addAll(items: Collection<out E>) {
+  override fun addAll(items: Iterable<E>) {
     kotlinList.addAll(items)
   }
 

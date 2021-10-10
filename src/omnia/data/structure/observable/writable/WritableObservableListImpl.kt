@@ -4,7 +4,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
-import omnia.data.structure.Collection
 import omnia.data.structure.IntRange
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
@@ -76,7 +75,7 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
     }
   }
 
-  override fun addAll(items: Collection<out E>) {
+  override fun addAll(items: Iterable<E>) {
     mutateState(
       { true },
       { state -> state.toBuilder().addAll(items).build() }

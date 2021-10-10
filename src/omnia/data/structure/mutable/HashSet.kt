@@ -46,7 +46,7 @@ class HashSet<E : Any>(
     kotlinSet.add(wrap(item))
   }
 
-  override fun addAll(items: Collection<out E>) {
+  override fun addAll(items: Iterable<E>) {
     kotlinSet.addAll(items.map { element -> wrap(element) })
   }
 

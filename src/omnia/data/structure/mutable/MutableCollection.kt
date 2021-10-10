@@ -23,7 +23,7 @@ interface MutableCollection<E : Any> : Collection<E>, Clearable {
    *
    * @param items the items to add to the collection
    */
-  fun addAll(items: Collection<out E>)
+  fun addAll(items: Iterable<E>)
 
   /**
    * Removes the given item from this [Collection] if contained within.
@@ -65,7 +65,7 @@ interface MutableCollection<E : Any> : Collection<E>, Clearable {
           javaCollection.add(item)
         }
 
-        override fun addAll(items: Collection<out E>) {
+        override fun addAll(items: Iterable<E>) {
           javaCollection.addAll(items)
         }
 

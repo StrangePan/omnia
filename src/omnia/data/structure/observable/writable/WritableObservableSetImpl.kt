@@ -5,7 +5,6 @@ import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
 import omnia.algorithm.SetAlgorithms
-import omnia.data.structure.Collection
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
@@ -27,7 +26,7 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
     ) { _, _ -> ImmutableSet.of(AddToSet(item)) }
   }
 
-  override fun addAll(items: Collection<out E>) {
+  override fun addAll(items: Iterable<E>) {
     mutateState(
       { state -> items.any { !state.contains(it) } },
       { state -> state.toBuilder().addAll(items).build() }
