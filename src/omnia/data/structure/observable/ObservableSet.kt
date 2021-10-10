@@ -1,6 +1,7 @@
 package omnia.data.structure.observable
 
-import io.reactivex.rxjava3.core.Observable
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.mapNotNull
 import omnia.data.structure.Set
 
 interface ObservableSet<E : Any> : ObservableDataStructure, Set<E> {
@@ -9,9 +10,9 @@ interface ObservableSet<E : Any> : ObservableDataStructure, Set<E> {
 
   interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
 
-    override fun states(): Observable<out Set<E>>
+    override fun states(): Observable<Set<E>>
 
-    override fun mutations(): Observable<out MutationEvent<E>>
+    override fun mutations(): Observable<MutationEvent<E>>
   }
 
   interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
@@ -27,24 +28,14 @@ interface ObservableSet<E : Any> : ObservableDataStructure, Set<E> {
 
     companion object {
 
-      fun <E : Any> justAddToSetOperations(
-        observable: Observable<out SetOperation<E>>
-      ): Observable<AddToSet<E>> {
-        return observable.flatMap { mutation: SetOperation<E> ->
-          if (mutation is AddToSet<*>) Observable.just(
-            mutation as AddToSet<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justAddToSetOperations(operations: Observable<SetOperation<E>>):
+          Observable<AddToSet<E>> {
+        return operations.mapNotNull { it as AddToSet<E> }
       }
 
-      fun <E : Any> justRemoveFromSetOperations(
-        observable: Observable<out SetOperation<E>>
-      ): Observable<RemoveFromSet<E>> {
-        return observable.flatMap { mutation: SetOperation<E> ->
-          if (mutation is RemoveFromSet<*>) Observable.just(
-            mutation as RemoveFromSet<E>
-          ) else Observable.empty()
-        }
+      fun <E : Any> justRemoveFromSetOperations(operations: Observable<SetOperation<E>>):
+          Observable<RemoveFromSet<E>> {
+        return operations.mapNotNull { it as RemoveFromSet<E> }
       }
     }
   }

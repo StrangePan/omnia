@@ -1,9 +1,9 @@
 package omnia.data.structure.observable.writable
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.Subject
+import com.badoo.reaktive.observable.concatWith
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.subject.publish.PublishSubject
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
@@ -17,8 +17,7 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
 
   @Volatile
   private var currentState: ImmutableMap<K, V>
-  private val mutationEvents: Subject<MutationEvent> =
-    PublishSubject.create<MutationEvent>().toSerialized()
+  private val mutationEvents = PublishSubject<MutationEvent>()
 
   constructor() {
     currentState = ImmutableMap.empty()
@@ -142,16 +141,17 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
   }
 
   inner class ObservableChannels : GenericObservableChannels<Map<K, V>, MutationEvent>(
-    Observable.create { flowableEmitter: ObservableEmitter<Map<K, V>> ->
-      flowableEmitter.onNext(state)
-      flowableEmitter.onComplete()
+    observable<Map<K, V>> {
+      it.onNext(state)
+      it.onComplete()
     }
-      .concatWith(mutationEvents.map { obj: MutationEvent -> obj.state() }),
-    Observable.create { flowableEmitter: ObservableEmitter<MutationEvent> ->
-      flowableEmitter.onNext(generateMutationEventForNewSubscription())
-      flowableEmitter.onComplete()
+      .concatWith(mutationEvents.map { it.state() }),
+    observable<MutationEvent> {
+      it.onNext(generateMutationEventForNewSubscription())
+      it.onComplete()
     }
-      .concatWith(mutationEvents)), ObservableMap.ObservableChannels<K, V>
+      .concatWith(mutationEvents)),
+    ObservableMap.ObservableChannels<K, V>
 
   private fun generateMutationEventForNewSubscription(): MutationEvent {
     val state: Map<K, V> = state

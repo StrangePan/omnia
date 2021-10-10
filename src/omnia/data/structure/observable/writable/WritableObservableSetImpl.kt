@@ -1,11 +1,10 @@
 package omnia.data.structure.observable.writable
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.Subject
+import com.badoo.reaktive.observable.concatWith
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.subject.publish.PublishSubject
 import omnia.algorithm.SetAlgorithms
-import omnia.data.structure.Collection
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
@@ -15,10 +14,9 @@ import omnia.data.structure.observable.ObservableSet.SetOperation
 internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
   @Volatile
-  private var currentState: ImmutableSet<E> = ImmutableSet.empty()
-  private val mutationEvents: Subject<MutationEvent> =
-    PublishSubject.create<MutationEvent>().toSerialized()
-  private val observableChannels: ObservableChannels = ObservableChannels()
+  private var currentState = ImmutableSet.empty<E>()
+  private val mutationEvents = PublishSubject<MutationEvent>()
+  private val observableChannels = ObservableChannels()
 
   override fun add(item: E) {
     mutateState(
@@ -27,7 +25,7 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
     ) { _, _ -> ImmutableSet.of(AddToSet(item)) }
   }
 
-  override fun addAll(items: Collection<out E>) {
+  override fun addAll(items: Iterable<E>) {
     mutateState(
       { state -> items.any { !state.contains(it) } },
       { state -> state.toBuilder().addAll(items).build() }
@@ -141,16 +139,17 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
   }
 
   inner class ObservableChannels : GenericObservableChannels<Set<E>, MutationEvent>(
-    Observable.create { flowableEmitter: ObservableEmitter<Set<E>> ->
-      flowableEmitter.onNext(state)
-      flowableEmitter.onComplete()
+    observable<Set<E>> {
+      it.onNext(state)
+      it.onComplete()
     }
-      .concatWith(mutationEvents.map { obj -> obj.state() }),
-    Observable.create { flowableEmitter: ObservableEmitter<MutationEvent> ->
-      flowableEmitter.onNext(generateMutationEventForNewSubscription())
-      flowableEmitter.onComplete()
+      .concatWith(mutationEvents.map { it.state() }),
+    observable<MutationEvent> {
+      it.onNext(generateMutationEventForNewSubscription())
+      it.onComplete()
     }
-      .concatWith(mutationEvents)), ObservableSet.ObservableChannels<E>
+      .concatWith(mutationEvents)),
+    ObservableSet.ObservableChannels<E>
 
   inner class MutationEvent(state: Set<E>, operations: Set<SetOperation<E>>) :
     GenericMutationEvent<Set<E>, Set<SetOperation<E>>>(state, operations),

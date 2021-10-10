@@ -1,6 +1,6 @@
 package omnia.data.structure.observable
 
-import io.reactivex.rxjava3.core.Observable
+import com.badoo.reaktive.observable.Observable
 import omnia.data.structure.Collection
 
 /**
@@ -43,7 +43,7 @@ interface ObservableDataStructure {
      * structure, as well as a mutation equivalent of populating an empty data structure with the
      * contents of current state.
      */
-    fun mutations(): Observable<out MutationEvent>
+    fun mutations(): Observable<MutationEvent>
   }
 
   /**

@@ -1,21 +1,14 @@
 package omnia.data.iterate
 
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
-import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.mock
 
 class EmptyIteratorTest {
 
-  @Mock private lateinit var consumer: (Any) -> Unit
-
-  @BeforeTest
-  fun setUp() {
-    MockitoAnnotations.initMocks(this)
-  }
+  private val consumer: (Any) -> Unit = mock()
 
   @Test
   fun hasNext_isFalse() {

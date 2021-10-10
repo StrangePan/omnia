@@ -1,6 +1,6 @@
 package omnia.data.structure.observable.writable
 
-import io.reactivex.rxjava3.core.Observable
+import com.badoo.reaktive.observable.Observable
 import omnia.data.structure.observable.ObservableDataStructure
 
 internal open class GenericObservableChannels<

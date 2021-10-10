@@ -1,18 +1,22 @@
 package omnia.data.structure.observable
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.functions.Function
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.SingleSubject
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.autoConnect
+import com.badoo.reaktive.observable.distinctUntilChanged
+import com.badoo.reaktive.observable.firstOrError
+import com.badoo.reaktive.observable.replay
+import com.badoo.reaktive.observable.scan
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.subject.publish.PublishSubject
+import com.badoo.reaktive.subject.replay.ReplaySubject
 import omnia.data.structure.tuple.Couple
 
 class ObservableState<T : Any> private constructor(initialState: T) {
 
-  private val mutations: PublishSubject<Function<T, T>> = PublishSubject.create()
+  private val mutations: PublishSubject<(T) -> T> = PublishSubject()
   private val observableState: Observable<T> =
-    mutations.hide()
-      .scan(initialState) { state, mutation -> mutation.apply(state) }
+    mutations
+      .scan(initialState) { state, mutation -> mutation(state) }
       .distinctUntilChanged()
       .replay(1)
       .autoConnect(0)
@@ -23,20 +27,19 @@ class ObservableState<T : Any> private constructor(initialState: T) {
   }
 
   /** Mutates the state asynchronously and returns the result of the mutation.  */
-  fun mutate(mutator: Function<in T, out T>): Single<T> {
-    val result: SingleSubject<T> = SingleSubject.create()
-    mutations.onNext(
-      Function { state: T ->
-        val newState: T = try {
-          mutator.apply(state)
-        } catch (t: Throwable) {
-          result.onError(t)
-          state
-        }
-        result.onSuccess(newState)
-        newState
-      })
-    return result
+  fun mutate(mutator: (T) -> T): Single<T> {
+    val result: ReplaySubject<T> = ReplaySubject(1)
+    mutations.onNext { state: T ->
+      val newState: T = try {
+        mutator(state)
+      } catch (t: Throwable) {
+        result.onError(t)
+        state
+      }
+      result.onNext(newState)
+      newState
+    }
+    return result.firstOrError()
   }
 
   /**
@@ -44,22 +47,19 @@ class ObservableState<T : Any> private constructor(initialState: T) {
    * as returned by the mutator. This allows the mutator to return extra information in addition
    * to the new state, such as a diff or generated data.
    */
-  fun <R> mutateAndReturn(
-    mutator: Function<in T, out Couple<out T, out R>>
-  ): Single<Couple<out T, out R>> {
-    val result: SingleSubject<Couple<out T, out R>> = SingleSubject.create()
-    mutations.onNext(
-      Function { state: T ->
-        val newState: Couple<out T, out R> = try {
-          mutator.apply(state)
-        } catch (t: Throwable) {
-          result.onError(t)
-          return@Function state
-        }
-        result.onSuccess(newState)
-        newState.first()
-      })
-    return result
+  fun <R> mutateAndReturn(mutator: (T) -> Couple<out T, out R>): Single<Couple<out T, out R>> {
+    val result: ReplaySubject<Couple<out T, out R>> = ReplaySubject(1)
+    mutations.onNext { state: T ->
+      val newState: Couple<out T, out R> = try {
+        mutator(state)
+      } catch (t: Throwable) {
+        result.onError(t)
+        return@onNext state
+      }
+      result.onNext(newState)
+      newState.first()
+    }
+    return result.firstOrError()
   }
 
   companion object {

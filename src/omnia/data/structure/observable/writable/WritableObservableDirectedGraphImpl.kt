@@ -1,8 +1,14 @@
 package omnia.data.structure.observable.writable
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.ObservableEmitter
+import com.badoo.reaktive.observable.doOnBeforeComplete
+import com.badoo.reaktive.observable.doOnBeforeError
+import com.badoo.reaktive.observable.doOnBeforeNext
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.subject.publish.PublishSubject
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
@@ -17,7 +23,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
 
   @Volatile
   private var state: ImmutableDirectedGraph<E>
-  private val mutationEvents = PublishSubject.create<MutationEvent<E>>().toSerialized()
+  private val mutationEvents = PublishSubject<MutationEvent<E>>()
 
   constructor() {
     state = ImmutableDirectedGraph.empty()
@@ -219,28 +225,28 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
   override fun observe(): ObservableDirectedGraph.ObservableChannels<E> {
     return object : ObservableDirectedGraph.ObservableChannels<E> {
       override fun states(): Observable<DirectedGraph<E>> {
-        return Observable.create { emitter: ObservableEmitter<DirectedGraph<E>> ->
+        return observable { emitter: ObservableEmitter<DirectedGraph<E>> ->
           synchronized(this) {
             emitter.onNext(getState())
             emitter.setDisposable(
-              mutationEvents.map { obj: MutationEvent<E> -> obj.state() }
-                .subscribe(
-                    { emitter.onNext(it) },
-                    { emitter.onError(it) },
-                    { emitter.onComplete() }))
+              mutationEvents.map { it.state() }
+                .doOnBeforeNext(emitter::onNext)
+                .doOnBeforeError(emitter::onError)
+                .doOnBeforeComplete(emitter::onComplete)
+                .subscribe())
           }
         }
       }
 
       override fun mutations(): Observable<MutationEvent<E>> {
-        return Observable.create { emitter: ObservableEmitter<MutationEvent<E>> ->
+        return observable { emitter: ObservableEmitter<MutationEvent<E>> ->
           synchronized(this) {
             val state = getState()
             val operations: Set<GraphOperation<E>> =
               state.nodes().map { AddNodeToGraph.create(it.item()) }
                 .plus(
                   state.edges()
-                    .map { AddEdgeToGraph.create(it.endpoints().map({ i -> i.item() }))})
+                    .map { AddEdgeToGraph.create(it.endpoints().map { i -> i.item() })})
                 .toImmutableSet()
             emitter.onNext(object : MutationEvent<E> {
               override fun state(): DirectedGraph<E> {
@@ -253,10 +259,10 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
             })
             emitter.setDisposable(
               mutationEvents
-                .subscribe(
-                    { emitter.onNext(it) },
-                    { emitter.onError(it) },
-                    { emitter.onComplete() }))
+                .doOnBeforeNext(emitter::onNext)
+                .doOnBeforeError(emitter::onError)
+                .doOnBeforeComplete(emitter::onComplete)
+                .subscribe())
           }
         }
       }
