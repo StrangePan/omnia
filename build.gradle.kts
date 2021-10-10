@@ -5,10 +5,8 @@ plugins {
 project.setBuildDir("out")
 
 dependencies {
-  api("io.reactivex.rxjava3:rxjava:3.0.8")
   api("com.badoo.reaktive:reaktive:1.2.0")
   api("com.badoo.reaktive:reaktive-jvm:1.2.0")
-  api("com.badoo.reaktive:rxjava3-interop:1.2.0")
 }
 
 sourceSets {

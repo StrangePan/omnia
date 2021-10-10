@@ -1,10 +1,9 @@
 package omnia.data.structure.observable.writable
 
-import com.badoo.reaktive.rxjavainterop.asReaktiveObservable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.Subject
+import com.badoo.reaktive.observable.concatWith
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.subject.publish.PublishSubject
 import omnia.data.structure.IntRange
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
@@ -14,10 +13,9 @@ import omnia.data.structure.observable.ObservableList.ListOperation
 internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
 
   @Volatile
-  private var currentState: ImmutableList<E> = ImmutableList.empty()
-  private val mutationEvents: Subject<MutationEvent> =
-    PublishSubject.create<MutationEvent>().toSerialized()
-  private val observableChannels: ObservableChannels = ObservableChannels()
+  private var currentState = ImmutableList.empty<E>()
+  private val mutationEvents = PublishSubject<MutationEvent>()
+  private val observableChannels = ObservableChannels()
 
   override fun insertAt(index: Int, item: E) {
     val range: IntRange = IntRange.just(index)
@@ -256,18 +254,16 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
   }
 
   inner class ObservableChannels : GenericObservableChannels<List<E>, MutationEvent>(
-    Observable.create { flowableEmitter: ObservableEmitter<List<E>> ->
-      flowableEmitter.onNext(state)
-      flowableEmitter.onComplete()
+    observable<List<E>> {
+      it.onNext(state)
+      it.onComplete()
     }
-      .concatWith(mutationEvents.map { obj: MutationEvent -> obj.state() })
-      .asReaktiveObservable(),
-    Observable.create { flowableEmitter: ObservableEmitter<MutationEvent> ->
-      flowableEmitter.onNext(generateMutationEventForNewSubscription())
-      flowableEmitter.onComplete()
+      .concatWith(mutationEvents.map { it.state() }),
+    observable<MutationEvent> {
+      it.onNext(generateMutationEventForNewSubscription())
+      it.onComplete()
     }
-      .concatWith(mutationEvents)
-      .asReaktiveObservable()),
+      .concatWith(mutationEvents)),
     ObservableList.ObservableChannels<E>
 
   inner class MutationEvent(state: List<E>, operations: List<ListOperation<E>>) :
