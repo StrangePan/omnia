@@ -11,7 +11,7 @@ import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.observable.writable.WritableObservableDirectedGraph
 import omnia.data.structure.tuple.Couplet.Companion.of
 import omnia.data.structure.tuple.Tuplet
-import omnia.reaktive.observable.test.assertValue
+import omnia.util.reaktive.observable.test.assertValue
 
 class ObservableDirectedGraphTest {
 

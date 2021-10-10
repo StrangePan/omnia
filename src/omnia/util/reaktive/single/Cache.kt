@@ -1,4 +1,4 @@
-package omnia.reaktive.single
+package omnia.util.reaktive.single
 
 import com.badoo.reaktive.observable.autoConnect
 import com.badoo.reaktive.observable.firstOrError

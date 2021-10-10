@@ -1,4 +1,4 @@
-package omnia.reaktive.observable.test
+package omnia.util.reaktive.observable.test
 
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import kotlin.test.assertTrue

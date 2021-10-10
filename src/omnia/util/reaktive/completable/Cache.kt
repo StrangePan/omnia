@@ -1,4 +1,4 @@
-package omnia.reaktive.completable
+package omnia.util.reaktive.completable
 
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.asObservable

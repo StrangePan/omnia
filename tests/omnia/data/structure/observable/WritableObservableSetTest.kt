@@ -15,9 +15,9 @@ import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.mutable.MutableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
 import omnia.data.structure.observable.writable.WritableObservableSet
-import omnia.reaktive.observable.test.assertValue
-import omnia.reaktive.observable.test.assertValueCount
-import omnia.reaktive.observable.test.assertValues
+import omnia.util.reaktive.observable.test.assertValue
+import omnia.util.reaktive.observable.test.assertValueCount
+import omnia.util.reaktive.observable.test.assertValues
 
 class WritableObservableSetTest {
 

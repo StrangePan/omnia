@@ -1,4 +1,4 @@
-package omnia.reaktive.observable
+package omnia.util.reaktive.observable
 
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.toList
