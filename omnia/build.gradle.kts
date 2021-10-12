@@ -9,7 +9,7 @@ kotlin {
 
   sourceSets {
     val jvmMain by getting {
-      kotlin.srcDir("src")
+      kotlin.srcDir("src/jvmMain")
       dependencies {
         implementation(kotlin("test"))
         api("com.badoo.reaktive:reaktive:1.2.0")
@@ -19,7 +19,7 @@ kotlin {
     }
 
     val jvmTest by getting {
-      kotlin.srcDir("tests")
+      kotlin.srcDir("src/jvmTest")
       dependencies {
         implementation(kotlin("test"))
         implementation(kotlin("test-junit"))
