@@ -12,8 +12,8 @@ kotlin {
       kotlin.srcDir("src/jvmMain")
       dependencies {
         implementation(kotlin("test"))
-        api("com.badoo.reaktive:reaktive:1.2.0")
-        api("com.badoo.reaktive:reaktive-testing:1.2.0")
+        implementation("com.badoo.reaktive:reaktive:1.2.0")
+        implementation("com.badoo.reaktive:reaktive-testing:1.2.0")
         implementation("com.badoo.reaktive:reaktive-jvm:1.2.0")
       }
     }
