@@ -1,20 +1,21 @@
 package omnia.reference
 
-/**
- * A wrapper around a value that holds a weak reference to the value. That is, the value could be
- * deallocated and this wrapper cleared at any time.
- */
-expect class WeakReference<T : Any> {
+actual class WeakReference<T : Any> private constructor(value: T? = null) {
+  private val weakReference: java.lang.ref.WeakReference<T>
 
-  companion object {
-    fun <T : Any> of(value: T): WeakReference<T>
-
-    fun <T : Any> empty(): WeakReference<T>
+  init {
+    weakReference = java.lang.ref.WeakReference(value)
   }
 
-  fun clear()
+  actual companion object {
+    actual fun <T : Any> of(value: T) = WeakReference<T>(value)
+
+    actual fun <T : Any> empty() = WeakReference<T>()
+  }
+
+  actual fun clear() = weakReference.clear()
 
   /** Setter and getter for the held value. To avoid race conditions, always save the value to a
    * local variable before using it. */
-  var value: T?
+  actual val value: T? = weakReference.get()
 }

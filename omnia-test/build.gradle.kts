@@ -8,14 +8,20 @@ kotlin {
   jvm()
 
   sourceSets {
-    val jvmMain by getting {
-      kotlin.srcDir("src/jvmMain")
+    val commonMain by getting {
+      kotlin.srcDir("src/commonMain")
       dependencies {
+        implementation(project(":lib:omnia:omnia"))
         implementation(kotlin("test"))
         implementation("com.badoo.reaktive:reaktive:1.2.0")
         implementation("com.badoo.reaktive:reaktive-testing:1.2.0")
+      }
+    }
+
+    val jvmMain by getting {
+      kotlin.srcDir("src/jvmMain")
+      dependencies {
         implementation("com.badoo.reaktive:reaktive-jvm:1.2.0")
-        implementation("com.google.truth.extensions:truth-java8-extension:1.0")
       }
     }
   }
