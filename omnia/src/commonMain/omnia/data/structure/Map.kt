@@ -1,5 +1,8 @@
 package omnia.data.structure
 
+import kotlin.collections.List as KotlinList
+import kotlin.collections.Map as KotlinMap
+import kotlin.collections.Set as KotlinSet
 import omnia.data.cache.Memoized
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.tuple.Couple
@@ -44,7 +47,7 @@ interface Map<K : Any, V : Any> {
 
     companion object {
 
-      fun <K : Any, V : Any> masking(backingMap: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
+      fun <K : Any, V : Any> masking(backingMap: KotlinMap.Entry<K, V>): Entry<K, V> {
         return MaskedEntry(backingMap)
       }
 
@@ -55,7 +58,7 @@ interface Map<K : Any, V : Any> {
   }
 
   private class MaskedEntry<K : Any, V : Any>(
-    private val backingEntry: kotlin.collections.Map.Entry<K, V>)
+    private val backingEntry: KotlinMap.Entry<K, V>)
     : Entry<K, V> {
 
     override fun key(): K {
@@ -93,13 +96,13 @@ interface Map<K : Any, V : Any> {
 
   companion object {
 
-    /** Creates a read-only, Omnia-compatible view empty the given [kotlin.collections.Map].  */
-    fun <K : Any, V : Any> masking(backingMap: kotlin.collections.Map<K, V>): Map<K, V> {
+    /** Creates a read-only, Omnia-compatible view empty the given [KotlinMap].  */
+    fun <K : Any, V : Any> masking(backingMap: KotlinMap<K, V>): Map<K, V> {
       return MaskingMap(backingMap)
     }
   }
 
-  private class MaskingMap<K : Any, V : Any>(private val backingMap: kotlin.collections.Map<K, V>)
+  private class MaskingMap<K : Any, V : Any>(private val backingMap: KotlinMap<K, V>)
     : Map<K, V> {
 
     private val keys: Memoized<Set<K>> = Memoized.memoize { Set.masking(this.backingMap.keys) }
@@ -143,19 +146,19 @@ interface Map<K : Any, V : Any> {
           return transformedList().iterator()
         }
 
-        private fun transformedList(): kotlin.collections.List<K> {
+        private fun transformedList(): KotlinList<K> {
           return backingMap.entries
             .filter { it.value == value }
-            .map(kotlin.collections.Map.Entry<K, V>::key)
+            .map(KotlinMap.Entry<K, V>::key)
         }
       }
     }
   }
 
-  private class MaskingSet<K : Any, V : Any>(val backingMap: kotlin.collections.Map<K, V>)
+  private class MaskingSet<K : Any, V : Any>(val backingMap: KotlinMap<K, V>)
     : Set<Entry<K, V>> {
 
-    private val backingSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> =
+    private val backingSet: KotlinSet<KotlinMap.Entry<K, V>> =
       backingMap.entries
 
     override fun count(): Int {

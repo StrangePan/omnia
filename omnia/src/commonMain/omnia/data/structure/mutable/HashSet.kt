@@ -14,7 +14,7 @@ class HashSet<E : Any>(
 
   private val hashFunction: (Any) -> Int = hashFunction ?: Any::hashCode
 
-  private val backingSet: kotlin.collections.MutableSet<Wrapper<E>> =
+  private val backingSet =
     kotlin.collections.HashSet(
       (original ?: Collection.empty())
         .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) })

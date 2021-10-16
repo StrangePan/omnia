@@ -1,5 +1,6 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.MutableMap as KotlinMutableMap
 import omnia.data.structure.Map
 import omnia.data.structure.Set
 
@@ -19,7 +20,7 @@ interface MutableMap<K : Any, V : Any> : Map<K, V> {
 
   companion object {
 
-    fun <K : Any, V : Any> masking(backingMap: kotlin.collections.MutableMap<K, V>): MutableMap<K, V> {
+    fun <K : Any, V : Any> masking(backingMap: KotlinMutableMap<K, V>): MutableMap<K, V> {
       return MaskingMap(backingMap)
     }
   }

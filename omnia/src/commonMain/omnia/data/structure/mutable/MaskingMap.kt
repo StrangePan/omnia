@@ -1,5 +1,6 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.MutableMap as KotlinMutableList
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
@@ -7,7 +8,8 @@ import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 
 open class MaskingMap<K : Any, V : Any>(
-  private val backingMap: kotlin.collections.MutableMap<K, V>)
+  private val backingMap: KotlinMutableList<K, V>
+)
   : MutableMap<K, V> {
 
   override fun putMapping(key: K, value: V) {
@@ -15,7 +17,7 @@ open class MaskingMap<K : Any, V : Any>(
   }
 
   override fun putMappingIfAbsent(key: K, value: () -> V): V {
-    return backingMap.computeIfAbsent(key) { value() }
+    return backingMap.getOrPut(key) { value() }
   }
 
   override fun removeUnknownTypedKey(key: Any?): V? {

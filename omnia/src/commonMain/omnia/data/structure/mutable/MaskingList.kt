@@ -1,6 +1,8 @@
 package omnia.data.structure.mutable
 
-open class MaskingList<E : Any>(private val backingList: kotlin.collections.MutableList<E>) :
+import kotlin.collections.MutableList as KotlinMutableList
+
+open class MaskingList<E : Any>(private val backingList: KotlinMutableList<E>) :
   MutableList<E> {
 
   override fun insertAt(index: Int, item: E) {

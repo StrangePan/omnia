@@ -263,13 +263,8 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
     override fun hashCode() = hash(endpoints)
 
-    override fun toString(): String {
-      return String.format(
-        "ImmutableDirectedEdge{from=%s, to=%s}",
-        endpoints.first(),
-        endpoints.second()
-      )
-    }
+    override fun toString() =
+      "ImmutableDirectedEdge{from=${endpoints.first()}, to=${endpoints.second()}}"
 
     private fun graph() = this@ImmutableDirectedGraph
   }

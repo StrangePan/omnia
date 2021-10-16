@@ -13,6 +13,6 @@ class ArrayIterator<E>(private val elements: Array<E>) : Iterator<E> {
     if (i < elements.size) {
       return elements[i++]
     }
-    throw NoSuchElementException(String.format("ArrayIterator reached last index in array: %d", i))
+    throw NoSuchElementException("ArrayIterator reached last index in array: $i")
   }
 }

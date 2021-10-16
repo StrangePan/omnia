@@ -1,5 +1,6 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.MutableList as KotlinMutableList
 import omnia.contract.Countable
 
 interface Stack<E : Any> : Countable, Iterable<E> {
@@ -12,7 +13,7 @@ interface Stack<E : Any> : Countable, Iterable<E> {
 
   companion object {
 
-    fun <E : Any> masking(backingList: kotlin.collections.MutableList<E>): Stack<E> {
+    fun <E : Any> masking(backingList: KotlinMutableList<E>): Stack<E> {
       return object : Stack<E> {
         override fun push(item: E) {
           backingList.add(item)

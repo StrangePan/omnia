@@ -4,6 +4,7 @@ import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.subject.publish.PublishSubject
+import kotlin.jvm.Volatile
 import omnia.algorithm.SetAlgorithms
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet
@@ -66,18 +67,16 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
     mutator: (ImmutableSet<E>) -> ImmutableSet<E>,
     mutationsGenerator: (ImmutableSet<E>, ImmutableSet<E>) -> Set<SetOperation<E>>
   ): Boolean {
-    synchronized(this) {
-      val previousState = currentState
-      if (!shouldMutate(previousState)) {
-        return false
-      }
-      val newState = mutator(previousState)
-      currentState = newState
-      mutationEvents.onNext(
-        MutationEvent(newState, mutationsGenerator(previousState, newState))
-      )
-      return true
+    val previousState = currentState
+    if (!shouldMutate(previousState)) {
+      return false
     }
+    val newState = mutator(previousState)
+    currentState = newState
+    mutationEvents.onNext(
+      MutationEvent(newState, mutationsGenerator(previousState, newState))
+    )
+    return true
   }
 
   override fun iterator(): Iterator<E> {
@@ -120,9 +119,7 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
   }
 
   private val state: ImmutableSet<E>
-    get() {
-      synchronized(this) { return currentState }
-    }
+    get() = currentState
 
   private class AddToSet<E : Any>(private val item: E) : ObservableSet.AddToSet<E> {
 

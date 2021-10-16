@@ -1,11 +1,13 @@
 package omnia.data.structure
 
+import kotlin.collections.Collection as KotlinCollection
+import kotlin.collections.Set as KotlinSet
 import omnia.data.iterate.ReadOnlyIterator
 
 interface Set<E : Any> : Collection<E> {
   companion object {
 
-    fun <E : Any> masking(backingSet: kotlin.collections.Set<E>): Set<E> {
+    fun <E : Any> masking(backingSet: KotlinSet<E>): Set<E> {
       return object : Set<E> {
         override val isPopulated: Boolean
           get() = backingSet.isNotEmpty()
@@ -28,7 +30,7 @@ interface Set<E : Any> : Collection<E> {
       }
     }
 
-    fun <E : Any> masking(backingCollection: kotlin.collections.Collection<E>): Set<E> {
+    fun <E : Any> masking(backingCollection: KotlinCollection<E>): Set<E> {
       return masking(HashSet(backingCollection))
     }
 

@@ -1,5 +1,6 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.MutableList as KotlinMutableList
 import omnia.contract.Countable
 
 interface Queue<E : Any> : Countable, Iterable<E> {
@@ -24,7 +25,7 @@ interface Queue<E : Any> : Countable, Iterable<E> {
 
   companion object {
 
-    fun <E : Any> masking(backingList: kotlin.collections.MutableList<E>): Queue<E> {
+    fun <E : Any> masking(backingList: KotlinMutableList<E>): Queue<E> {
       return object : Queue<E> {
         override fun dequeue(): E? {
           return backingList.removeFirstOrNull()

@@ -1,6 +1,8 @@
 package omnia.data.structure.mutable
 
-open class MaskingSet<E : Any, J : kotlin.collections.MutableSet<E>>(private val backingSet: J) :
+import kotlin.collections.MutableSet as KotlinMutableSet
+
+open class MaskingSet<E : Any, J : KotlinMutableSet<E>>(private val backingSet: J) :
   MutableSet<E> {
 
   override fun add(item: E) {

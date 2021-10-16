@@ -41,11 +41,8 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
 
     constructor(capacity: Int, other: FixedArrayQueue<E>) : this(capacity) {
       require(other.count() <= capacity) {
-        String.format(
-          "Attempted to copy a queue (capacity %d) into a smaller queue (capacity %d)",
-          other.capacity(),
-          capacity
-        )
+        "Attempted to copy a queue (capacity ${other.capacity()}) into a smaller queue " +
+            "(capacity $capacity)"
       }
       var item = other.dequeue()
       while (item != null) {
@@ -56,10 +53,7 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
 
     override fun enqueue(item: E) {
       check(items[tail] == null) {
-        String.format(
-          "Attempted to enqueue an item into a full queue (size %d)",
-          items.size
-        )
+        "Attempted to enqueue an item into a full queue (size ${items.size})"
       }
       items[tail] = item
       tail = (tail + 1) % items.size
@@ -102,7 +96,7 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
     }
 
     init {
-      require(capacity >= 1) { String.format("Capacity must be at least 1 (%d given)", capacity) }
+      require(capacity >= 1) { "Capacity must be at least 1 ($capacity given)" }
       this.items = arrayOfNulls(capacity)
     }
   }
@@ -121,7 +115,7 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
   }
 
   init {
-    require(capacity >= 1) { String.format("Capacity must be at least 1: %d given.", capacity) }
+    require(capacity >= 1) { "Capacity must be at least 1: $capacity given." }
     minimumCapacity = capacity
     subQueue = FixedArrayQueue(capacity)
   }

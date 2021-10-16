@@ -1,9 +1,12 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.ArrayList as KotlinArrayList
+import kotlin.collections.List as KotlinList
 import omnia.data.structure.List
 
 class ArrayList<E : Any> private constructor(
-    backingList: kotlin.collections.List<E> = kotlin.collections.ArrayList()) :
+    backingList: KotlinList<E> = KotlinArrayList()
+) :
     MaskingList<E>(toArrayList(backingList)) {
 
   companion object {
@@ -14,7 +17,7 @@ class ArrayList<E : Any> private constructor(
 
     fun <E : Any> copyOf(otherList: List<out E>): ArrayList<E> {
       val newList: ArrayList<E> = create()
-      otherList.iterator().forEachRemaining { element: E -> newList.add(element) }
+      otherList.iterator().forEach(newList::add)
       return newList
     }
 
@@ -22,8 +25,8 @@ class ArrayList<E : Any> private constructor(
       return ArrayList()
     }
 
-    fun <E : Any> toArrayList(list: kotlin.collections.List<E>): kotlin.collections.ArrayList<E> {
-      return if (list is kotlin.collections.ArrayList) list else kotlin.collections.ArrayList(list)
+    fun <E : Any> toArrayList(list: KotlinList<E>): KotlinArrayList<E> {
+      return if (list is KotlinArrayList) list else KotlinArrayList(list)
     }
   }
 }

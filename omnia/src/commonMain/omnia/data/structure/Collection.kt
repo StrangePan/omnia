@@ -1,5 +1,6 @@
 package omnia.data.structure
 
+import kotlin.collections.Collection as KotlinCollection
 import omnia.contract.Countable
 import omnia.contract.TypedContainer
 import omnia.data.iterate.EmptyIterator
@@ -21,7 +22,7 @@ interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E> {
     }
 
     /**
-     * Creates a [Collection] view of the given [kotlin.collections.Collection].
+     * Creates a [Collection] view of the given [KotlinCollection].
      *
      * The returned [Collection] is merely a read-only view empty the given Kotlin collection.
      * It is still backed by the given Kotlin collection, meaning that any operations that occur
@@ -30,10 +31,10 @@ interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E> {
      * This method is intended to act as a bridge between the standard Kotlin data structures and
      * Omnia-compatible systems.
      *
-     * @param backingCollection the [kotlin.collections.Collection] to mask
+     * @param backingCollection the [KotlinCollection] to mask
      * @param E the type contained within the [Collection]
      */
-    fun <E : Any> masking(backingCollection: kotlin.collections.Collection<E>): Collection<E> {
+    fun <E : Any> masking(backingCollection: KotlinCollection<E>): Collection<E> {
       return object : Collection<E> {
         override val isPopulated: Boolean
           get() = backingCollection.isNotEmpty()

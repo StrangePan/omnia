@@ -1,5 +1,6 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.MutableCollection as KotlinMutableCollection
 import omnia.contract.Clearable
 import omnia.data.structure.Collection
 
@@ -58,7 +59,7 @@ interface MutableCollection<E : Any> : Collection<E>, Clearable {
 
   companion object {
 
-    fun <E : Any> masking(backingCollection: kotlin.collections.MutableCollection<E>):
+    fun <E : Any> masking(backingCollection: KotlinMutableCollection<E>):
         MutableCollection<E> {
       return object : MutableCollection<E> {
         override fun add(item: E) {

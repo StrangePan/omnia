@@ -1,6 +1,7 @@
 package omnia.data.structure.immutable
 
 import kotlin.collections.HashMap as KotlinHashMap
+import kotlin.collections.Map as KotlinMap
 import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.cache.Memoized.Companion.memoize
 import omnia.data.structure.Collection
@@ -55,7 +56,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
   private constructor()
   
-  private constructor(map: kotlin.collections.Map<K, V>) {
+  private constructor(map: KotlinMap<K, V>) {
     this.backingMap.putAll(map)
   }
 
@@ -157,7 +158,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       return ImmutableMap(mapOf(Pair(key, value)))
     }
 
-    fun <K : Any, V : Any> copyOf(otherMap: kotlin.collections.Map<out K, V>): ImmutableMap<K, V> {
+    fun <K : Any, V : Any> copyOf(otherMap: KotlinMap<out K, V>): ImmutableMap<K, V> {
       return copyOf(Map.masking(otherMap))
     }
 

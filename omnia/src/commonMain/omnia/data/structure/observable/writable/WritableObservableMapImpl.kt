@@ -4,6 +4,7 @@ import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.subject.publish.PublishSubject
+import kotlin.jvm.Volatile
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
@@ -40,49 +41,43 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
   }
 
   override fun putMappingIfAbsent(key: K, value: () -> V): V {
-    synchronized(this) {
-      mutateState(
-        { currentState -> currentState.valueOf(key) == null },
-        { currentState -> currentState.toBuilder().putMapping(key, value()).build() }
-      ) { _, newState -> ImmutableSet.of(AddToMap(key, newState.valueOf(key)!!)) }
-      return currentState.valueOf(key)!!
-    }
+    mutateState(
+      { currentState -> currentState.valueOf(key) == null },
+      { currentState -> currentState.toBuilder().putMapping(key, value()).build() }
+    ) { _, newState -> ImmutableSet.of(AddToMap(key, newState.valueOf(key)!!)) }
+    return currentState.valueOf(key)!!
   }
 
   override fun removeKey(key: K): V? {
-    synchronized(this) {
-      val removedValue = currentState.valueOf(key)
-      mutateState(
-        { currentState -> currentState.valueOf(key) != null },
-        { currentState -> currentState.toBuilder().removeKey(key).build() }
-      ) { previousState, _ ->
-        ImmutableSet.of(
-          RemoveFromMap(
-            key,
-            previousState.valueOf(key)!!
-          )
+    val removedValue = currentState.valueOf(key)
+    mutateState(
+      { currentState -> currentState.valueOf(key) != null },
+      { currentState -> currentState.toBuilder().removeKey(key).build() }
+    ) { previousState, _ ->
+      ImmutableSet.of(
+        RemoveFromMap(
+          key,
+          previousState.valueOf(key)!!
         )
-      }
-      return removedValue
+      )
     }
+    return removedValue
   }
 
   override fun removeUnknownTypedKey(key: Any?): V? {
-    synchronized(this) {
-      val removedValue = currentState.valueOfUnknownTyped(key)
-      mutateState(
-        { currentState -> currentState.valueOfUnknownTyped(key) != null },
-        { currentState -> currentState.toBuilder().removeUnknownTypedKey(key).build() }
-      ) { previousState, _ ->
-        @Suppress("UNCHECKED_CAST")
-        ImmutableSet.of(
-          RemoveFromMap(
-            key as K, previousState.valueOfUnknownTyped(key)!!
-          )
+    val removedValue = currentState.valueOfUnknownTyped(key)
+    mutateState(
+      { currentState -> currentState.valueOfUnknownTyped(key) != null },
+      { currentState -> currentState.toBuilder().removeUnknownTypedKey(key).build() }
+    ) { previousState, _ ->
+      @Suppress("UNCHECKED_CAST")
+      ImmutableSet.of(
+        RemoveFromMap(
+          key as K, previousState.valueOfUnknownTyped(key)!!
         )
-      }
-      return removedValue
+      )
     }
+    return removedValue
   }
 
   private fun mutateState(
@@ -90,17 +85,15 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
     mutateState: (ImmutableMap<K, V>) -> ImmutableMap<K, V>,
     mutationOperations: (ImmutableMap<K, V>, ImmutableMap<K, V>) -> Set<MapOperation<K, V>>
   ): Boolean {
-    synchronized(this) {
-      val previousState = currentState
-      if (!shouldChange(previousState)) {
-        return false
-      }
-      val nextState = mutateState(previousState)
-      currentState = nextState
-      val operations = mutationOperations(previousState, nextState)
-      mutationEvents.onNext(MutationEvent(nextState, operations))
-      return true
+    val previousState = currentState
+    if (!shouldChange(previousState)) {
+      return false
     }
+    val nextState = mutateState(previousState)
+    currentState = nextState
+    val operations = mutationOperations(previousState, nextState)
+    mutationEvents.onNext(MutationEvent(nextState, operations))
+    return true
   }
 
   override fun entries(): Set<Map.Entry<K, V>> {
@@ -132,9 +125,7 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
   }
 
   private val state: ImmutableMap<K, V>
-    get() {
-      synchronized(this) { return currentState }
-    }
+    get() = currentState
 
   override fun observe(): ObservableChannels {
     return ObservableChannels()

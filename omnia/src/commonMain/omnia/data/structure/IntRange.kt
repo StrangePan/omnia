@@ -96,12 +96,8 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
 
   init {
     require(length >= 0) {
-      String.format(
-        "range start must come at or before the end. start=%d end=%d length=%d",
-        start,
-        start + length,
-        length
-      )
+      "range start must come at or before the end. " +
+          "start=$start end=${start + length} length=$length"
     }
     this.start = start
     this.length = length

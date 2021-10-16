@@ -4,6 +4,7 @@ import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.subject.publish.PublishSubject
+import kotlin.jvm.Volatile
 import omnia.data.structure.IntRange
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
@@ -27,37 +28,31 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
 
   override fun removeAt(index: Int): E {
     val range: IntRange = IntRange.just(index)
-    var value: E
-    synchronized(this) {
-      value = state.itemAt(index)
-      mutateState(
-        { true },
-        { state -> state.toBuilder().removeAt(index).build() }
-      ) { previousState: ImmutableList<E>, _: ImmutableList<E> ->
-        generateRemoveAtMutations(
-          previousState,
-          range
-        )
-      }
+    val value: E = state.itemAt(index)
+    mutateState(
+      { true },
+      { state -> state.toBuilder().removeAt(index).build() }
+    ) { previousState: ImmutableList<E>, _: ImmutableList<E> ->
+      generateRemoveAtMutations(
+        previousState,
+        range
+      )
     }
     return value
   }
 
   override fun replaceAt(index: Int, item: E): E {
     val range: IntRange = IntRange.just(index)
-    var value: E
-    synchronized(this) {
-      value = state.itemAt(index)
-      mutateState(
-        { true },
-        { state -> state.toBuilder().replaceAt(index, item).build() }
-      ) { previousState, currentState ->
-        generateReplaceAtMutations(
-          previousState,
-          currentState,
-          range
-        )
-      }
+    val value: E = state.itemAt(index)
+    mutateState(
+      { true },
+      { state -> state.toBuilder().replaceAt(index, item).build() }
+    ) { previousState, currentState ->
+      generateReplaceAtMutations(
+        previousState,
+        currentState,
+        range
+      )
     }
     return value
   }
@@ -87,28 +82,24 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
   }
 
   override fun removeUnknownTyped(item: Any?): Boolean {
-    synchronized(this) {
-      val index = state.indexOf(item)
-      return mutateState(
-        { index != null },
-        { state -> state.toBuilder().removeAt(index!!).build() }
-      ) { previousState, _ ->
-        generateRemoveAtMutations(
-          previousState, IntRange.just(index!!)
-        )
-      }
+    val index = state.indexOf(item)
+    return mutateState(
+      { index != null },
+      { state -> state.toBuilder().removeAt(index!!).build() }
+    ) { previousState, _ ->
+      generateRemoveAtMutations(
+        previousState, IntRange.just(index!!)
+      )
     }
   }
 
   override fun clear() {
-    synchronized(this) {
-      mutateState({ obj: ImmutableList<E> -> obj.isPopulated },
-        { ImmutableList.empty() }
-      ) { previousState, _ ->
-        generateRemoveAtMutations(
-          previousState, IntRange.startingAt(0).endingAt(previousState.count())
-        )
-      }
+    mutateState({ obj: ImmutableList<E> -> obj.isPopulated },
+      { ImmutableList.empty() }
+    ) { previousState, _ ->
+      generateRemoveAtMutations(
+        previousState, IntRange.startingAt(0).endingAt(previousState.count())
+      )
     }
   }
 
@@ -117,18 +108,16 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
     mutator: (ImmutableList<E>) -> ImmutableList<E>,
     mutationsGenerator: (ImmutableList<E>, ImmutableList<E>) -> List<ListOperation<E>>
   ): Boolean {
-    synchronized(this) {
-      val previousState = currentState
-      if (!shouldMutate(previousState)) {
-        return false
-      }
-      val newState = mutator(previousState)
-      currentState = newState
-      mutationEvents.onNext(
-        MutationEvent(newState, mutationsGenerator(previousState, newState))
-      )
-      return true
+    val previousState = currentState
+    if (!shouldMutate(previousState)) {
+      return false
     }
+    val newState = mutator(previousState)
+    currentState = newState
+    mutationEvents.onNext(
+      MutationEvent(newState, mutationsGenerator(previousState, newState))
+    )
+    return true
   }
 
   override fun iterator(): Iterator<E> {
@@ -187,9 +176,7 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
   }
 
   private val state: ImmutableList<E>
-    get() {
-      synchronized(this) { return currentState }
-    }
+    get() = currentState
 
   private class AddToList<E : Any>(private val items: List<E>, private val indices: IntRange) :
     ObservableList.AddToList<E> {

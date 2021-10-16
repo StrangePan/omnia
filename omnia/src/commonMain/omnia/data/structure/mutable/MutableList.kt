@@ -1,5 +1,6 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.MutableList as KotlinMutableList
 import omnia.data.structure.List
 
 interface MutableList<E : Any> : List<E>, MutableCollection<E> {
@@ -12,7 +13,7 @@ interface MutableList<E : Any> : List<E>, MutableCollection<E> {
 
   companion object {
 
-    fun <E : Any> masking(backingList: kotlin.collections.MutableList<E>): MutableList<E> {
+    fun <E : Any> masking(backingList: KotlinMutableList<E>): MutableList<E> {
       return MaskingList(backingList)
     }
   }
