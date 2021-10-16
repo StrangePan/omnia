@@ -23,31 +23,31 @@ interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E> {
     /**
      * Creates a [Collection] view of the given [kotlin.collections.Collection].
      *
-     * The returned [Collection] is merely a read-only view empty the given Java collection.
-     * It is still backed by the given Java collection, meaning that any operations that occur on the
-     * underlying Java collection will reflect in its own method calls.
+     * The returned [Collection] is merely a read-only view empty the given Kotlin collection.
+     * It is still backed by the given Kotlin collection, meaning that any operations that occur
+     * on the underlying Kotlin collection will reflect in its own method calls.
      *
-     * This method is intended to act as a bridge between the standard Java data structures and
+     * This method is intended to act as a bridge between the standard Kotlin data structures and
      * Omnia-compatible systems.
      *
-     * @param kotlinCollection the [kotlin.collections.Collection] to mask
+     * @param backingCollection the [kotlin.collections.Collection] to mask
      * @param E the type contained within the [Collection]
      */
-    fun <E : Any> masking(kotlinCollection: kotlin.collections.Collection<E>): Collection<E> {
+    fun <E : Any> masking(backingCollection: kotlin.collections.Collection<E>): Collection<E> {
       return object : Collection<E> {
         override val isPopulated: Boolean
-          get() = kotlinCollection.isNotEmpty()
+          get() = backingCollection.isNotEmpty()
 
         override fun count(): Int {
-          return kotlinCollection.size
+          return backingCollection.size
         }
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return kotlinCollection.contains(item)
+          return backingCollection.contains(item)
         }
 
         override fun iterator(): Iterator<E> {
-          return ReadOnlyIterator(kotlinCollection.iterator())
+          return ReadOnlyIterator(backingCollection.iterator())
         }
       }
     }

@@ -21,40 +21,40 @@ interface List<E : Any> : Collection<E>, Indexable<E> {
     /**
      * Creates a [List] view empty the given [kotlin.collections.List].
      *
-     * The returned [List] is merely a read-only view empty the given Java list.
-     * It is still backed by the given Java list, meaning that any operations that occur on the
-     * underlying Java list will reflect in its own method calls.
+     * The returned [List] is merely a read-only view empty the given Kotlin list.
+     * It is still backed by the given Kotlin list, meaning that any operations that occur on the
+     * underlying Kotlin list will reflect in its own method calls.
      *
-     * This method is intended to act as a bridge between the standard Java data structures and
+     * This method is intended to act as a bridge between the standard Kotlin data structures and
      * Omnia-compatible systems.
      *
-     * @param javaList the [kotlin.collections.List] to mask
+     * @param backingList the [kotlin.collections.List] to mask
      * @param E the type contained within the [List]
      */
     @JvmStatic
-    fun <E : Any> masking(javaList: kotlin.collections.List<E>): List<E> {
+    fun <E : Any> masking(backingList: kotlin.collections.List<E>): List<E> {
       return object : List<E> {
         override val isPopulated: Boolean
-          get() = javaList.isNotEmpty()
+          get() = backingList.isNotEmpty()
 
         override fun count(): Int {
-          return javaList.size
+          return backingList.size
         }
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return javaList.contains(item)
+          return backingList.contains(item)
         }
 
         override fun iterator(): Iterator<E> {
-          return ReadOnlyIterator(javaList.iterator())
+          return ReadOnlyIterator(backingList.iterator())
         }
 
         override fun itemAt(index: Int): E {
-          return javaList[index]
+          return backingList[index]
         }
 
         override fun indexOf(item: Any?): Int? {
-          val index = javaList.indexOf(item)
+          val index = backingList.indexOf(item)
           return if (index < 0) null else index
         }
       }

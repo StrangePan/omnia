@@ -10,21 +10,21 @@ import omnia.data.structure.tuple.Couple
 
 class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
-  private val kotlinMap: MutableMap<K, V> = kotlin.collections.HashMap()
+  private val backingMap: MutableMap<K, V> = kotlin.collections.HashMap()
   fun toBuilder(): Builder<K, V> {
     return buildUpon(this)
   }
 
   class Builder<K : Any, V : Any> {
 
-    val kotlinMap: MutableMap<K, V> = kotlin.collections.HashMap()
+    val backingMap: MutableMap<K, V> = kotlin.collections.HashMap()
     fun putMapping(key: K, value: V): Builder<K, V> {
-      kotlinMap[key] = value
+      backingMap[key] = value
       return this
     }
 
     fun putMappingIfAbsent(key: K, value: () -> V): Builder<K, V> {
-      kotlinMap.computeIfAbsent(key) { value() }
+      backingMap.computeIfAbsent(key) { value() }
       return this
     }
 
@@ -43,39 +43,40 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     }
 
     fun removeUnknownTypedKey(key: Any?): Builder<K, V> {
-      kotlinMap.remove(key)
+      backingMap.remove(key)
       return this
     }
 
     fun build(): ImmutableMap<K, V> {
-      return if (kotlinMap.isEmpty()) empty() else ImmutableMap(this)
+      return if (backingMap.isEmpty()) empty() else ImmutableMap(this)
     }
   }
 
   private constructor()
+  
   private constructor(map: kotlin.collections.Map<K, V>) {
-    this.kotlinMap.putAll(map)
+    this.backingMap.putAll(map)
   }
 
-  private constructor(builder: Builder<K, V>) : this(builder.kotlinMap)
+  private constructor(builder: Builder<K, V>) : this(builder.backingMap)
 
   override fun keys(): Set<K> {
-    return Set.masking(kotlinMap.keys)
+    return Set.masking(backingMap.keys)
   }
 
   override fun values(): Collection<V> {
-    return Collection.masking(kotlinMap.values)
+    return Collection.masking(backingMap.values)
   }
 
   override fun entries(): ImmutableSet<Map.Entry<K, V>> {
-    class Entry(private val javaEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
+    class Entry(private val backingEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
 
       override fun key(): K {
-        return javaEntry.key
+        return backingEntry.key
       }
 
       override fun value(): V {
-        return javaEntry.value
+        return backingEntry.value
       }
 
       override fun equals(other: Any?): Boolean {
@@ -95,15 +96,15 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
         return key().toString() + " => " + value().toString()
       }
     }
-    return kotlinMap.entries.map { Entry(it) }.toImmutableSet()
+    return backingMap.entries.map { Entry(it) }.toImmutableSet()
   }
 
   override fun valueOfUnknownTyped(key: Any?): V? {
-    return kotlinMap[key]
+    return backingMap[key]
   }
 
   override fun keysOfUnknownTyped(value: Any?): ImmutableSet<K> {
-    return kotlinMap.entries.filter { it.value == value }.map { it.key }.toImmutableSet()
+    return backingMap.entries.filter { it.value == value }.map { it.key }.toImmutableSet()
   }
 
   override fun equals(other: Any?): Boolean {
@@ -139,7 +140,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
   }
 
   override fun toString(): String {
-    return "${javaClass.simpleName}[${entries().joinToString { "{$it}" }}]"
+    return "${this::class.simpleName}[${entries().joinToString { "{$it}" }}]"
   }
 
   companion object {

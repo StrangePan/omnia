@@ -7,58 +7,54 @@ import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 
 open class MaskingMap<K : Any, V : Any>(
-  private val kotlinMap: kotlin.collections.MutableMap<K, V>)
+  private val backingMap: kotlin.collections.MutableMap<K, V>)
   : MutableMap<K, V> {
 
   override fun putMapping(key: K, value: V) {
-    kotlinMap[key] = value
+    backingMap[key] = value
   }
 
   override fun putMappingIfAbsent(key: K, value: () -> V): V {
-    return kotlinMap.computeIfAbsent(key) { value() }
+    return backingMap.computeIfAbsent(key) { value() }
   }
 
   override fun removeUnknownTypedKey(key: Any?): V? {
-    return kotlinMap.remove(key)
+    return backingMap.remove(key)
   }
 
   override fun keys(): Set<K> {
-    return Set.masking(kotlinMap.keys)
+    return Set.masking(backingMap.keys)
   }
 
   override fun values(): Collection<V> {
-    return Collection.masking(kotlinMap.values)
+    return Collection.masking(backingMap.values)
   }
 
   override fun entries(): Set<Map.Entry<K, V>> {
     return object : Set<Map.Entry<K, V>> {
       override fun containsUnknownTyped(item: Any?): Boolean {
-        return (item is Map.Entry<*, *> && kotlinMap[item.key()] == item.value())
+        return (item is Map.Entry<*, *> && backingMap[item.key()] == item.value())
       }
 
       override fun count(): Int {
-        return kotlinMap.size
+        return backingMap.size
       }
 
       override fun iterator(): Iterator<Map.Entry<K, V>> {
-        return MappingIterator(kotlinMap.entries.iterator()) { javaEntry ->
-          Map.Entry.masking(
-            javaEntry
-          )
-        }
+        return MappingIterator(backingMap.entries.iterator()) { Map.Entry.masking(it) }
       }
     }
   }
 
   override fun valueOfUnknownTyped(key: Any?): V? {
-    return kotlinMap[key]
+    return backingMap[key]
   }
 
   override fun keysOfUnknownTyped(value: Any?): Set<K> {
-    return kotlinMap.entries.filter { it.value == value }.map { it.key }.toImmutableSet()
+    return backingMap.entries.filter { it.value == value }.map { it.key }.toImmutableSet()
   }
 
   override fun toString(): String {
-    return kotlinMap.toString()
+    return backingMap.toString()
   }
 }

@@ -15,7 +15,7 @@ interface Container {
    *
    * Instances will be compared using the [Object.equals] method as defined by the
    * contained type. It is important that this type appropriately implement this method
-   * according to the contract set forth by the core Java libraries.
+   * according to the contract set forth by the core platform libraries.
    *
    * @param item the element to check for
    * @return `true` if the given object (or a functional equivalent as defined by [Object.equals])

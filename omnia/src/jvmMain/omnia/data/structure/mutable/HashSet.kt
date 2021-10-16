@@ -14,7 +14,7 @@ class HashSet<E : Any>(
 
   private val hashFunction: (Any) -> Int = hashFunction ?: Any::hashCode
 
-  private val kotlinSet: kotlin.collections.MutableSet<Wrapper<E>> =
+  private val backingSet: kotlin.collections.MutableSet<Wrapper<E>> =
     kotlin.collections.HashSet(
       (original ?: Collection.empty())
         .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) })
@@ -43,38 +43,38 @@ class HashSet<E : Any>(
   }
 
   override fun add(item: E) {
-    kotlinSet.add(wrap(item))
+    backingSet.add(wrap(item))
   }
 
   override fun addAll(items: Iterable<E>) {
-    kotlinSet.addAll(items.map { element -> wrap(element) })
+    backingSet.addAll(items.map { element -> wrap(element) })
   }
 
   override fun removeUnknownTyped(item: Any?): Boolean {
-    return if (item != null) kotlinSet.remove(wrap(item) as Wrapper<*>) else false
+    return if (item != null) backingSet.remove(wrap(item) as Wrapper<*>) else false
   }
 
   override fun clear() {
-    kotlinSet.clear()
+    backingSet.clear()
   }
 
   override fun iterator(): Iterator<E> {
-    return MappingIterator(kotlinSet.iterator(), unwrap())
+    return MappingIterator(backingSet.iterator(), unwrap())
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {
-    return if (item != null) kotlinSet.contains(wrap(item) as Wrapper<*>) else false
+    return if (item != null) backingSet.contains(wrap(item) as Wrapper<*>) else false
   }
 
   override fun count(): Int {
-    return kotlinSet.size
+    return backingSet.size
   }
 
   override val isPopulated: Boolean
-    get() = kotlinSet.isNotEmpty()
+    get() = backingSet.isNotEmpty()
 
   override fun toString(): String {
-    return kotlinSet.toString()
+    return backingSet.toString()
   }
 
   private fun <T : Any> wrap(element: T): Wrapper<T> {

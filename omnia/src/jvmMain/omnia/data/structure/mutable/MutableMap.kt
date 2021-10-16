@@ -19,8 +19,8 @@ interface MutableMap<K : Any, V : Any> : Map<K, V> {
 
   companion object {
 
-    fun <K : Any, V : Any> masking(javaMap: kotlin.collections.MutableMap<K, V>): MutableMap<K, V> {
-      return MaskingMap(javaMap)
+    fun <K : Any, V : Any> masking(backingMap: kotlin.collections.MutableMap<K, V>): MutableMap<K, V> {
+      return MaskingMap(backingMap)
     }
   }
 }

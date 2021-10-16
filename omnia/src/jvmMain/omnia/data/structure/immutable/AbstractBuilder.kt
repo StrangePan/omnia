@@ -40,5 +40,6 @@ abstract class AbstractBuilder<E : Any, B : AbstractBuilder<E, B, R>, R> {
   }
 
   abstract fun build(): R
+
   protected abstract val self: B
 }

@@ -22,7 +22,7 @@ class TypedMap private constructor(map: Map<Key<*>, Any>) {
 
     fun putMappings(map: TypedMap): Builder {
       map.map.entries()
-        .forEach({ entry -> this.map.putMapping(entry.key(), entry.value()) })
+        .forEach { entry -> this.map.putMapping(entry.key(), entry.value()) }
       return this
     }
 

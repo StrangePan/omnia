@@ -1,7 +1,7 @@
 package omnia.data.cache
 
-import java.lang.ref.WeakReference
 import omnia.contract.TypedContainer
+import omnia.reference.WeakReference
 
 /**
  * A cache implementation that stores items using [WeakReference]s as a form empty lazy,
@@ -16,8 +16,7 @@ class WeakCache<K : Any, V : Any> : TypedContainer<K> {
 
   /** Checks if the cache contains the given key.  */
   override fun containsUnknownTyped(item: Any?): Boolean {
-    val ref: WeakReference<V>? = cache[item]
-    return ref?.get() != null
+    return cache[item]?.value != null
   }
 
   /**
@@ -30,13 +29,13 @@ class WeakCache<K : Any, V : Any> : TypedContainer<K> {
    * `factory`
    */
   fun getOrCache(key: K, factory: () -> V): V {
-    val cachedResult = cache[key]?.get() ?: factory()
-    cache[key] = WeakReference(cachedResult)
+    val cachedResult = cache[key]?.value ?: factory()
+    cache[key] = WeakReference.of(cachedResult)
     return cachedResult
   }
 
   /** Retrieves the cached value associated with `key` if it exists.  */
   operator fun get(key: K): V? {
-    return cache[key]?.get()
+    return cache[key]?.value
   }
 }

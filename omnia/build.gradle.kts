@@ -25,8 +25,8 @@ kotlin {
         implementation("com.google.truth:truth:1.0")
         implementation("org.mockito:mockito-core:3.2.0")
         implementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
-        implementation("com.google.truth.extensions:truth-java8-extension:1.0")
         implementation("com.badoo.reaktive:reaktive-testing:1.2.0")
+        implementation("com.google.truth.extensions:truth-java8-extension:1.0")
       }
     }
   }

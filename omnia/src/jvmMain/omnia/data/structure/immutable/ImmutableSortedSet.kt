@@ -8,42 +8,42 @@ import omnia.data.structure.mutable.SortedArraySet
 class ImmutableSortedSet<E : Any>
 private constructor(comparator: Comparator<in E>, other: Collection<out E>) : SortedSet<E> {
 
-  private val baseSet: SortedArraySet<E> = SortedArraySet.create(comparator)
+  private val backingSet: SortedArraySet<E> = SortedArraySet.create(comparator)
 
   init {
-    baseSet.addAll(other)
+    backingSet.addAll(other)
   }
 
   override fun contains(item: E): Boolean {
-    return baseSet.contains(item)
+    return backingSet.contains(item)
   }
 
   override fun containsUnknownTyped(item: Any?): Boolean {
-    return baseSet.containsUnknownTyped(item)
+    return backingSet.containsUnknownTyped(item)
   }
 
-  override fun count() = baseSet.count()
+  override fun count() = backingSet.count()
 
-  override val isPopulated get() = baseSet.isPopulated
+  override val isPopulated get() = backingSet.isPopulated
 
   override fun itemPreceding(other: E): E? {
-    return baseSet.itemPreceding(other)
+    return backingSet.itemPreceding(other)
   }
 
   override fun itemPrecedingUnknownTyped(other: Any?): E? {
-    return baseSet.itemPrecedingUnknownTyped(other)
+    return backingSet.itemPrecedingUnknownTyped(other)
   }
 
   override fun itemFollowing(other: E): E? {
-    return baseSet.itemFollowing(other)
+    return backingSet.itemFollowing(other)
   }
 
   override fun itemFollowingUnknownTyped(other: Any?): E? {
-    return baseSet.itemFollowingUnknownTyped(other)
+    return backingSet.itemFollowingUnknownTyped(other)
   }
 
   override fun iterator(): Iterator<E> {
-    return baseSet.iterator()
+    return backingSet.iterator()
   }
 
   companion object {

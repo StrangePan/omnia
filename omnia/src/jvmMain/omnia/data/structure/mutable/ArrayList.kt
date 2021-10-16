@@ -3,8 +3,8 @@ package omnia.data.structure.mutable
 import omnia.data.structure.List
 
 class ArrayList<E : Any> private constructor(
-    kotlinList: kotlin.collections.List<E> = kotlin.collections.ArrayList()) :
-    MaskingList<E>(toArrayList(kotlinList)) {
+    backingList: kotlin.collections.List<E> = kotlin.collections.ArrayList()) :
+    MaskingList<E>(toArrayList(backingList)) {
 
   companion object {
 

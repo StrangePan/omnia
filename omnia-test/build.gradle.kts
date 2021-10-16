@@ -15,6 +15,7 @@ kotlin {
         implementation("com.badoo.reaktive:reaktive:1.2.0")
         implementation("com.badoo.reaktive:reaktive-testing:1.2.0")
         implementation("com.badoo.reaktive:reaktive-jvm:1.2.0")
+        implementation("com.google.truth.extensions:truth-java8-extension:1.0")
       }
     }
   }

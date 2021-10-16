@@ -12,8 +12,8 @@ interface MutableList<E : Any> : List<E>, MutableCollection<E> {
 
   companion object {
 
-    fun <E : Any> masking(javaList: kotlin.collections.MutableList<E>): MutableList<E> {
-      return MaskingList(javaList)
+    fun <E : Any> masking(backingList: kotlin.collections.MutableList<E>): MutableList<E> {
+      return MaskingList(backingList)
     }
   }
 }

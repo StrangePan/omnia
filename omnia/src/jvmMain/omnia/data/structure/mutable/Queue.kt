@@ -24,35 +24,35 @@ interface Queue<E : Any> : Countable, Iterable<E> {
 
   companion object {
 
-    fun <E : Any> masking(kotlinList: kotlin.collections.MutableList<E>): Queue<E> {
+    fun <E : Any> masking(backingList: kotlin.collections.MutableList<E>): Queue<E> {
       return object : Queue<E> {
         override fun dequeue(): E? {
-          return kotlinList.removeFirstOrNull()
+          return backingList.removeFirstOrNull()
         }
 
         override fun peek(): E? {
-          return kotlinList.firstOrNull()
+          return backingList.firstOrNull()
         }
 
         override fun enqueue(item: E) {
-          kotlinList.add(item)
+          backingList.add(item)
         }
 
         override fun count(): Int {
-          return kotlinList.size
+          return backingList.size
         }
 
         override val isPopulated: Boolean
-          get() = kotlinList.isNotEmpty()
+          get() = backingList.isNotEmpty()
 
         override fun iterator(): Iterator<E> {
           return object : Iterator<E> {
             override fun hasNext(): Boolean {
-              return kotlinList.isNotEmpty()
+              return backingList.isNotEmpty()
             }
 
             override fun next(): E {
-              return kotlinList.removeFirst()
+              return backingList.removeFirst()
             }
           }
         }

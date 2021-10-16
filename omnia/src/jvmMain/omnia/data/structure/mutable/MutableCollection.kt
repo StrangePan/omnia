@@ -58,38 +58,38 @@ interface MutableCollection<E : Any> : Collection<E>, Clearable {
 
   companion object {
 
-    fun <E : Any> masking(javaCollection: kotlin.collections.MutableCollection<E>):
+    fun <E : Any> masking(backingCollection: kotlin.collections.MutableCollection<E>):
         MutableCollection<E> {
       return object : MutableCollection<E> {
         override fun add(item: E) {
-          javaCollection.add(item)
+          backingCollection.add(item)
         }
 
         override fun addAll(items: Iterable<E>) {
-          javaCollection.addAll(items)
+          backingCollection.addAll(items)
         }
 
         override fun removeUnknownTyped(item: Any?): Boolean {
-          return javaCollection.remove(item)
+          return backingCollection.remove(item)
         }
 
         override fun clear() {
-          javaCollection.clear()
+          backingCollection.clear()
         }
 
         override fun count(): Int {
-          return javaCollection.size
+          return backingCollection.size
         }
 
         override val isPopulated: Boolean
-          get() = !javaCollection.isEmpty()
+          get() = !backingCollection.isEmpty()
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return javaCollection.contains(item)
+          return backingCollection.contains(item)
         }
 
         override fun iterator(): MutableIterator<E> {
-          return javaCollection.iterator()
+          return backingCollection.iterator()
         }
       }
     }

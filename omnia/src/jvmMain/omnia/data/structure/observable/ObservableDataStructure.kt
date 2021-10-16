@@ -4,9 +4,9 @@ import com.badoo.reaktive.observable.Observable
 import omnia.data.structure.Collection
 
 /**
- * A mutable data structure whose state changes can be observed using RxJava. Observers can
- * subscribe to state changes and can subscribe to receive summaries of the operations that occurred
- * between state changes, allowing subscribers to process "diffs" between states.
+ * A mutable data structure whose state changes can be observed. Observers can subscribe to state
+ * changes and can subscribe to receive summaries of the operations that occurred between state
+ * changes, allowing subscribers to process "diffs" between states.
  */
 interface ObservableDataStructure {
 

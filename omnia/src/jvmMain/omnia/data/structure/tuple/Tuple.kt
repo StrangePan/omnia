@@ -142,7 +142,7 @@ interface Tuple : Countable {
       if (tuple is Decuple<*, *, *, *, *, *, *, *, *, *>) {
         return toList(tuple)
       }
-      throw IllegalArgumentException("unrecognized tuple " + tuple.javaClass)
+      throw IllegalArgumentException("unrecognized tuple " + tuple::class)
     }
 
     @JvmStatic

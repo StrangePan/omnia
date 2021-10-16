@@ -12,34 +12,34 @@ interface Stack<E : Any> : Countable, Iterable<E> {
 
   companion object {
 
-    fun <E : Any> masking(kotlinList: kotlin.collections.MutableList<E>): Stack<E> {
+    fun <E : Any> masking(backingList: kotlin.collections.MutableList<E>): Stack<E> {
       return object : Stack<E> {
         override fun push(item: E) {
-          kotlinList.add(item)
+          backingList.add(item)
         }
 
         override fun pop(): E? {
-          return kotlinList.removeLastOrNull()
+          return backingList.removeLastOrNull()
         }
 
         override fun peek(): E? {
-          return kotlinList.lastOrNull()
+          return backingList.lastOrNull()
         }
 
         override fun count(): Int {
-          return kotlinList.size
+          return backingList.size
         }
 
-        override val isPopulated: Boolean get() = kotlinList.isNotEmpty()
+        override val isPopulated: Boolean get() = backingList.isNotEmpty()
 
         override fun iterator(): Iterator<E> {
           return object : Iterator<E> {
             override fun hasNext(): Boolean {
-              return kotlinList.isNotEmpty()
+              return backingList.isNotEmpty()
             }
 
             override fun next(): E {
-              return kotlinList.removeLast()
+              return backingList.removeLast()
             }
           }
         }

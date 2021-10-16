@@ -44,8 +44,8 @@ interface Map<K : Any, V : Any> {
 
     companion object {
 
-      fun <K : Any, V : Any> masking(javaEntry: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
-        return MaskedEntry(javaEntry)
+      fun <K : Any, V : Any> masking(backingMap: kotlin.collections.Map.Entry<K, V>): Entry<K, V> {
+        return MaskedEntry(backingMap)
       }
 
       fun <K : Any, V : Any> of(key: K, value: V): Entry<K, V> {
@@ -54,23 +54,23 @@ interface Map<K : Any, V : Any> {
     }
   }
 
-  private class MaskedEntry<K : Any, V : Any>(javaEntry: kotlin.collections.Map.Entry<K, V>)
+  private class MaskedEntry<K : Any, V : Any>(
+    private val backingEntry: kotlin.collections.Map.Entry<K, V>)
     : Entry<K, V> {
 
-    private val jEntry = javaEntry
     override fun key(): K {
-      return jEntry.key
+      return backingEntry.key
     }
 
     override fun value(): V {
-      return jEntry.value
+      return backingEntry.value
     }
 
     override fun equals(other: Any?): Boolean {
-      return other is MaskedEntry<*, *> && other.jEntry == jEntry
+      return other is MaskedEntry<*, *> && other.backingEntry == backingEntry
     }
 
-    override fun hashCode() = 7 * 31 + jEntry.hashCode()
+    override fun hashCode() = 7 * 31 + backingEntry.hashCode()
   }
 
   private class SimpleEntry<K : Any, V : Any>(key: K, value: V) : Entry<K, V> {
@@ -94,18 +94,18 @@ interface Map<K : Any, V : Any> {
   companion object {
 
     /** Creates a read-only, Omnia-compatible view empty the given [kotlin.collections.Map].  */
-    fun <K : Any, V : Any> masking(javaMap: kotlin.collections.Map<K, V>): Map<K, V> {
-      return MaskingMap(javaMap)
+    fun <K : Any, V : Any> masking(backingMap: kotlin.collections.Map<K, V>): Map<K, V> {
+      return MaskingMap(backingMap)
     }
   }
 
-  private class MaskingMap<K : Any, V : Any>(private val javaMap: kotlin.collections.Map<K, V>)
+  private class MaskingMap<K : Any, V : Any>(private val backingMap: kotlin.collections.Map<K, V>)
     : Map<K, V> {
 
-    private val keys: Memoized<Set<K>> = Memoized.memoize { Set.masking(this.javaMap.keys) }
+    private val keys: Memoized<Set<K>> = Memoized.memoize { Set.masking(this.backingMap.keys) }
     private val values: Memoized<Collection<V>> =
-      Memoized.memoize { Collection.masking(this.javaMap.values) }
-    private val entries: Memoized<Set<Entry<K, V>>> = Memoized.memoize { MaskingSet(javaMap) }
+      Memoized.memoize { Collection.masking(this.backingMap.values) }
+    private val entries: Memoized<Set<Entry<K, V>>> = Memoized.memoize { MaskingSet(backingMap) }
 
     override fun keys(): Set<K> {
       return keys.value()
@@ -120,7 +120,7 @@ interface Map<K : Any, V : Any> {
     }
 
     override fun valueOfUnknownTyped(key: Any?): V? {
-      return javaMap[key]
+      return backingMap[key]
     }
 
     override fun keysOfUnknownTyped(value: Any?): Set<K> {
@@ -129,22 +129,22 @@ interface Map<K : Any, V : Any> {
       return object : Set<K> {
 
         override fun count(): Int {
-          return transformedJavaMap().count()
+          return transformedList().count()
         }
 
         override val isPopulated: Boolean
-          get() = javaMap.containsValue(value)
+          get() = backingMap.containsValue(value)
 
         override fun containsUnknownTyped(item: Any?): Boolean {
-          return isPopulated && transformedJavaMap().any { it == item }
+          return isPopulated && transformedList().any { it == item }
         }
 
         override fun iterator(): Iterator<K> {
-          return transformedJavaMap().iterator()
+          return transformedList().iterator()
         }
 
-        private fun transformedJavaMap(): kotlin.collections.List<K> {
-          return javaMap.entries
+        private fun transformedList(): kotlin.collections.List<K> {
+          return backingMap.entries
             .filter { it.value == value }
             .map(kotlin.collections.Map.Entry<K, V>::key)
         }
@@ -152,27 +152,27 @@ interface Map<K : Any, V : Any> {
     }
   }
 
-  private class MaskingSet<K : Any, V : Any>(val javaMap: kotlin.collections.Map<K, V>)
+  private class MaskingSet<K : Any, V : Any>(val backingMap: kotlin.collections.Map<K, V>)
     : Set<Entry<K, V>> {
 
-    private val javaSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> =
-      javaMap.entries
+    private val backingSet: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> =
+      backingMap.entries
 
     override fun count(): Int {
-      return javaSet.size
+      return backingSet.size
     }
 
     override val isPopulated: Boolean
       get() {
-        return javaSet.isNotEmpty()
+        return backingSet.isNotEmpty()
       }
 
     override fun containsUnknownTyped(item: Any?): Boolean {
-      return (item is Entry<*, *> && item.value() == javaMap[item.key()])
+      return (item is Entry<*, *> && item.value() == backingMap[item.key()])
     }
 
     override fun iterator(): Iterator<Entry<K, V>> {
-      return MappingIterator(javaSet.iterator()) { javaEntry -> Entry.masking(javaEntry) }
+      return MappingIterator(backingSet.iterator()) { Entry.masking(it) }
     }
   }
 }
