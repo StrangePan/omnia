@@ -30,7 +30,7 @@ interface Cached<T : Any> : Holder<T>, CachedValue {
   companion object {
 
     /**
-     * Creates a [Cached] implementation that uses the provided [Supplier] as the factory that
+     * Creates a [Cached] implementation that uses the provided [supplier] as the factory that
      * supplies the value to be cached.
      *
      * @param supplier the supplier that will construct the given value

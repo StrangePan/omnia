@@ -47,38 +47,5 @@ interface Memoized<T : Any> : Holder<T> {
     fun <T : Any> memoize(supplier: () -> T): Memoized<T> {
       return SimpleMemoizer(supplier)
     }
-
-    /**
-     * Creates a [MemoizedInt] implementation that uses the provided [IntSupplier] as the
-     * factory that supplies the value to be memoized.
-     *
-     * @param supplier the supplier that will create the value to be memoized
-     * @return a new [MemoizedInt] instance that will memoize the created value
-     */
-    fun memoizeInt(supplier: () -> Int): MemoizedInt {
-      return SimpleIntMemoizer(supplier)
-    }
-
-    /**
-     * Creates a [MemoizedLong] implementation that uses the provided [LongSupplier]
-     * as the factory that supplies the value to be memoized.
-     *
-     * @param supplier the supplier that will create the value to be memoized
-     * @return a new [MemoizedLong] instance that will memoize the created value
-     */
-    fun memoizeLong(supplier: () -> Long): MemoizedLong {
-      return SimpleLongMemoizer(supplier)
-    }
-
-    /**
-     * Creates a [MemoizedDouble] implementation that uses the provided [DoubleSupplier]
-     * as the factory that supplies the value to be memoized.
-     *
-     * @param supplier the supplier that will create the value to be memoized
-     * @return a new [MemoizedDouble] instance that will memoize the created value
-     */
-    fun memoizeDouble(supplier: () -> Double): MemoizedDouble {
-      return SimpleDoubleMemoizer(supplier)
-    }
   }
 }

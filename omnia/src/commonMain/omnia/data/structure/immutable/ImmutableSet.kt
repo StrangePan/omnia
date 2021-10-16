@@ -1,7 +1,7 @@
 package omnia.data.structure.immutable
 
 import omnia.algorithm.HashAlgorithms.Companion.hash
-import omnia.data.cache.MemoizedInt
+import omnia.data.cache.Memoized.Companion.memoize
 import omnia.data.iterate.ReadOnlyIterator
 import omnia.data.structure.Set
 import omnia.data.structure.mutable.HashSet
@@ -82,7 +82,7 @@ class ImmutableSet<E : Any> : Set<E> {
 
   override fun toString() = elements.toString()
 
-  private val hashCode: MemoizedInt = MemoizedInt.memoize { computeHash() }
+  private val hashCode = memoize { computeHash() }
 
   private fun computeHash(): Int {
     val elementCodes = IntArray(count())

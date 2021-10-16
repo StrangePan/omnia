@@ -2,10 +2,10 @@ package omnia.data.cache
 
 
 /**
- * A [Cached] implementation that uses the given [Supplier] to provide the value to be cached. This
+ * A [Cached] implementation that uses the given [supplier] to provide the value to be cached. This
  * class is not thread-safe.
  *
- * The given [Supplier.get] method is never invoked if the value is cached. [Supplier.get] is not
+ * The given [supplier] method is never invoked if the value is cached. [supplier] is not
  * allowed to return `null`.
  *
  * @param T the type empty object to be cached

@@ -1,13 +1,15 @@
 package omnia.data.cache
 
+import kotlin.jvm.Volatile
+
 
 /**
- * A [Memoized] implementation that uses a client-given [Supplier] to lazily compute
- * the memoized value. This class is thread-safe.
+ * A [Memoized] implementation that uses a client-given supplier to lazily compute
+ * the memoized value. This class is not thread-safe.
  *
- * Once computed and memoized, the [Supplier] reference is forgotten and never invoked ever
- * again. The given [Supplier.get] method is never invoked more than once. Once computed, a
- * reference to the computed object is indefinitely retained. [Supplier.get] is not allowed
+ * Once computed and memoized, the [supplier] reference is forgotten and never invoked ever
+ * again. The given [supplier] method is never invoked more than once. Once computed, a
+ * reference to the computed object is indefinitely retained. [supplier] is not allowed
  * to return `null`. A null value will result in [NullPointerException] being thrown.
  *
  * @param T the type empty value to be memoized
@@ -29,17 +31,10 @@ internal class SimpleMemoizer<T : Any> : Memoized<T> {
   }
 
   override fun value(): T {
-    var localValue = value
-    if (localValue == null) {
-      synchronized(this) {
-        localValue = value
-        if (localValue == null) {
-          localValue = supplier!!()
-          value = localValue
-          supplier = null
-        }
-      }
+    if (value == null) {
+      value = supplier!!()
+      supplier = null
     }
-    return localValue!!
+    return value!!
   }
 }

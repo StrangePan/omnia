@@ -1,7 +1,8 @@
 package omnia.data.structure.immutable
 
+import kotlin.collections.HashMap as KotlinHashMap
 import omnia.algorithm.HashAlgorithms.Companion.hash
-import omnia.data.cache.MemoizedInt
+import omnia.data.cache.Memoized.Companion.memoize
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
@@ -10,21 +11,21 @@ import omnia.data.structure.tuple.Couple
 
 class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
-  private val backingMap: MutableMap<K, V> = kotlin.collections.HashMap()
+  private val backingMap: MutableMap<K, V> = KotlinHashMap()
   fun toBuilder(): Builder<K, V> {
     return buildUpon(this)
   }
 
   class Builder<K : Any, V : Any> {
 
-    val backingMap: MutableMap<K, V> = kotlin.collections.HashMap()
+    val backingMap: MutableMap<K, V> = KotlinHashMap()
     fun putMapping(key: K, value: V): Builder<K, V> {
       backingMap[key] = value
       return this
     }
 
     fun putMappingIfAbsent(key: K, value: () -> V): Builder<K, V> {
-      backingMap.computeIfAbsent(key) { value() }
+      backingMap.getOrPut(key) { value() }
       return this
     }
 
@@ -130,7 +131,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     return hashCode.value()
   }
 
-  private val hashCode: MemoizedInt = MemoizedInt.memoize { computeHash() }
+  private val hashCode = memoize { computeHash() }
   private fun computeHash(): Int {
     val entries: Set<out Map.Entry<*, *>> = entries()
     val entryCodes = IntArray(entries.count())
