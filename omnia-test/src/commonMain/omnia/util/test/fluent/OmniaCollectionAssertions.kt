@@ -35,7 +35,7 @@ fun <T, C : TypedContainer<T>> Assertion<C>.containsElementsIn(expected: Iterabl
   return this
 }
 
-fun <T, C : Container> Assertion<C>.containsUnknownTyped(vararg expected: Any?): Assertion<C> {
+fun <T : Container> Assertion<T>.containsUnknownTyped(vararg expected: Any?): Assertion<T> {
   for (item in expected) {
     assertTrue(actual.containsUnknownTyped(item), message)
   }
@@ -55,7 +55,7 @@ fun <T, C : Collection<T>> Assertion<C>.containsExactlyElementsIn(expected: Iter
 fun <T, C : Collection<T>> Assertion<C>.containsExactlyUnknownTyped(vararg expected: Any?):
     Assertion<C> {
   hasCount(expected.count())
-  return containsUnknownTyped<T, C>(*expected)
+  return containsUnknownTyped(*expected)
 }
 
 fun <T, C : TypedContainer<T>> Assertion<C>.doesNotContain(vararg expected: T): Assertion<C> {

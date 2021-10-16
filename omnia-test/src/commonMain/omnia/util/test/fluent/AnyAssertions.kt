@@ -9,6 +9,8 @@ import kotlin.test.assertNotSame
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
+import omnia.data.structure.immutable.ImmutableList
+import omnia.util.test.fluent.IncompleteAssertion.Companion.assertWithMessage
 
 fun <T> Assertion<T>.isEqualTo(expected: Any?): Assertion<T> {
   assertEquals(expected, actual, message)
@@ -20,9 +22,14 @@ fun <T> Assertion<T>.isNotEqualTo(expected: Any?): Assertion<T> {
   return this
 }
 
-fun <T> Assertion<T>.isNotNull(): Assertion<T> {
-  assertNotNull(actual, message)
+fun <T> Assertion<T>.isEqualToAnyOf(vararg expected: Any): Assertion<T> {
+  assertWithMessage(message).that(ImmutableList.copyOf(expected)).containsUnknownTyped(actual)
   return this
+}
+
+fun <T> Assertion<T?>.isNotNull(): Assertion<T> {
+  assertNotNull(actual, message)
+  return assertWithMessage(message).that(actual)
 }
 
 fun <T> Assertion<T>.isNull(): Assertion<T> {
