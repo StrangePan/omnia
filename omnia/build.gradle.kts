@@ -19,7 +19,7 @@ kotlin {
       kotlin.srcDir("src/commonTest")
       dependencies {
         implementation(kotlin("test"))
-        implementation(project(":lib:omnia:omnia-test"))
+        implementation(project(":omnia-test"))
         implementation("com.badoo.reaktive:reaktive-testing:1.2.0")
       }
     }

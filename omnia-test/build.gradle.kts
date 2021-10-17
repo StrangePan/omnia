@@ -11,7 +11,7 @@ kotlin {
     val commonMain by getting {
       kotlin.srcDir("src/commonMain")
       dependencies {
-        implementation(project(":lib:omnia:omnia"))
+        implementation(project(":omnia"))
         implementation(kotlin("test"))
         implementation("com.badoo.reaktive:reaktive:1.2.0")
         implementation("com.badoo.reaktive:reaktive-testing:1.2.0")
