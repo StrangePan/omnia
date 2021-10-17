@@ -44,17 +44,35 @@ fun Assertion<String>.doesNotContain(expected: String): Assertion<String> {
   return this
 }
 
-fun Assertion<String>.containsMatch(expected: String): Assertion<String> {
-  return containsMatch(Regex(expected))
+fun Assertion<String>.matches(expected: String): Assertion<String> {
+  return matches(Regex(expected))
 }
 
-fun Assertion<String>.doesNotContainMatch(expected: String): Assertion<String> {
-  return doesNotContainMatch(Regex(expected))
+fun Assertion<String>.matches(expected: Regex): Assertion<String> {
+  assertTrue(actual.matches(expected), message)
+  return this
+}
+
+fun Assertion<String>.doesNotMatch(expected: String): Assertion<String> {
+  return doesNotMatch(Regex(expected))
+}
+
+fun Assertion<String>.doesNotMatch(expected: Regex): Assertion<String> {
+  assertFalse(actual.matches(expected), message)
+  return this
+}
+
+fun Assertion<String>.containsMatch(expected: String): Assertion<String> {
+  return containsMatch(Regex(expected))
 }
 
 fun Assertion<String>.containsMatch(expected: Regex): Assertion<String> {
   assertTrue(actual.contains(expected), message)
   return this
+}
+
+fun Assertion<String>.doesNotContainMatch(expected: String): Assertion<String> {
+  return doesNotContainMatch(Regex(expected))
 }
 
 fun Assertion<String>.doesNotContainMatch(expected: Regex): Assertion<String> {
