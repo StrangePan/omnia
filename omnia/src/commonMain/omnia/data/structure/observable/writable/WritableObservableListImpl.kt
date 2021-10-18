@@ -16,7 +16,6 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
   @Volatile
   private var currentState = ImmutableList.empty<E>()
   private val mutationEvents = PublishSubject<MutationEvent>()
-  private val observableChannels = ObservableChannels()
 
   override fun insertAt(index: Int, item: E) {
     val range: IntRange = IntRange.just(index)
@@ -146,9 +145,10 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
 
   override fun toReadOnly(): ObservableList<E> {
     return object : ObservableList<E> {
-      override fun observe(): ObservableList.ObservableChannels<E> {
-        return this@WritableObservableListImpl.observe()
-      }
+      override val observables: ObservableList.Observables<E>
+        get() {
+          return this@WritableObservableListImpl.observables
+        }
 
       override fun iterator(): Iterator<E> {
         return this@WritableObservableListImpl.iterator()
@@ -173,87 +173,42 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
     }
   }
 
-  override fun observe(): ObservableChannels {
-    return observableChannels
-  }
+  override val observables = Observables()
 
-  private val state: ImmutableList<E>
-    get() = currentState
+  private val state: ImmutableList<E> get() = currentState
 
-  private class AddToList<E : Any>(private val items: List<E>, private val indices: IntRange) :
-    ObservableList.AddToList<E> {
-
-    override fun items(): List<E> {
-      return items
-    }
-
-    override fun indices(): IntRange {
-      return indices
-    }
-  }
+  private class AddToList<E : Any>(override val items: List<E>, override val indices: IntRange) :
+    ObservableList.AddToList<E>
 
   private class MoveInList<E : Any>(
-    private val items: List<E>,
-    private val previousIndices: IntRange,
-    private val currentIndices: IntRange
-  ) : ObservableList.MoveInList<E> {
+    override val items: List<E>,
+    override val previousIndices: IntRange,
+    override val currentIndices: IntRange
+  ) : ObservableList.MoveInList<E>
 
-    override fun items(): List<E> {
-      return items
-    }
-
-    override fun previousIndices(): IntRange {
-      return previousIndices
-    }
-
-    override fun currentIndices(): IntRange {
-      return currentIndices
-    }
-  }
-
-  private class RemoveFromList<E : Any>(private val items: List<E>, private val indices: IntRange) :
-    ObservableList.RemoveFromList<E> {
-
-    override fun items(): List<E> {
-      return items
-    }
-
-    override fun indices(): IntRange {
-      return indices
-    }
-  }
+  private class RemoveFromList<E : Any>(
+    override val items: List<E>,
+    override val indices: IntRange
+  ) : ObservableList.RemoveFromList<E>
 
   private class ReplaceInList<E : Any>(
-    private val replacedItems: List<E>,
-    private val newItems: List<E>,
-    private val indices: IntRange
-  ) : ObservableList.ReplaceInList<E> {
+    override val replacedItems: List<E>,
+    override val newItems: List<E>,
+    override val indices: IntRange
+  ) : ObservableList.ReplaceInList<E>
 
-    override fun replacedItems(): List<E> {
-      return replacedItems
-    }
-
-    override fun newItems(): List<E> {
-      return newItems
-    }
-
-    override fun indices(): IntRange {
-      return indices
-    }
-  }
-
-  inner class ObservableChannels : GenericObservableChannels<List<E>, MutationEvent>(
+  inner class Observables : GenericObservables<List<E>, MutationEvent>(
     observable<List<E>> {
       it.onNext(state)
       it.onComplete()
     }
-      .concatWith(mutationEvents.map { it.state() }),
+      .concatWith(mutationEvents.map { it.state }),
     observable<MutationEvent> {
       it.onNext(generateMutationEventForNewSubscription())
       it.onComplete()
     }
       .concatWith(mutationEvents)),
-    ObservableList.ObservableChannels<E>
+    ObservableList.Observables<E>
 
   inner class MutationEvent(state: List<E>, operations: List<ListOperation<E>>) :
     GenericMutationEvent<List<E>, List<ListOperation<E>>>(state, operations),

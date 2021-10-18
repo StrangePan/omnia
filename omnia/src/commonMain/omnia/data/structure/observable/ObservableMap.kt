@@ -7,20 +7,20 @@ import omnia.data.structure.Set
 
 interface ObservableMap<K : Any, V : Any> : Map<K, V>, ObservableDataStructure {
 
-  override fun observe(): ObservableChannels<K, V>
+  override val observables: Observables<K, V>
 
-  interface ObservableChannels<K : Any, V : Any> : ObservableDataStructure.ObservableChannels {
+  interface Observables<K : Any, V : Any> : ObservableDataStructure.Observables {
 
-    override fun states(): Observable<Map<K, V>>
+    override val states: Observable<Map<K, V>>
 
-    override fun mutations(): Observable<MutationEvent<K, V>>
+    override val mutations: Observable<MutationEvent<K, V>>
   }
 
   interface MutationEvent<K : Any, V : Any> : ObservableDataStructure.MutationEvent {
 
-    override fun state(): Map<K, V>
+    override val state: Map<K, V>
 
-    override fun operations(): Set<out MapOperation<K, V>>
+    override val operations: Set<out MapOperation<K, V>>
   }
 
   /**
@@ -30,7 +30,7 @@ interface ObservableMap<K : Any, V : Any> : Map<K, V>, ObservableDataStructure {
   interface MapOperation<K : Any, V : Any> {
 
     /** The key associated with the operation.  */
-    fun key(): K
+    val key: K
 
     companion object {
 
@@ -55,14 +55,14 @@ interface ObservableMap<K : Any, V : Any> : Map<K, V>, ObservableDataStructure {
   interface AddToMap<K : Any, V : Any> : MapOperation<K, V> {
 
     /** The value added to the map.  */
-    fun value(): V
+    val value: V
   }
 
   /** Represents one entry being removed from the map. Contains the corresponding key and value.  */
   interface RemoveFromMap<K : Any, V : Any> : MapOperation<K, V> {
 
     /** The value removed from the map.  */
-    fun value(): V
+    val value: V
   }
 
   /**
@@ -72,9 +72,9 @@ interface ObservableMap<K : Any, V : Any> : Map<K, V>, ObservableDataStructure {
   interface ReplaceInMap<K : Any, V : Any> : MapOperation<K, V> {
 
     /** The value removed from the map.  */
-    fun replacedValue(): V
+    val replacedValue: V
 
     /** The value added to the map.  */
-    fun newValue(): V
+    val newValue: V
   }
 }

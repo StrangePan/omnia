@@ -17,7 +17,7 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
   @Volatile
   private var currentState = ImmutableSet.empty<E>()
   private val mutationEvents = PublishSubject<MutationEvent>()
-  private val observableChannels = ObservableChannels()
+  override val observables = Observables()
 
   override fun add(item: E) {
     mutateState(
@@ -97,9 +97,10 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
   override fun toReadOnly(): ObservableSet<E> {
     return object : ObservableSet<E> {
-      override fun observe(): ObservableSet.ObservableChannels<E> {
-        return this@WritableObservableSetImpl.observe()
-      }
+      override val observables: ObservableSet.Observables<E>
+        get() {
+          return this@WritableObservableSetImpl.observables
+        }
 
       override fun iterator(): Iterator<E> {
         return this@WritableObservableSetImpl.iterator()
@@ -116,39 +117,24 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
     }
   }
 
-  override fun observe(): ObservableChannels {
-    return observableChannels
-  }
+  private val state: ImmutableSet<E> get() = currentState
 
-  private val state: ImmutableSet<E>
-    get() = currentState
+  private class AddToSet<E : Any>(override val item: E) : ObservableSet.AddToSet<E>
 
-  private class AddToSet<E : Any>(private val item: E) : ObservableSet.AddToSet<E> {
+  private class RemoveFromSet<E : Any>(override val item: E) : ObservableSet.RemoveFromSet<E>
 
-    override fun item(): E {
-      return item
-    }
-  }
-
-  private class RemoveFromSet<E : Any>(private val item: E) : ObservableSet.RemoveFromSet<E> {
-
-    override fun item(): E {
-      return item
-    }
-  }
-
-  inner class ObservableChannels : GenericObservableChannels<Set<E>, MutationEvent>(
+  inner class Observables : GenericObservables<Set<E>, MutationEvent>(
     observable<Set<E>> {
       it.onNext(state)
       it.onComplete()
     }
-      .concatWith(mutationEvents.map { it.state() }),
+      .concatWith(mutationEvents.map { it.state }),
     observable<MutationEvent> {
       it.onNext(generateMutationEventForNewSubscription())
       it.onComplete()
     }
       .concatWith(mutationEvents)),
-    ObservableSet.ObservableChannels<E>
+    ObservableSet.Observables<E>
 
   inner class MutationEvent(state: Set<E>, operations: Set<SetOperation<E>>) :
     GenericMutationEvent<Set<E>, Set<SetOperation<E>>>(state, operations),

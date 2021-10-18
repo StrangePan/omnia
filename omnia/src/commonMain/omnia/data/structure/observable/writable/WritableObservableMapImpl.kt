@@ -127,25 +127,22 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
     return state.keysOfUnknownTyped(value)
   }
 
-  private val state: ImmutableMap<K, V>
-    get() = currentState
+  private val state: ImmutableMap<K, V> get() = currentState
 
-  override fun observe(): ObservableChannels {
-    return ObservableChannels()
-  }
+  override val observables = Observables()
 
-  inner class ObservableChannels : GenericObservableChannels<Map<K, V>, MutationEvent>(
+  inner class Observables : GenericObservables<Map<K, V>, MutationEvent>(
     observable<Map<K, V>> {
       it.onNext(state)
       it.onComplete()
     }
-      .concatWith(mutationEvents.map { it.state() }),
+      .concatWith(mutationEvents.map { it.state }),
     observable<MutationEvent> {
       it.onNext(generateMutationEventForNewSubscription())
       it.onComplete()
     }
       .concatWith(mutationEvents)),
-    ObservableMap.ObservableChannels<K, V>
+    ObservableMap.Observables<K, V>
 
   private fun generateMutationEventForNewSubscription(): MutationEvent {
     val state: Map<K, V> = state
@@ -162,9 +159,10 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
 
   override fun toReadOnly(): ObservableMap<K, V> {
     return object : ObservableMap<K, V> {
-      override fun observe(): ObservableMap.ObservableChannels<K, V> {
-        return this@WritableObservableMapImpl.observe()
-      }
+      override val observables: ObservableMap.Observables<K, V>
+        get() {
+          return this@WritableObservableMapImpl.observables
+        }
 
       override val keys: Set<K>
         get() {
@@ -191,46 +189,15 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
     }
   }
 
-  private class AddToMap<K : Any, V : Any>(private val key: K, private val value: V) :
-    ObservableMap.AddToMap<K, V> {
+  private class AddToMap<K : Any, V : Any>(override val key: K, override val value: V) :
+    ObservableMap.AddToMap<K, V>
 
-    override fun key(): K {
-      return key
-    }
-
-    override fun value(): V {
-      return value
-    }
-  }
-
-  private class RemoveFromMap<K : Any, V : Any>(private val key: K, private val value: V) :
-    ObservableMap.RemoveFromMap<K, V> {
-
-    override fun key(): K {
-      return key
-    }
-
-    override fun value(): V {
-      return value
-    }
-  }
+  private class RemoveFromMap<K : Any, V : Any>(override val key: K, override val value: V) :
+    ObservableMap.RemoveFromMap<K, V>
 
   private class ReplaceInMap<K : Any, V : Any>(
-    private val key: K,
-    private val replacedValue: V,
-    private val newValue: V
-  ) : ObservableMap.ReplaceInMap<K, V> {
-
-    override fun key(): K {
-      return key
-    }
-
-    override fun replacedValue(): V {
-      return replacedValue
-    }
-
-    override fun newValue(): V {
-      return newValue
-    }
-  }
+    override val key: K,
+    override val replacedValue: V,
+    override val newValue: V
+  ) : ObservableMap.ReplaceInMap<K, V>
 }

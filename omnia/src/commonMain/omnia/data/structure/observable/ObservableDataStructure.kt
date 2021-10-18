@@ -11,17 +11,17 @@ import omnia.data.structure.Collection
 interface ObservableDataStructure {
 
   /**
-   * Returns an [ObservableChannels] with which observers can choose which channel to
+   * Returns an [Observables] with which observers can choose which channel to
    * subscribe to.
    */
-  fun observe(): ObservableChannels
+  val observables: Observables
 
   /**
-   * A condense view of the types of observable channels available to subscribers. This encapsulates
-   * the Rx-related methods into a contained interface so as not to pollute the namespace of the
-   * data structure.
+   * A condensed view of the types of observable channels available to subscribers. This
+   * encapsulates the observable-related methods into a contained interface so as not to pollute the
+   * namespace of the data structure.
    */
-  interface ObservableChannels {
+  interface Observables {
 
     /**
      * Emits an immutable copy of the data structure whenever its state changes.
@@ -31,7 +31,7 @@ interface ObservableDataStructure {
      * data structure. New subscribers should ignore this first emission if they wish to only be
      * notified of changes.
      */
-    fun states(): Observable<*>
+    val states: Observable<*>
 
     /**
      * Emits both an immutable copy of the data structure whenever its state changes, as well
@@ -43,7 +43,7 @@ interface ObservableDataStructure {
      * structure, as well as a mutation equivalent of populating an empty data structure with the
      * contents of current state.
      */
-    fun mutations(): Observable<MutationEvent>
+    val mutations: Observable<MutationEvent>
   }
 
   /**
@@ -58,7 +58,7 @@ interface ObservableDataStructure {
   interface MutationEvent {
 
     /** The state of the data structure after this mutation event.  */
-    fun state(): Any
+    val state: Any
 
     /**
      * The collection of operations that this mutation event comprises. These operations describe
@@ -69,6 +69,6 @@ interface ObservableDataStructure {
      * See the specific data structure's documentation for the semantics of how each operation
      * is to be applied.
      */
-    fun operations(): Collection<*>
+    val operations: Collection<*>
   }
 }

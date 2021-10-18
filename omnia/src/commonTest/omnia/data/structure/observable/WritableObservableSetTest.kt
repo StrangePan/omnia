@@ -90,15 +90,15 @@ class WritableObservableSetTest {
   @Test
   fun observeStates_whenEmpty_emitsEmpty() {
     val set: ObservableSet<Any> = WritableObservableSet.create()
-    set.observe().states().test().assertValue { !it.isPopulated }
+    set.observables.states.test().assertValue { !it.isPopulated }
   }
 
   @Test
   fun observeMutations_whenEmpty_emitsEmpty() {
     val set: ObservableSet<Any> = WritableObservableSet.create()
-    val subscriber = set.observe().mutations().test()
-    subscriber.assertValue { !it.state().isPopulated }
-    subscriber.assertValue { !it.operations().isPopulated }
+    val subscriber = set.observables.mutations.test()
+    subscriber.assertValue { !it.state.isPopulated }
+    subscriber.assertValue { !it.operations.isPopulated }
   }
 
   @Test
@@ -106,7 +106,7 @@ class WritableObservableSetTest {
     val contents: Set<Any> = ImmutableSet.of(Any(), Any(), Any())
     val set = WritableObservableSet.create<Any>()
     contents.forEach(set::add)
-    set.observe().states().test().assertValue { areEqual(it, contents) }
+    set.observables.states.test().assertValue { areEqual(it, contents) }
   }
 
   @Test
@@ -114,7 +114,7 @@ class WritableObservableSetTest {
     val contents: Set<Any> = ImmutableSet.of(Any(), Any(), Any())
     val set = WritableObservableSet.create<Any>()
     contents.forEach(set::add)
-    val testSubscriber = set.observe().mutations().map { it.state() }.test()
+    val testSubscriber = set.observables.mutations.map { it.state }.test()
     testSubscriber.assertValue { areEqual(it, contents) }
   }
 
@@ -123,11 +123,11 @@ class WritableObservableSetTest {
     val contents: Set<Any> = ImmutableSet.of(Any(), Any(), Any())
     val set = WritableObservableSet.create<Any>()
     contents.forEach(set::add)
-    val testSubscriber = set.observe().mutations().flatMapIterable { it.operations() }.test()
+    val testSubscriber = set.observables.mutations.flatMapIterable { it.operations }.test()
     testSubscriber.assertValues { it is ObservableSet.AddToSet<*> }
     assertThat(
       testSubscriber.values
-        .map { (it as ObservableSet.AddToSet<*>).item() }
+        .map { (it as ObservableSet.AddToSet<*>).item }
         .toImmutableSet())
       .containsExactlyElementsIn(contents)
   }
@@ -141,7 +141,7 @@ class WritableObservableSetTest {
     originalContents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observe().states().skip(1).test()
+    val testSubscriber = set.observables.states.skip(1).test()
     addedContents.forEach(set::add)
     testSubscriber.assertValueCount(addedContents.count)
       .assertValues { SetAlgorithms.intersectionOf(it, finalContents) == it }
@@ -157,17 +157,17 @@ class WritableObservableSetTest {
     originalContents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observe().mutations().skip(1).test()
+    val testSubscriber = set.observables.mutations.skip(1).test()
     removedContents.forEach(set::remove)
     testSubscriber.assertValueCount(removedContents.count)
-    testSubscriber.values.forEach { assertThat(it.operations()).hasCount(1) }
+    testSubscriber.values.forEach { assertThat(it.operations).hasCount(1) }
     val operations: Set<out SetOperation<Any>> =
-      testSubscriber.values.flatMap { it.operations() }.toImmutableSet()
+      testSubscriber.values.flatMap { it.operations }.toImmutableSet()
     operations.forEach {
       assertThat(it).isA(ObservableSet.RemoveFromSet::class)
     }
     val actualRemovedContents: Set<Any> = operations
-      .map { (it as ObservableSet.RemoveFromSet<Any>).item() }
+      .map { (it as ObservableSet.RemoveFromSet<Any>).item }
       .toImmutableSet()
     assertThat(actualRemovedContents).containsExactlyElementsIn(removedContents)
   }
@@ -179,18 +179,18 @@ class WritableObservableSetTest {
     contents.forEach { set.add(it) }
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observe().mutations().skip(1).test()
+    val testSubscriber = set.observables.mutations.skip(1).test()
     set.clear()
     testSubscriber.assertValueCount(1)
-    testSubscriber.assertValue { it.operations().count == contents.count }
+    testSubscriber.assertValue { it.operations.count == contents.count }
     val operations: Set<out SetOperation<Any>> = testSubscriber.values
-      .flatMap { it.operations() }
+      .flatMap { it.operations }
       .toImmutableSet()
     operations.forEach {
       assertThat(it).isA(ObservableSet.RemoveFromSet::class)
     }
     val actualRemovedContents: Set<Any> = operations
-      .map { (it as ObservableSet.RemoveFromSet<Any>).item() }
+      .map { (it as ObservableSet.RemoveFromSet<Any>).item }
       .toImmutableSet()
     assertThat(actualRemovedContents).containsExactlyElementsIn(contents)
   }
@@ -202,7 +202,7 @@ class WritableObservableSetTest {
     contents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observe().states().skip(1).test()
+    val testSubscriber = set.observables.states.skip(1).test()
     set.clear()
     testSubscriber.assertValueCount(1)
     testSubscriber.assertValue { areEqual(it, ImmutableSet.empty<Any>()) }

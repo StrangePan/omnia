@@ -7,19 +7,19 @@ import omnia.data.structure.observable.ObservableGraph.GraphOperation
 
 interface ObservableDirectedGraph<E : Any> : DirectedGraph<E>, ObservableGraph<E> {
 
-  override fun observe(): ObservableChannels<E>
+  override val observables: Observables<E>
 
-  interface ObservableChannels<E : Any> : ObservableGraph.ObservableChannels<E> {
+  interface Observables<E : Any> : ObservableGraph.Observables<E> {
 
-    override fun states(): Observable<DirectedGraph<E>>
+    override val states: Observable<DirectedGraph<E>>
 
-    override fun mutations(): Observable<MutationEvent<E>>
+    override val mutations: Observable<MutationEvent<E>>
   }
 
   interface MutationEvent<E : Any> : ObservableGraph.MutationEvent<E> {
 
-    override fun state(): DirectedGraph<E>
+    override val state: DirectedGraph<E>
 
-    override fun operations(): Set<out GraphOperation<E>>
+    override val operations: Set<out GraphOperation<E>>
   }
 }

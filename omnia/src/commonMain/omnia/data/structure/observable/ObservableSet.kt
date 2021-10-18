@@ -6,25 +6,25 @@ import omnia.data.structure.Set
 
 interface ObservableSet<E : Any> : ObservableDataStructure, Set<E> {
 
-  override fun observe(): ObservableChannels<E>
+  override val observables: Observables<E>
 
-  interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
+  interface Observables<E : Any> : ObservableDataStructure.Observables {
 
-    override fun states(): Observable<Set<E>>
+    override val states: Observable<Set<E>>
 
-    override fun mutations(): Observable<MutationEvent<E>>
+    override val mutations: Observable<MutationEvent<E>>
   }
 
   interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
 
-    override fun state(): Set<E>
+    override val state: Set<E>
 
-    override fun operations(): Set<out SetOperation<E>>
+    override val operations: Set<out SetOperation<E>>
   }
 
   interface SetOperation<E : Any> {
 
-    fun item(): E
+    val item: E
 
     companion object {
 

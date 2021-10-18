@@ -146,13 +146,15 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     val operations = mutationOperations(previousState, nextState)
     mutationEvents.onNext(
       object : MutationEvent<E> {
-        override fun state(): DirectedGraph<E> {
-          return nextState
-        }
+        override val state: DirectedGraph<E>
+          get() {
+            return nextState
+          }
 
-        override fun operations(): Set<GraphOperation<E>> {
-          return operations
-        }
+        override val operations: Set<GraphOperation<E>>
+          get() {
+            return operations
+          }
       })
     return true
   }
@@ -190,9 +192,10 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
 
   override fun toReadOnly(): ObservableDirectedGraph<E> {
     return object : ObservableDirectedGraph<E> {
-      override fun observe(): ObservableDirectedGraph.ObservableChannels<E> {
-        return this@WritableObservableDirectedGraphImpl.observe()
-      }
+      override val observables: ObservableDirectedGraph.Observables<E>
+        get() {
+          return this@WritableObservableDirectedGraphImpl.observables
+        }
 
       override fun nodeOf(item: E): DirectedGraph.DirectedNode<E>? {
         return nodeOfUnknownType(item)
@@ -227,48 +230,54 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     }
   }
 
-  override fun observe(): ObservableDirectedGraph.ObservableChannels<E> {
-    return object : ObservableDirectedGraph.ObservableChannels<E> {
-      override fun states(): Observable<DirectedGraph<E>> {
-        return observable { emitter: ObservableEmitter<DirectedGraph<E>> ->
-          emitter.onNext(getState())
-          emitter.setDisposable(
-            mutationEvents.map { it.state() }
-              .doOnBeforeNext(emitter::onNext)
-              .doOnBeforeError(emitter::onError)
-              .doOnBeforeComplete(emitter::onComplete)
-              .subscribe())
-        }
-      }
-
-      override fun mutations(): Observable<MutationEvent<E>> {
-        return observable { emitter: ObservableEmitter<MutationEvent<E>> ->
-          val state = getState()
-          val operations: Set<GraphOperation<E>> =
-            state.nodes.map { AddNodeToGraph.create(it.item) }
-              .plus(
-                state.edges
-                  .map { AddEdgeToGraph.create(it.endpoints.map { i -> i.item })})
-              .toImmutableSet()
-          emitter.onNext(object : MutationEvent<E> {
-            override fun state(): DirectedGraph<E> {
-              return state
+  override val observables: ObservableDirectedGraph.Observables<E>
+    get() {
+      return object : ObservableDirectedGraph.Observables<E> {
+        override val states: Observable<DirectedGraph<E>>
+          get() {
+            return observable { emitter: ObservableEmitter<DirectedGraph<E>> ->
+              emitter.onNext(getState())
+              emitter.setDisposable(
+                mutationEvents.map { it.state }
+                  .doOnBeforeNext(emitter::onNext)
+                  .doOnBeforeError(emitter::onError)
+                  .doOnBeforeComplete(emitter::onComplete)
+                  .subscribe())
             }
+          }
 
-            override fun operations(): Set<GraphOperation<E>> {
-              return operations
+        override val mutations: Observable<MutationEvent<E>>
+          get() {
+            return observable { emitter: ObservableEmitter<MutationEvent<E>> ->
+              val state = getState()
+              val operations: Set<GraphOperation<E>> =
+                state.nodes.map { AddNodeToGraph.create(it.item) }
+                  .plus(
+                    state.edges
+                      .map { AddEdgeToGraph.create(it.endpoints.map { i -> i.item }) })
+                  .toImmutableSet()
+              emitter.onNext(object : MutationEvent<E> {
+                override val state: DirectedGraph<E>
+                  get() {
+                    return state
+                  }
+
+                override val operations: Set<GraphOperation<E>>
+                  get() {
+                    return operations
+                  }
+              })
+              emitter.setDisposable(
+                mutationEvents
+                  .doOnBeforeNext(emitter::onNext)
+                  .doOnBeforeError(emitter::onError)
+                  .doOnBeforeComplete(emitter::onComplete)
+                  .subscribe()
+              )
             }
-          })
-          emitter.setDisposable(
-            mutationEvents
-              .doOnBeforeNext(emitter::onNext)
-              .doOnBeforeError(emitter::onError)
-              .doOnBeforeComplete(emitter::onComplete)
-              .subscribe())
-        }
+          }
       }
     }
-  }
 
   private fun getState(): ImmutableDirectedGraph<E> {
     return state
@@ -276,18 +285,13 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
 
   internal interface MutationEvent<E : Any> : ObservableDirectedGraph.MutationEvent<E> {
 
-    override fun state(): DirectedGraph<E>
+    override val state: DirectedGraph<E>
 
-    override fun operations(): Set<GraphOperation<E>>
+    override val operations: Set<GraphOperation<E>>
   }
 
-  private abstract class NodeOperation<E : Any>(private val item: E) :
-      ObservableGraph.NodeOperation<E> {
-
-    override fun item(): E {
-      return item
-    }
-  }
+  private abstract class NodeOperation<E : Any>(override val item: E) :
+      ObservableGraph.NodeOperation<E>
 
   private class AddNodeToGraph<E : Any> private constructor(item: E) : NodeOperation<E>(item),
     ObservableGraph.AddNodeToGraph<E> {
@@ -311,12 +315,8 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     }
   }
 
-  private abstract class EdgeOperation<E : Any>(private val endpoints: Couplet<E>) :
+  private abstract class EdgeOperation<E : Any>(override val endpoints: Couplet<E>) :
     ObservableGraph.EdgeOperation<E> {
-
-    override fun endpoints(): Couplet<E> {
-      return endpoints
-    }
   }
 
   private class AddEdgeToGraph<E : Any> private constructor(endpoints: Couplet<E>) :

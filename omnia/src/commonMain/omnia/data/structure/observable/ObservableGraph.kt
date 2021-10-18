@@ -8,20 +8,20 @@ import omnia.data.structure.tuple.Couplet
 
 interface ObservableGraph<E : Any> : Graph<E>, ObservableDataStructure {
 
-  override fun observe(): ObservableChannels<E>
+  override val observables: Observables<E>
 
-  interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
+  interface Observables<E : Any> : ObservableDataStructure.Observables {
 
-    override fun states(): Observable<Graph<E>>
+    override val states: Observable<Graph<E>>
 
-    override fun mutations(): Observable<MutationEvent<E>>
+    override val mutations: Observable<MutationEvent<E>>
   }
 
   interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
 
-    override fun state(): Graph<E>
+    override val state: Graph<E>
 
-    override fun operations(): Set<out GraphOperation<E>>
+    override val operations: Set<out GraphOperation<E>>
   }
 
   interface GraphOperation<E : Any> {
@@ -51,12 +51,12 @@ interface ObservableGraph<E : Any> : Graph<E>, ObservableDataStructure {
 
   interface NodeOperation<E : Any> : GraphOperation<E> {
 
-    fun item(): E
+    val item: E
   }
 
   interface EdgeOperation<E : Any> : GraphOperation<E> {
 
-    fun endpoints(): Couplet<E>
+    val endpoints: Couplet<E>
   }
 
   interface AddNodeToGraph<E : Any> : NodeOperation<E>

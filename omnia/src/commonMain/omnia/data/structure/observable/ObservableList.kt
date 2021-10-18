@@ -7,20 +7,20 @@ import omnia.data.structure.List
 
 interface ObservableList<E : Any> : List<E>, ObservableDataStructure {
 
-  override fun observe(): ObservableChannels<E>
+  override val observables: Observables<E>
 
-  interface ObservableChannels<E : Any> : ObservableDataStructure.ObservableChannels {
+  interface Observables<E : Any> : ObservableDataStructure.Observables {
 
-    override fun states(): Observable<List<E>>
+    override val states: Observable<List<E>>
 
-    override fun mutations(): Observable<MutationEvent<E>>
+    override val mutations: Observable<MutationEvent<E>>
   }
 
   interface MutationEvent<E : Any> : ObservableDataStructure.MutationEvent {
 
-    override fun state(): List<E>
+    override val state: List<E>
 
-    override fun operations(): List<out ListOperation<E>>
+    override val operations: List<out ListOperation<E>>
   }
 
   /**
@@ -73,10 +73,10 @@ interface ObservableList<E : Any> : List<E>, ObservableDataStructure {
   interface AddToList<E : Any> : ListOperation<E> {
 
     /** The item or items that were added to the list.  */
-    fun items(): List<E>
+    val items: List<E>
 
     /** The index range at which the items were added.  */
-    fun indices(): IntRange
+    val indices: IntRange
   }
 
   /**
@@ -87,23 +87,23 @@ interface ObservableList<E : Any> : List<E>, ObservableDataStructure {
   interface MoveInList<E : Any> : ListOperation<E> {
 
     /** The items that were moved within the list.  */
-    fun items(): List<E>
+    val items: List<E>
 
     /** The range of indices at which the items resided in the previous state of the list.  */
-    fun previousIndices(): IntRange
+    val previousIndices: IntRange
 
     /** The range of indices at which the items now reside in the current state of the list.  */
-    fun currentIndices(): IntRange
+    val currentIndices: IntRange
   }
 
   /** Represents one or more items being removed from the list.  */
   interface RemoveFromList<E : Any> : ListOperation<E> {
 
     /** The items that were removed from the list. */
-    fun items(): List<E>
+    val items: List<E>
 
     /** The indices of the items in the previous state of the list.  */
-    fun indices(): IntRange
+    val indices: IntRange
   }
 
   /**
@@ -113,15 +113,15 @@ interface ObservableList<E : Any> : List<E>, ObservableDataStructure {
   interface ReplaceInList<E : Any> : ListOperation<E> {
 
     /**
-     * The items that were replaced by [newItems]. These items may still be located in
+     * The items that were replaced by [getNewItems]. These items may still be located in
      * other positions within the list.
      */
-    fun replacedItems(): List<E>
+    val replacedItems: List<E>
 
-    /** The items that replaced [replacedItems].  */
-    fun newItems(): List<E>
+    /** The items that replaced [getReplacedItems].  */
+    val newItems: List<E>
 
     /** The range of indices within the list whose values were replaced in this operation.  */
-    fun indices(): IntRange
+    val indices: IntRange
   }
 }
