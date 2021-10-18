@@ -49,7 +49,8 @@ cmake-build-*/
 *.iws
 
 # IntelliJ
-**/out/
+omnia/out/
+omnia-test/out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
