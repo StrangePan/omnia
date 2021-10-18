@@ -34,10 +34,10 @@ object GraphAlgorithms {
    * return the empty set.
    */
   fun <E : Any> sinkElements(graph: DirectedGraph<out E>): ImmutableSet<E> {
-    return graph.nodes()
+    return graph.nodes
         .filter { hasNoOutgoingEdges(it) }
         .filter { hasIncomingEdges(it) }
-        .map { it.item() }
+        .map { it.item }
         .toImmutableSet()
   }
 
@@ -50,10 +50,10 @@ object GraphAlgorithms {
    * return the empty set.
    */
   fun <E : Any> sourceElements(graph: DirectedGraph<E>): Set<E> {
-    return graph.nodes()
+    return graph.nodes
         .filter { hasNoIncomingEdges(it) }
         .filter { hasOutgoingEdges(it) }
-        .map { it.item() }
+        .map { it.item }
         .toImmutableSet()
   }
 
@@ -65,9 +65,9 @@ object GraphAlgorithms {
    * @return The set of items in the graph that have no edges. May return the empty set.
    */
   fun <E : Any> isolatedElements(graph: Graph<E>): Set<E> {
-    return graph.nodes()
+    return graph.nodes
       .filter { hasNoNeighbors(it) }
-      .map { it.item() }
+      .map { it.item }
       .toImmutableSet()
   }
 
@@ -99,8 +99,8 @@ object GraphAlgorithms {
     val visitedItems: MutableSet<T> = HashSet.create()
 
     // iterate over every node, skipping over those we've already visited in another inner loop
-    for (directedNode in graph.nodes()) {
-      if (visitedItems.contains(directedNode.item())) {
+    for (directedNode in graph.nodes) {
+      if (visitedItems.contains(directedNode.item)) {
         continue
       }
 
@@ -110,15 +110,15 @@ object GraphAlgorithms {
       // correlates to itemStack. iterators track state.
       val iteratorStack: MutableList<Iterator<DirectedNode<T>>> =
         ArrayList.create()
-      itemStack.add(directedNode.item())
-      itemsInStack.add(directedNode.item())
-      iteratorStack.add(directedNode.successors().iterator())
+      itemStack.add(directedNode.item)
+      itemsInStack.add(directedNode.item)
+      iteratorStack.add(directedNode.successors.iterator())
       while (iteratorStack.isPopulated) {
         val item = itemStack.itemAt(itemStack.count - 1)
         val iterator = iteratorStack.itemAt(iteratorStack.count - 1)
         if (iterator.hasNext()) {
           val nextNode = iterator.next()
-          val nextItem = nextNode.item()
+          val nextItem = nextNode.item
           if (itemsInStack.contains(nextItem)) {
             // navigate back up the stack, building a list representing the cycle
             return ListAlgorithms.sublistOf(
@@ -132,7 +132,7 @@ object GraphAlgorithms {
           }
           itemStack.add(nextItem)
           itemsInStack.add(nextItem)
-          iteratorStack.add(nextNode.successors().iterator())
+          iteratorStack.add(nextNode.successors.iterator())
         } else {
           // only if all possible paths from the current node are acyclical
           visitedItems.add(item)
@@ -167,7 +167,7 @@ object GraphAlgorithms {
     val itemsInStack: MutableSet<DirectedNode<out T>> = HashSet.create()
 
     // all starting nodes
-    for (sourceNode in graph.nodes()) {
+    for (sourceNode in graph.nodes) {
       if (itemsInResult.contains(sourceNode)) {
         continue
       }
@@ -175,10 +175,10 @@ object GraphAlgorithms {
       // traverse entire sub-graph to help cluster nodes
       val subgraphNodes: Set<DirectedNode<out T>> = findOtherNodesInSubgraphContaining(sourceNode)
       for (rootNode in subgraphNodes) {
-        if (rootNode.outgoingEdges().isPopulated) {
+        if (rootNode.outgoingEdges.isPopulated) {
           continue
         }
-        stack.push(Tuple.of(rootNode, rootNode.predecessors().iterator()))
+        stack.push(Tuple.of(rootNode, rootNode.predecessors.iterator()))
         itemsInStack.add(rootNode)
 
         // core loop
@@ -195,14 +195,14 @@ object GraphAlgorithms {
             if (!itemsInResult.contains(next)) {
 
               // put successors in the stack for future processing
-              stack.push(Tuple.of(next, next.predecessors().iterator()))
+              stack.push(Tuple.of(next, next.predecessors.iterator()))
               itemsInStack.add(next)
             }
           } else {
             val current = frame.first
 
             // no other successors, add to result
-            result.add(current.item())
+            result.add(current.item)
             itemsInResult.add(current)
             stack.pop()
             itemsInStack.remove(current)
@@ -213,7 +213,7 @@ object GraphAlgorithms {
     }
     val resultList = result.build()
     require(
-      resultList.count == graph.nodes().count
+      resultList.count == graph.nodes.count
     ) { "graph must be acyclic to perform a topological sort" }
     return resultList
   }
@@ -235,7 +235,7 @@ object GraphAlgorithms {
         continue
       }
       set.add(node)
-      for (neighbor in node.neighbors()) {
+      for (neighbor in node.neighbors) {
         if (set.containsUnknownTyped(neighbor)) {
           continue
         }
@@ -256,7 +256,7 @@ object GraphAlgorithms {
     }
     while (queue.isPopulated) {
       val node = queue.dequeue()!!
-      for (predecessor in node.predecessors()) {
+      for (predecessor in node.predecessors) {
         @Suppress("UNCHECKED_CAST")
         if (predecessor as T !in seenNodes) {
           seenNodes.add(predecessor)
@@ -276,7 +276,7 @@ object GraphAlgorithms {
     }
     while (queue.isPopulated) {
       val node = queue.dequeue()!!
-      for (successor in node.successors()) {
+      for (successor in node.successors) {
         @Suppress("UNCHECKED_CAST")
         if (successor as T !in seenNodes) {
           seenNodes.add(successor)
@@ -322,7 +322,7 @@ object GraphAlgorithms {
   }
 
   private fun hasNeighbors(node: Graph.Node<*>): Boolean {
-    return node.neighbors().isPopulated
+    return node.neighbors.isPopulated
   }
 
   private fun hasNoNeighbors(node: Graph.Node<*>): Boolean {
@@ -330,7 +330,7 @@ object GraphAlgorithms {
   }
 
   private fun hasOutgoingEdges(directedNode: DirectedNode<*>): Boolean {
-    return directedNode.outgoingEdges().isPopulated
+    return directedNode.outgoingEdges.isPopulated
   }
 
   private fun hasNoOutgoingEdges(directedNode: DirectedNode<*>): Boolean {
@@ -338,7 +338,7 @@ object GraphAlgorithms {
   }
 
   private fun hasIncomingEdges(directedNode: DirectedNode<*>): Boolean {
-    return directedNode.incomingEdges().isPopulated
+    return directedNode.incomingEdges.isPopulated
   }
 
   private fun hasNoIncomingEdges(directedNode: DirectedNode<*>): Boolean {

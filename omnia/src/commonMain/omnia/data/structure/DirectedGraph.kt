@@ -15,7 +15,7 @@ interface DirectedGraph<E : Any> : Graph<E> {
     /**
      * The set of edges connected to this node.
      */
-    override fun edges(): Set<out DirectedEdge<E>>
+    override val edges: Set<out DirectedEdge<E>>
 
     /**
      * The set of edges connected to this node where this node is at the tail / start of the edge.
@@ -26,7 +26,7 @@ interface DirectedGraph<E : Any> : Graph<E> {
      *
      * @see successors
      */
-    fun outgoingEdges(): Set<out DirectedEdge<E>>
+    val outgoingEdges: Set<out DirectedEdge<E>>
 
     /**
      * The set of edges connected to this node where this node is at the head / end of this edge.
@@ -37,13 +37,13 @@ interface DirectedGraph<E : Any> : Graph<E> {
      *
      * @see predecessors
      */
-    fun incomingEdges(): Set<out DirectedEdge<E>>
+    val incomingEdges: Set<out DirectedEdge<E>>
 
     /**
      * The set of nodes connected to this node. If this node is connected to itself, then this set
      * will contain this node.
      */
-    override fun neighbors(): Set<out DirectedNode<E>>
+    override val neighbors: Set<out DirectedNode<E>>
 
     /**
      * The set of nodes connected to this node via an edge where this node is at the tail / start
@@ -55,7 +55,7 @@ interface DirectedGraph<E : Any> : Graph<E> {
      *
      * @see outgoingEdges
      */
-    fun successors(): Set<out DirectedNode<E>>
+    val successors: Set<out DirectedNode<E>>
 
     /**
      * The set of nodes connected to this node via an edge where this node is at the head / end
@@ -65,7 +65,7 @@ interface DirectedGraph<E : Any> : Graph<E> {
      * <pre>`[..] -> [this node]
     `</pre> *
      */
-    fun predecessors(): Set<out DirectedNode<E>>
+    val predecessors: Set<out DirectedNode<E>>
   }
 
   interface DirectedEdge<E : Any> : Graph.Edge<E> {
@@ -76,7 +76,7 @@ interface DirectedGraph<E : Any> : Graph<E> {
      * <pre>`[this node] -> [..]
     `</pre> *
      */
-    fun start(): DirectedNode<E>
+    val start: DirectedNode<E>
 
     /**
      * The node at the tail / end of this edge.
@@ -84,14 +84,14 @@ interface DirectedGraph<E : Any> : Graph<E> {
      * <pre>`[..] -> [this node]
     `</pre> *
      */
-    fun end(): DirectedNode<E>
+    val end: DirectedNode<E>
 
     /**
-     * The two nodes that compose this edge. [Couplet.getFirst] returns the head / start of
-     * this edge like [start], while [Couplet.getSecond] returns the tail / end of
+     * The two nodes that compose this edge. [Couplet.first] returns the head / start of
+     * this edge like [start], while [Couplet.second] returns the tail / end of
      * this edge like [end].
      */
-    override fun endpoints(): Couplet<out DirectedNode<E>>
+    override val endpoints: Couplet<out DirectedNode<E>>
   }
 
   /**
@@ -117,16 +117,16 @@ interface DirectedGraph<E : Any> : Graph<E> {
   fun edgeOfUnknownType(from: Any?, to: Any?): DirectedEdge<E>?
 
   /** All nodes contained in the graph.  */
-  override fun nodes(): Set<out DirectedNode<E>>
+  override val nodes: Set<out DirectedNode<E>>
 
   /** All edges contained in the graph.  */
-  override fun edges(): Set<out DirectedEdge<E>>
+  override val edges: Set<out DirectedEdge<E>>
 
   companion object {
 
     /**
      * Compares if two [DirectedGraph]s are equal per this interface's definitions. This is a
-     * more reliable method for comparing directed graphs than [Object.equals].
+     * more reliable method for comparing directed graphs than [Any.equals].
      *
      * The following conditions are required for two graphs to be considered equal:
      *  1. both graphs contain equal sets of nodes
@@ -134,13 +134,13 @@ interface DirectedGraph<E : Any> : Graph<E> {
      */
     fun <T> areEqual(a: DirectedGraph<out Any>?, b: DirectedGraph<out Any>?): Boolean {
       return (a === b
-          || (a != null && b != null && Set.areEqual(a.contents(), b.contents())
+          || (a != null && b != null && Set.areEqual(a.contents, b.contents)
           && Set.areEqual(
-              a.edges()
-                .map { it.endpoints().map { node -> node.item() } }
+              a.edges
+                .map { it.endpoints.map { node -> node.item } }
                 .toImmutableSet(),
-              b.edges()
-                .map { it.endpoints().map { node -> node.item() } }
+              b.edges
+                .map { it.endpoints.map { node -> node.item } }
                 .toImmutableSet())))
     }
   }

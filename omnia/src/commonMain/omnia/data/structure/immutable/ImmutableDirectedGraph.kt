@@ -169,60 +169,70 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     return getOrCreateEdge(from as E, to as E)
   }
 
-  override fun contents(): ImmutableSet<E> {
-    return nodes
-  }
+  override val contents: ImmutableSet<E>
+    get() {
+      return nodes
+    }
 
-  override fun nodes(): ImmutableSet<DirectedNode> {
-    return nodes.map(toNode()).toImmutableSet()
-  }
+  override val nodes: ImmutableSet<DirectedNode>
+    get() {
+      return nodes.map(toNode()).toImmutableSet()
+    }
 
-  override fun edges(): ImmutableSet<DirectedEdge> {
-    return successors.entries()
-      .flatMap(::toCouplets)
-      .map(toEdge())
-      .toImmutableSet()
-  }
+  override val edges: ImmutableSet<DirectedEdge>
+    get() {
+      return successors.entries()
+        .flatMap(::toCouplets)
+        .map(toEdge())
+        .toImmutableSet()
+    }
 
   inner class DirectedNode internal constructor(private val item: E) :
     DirectedGraph.DirectedNode<E> {
 
-    override fun item(): E {
-      return item
-    }
+    override val item: E
+      get() {
+        return item
+      }
 
-    override fun edges(): ImmutableSet<DirectedEdge> {
-      return ImmutableSet.builder<DirectedEdge>()
-        .addAll(outgoingEdges())
-        .addAll(incomingEdges())
-        .build()
-    }
+    override val edges: ImmutableSet<DirectedEdge>
+      get() {
+        return ImmutableSet.builder<DirectedEdge>()
+          .addAll(outgoingEdges)
+          .addAll(incomingEdges)
+          .build()
+      }
 
-    override fun outgoingEdges(): ImmutableSet<DirectedEdge> {
-      return (successors.valueOf(item) ?: ImmutableSet.empty())
-        .map { Tuplet.of(item, it) }
-        .map(toEdge())
-        .toImmutableSet()
-    }
+    override val outgoingEdges: ImmutableSet<DirectedEdge>
+      get() {
+        return (successors.valueOf(item) ?: ImmutableSet.empty())
+          .map { Tuplet.of(item, it) }
+          .map(toEdge())
+          .toImmutableSet()
+      }
 
-    override fun incomingEdges(): ImmutableSet<DirectedEdge> {
-      return (predecessors.valueOf(item) ?: ImmutableSet.empty())
-        .map { Tuplet.of(it, item) }
-        .map(toEdge())
-        .toImmutableSet()
-    }
+    override val incomingEdges: ImmutableSet<DirectedEdge>
+      get() {
+        return (predecessors.valueOf(item) ?: ImmutableSet.empty())
+          .map { Tuplet.of(it, item) }
+          .map(toEdge())
+          .toImmutableSet()
+      }
 
-    override fun neighbors(): ImmutableSet<DirectedNode> {
-      return (neighbors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
-    }
+    override val neighbors: ImmutableSet<DirectedNode>
+      get() {
+        return (neighbors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
+      }
 
-    override fun successors(): ImmutableSet<DirectedNode> {
-      return (successors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
-    }
+    override val successors: ImmutableSet<DirectedNode>
+      get() {
+        return (successors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
+      }
 
-    override fun predecessors(): Set<DirectedNode> {
-      return (predecessors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
-    }
+    override val predecessors: Set<DirectedNode>
+      get() {
+        return (predecessors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
+      }
 
     override fun equals(other: Any?): Boolean {
       return other is ImmutableDirectedGraph<*>.DirectedNode
@@ -240,20 +250,23 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
   inner class DirectedEdge internal constructor(private val endpoints: Couplet<out E>) :
     DirectedGraph.DirectedEdge<E> {
 
-    override fun start(): DirectedGraph.DirectedNode<E> {
-      return getOrCreateNode(endpoints.first)
-    }
+    override val start: DirectedGraph.DirectedNode<E>
+      get() {
+        return getOrCreateNode(endpoints.first)
+      }
 
-    override fun end(): DirectedGraph.DirectedNode<E> {
-      return getOrCreateNode(endpoints.second)
-    }
+    override val end: DirectedGraph.DirectedNode<E>
+      get() {
+        return getOrCreateNode(endpoints.second)
+      }
 
-    override fun endpoints(): Couplet<DirectedNode> {
-      return Tuplet.of(
-        getOrCreateNode(endpoints.first),
-        getOrCreateNode(endpoints.second)
-      )
-    }
+    override val endpoints: Couplet<DirectedNode>
+      get() {
+        return Tuplet.of(
+          getOrCreateNode(endpoints.first),
+          getOrCreateNode(endpoints.second)
+        )
+      }
 
     override fun equals(other: Any?): Boolean {
       return other is ImmutableDirectedGraph<*>.DirectedEdge
@@ -332,14 +345,14 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
       original: DirectedGraph<E>, mapper: (E) -> R,
     ): ImmutableDirectedGraph<R> {
       val builder: Builder<R> = builder()
-      val convertedTasks: Map<E, R> = original.contents()
+      val convertedTasks: Map<E, R> = original.contents
         .map { Tuple.of(it, mapper(it)) }
         .toImmutableMap()
-      original.contents().forEach { id -> builder.addNode(convertedTasks.valueOf(id)!!) }
-      original.edges().forEach {
+      original.contents.forEach { id -> builder.addNode(convertedTasks.valueOf(id)!!) }
+      original.edges.forEach {
         builder.addEdge(
-          convertedTasks.valueOf(it.start().item())!!,
-          convertedTasks.valueOf(it.end().item())!!
+          convertedTasks.valueOf(it.start.item)!!,
+          convertedTasks.valueOf(it.end.item)!!
         )
       }
       return builder.build()
@@ -354,13 +367,13 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
         @Suppress("UNCHECKED_CAST")
         (original as ImmutableDirectedGraph<E>).toBuilder()
       } else Builder(
-        original.contents(),
-        original.edges()
-          .groupBy({ it.start().item() }, { it.end().item() })
+        original.contents,
+        original.edges
+          .groupBy({ it.start.item }, { it.end.item })
           .entries
           .toHashMap({ it.key }, { it.value.toHashSet() }),
-        original.edges()
-          .groupBy({ it.end().item() }, { it.start().item() })
+        original.edges
+          .groupBy({ it.end.item }, { it.start.item })
           .entries
           .toHashMap({ it.key }, { it.value.toHashSet() }))
     }

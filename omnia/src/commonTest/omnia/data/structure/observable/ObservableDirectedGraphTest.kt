@@ -23,17 +23,17 @@ class ObservableDirectedGraphTest {
 
   @Test
   fun contents_whenInit_areEmpty() {
-    assertThat(WritableObservableDirectedGraph.create<Any>().contents().isPopulated).isFalse()
+    assertThat(WritableObservableDirectedGraph.create<Any>().contents.isPopulated).isFalse()
   }
 
   @Test
   fun nodes_whenInit_areEmpty() {
-    assertThat(WritableObservableDirectedGraph.create<Any>().nodes().isPopulated).isFalse()
+    assertThat(WritableObservableDirectedGraph.create<Any>().nodes.isPopulated).isFalse()
   }
 
   @Test
   fun edges_whenInit_areEmpty() {
-    assertThat(WritableObservableDirectedGraph.create<Any>().edges().isPopulated).isFalse()
+    assertThat(WritableObservableDirectedGraph.create<Any>().edges.isPopulated).isFalse()
   }
 
   @Test
@@ -41,7 +41,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    assertThat(graph.contents()).hasCount(1)
+    assertThat(graph.contents).hasCount(1)
   }
 
   @Test
@@ -49,7 +49,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    assertThat(graph.contents().contains(item)).isTrue()
+    assertThat(graph.contents.contains(item)).isTrue()
   }
 
   @Test
@@ -57,7 +57,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    assertThat(graph.nodes()).hasCount(1)
+    assertThat(graph.nodes).hasCount(1)
   }
 
   @Test
@@ -65,7 +65,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    assertThat(graph.nodes().firstOrNull()?.item()).isEqualTo(item)
+    assertThat(graph.nodes.firstOrNull()?.item).isEqualTo(item)
   }
 
   @Test
@@ -83,7 +83,7 @@ class ObservableDirectedGraphTest {
     graph.addNode(item1)
     graph.addNode(item2)
     graph.addEdge(item1, item2)
-    assertThat(graph.edges().firstOrNull()?.endpoints()?.map { it.item() })
+    assertThat(graph.edges.firstOrNull()?.endpoints?.map { it.item })
         .isEqualTo(of(item1, item2))
   }
 
@@ -116,7 +116,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(original)
     graph.replaceNode(original, replacement)
-    assertThat(graph.contents()).containsExactlyElementsIn(ImmutableSet.of(replacement))
+    assertThat(graph.contents).containsExactlyElementsIn(ImmutableSet.of(replacement))
   }
 
   @Test
@@ -127,21 +127,21 @@ class ObservableDirectedGraphTest {
     graph.addNode(original)
     graph.addEdge(original, original)
     graph.replaceNode(original, replacement)
-    assertThat(graph.edges().map { edge -> edge.endpoints().map { it.item() } })
+    assertThat(graph.edges.map { edge -> edge.endpoints.map { it.item } })
       .containsExactly(of(replacement, replacement))
   }
 
   @Test
   fun observeStates_whenInit_emitsEmpty() {
     WritableObservableDirectedGraph.create<Any>().observe().states().test()
-      .assertValue { !it.contents().isPopulated }
+      .assertValue { !it.contents.isPopulated }
   }
 
   @Test
   fun observeMutations_whenInit_emitsEmptyState() {
     WritableObservableDirectedGraph.create<Any>().observe().mutations().map { obj -> obj.state() }
       .test()
-      .assertValue { !it.contents().isPopulated }
+      .assertValue { !it.contents.isPopulated }
   }
 
   @Test
@@ -158,7 +158,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
     graph.observe().mutations().map { it.state() }.test()
-      .assertValue { it.contents().contains(item) }
+      .assertValue { it.contents.contains(item) }
   }
 
   @Test
@@ -185,8 +185,8 @@ class ObservableDirectedGraphTest {
     graph.addNode(item)
     graph.addEdge(edge.first, edge.second)
     val subscriber = graph.observe().mutations().map { it.state() }.test()
-    subscriber.assertValue { it.edges().count == 1 }
-    subscriber.assertValue { value -> value.edges().first().endpoints().map { it.item() } == edge }
+    subscriber.assertValue { it.edges.count == 1 }
+    subscriber.assertValue { value -> value.edges.first().endpoints.map { it.item } == edge }
   }
 
   @Test

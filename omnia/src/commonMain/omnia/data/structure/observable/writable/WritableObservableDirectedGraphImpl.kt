@@ -37,7 +37,7 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
 
   override fun addNode(item: E) {
     mutateState(
-      { currentState -> !currentState.contents().contains(item) },
+      { currentState -> !currentState.contents.contains(item) },
       { currentState -> currentState.toBuilder().addNode(item).build() }
     ) { _, _ -> ImmutableSet.of(AddNodeToGraph.create(item)) }
   }
@@ -46,10 +46,10 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     mutateState(
       { currentState: ImmutableDirectedGraph<E> ->
         require(
-          currentState.contents().contains(original)
+          currentState.contents.contains(original)
         ) { "cannot replace a non-existent node. original=$original" }
         require(
-          !currentState.contents().contains(replacement)
+          !currentState.contents.contains(replacement)
         ) { "cannot replace a node with an already existing node. replacement=$replacement" }
         true
       },
@@ -57,22 +57,22 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     ) { previousState, newState ->
       listOfNotNull(
           previousState.nodeOf(original)
-            ?.edges()
-            ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map { it.item() } }
+            ?.edges
+            ?.map { it.endpoints }
+            ?.map { couplet -> couplet.map { it.item } }
             ?.map { RemoveEdgeFromGraph.create(it) },
           previousState.nodeOf(original)
-            ?.item()
+            ?.item
             ?.let { RemoveNodeFromGraph.create(it) }
             ?.let { listOf(it) },
           newState.nodeOf(replacement)
-            ?.item()
+            ?.item
             ?.let { AddNodeToGraph.create(it) }
             ?.let { listOf(it) },
           newState.nodeOf(replacement)
-            ?.edges()
-            ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map { it.item() } }
+            ?.edges
+            ?.map { it.endpoints }
+            ?.map { couplet -> couplet.map { it.item } }
             ?.map { AddEdgeToGraph.create(it) })
         .flatten()
         .toImmutableSet()
@@ -81,17 +81,17 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
 
   override fun removeUnknownTypedNode(item: Any?): Boolean {
     return mutateState(
-      { currentState -> currentState.contents().containsUnknownTyped(item) },
+      { currentState -> currentState.contents.containsUnknownTyped(item) },
       { currentState -> currentState.toBuilder().removeUnknownTypedNode(item).build() }
     ) { previousState, _ ->
       listOfNotNull(
           previousState.nodeOfUnknownType(item)
-            ?.edges()
-            ?.map { it.endpoints() }
-            ?.map { couplet -> couplet.map { it.item() } }
+            ?.edges
+            ?.map { it.endpoints }
+            ?.map { couplet -> couplet.map { it.item } }
             ?.map { RemoveEdgeFromGraph.create(it) },
           previousState.nodeOfUnknownType(item)
-            ?.item()
+            ?.item
             ?.let { RemoveNodeFromGraph.create(it) }
             ?.let { listOf(it) })
         .flatten()
@@ -105,8 +105,8 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
       { currentState -> currentState.toBuilder().addEdge(from, to).build() }
     ) { _, newState ->
       newState.edgeOf(from, to)
-        ?.endpoints()
-        ?.map { it.item() }
+        ?.endpoints
+        ?.map { it.item }
         ?.let { AddEdgeToGraph.create(it) }
         ?.let { ImmutableSet.of(it) }
         ?: ImmutableSet.empty()
@@ -123,8 +123,8 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
       { currentState -> currentState.toBuilder().removeEdgeUnknownEdge(from, to).build() }
     ) { previousState, _ ->
       previousState.edgeOfUnknownType(from, to)
-        ?.endpoints()
-        ?.map { it.item() }
+        ?.endpoints
+        ?.map { it.item }
         ?.let { RemoveEdgeFromGraph.create(it) }
         ?.let { ImmutableSet.of(it) }
         ?: ImmutableSet.empty()
@@ -173,17 +173,20 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     return getState().edgeOfUnknownType(from, to)
   }
 
-  override fun contents(): Set<E> {
-    return getState().contents()
-  }
+  override val contents: Set<E>
+    get() {
+      return getState().contents
+    }
 
-  override fun nodes(): Set<out DirectedGraph.DirectedNode<E>> {
-    return getState().nodes()
-  }
+  override val nodes: Set<out DirectedGraph.DirectedNode<E>>
+    get() {
+      return getState().nodes
+    }
 
-  override fun edges(): Set<out DirectedGraph.DirectedEdge<E>> {
-    return getState().edges()
-  }
+  override val edges: Set<out DirectedGraph.DirectedEdge<E>>
+    get() {
+      return getState().edges
+    }
 
   override fun toReadOnly(): ObservableDirectedGraph<E> {
     return object : ObservableDirectedGraph<E> {
@@ -207,17 +210,20 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
         return this@WritableObservableDirectedGraphImpl.edgeOfUnknownType(from, to)
       }
 
-      override fun nodes(): Set<out DirectedGraph.DirectedNode<E>> {
-        return this@WritableObservableDirectedGraphImpl.nodes()
-      }
+      override val nodes: Set<out DirectedGraph.DirectedNode<E>>
+        get() {
+          return this@WritableObservableDirectedGraphImpl.nodes
+        }
 
-      override fun edges(): Set<out DirectedGraph.DirectedEdge<E>> {
-        return this@WritableObservableDirectedGraphImpl.edges()
-      }
+      override val edges: Set<out DirectedGraph.DirectedEdge<E>>
+        get() {
+          return this@WritableObservableDirectedGraphImpl.edges
+        }
 
-      override fun contents(): Set<E> {
-        return this@WritableObservableDirectedGraphImpl.contents()
-      }
+      override val contents: Set<E>
+        get() {
+          return this@WritableObservableDirectedGraphImpl.contents
+        }
     }
   }
 
@@ -239,10 +245,10 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
         return observable { emitter: ObservableEmitter<MutationEvent<E>> ->
           val state = getState()
           val operations: Set<GraphOperation<E>> =
-            state.nodes().map { AddNodeToGraph.create(it.item()) }
+            state.nodes.map { AddNodeToGraph.create(it.item) }
               .plus(
-                state.edges()
-                  .map { AddEdgeToGraph.create(it.endpoints().map { i -> i.item() })})
+                state.edges
+                  .map { AddEdgeToGraph.create(it.endpoints.map { i -> i.item })})
               .toImmutableSet()
           emitter.onNext(object : MutationEvent<E> {
             override fun state(): DirectedGraph<E> {

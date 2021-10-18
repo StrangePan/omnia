@@ -530,7 +530,7 @@ class GraphAlgorithmsTest {
 
 private fun <T : Any, C : List<T>> Assertion<C>.isATopologicalSortOf(graph: DirectedGraph<T>):
     Assertion<C> {
-  this.hasCount(graph.nodes().count)
+  this.hasCount(graph.nodes.count)
 
   // O(N)
   for (item in actual) {
@@ -542,21 +542,21 @@ private fun <T : Any, C : List<T>> Assertion<C>.isATopologicalSortOf(graph: Dire
   for (item in actual) {
 
     // predecessors of item exist in cumulative predecessors: O(N)
-    (graph.nodeOf(item)?.predecessors() ?: Set.empty())
-      .map { it.item() }
+    (graph.nodeOf(item)?.predecessors ?: Set.empty())
+      .map { it.item }
       .forEach { assertThat(cumulativePredecessors).contains(it) }
 
     // successors of item do NOT exist in cumulative predecessors yet: O(N)
-    (graph.nodeOf(item)?.successors() ?: Set.empty())
-      .map { it.item() }
+    (graph.nodeOf(item)?.successors ?: Set.empty())
+      .map { it.item }
       .forEach { assertThat(cumulativePredecessors).doesNotContain(it) }
 
     cumulativePredecessors.add(item)
   }
 
   // all nodes in graph exist in the result: O(N)
-  for (node in graph.nodes()) {
-    assertThat(cumulativePredecessors).contains(node.item())
+  for (node in graph.nodes) {
+    assertThat(cumulativePredecessors).contains(node.item)
   }
 
   return this
