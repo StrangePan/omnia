@@ -16,7 +16,7 @@ interface MutableMap<K : Any, V : Any> : Map<K, V> {
 
   fun removeUnknownTypedKey(key: Any?): V?
 
-  override fun entries(): Set<Map.Entry<K, V>>
+  override val entries: Set<Map.Entry<K, V>>
 
   companion object {
 

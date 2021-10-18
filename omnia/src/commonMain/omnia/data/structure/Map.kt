@@ -2,8 +2,6 @@ package omnia.data.structure
 
 import kotlin.collections.List as KotlinList
 import kotlin.collections.Map as KotlinMap
-import kotlin.collections.Set as KotlinSet
-import omnia.data.cache.Memoized
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.tuple.Couple
 import omnia.data.structure.tuple.Tuple
@@ -12,13 +10,13 @@ import omnia.data.structure.tuple.Tuple
 interface Map<K : Any, V : Any> {
 
   /** Retrieves a read-only, unordered set empty all empty the keys contained in this map.  */
-  fun keys(): Set<K>
+  val keys: Set<K>
 
   /** Retrieves a read-only, unordered collection empty all the values contained in this map.  */
-  fun values(): Collection<V>
+  val values: Collection<V>
 
   /** Retrieves a read-only, unordered set empty all the entries contained in this map.  */
-  fun entries(): Set<Entry<K, V>>
+  val entries: Set<Entry<K, V>>
 
   /** A type-safe alternative to [valueOfUnknownTyped].  */
   fun valueOf(key: K): V? {
@@ -42,8 +40,9 @@ interface Map<K : Any, V : Any> {
   /** An [Entry] is read-only representing empty a single key-value mapping.   */
   interface Entry<K : Any, V : Any> {
 
-    fun key(): K
-    fun value(): V
+    val key: K
+
+    val value: V
 
     companion object {
 
@@ -61,13 +60,15 @@ interface Map<K : Any, V : Any> {
     private val backingEntry: KotlinMap.Entry<K, V>)
     : Entry<K, V> {
 
-    override fun key(): K {
-      return backingEntry.key
-    }
+    override val key: K
+      get() {
+        return backingEntry.key
+      }
 
-    override fun value(): V {
-      return backingEntry.value
-    }
+    override val value: V
+      get() {
+        return backingEntry.value
+      }
 
     override fun equals(other: Any?): Boolean {
       return other is MaskedEntry<*, *> && other.backingEntry == backingEntry
@@ -79,13 +80,15 @@ interface Map<K : Any, V : Any> {
   private class SimpleEntry<K : Any, V : Any>(key: K, value: V) : Entry<K, V> {
 
     private val couple: Couple<K, V> = Tuple.of(key, value)
-    override fun key(): K {
-      return couple.first
-    }
+    override val key: K
+      get() {
+        return couple.first
+      }
 
-    override fun value(): V {
-      return couple.second
-    }
+    override val value: V
+      get() {
+        return couple.second
+      }
 
     override fun equals(other: Any?): Boolean {
       return other === this || other is SimpleEntry<*, *> && other.couple == couple
@@ -105,22 +108,9 @@ interface Map<K : Any, V : Any> {
   private class MaskingMap<K : Any, V : Any>(private val backingMap: KotlinMap<K, V>)
     : Map<K, V> {
 
-    private val keys: Memoized<Set<K>> = Memoized.memoize { Set.masking(this.backingMap.keys) }
-    private val values: Memoized<Collection<V>> =
-      Memoized.memoize { Collection.masking(this.backingMap.values) }
-    private val entries: Memoized<Set<Entry<K, V>>> = Memoized.memoize { MaskingSet(backingMap) }
-
-    override fun keys(): Set<K> {
-      return keys.value()
-    }
-
-    override fun values(): Collection<V> {
-      return values.value()
-    }
-
-    override fun entries(): Set<Entry<K, V>> {
-      return entries.value()
-    }
+    override val keys: Set<K> by lazy { Set.masking(this.backingMap.keys) }
+    override val values: Collection<V> by lazy { Collection.masking(this.backingMap.values) }
+    override val entries: Set<Entry<K, V>> by lazy { MaskingSet(backingMap) }
 
     override fun valueOfUnknownTyped(key: Any?): V? {
       return backingMap[key]
@@ -165,7 +155,7 @@ interface Map<K : Any, V : Any> {
     override val isPopulated get() = backingSet.isNotEmpty()
 
     override fun containsUnknownTyped(item: Any?): Boolean {
-      return (item is Entry<*, *> && item.value() == backingMap[item.key()])
+      return (item is Entry<*, *> && item.value == backingMap[item.key])
     }
 
     override fun iterator(): Iterator<Entry<K, V>> {

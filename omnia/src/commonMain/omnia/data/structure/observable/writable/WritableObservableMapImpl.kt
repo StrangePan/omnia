@@ -96,17 +96,20 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
     return true
   }
 
-  override fun entries(): Set<Map.Entry<K, V>> {
-    return state.entries()
-  }
+  override val entries: Set<Map.Entry<K, V>>
+    get() {
+      return state.entries
+    }
 
-  override fun keys(): Set<K> {
-    return state.keys()
-  }
+  override val keys: Set<K>
+    get() {
+      return state.keys
+    }
 
-  override fun values(): Collection<V> {
-    return state.values()
-  }
+  override val values: Collection<V>
+    get() {
+      return state.values
+    }
 
   override fun valueOf(key: K): V? {
     return state.valueOf(key)
@@ -148,8 +151,8 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
     val state: Map<K, V> = state
     return MutationEvent(
       state,
-      state.entries()
-        .map { AddToMap(it.key(), it.value()) }
+      state.entries
+        .map { AddToMap(it.key, it.value) }
         .toImmutableSet())
   }
 
@@ -163,17 +166,20 @@ internal class WritableObservableMapImpl<K : Any, V : Any> : WritableObservableM
         return this@WritableObservableMapImpl.observe()
       }
 
-      override fun keys(): Set<K> {
-        return this@WritableObservableMapImpl.keys()
-      }
+      override val keys: Set<K>
+        get() {
+          return this@WritableObservableMapImpl.keys
+        }
 
-      override fun values(): Collection<V> {
-        return this@WritableObservableMapImpl.values()
-      }
+      override val values: Collection<V>
+        get() {
+          return this@WritableObservableMapImpl.values
+        }
 
-      override fun entries(): Set<Map.Entry<K, V>> {
-        return this@WritableObservableMapImpl.entries()
-      }
+      override val entries: Set<Map.Entry<K, V>>
+        get() {
+          return this@WritableObservableMapImpl.entries
+        }
 
       override fun valueOfUnknownTyped(key: Any?): V? {
         return this@WritableObservableMapImpl.valueOfUnknownTyped(key)

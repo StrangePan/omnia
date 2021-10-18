@@ -19,13 +19,13 @@ import omnia.data.structure.tuple.Tuplet
 
 class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
-  private val nodes: ImmutableSet<E>
-  private val neighbors: ImmutableMap<E, ImmutableSet<E>>
-  private val successors: ImmutableMap<E, ImmutableSet<E>>
-  private val predecessors: ImmutableMap<E, ImmutableSet<E>>
+  override val contents: ImmutableSet<E>
+  private val neighborMap: ImmutableMap<E, ImmutableSet<E>>
+  private val successorMap: ImmutableMap<E, ImmutableSet<E>>
+  private val predecessorMap: ImmutableMap<E, ImmutableSet<E>>
 
   fun toBuilder(): Builder<E> {
-    return Builder(nodes, successors, predecessors)
+    return Builder(contents, successorMap, predecessorMap)
   }
 
   class Builder<E : Any> {
@@ -107,19 +107,19 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     companion object {
 
       private fun <E : Any> deepCopy(other: Map<E, out Set<E>>): MutableMap<E, MutableSet<E>> {
-        return other.entries().toHashMap({ it.key() }, { HashSet.copyOf(it.value()) })
+        return other.entries.toHashMap({ it.key }, { HashSet.copyOf(it.value) })
       }
 
       private fun <T : Any> deepRemove(map: MutableMap<T, MutableSet<T>>, item: Any?) {
         map.removeUnknownTypedKey(item)
-        map.values().forEach { it.removeUnknownTyped(item) }
+        map.values.forEach { it.removeUnknownTyped(item) }
       }
 
       private fun <T : Any> deepReplace(
         map: MutableMap<T, MutableSet<T>>, original: T, replacement: T,
       ) {
         map.removeKey(original)?.let { set -> map.putMapping(replacement, set) }
-        map.values().forEach {
+        map.values.forEach {
           if (it.removeUnknownTyped(original)) {
             it.add(replacement)
           }
@@ -129,20 +129,20 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
   }
 
   private constructor() {
-    nodes = ImmutableSet.empty()
-    neighbors = ImmutableMap.empty()
-    successors = ImmutableMap.empty()
-    predecessors = ImmutableMap.empty()
+    contents = ImmutableSet.empty()
+    neighborMap = ImmutableMap.empty()
+    successorMap = ImmutableMap.empty()
+    predecessorMap = ImmutableMap.empty()
   }
 
   private constructor(builder: Builder<E>) {
-    nodes = ImmutableSet.copyOf(builder.nodes)
-    successors = deepCopy(builder.successors)
-    predecessors = deepCopy(builder.predecessors)
-    neighbors = deepCopy(
-      successors.entries()
-        .plus(predecessors.entries())
-        .groupBy({ it.key() }, { it.value() })
+    contents = ImmutableSet.copyOf(builder.nodes)
+    successorMap = deepCopy(builder.successors)
+    predecessorMap = deepCopy(builder.predecessors)
+    neighborMap = deepCopy(
+      successorMap.entries
+        .plus(predecessorMap.entries)
+        .groupBy({ it.key }, { it.value })
         .entries
         .toImmutableMap({ it.key }, { it.value.flatten().toImmutableSet() }))
   }
@@ -153,7 +153,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
   override fun nodeOfUnknownType(item: Any?): DirectedNode? {
     @Suppress("UNCHECKED_CAST")
-    return if (nodes.containsUnknownTyped(item)) getOrCreateNode(item as E) else null
+    return if (contents.containsUnknownTyped(item)) getOrCreateNode(item as E) else null
   }
 
   override fun edgeOf(from: E, to: E): DirectedEdge? {
@@ -161,7 +161,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
   }
 
   override fun edgeOfUnknownType(from: Any?, to: Any?): DirectedEdge? {
-    val edges = successors.valueOfUnknownTyped(from) ?: return null
+    val edges = successorMap.valueOfUnknownTyped(from) ?: return null
     if (!edges.containsUnknownTyped(to)) {
       return null
     }
@@ -169,31 +169,21 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     return getOrCreateEdge(from as E, to as E)
   }
 
-  override val contents: ImmutableSet<E>
-    get() {
-      return nodes
-    }
-
   override val nodes: ImmutableSet<DirectedNode>
     get() {
-      return nodes.map(toNode()).toImmutableSet()
+      return contents.map(toNode()).toImmutableSet()
     }
 
   override val edges: ImmutableSet<DirectedEdge>
     get() {
-      return successors.entries()
+      return successorMap.entries
         .flatMap(::toCouplets)
         .map(toEdge())
         .toImmutableSet()
     }
 
-  inner class DirectedNode internal constructor(private val item: E) :
+  inner class DirectedNode internal constructor(override val item: E) :
     DirectedGraph.DirectedNode<E> {
-
-    override val item: E
-      get() {
-        return item
-      }
 
     override val edges: ImmutableSet<DirectedEdge>
       get() {
@@ -205,7 +195,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
     override val outgoingEdges: ImmutableSet<DirectedEdge>
       get() {
-        return (successors.valueOf(item) ?: ImmutableSet.empty())
+        return (successorMap.valueOf(item) ?: ImmutableSet.empty())
           .map { Tuplet.of(item, it) }
           .map(toEdge())
           .toImmutableSet()
@@ -213,7 +203,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
     override val incomingEdges: ImmutableSet<DirectedEdge>
       get() {
-        return (predecessors.valueOf(item) ?: ImmutableSet.empty())
+        return (predecessorMap.valueOf(item) ?: ImmutableSet.empty())
           .map { Tuplet.of(it, item) }
           .map(toEdge())
           .toImmutableSet()
@@ -221,17 +211,17 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
     override val neighbors: ImmutableSet<DirectedNode>
       get() {
-        return (neighbors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
+        return (neighborMap.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
       }
 
     override val successors: ImmutableSet<DirectedNode>
       get() {
-        return (successors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
+        return (successorMap.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
       }
 
     override val predecessors: Set<DirectedNode>
       get() {
-        return (predecessors.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
+        return (predecessorMap.valueOf(item) ?: ImmutableSet.empty()).map(toNode()).toImmutableSet()
       }
 
     override fun equals(other: Any?): Boolean {
@@ -247,37 +237,37 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     private fun graph() = this@ImmutableDirectedGraph
   }
 
-  inner class DirectedEdge internal constructor(private val endpoints: Couplet<out E>) :
+  inner class DirectedEdge internal constructor(private val endpointContents: Couplet<out E>) :
     DirectedGraph.DirectedEdge<E> {
 
     override val start: DirectedGraph.DirectedNode<E>
       get() {
-        return getOrCreateNode(endpoints.first)
+        return getOrCreateNode(endpointContents.first)
       }
 
     override val end: DirectedGraph.DirectedNode<E>
       get() {
-        return getOrCreateNode(endpoints.second)
+        return getOrCreateNode(endpointContents.second)
       }
 
     override val endpoints: Couplet<DirectedNode>
       get() {
         return Tuplet.of(
-          getOrCreateNode(endpoints.first),
-          getOrCreateNode(endpoints.second)
+          getOrCreateNode(endpointContents.first),
+          getOrCreateNode(endpointContents.second)
         )
       }
 
     override fun equals(other: Any?): Boolean {
       return other is ImmutableDirectedGraph<*>.DirectedEdge
           && other.graph() == graph()
-          && endpoints == other.endpoints
+          && endpointContents == other.endpoints
     }
 
-    override fun hashCode() = hash(endpoints)
+    override fun hashCode() = hash(endpointContents)
 
     override fun toString() =
-      "ImmutableDirectedEdge{from=${endpoints.first}, to=${endpoints.second}}"
+      "ImmutableDirectedEdge{from=${endpointContents.first}, to=${endpointContents.second}}"
 
     private fun graph() = this@ImmutableDirectedGraph
   }
@@ -379,13 +369,13 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     }
 
     private fun <E : Any> deepCopy(other: Map<E, out Set<E>>): ImmutableMap<E, ImmutableSet<E>> {
-      return other.entries()
-        .map { Tuple.of(it.key(), ImmutableSet.copyOf(it.value())) }
+      return other.entries
+        .map { Tuple.of(it.key, ImmutableSet.copyOf(it.value)) }
         .toImmutableMap()
     }
 
     private fun <T : Any> toCouplets(entry: Map.Entry<T, out Set<T>>): Iterable<Couplet<T>> {
-      return entry.value().map { Tuplet.of(entry.key(), it) }
+      return entry.value.map { Tuplet.of(entry.key, it) }
     }
   }
 }

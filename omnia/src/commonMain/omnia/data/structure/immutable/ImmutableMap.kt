@@ -31,12 +31,12 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     }
 
     fun putAll(otherMap: Map<out K, out V>): Builder<K, V> {
-      otherMap.entries().forEach { putMapping(it.key(), it.value()) }
+      otherMap.entries.forEach { putMapping(it.key, it.value) }
       return this
     }
 
     fun putAll(iterable: Iterable<Map.Entry<out K, out V>>): Builder<K, V> {
-      iterable.forEach { e: Map.Entry<out K, out V> -> putMapping(e.key(), e.value()) }
+      iterable.forEach { e: Map.Entry<out K, out V> -> putMapping(e.key, e.value) }
       return this
     }
 
@@ -62,44 +62,49 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
   private constructor(builder: Builder<K, V>) : this(builder.backingMap)
 
-  override fun keys(): Set<K> {
-    return Set.masking(backingMap.keys)
-  }
-
-  override fun values(): Collection<V> {
-    return Collection.masking(backingMap.values)
-  }
-
-  override fun entries(): ImmutableSet<Map.Entry<K, V>> {
-    class Entry(private val backingEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
-
-      override fun key(): K {
-        return backingEntry.key
-      }
-
-      override fun value(): V {
-        return backingEntry.value
-      }
-
-      override fun equals(other: Any?): Boolean {
-        if (other === this) {
-          return true
-        }
-        if (other !is Map.Entry<*, *>) {
-          return false
-        }
-        return (key() == other.key()
-            && value() == other.value())
-      }
-
-      override fun hashCode() = hash(key(), value())
-
-      override fun toString(): String {
-        return key().toString() + " => " + value().toString()
-      }
+  override val keys: Set<K>
+    get() {
+      return Set.masking(backingMap.keys)
     }
-    return backingMap.entries.map { Entry(it) }.toImmutableSet()
-  }
+
+  override val values: Collection<V>
+    get() {
+      return Collection.masking(backingMap.values)
+    }
+
+  override val entries: ImmutableSet<Map.Entry<K, V>>
+    get() {
+      class Entry(private val backingEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
+
+        override val key: K
+          get() {
+            return backingEntry.key
+          }
+
+        override val value: V
+          get() {
+            return backingEntry.value
+          }
+
+        override fun equals(other: Any?): Boolean {
+          if (other === this) {
+            return true
+          }
+          if (other !is Map.Entry<*, *>) {
+            return false
+          }
+          return (key == other.key
+              && value == other.value)
+        }
+
+        override fun hashCode() = hash(key, value)
+
+        override fun toString(): String {
+          return key.toString() + " => " + value.toString()
+        }
+      }
+      return backingMap.entries.map { Entry(it) }.toImmutableSet()
+    }
 
   override fun valueOfUnknownTyped(key: Any?): V? {
     return backingMap[key]
@@ -116,12 +121,12 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     if (other !is ImmutableMap<*, *>) {
       return false
     }
-    if (other.entries().count != entries().count) {
+    if (other.entries.count != entries.count) {
       return false
     }
-    for (entry in entries()) {
-      val otherValue = other.valueOfUnknownTyped(entry.key())
-      if (otherValue != entry.value()) {
+    for (entry in entries) {
+      val otherValue = other.valueOfUnknownTyped(entry.key)
+      if (otherValue != entry.value) {
         return false
       }
     }
@@ -134,7 +139,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
   private val hashCode = memoize { computeHash() }
   private fun computeHash(): Int {
-    val entries: Set<out Map.Entry<*, *>> = entries()
+    val entries: Set<out Map.Entry<*, *>> = entries
     val entryCodes = IntArray(entries.count)
     entries.forEachIndexed { index, entry -> entryCodes[index] = entry.hashCode() }
     entryCodes.sort()
@@ -142,7 +147,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
   }
 
   override fun toString(): String {
-    return "${this::class.simpleName}[${entries().joinToString { "{$it}" }}]"
+    return "${this::class.simpleName}[${entries.joinToString { "{$it}" }}]"
   }
 
   companion object {
