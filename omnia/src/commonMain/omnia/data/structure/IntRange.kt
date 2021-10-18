@@ -6,10 +6,21 @@ import omnia.data.iterate.IntegerRangeIterator
 import omnia.data.structure.immutable.ImmutableList
 
 /** A simple class representing a range of integers.  */
-class IntRange private constructor(start: Int, length: Int) : Countable, Iterable<Int> {
+class IntRange private constructor(
 
-  private val start: Int
-  private val length: Int
+  /**
+   * The **inclusive** starting index of the range. Guaranteed to represent a valid index into
+   * a list.
+   */
+  val start: Int,
+  private val length: Int) : Countable, Iterable<Int> {
+
+  init {
+    require(length >= 0) {
+      "range start must come at or before the end. " +
+          "start=$start end=${start + length} length=$length"
+    }
+  }
 
   interface Builder {
     fun endingAt(end: Int): IntRange
@@ -18,28 +29,16 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
   }
 
   /**
-   * The **inclusive** starting index of the range. Guaranteed to represent a valid index into
-   * a list.
-   */
-  fun start(): Int {
-    return start
-  }
-
-  /**
    * The **non-inclusive** ending index of the range. Not guaranteed to represent a valid
    * index into a list.
    */
-  fun end(): Int {
-    return start + length
-  }
+  val end = start + length
 
   /**
    * The **inclusive** end index of the range. Guaranteed to represent a valid index into a
    * list.
    */
-  fun endInclusive(): Int {
-    return end() - 1
-  }
+  val endInclusive = end - 1
 
   /**
    * The number of indices contained within the range. Equivalent to
@@ -54,11 +53,11 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
   override val isPopulated get() = length > 0
 
   override fun iterator(): Iterator<Int> {
-    return IntegerRangeIterator.create(start, end())
+    return IntegerRangeIterator.create(start, end)
   }
 
   private fun <E : Any> asSublistOf(list: ImmutableList<E>): ImmutableList<E> {
-    return list.sublistStartingAt(start()).to(end())
+    return list.sublistStartingAt(start).to(end)
   }
 
   override fun hashCode() = hash(start, length)
@@ -67,7 +66,7 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
     return other is IntRange && other.start == start && other.length == length
   }
 
-  override fun toString() = "[${start()}–${end()})"
+  override fun toString() = "[${start}–${end})"
 
   companion object {
 
@@ -90,14 +89,5 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
         }
       }
     }
-  }
-
-  init {
-    require(length >= 0) {
-      "range start must come at or before the end. " +
-          "start=$start end=${start + length} length=$length"
-    }
-    this.start = start
-    this.length = length
   }
 }

@@ -105,7 +105,7 @@ class ImmutableList<E : Any> : List<E> {
   override fun hashCode() = elements.contentHashCode()
 
   fun getSublist(intRange: IntRange): ImmutableList<E> {
-    return sublistStartingAt(intRange.start()).length(intRange.count)
+    return sublistStartingAt(intRange.start).length(intRange.count)
   }
 
   fun sublistStartingAt(startingIndex: Int): SublistBuilder {

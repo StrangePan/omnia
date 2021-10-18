@@ -274,10 +274,10 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
       val builder: ImmutableList.Builder<ListOperation<E>> = ImmutableList.builder()
 
       // Move must be done before insert to make way for new items
-      if (range.end() < state.count) {
-        val numItemsMoved = state.count - range.end()
-        val moveFromRange: IntRange = IntRange.startingAt(range.start()).withLength(numItemsMoved)
-        val moveToRange: IntRange = IntRange.startingAt(range.end()).withLength(numItemsMoved)
+      if (range.end < state.count) {
+        val numItemsMoved = state.count - range.end
+        val moveFromRange: IntRange = IntRange.startingAt(range.start).withLength(numItemsMoved)
+        val moveToRange: IntRange = IntRange.startingAt(range.end).withLength(numItemsMoved)
         builder.add(MoveInList(state.getSublist(moveToRange), moveFromRange, moveToRange))
       }
       builder.add(AddToList(state.getSublist(range), range))
@@ -291,10 +291,10 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
 
       /// Removal must be done BEFORE move to make space for moved items
       builder.add(RemoveFromList(previousState.getSublist(range), range))
-      if (range.end() < previousState.count) {
-        val numItemsMoved = previousState.count - range.end()
-        val moveFromRange: IntRange = IntRange.startingAt(range.end()).withLength(numItemsMoved)
-        val moveToRange: IntRange = IntRange.startingAt(range.start()).withLength(numItemsMoved)
+      if (range.end < previousState.count) {
+        val numItemsMoved = previousState.count - range.end
+        val moveFromRange: IntRange = IntRange.startingAt(range.end).withLength(numItemsMoved)
+        val moveToRange: IntRange = IntRange.startingAt(range.start).withLength(numItemsMoved)
         builder.add(
           MoveInList(previousState.getSublist(moveFromRange), moveFromRange, moveToRange)
         )
