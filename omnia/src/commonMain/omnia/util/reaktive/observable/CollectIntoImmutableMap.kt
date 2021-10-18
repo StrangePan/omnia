@@ -8,7 +8,7 @@ import omnia.data.structure.tuple.Tuples.AtLeastCouple
 fun <K : Any, V: Any> Observable<AtLeastCouple<out K, out V>>.collectIntoImmutableMap() =
   this.collectInto(
     { ImmutableMap.builder<K, V>() },
-    { builder, couple -> builder.putMapping(couple.first(), couple.second()) })
+    { builder, couple -> builder.putMapping(couple.first, couple.second) })
     .map(ImmutableMap.Builder<K, V>::build)
 
 fun <T : Any, K : Any, V: Any> Observable<T>.collectIntoImmutableMap(

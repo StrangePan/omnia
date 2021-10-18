@@ -184,7 +184,7 @@ object GraphAlgorithms {
         // core loop
         var frame = stack.peek()
         while (frame != null /* base case*/) {
-          val iterator = frame.second()
+          val iterator = frame.second
           if (iterator.hasNext()) {
             val next = iterator.next()
 
@@ -199,7 +199,7 @@ object GraphAlgorithms {
               itemsInStack.add(next)
             }
           } else {
-            val current = frame.first()
+            val current = frame.first
 
             // no other successors, add to result
             result.add(current.item())

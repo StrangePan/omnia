@@ -136,94 +136,94 @@ interface Tuple : Countable {
     }
 
     fun <T : Any> toList(couple: Couple<out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(couple.first(), couple.second())
+      return ImmutableList.of(couple.first, couple.second)
     }
 
     fun <T : Any> toList(triple: Triple<out T, out T, out T>): ImmutableList<T> {
-      return ImmutableList.of(triple.first(), triple.second(), triple.third())
+      return ImmutableList.of(triple.first, triple.second, triple.third)
     }
 
     fun <T : Any> toList(quadruple: Quadruple<out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-          quadruple.first(),
-          quadruple.second(),
-          quadruple.third(),
-          quadruple.fourth()
+          quadruple.first,
+          quadruple.second,
+          quadruple.third,
+          quadruple.fourth
       )
     }
 
     fun <T : Any> toList(quintuple: Quintuple<out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-          quintuple.first(),
-          quintuple.second(),
-          quintuple.third(),
-          quintuple.fourth(),
-          quintuple.fifth()
+          quintuple.first,
+          quintuple.second,
+          quintuple.third,
+          quintuple.fourth,
+          quintuple.fifth
       )
     }
 
     fun <T : Any> toList(sextuple: Sextuple<out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-          sextuple.first(),
-          sextuple.second(),
-          sextuple.third(),
-          sextuple.fourth(),
-          sextuple.fifth(),
-          sextuple.sixth()
+          sextuple.first,
+          sextuple.second,
+          sextuple.third,
+          sextuple.fourth,
+          sextuple.fifth,
+          sextuple.sixth
       )
     }
 
     fun <T : Any> toList(septuple: Septuple<out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-          septuple.first(),
-          septuple.second(),
-          septuple.third(),
-          septuple.fourth(),
-          septuple.fifth(),
-          septuple.sixth(),
-          septuple.seventh()
+          septuple.first,
+          septuple.second,
+          septuple.third,
+          septuple.fourth,
+          septuple.fifth,
+          septuple.sixth,
+          septuple.seventh
       )
     }
 
     fun <T : Any> toList(octuple: Octuple<out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-          octuple.first(),
-          octuple.second(),
-          octuple.third(),
-          octuple.fourth(),
-          octuple.fifth(),
-          octuple.sixth(),
-          octuple.seventh(),
-          octuple.eighth()
+          octuple.first,
+          octuple.second,
+          octuple.third,
+          octuple.fourth,
+          octuple.fifth,
+          octuple.sixth,
+          octuple.seventh,
+          octuple.eighth
       )
     }
 
     fun <T : Any> toList(nonuple: Nonuple<out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-          nonuple.first(),
-          nonuple.second(),
-          nonuple.third(),
-          nonuple.fourth(),
-          nonuple.fifth(),
-          nonuple.sixth(),
-          nonuple.seventh(),
-          nonuple.eighth(),
-          nonuple.ninth()
+          nonuple.first,
+          nonuple.second,
+          nonuple.third,
+          nonuple.fourth,
+          nonuple.fifth,
+          nonuple.sixth,
+          nonuple.seventh,
+          nonuple.eighth,
+          nonuple.ninth
       )
     }
 
     fun <T : Any> toList(decuple: Decuple<out T, out T, out T, out T, out T, out T, out T, out T, out T, out T>): ImmutableList<T> {
       return ImmutableList.of(
-          decuple.first(),
-          decuple.second(),
-          decuple.third(),
-          decuple.fourth(),
-          decuple.fifth(),
-          decuple.sixth(),
-          decuple.seventh(),
-          decuple.eighth(),
-          decuple.ninth(),
-          decuple.tenth()
+          decuple.first,
+          decuple.second,
+          decuple.third,
+          decuple.fourth,
+          decuple.fifth,
+          decuple.sixth,
+          decuple.seventh,
+          decuple.eighth,
+          decuple.ninth,
+          decuple.tenth
       )
     }
   }

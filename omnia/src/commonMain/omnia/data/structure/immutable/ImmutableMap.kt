@@ -183,7 +183,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     }
 
     fun <K : Any, V : Any> Iterable<Couple<out K, out V>>.toImmutableMap(): ImmutableMap<K, V> {
-      return this.toImmutableMap({ it.first() }, { it.second() })
+      return this.toImmutableMap({ it.first }, { it.second })
     }
 
     fun <K : Any, V : Any> builder(): Builder<K, V> {

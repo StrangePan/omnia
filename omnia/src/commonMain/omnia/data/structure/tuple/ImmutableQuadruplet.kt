@@ -7,88 +7,88 @@ internal class ImmutableQuadruplet<T : Any>(first: T, second: T, third: T, fourt
 
   override fun <R : Any> map(mapper: (T) -> R): Quadruplet<R> {
     return Tuplet.of(
-      mapper(first()),
-      mapper(second()),
-      mapper(third()),
-      mapper(fourth())
+      mapper(first),
+      mapper(second),
+      mapper(third),
+      mapper(fourth)
     )
   }
 
   override fun dropFirst(): Triplet<T> {
-    return Tuplet.of(second(), third(), fourth())
+    return Tuplet.of(second, third, fourth)
   }
 
   override fun dropSecond(): Triplet<T> {
-    return Tuplet.of(first(), third(), fourth())
+    return Tuplet.of(first, third, fourth)
   }
 
   override fun dropThird(): Triplet<T> {
-    return Tuplet.of(first(), second(), fourth())
+    return Tuplet.of(first, second, fourth)
   }
 
   override fun dropFourth(): Triplet<T> {
-    return Tuplet.of(first(), second(), third())
+    return Tuplet.of(first, second, third)
   }
 
   override fun concat(`object`: T): Quintuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), `object`)
+    return Tuplet.of(first, second, third, fourth, `object`)
   }
 
   override fun concat(other: Couple<T, T>): Sextuplet<T> {
-    return Tuplet.of(first(), second(), third(), fourth(), other.first(), other.second())
+    return Tuplet.of(first, second, third, fourth, other.first, other.second)
   }
 
   override fun concat(other: Triple<T, T, T>): Septuplet<T> {
     return Tuplet.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      other.first(),
-      other.second(),
-      other.third()
+      first,
+      second,
+      third,
+      fourth,
+      other.first,
+      other.second,
+      other.third
     )
   }
 
   override fun concat(other: Quadruple<T, T, T, T>): Octuplet<T> {
     return Tuplet.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      other.first(),
-      other.second(),
-      other.third(),
-      other.fourth()
+      first,
+      second,
+      third,
+      fourth,
+      other.first,
+      other.second,
+      other.third,
+      other.fourth
     )
   }
 
   override fun concat(other: Quintuple<T, T, T, T, T>): Nonuplet<T> {
     return Tuplet.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      other.first(),
-      other.second(),
-      other.third(),
-      other.fourth(),
-      other.fifth()
+      first,
+      second,
+      third,
+      fourth,
+      other.first,
+      other.second,
+      other.third,
+      other.fourth,
+      other.fifth
     )
   }
 
   override fun concat(other: Sextuple<T, T, T, T, T, T>): Decuplet<T> {
     return Tuplet.of(
-      first(),
-      second(),
-      third(),
-      fourth(),
-      other.first(),
-      other.second(),
-      other.third(),
-      other.fourth(),
-      other.fifth(),
-      other.sixth()
+      first,
+      second,
+      third,
+      fourth,
+      other.first,
+      other.second,
+      other.third,
+      other.fourth,
+      other.fifth,
+      other.sixth
     )
   }
 
@@ -109,6 +109,6 @@ internal class ImmutableQuadruplet<T : Any>(first: T, second: T, third: T, fourt
   }
 
   private fun toActualList(): ImmutableList<T> {
-    return ImmutableList.of(first(), second(), third(), fourth())
+    return ImmutableList.of(first, second, third, fourth)
   }
 }

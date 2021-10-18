@@ -57,7 +57,7 @@ class ObservableState<T : Any> private constructor(initialState: T) {
         return@onNext state
       }
       result.onNext(newState)
-      newState.first()
+      newState.first
     }
     return result.firstOrError()
   }

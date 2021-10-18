@@ -87,8 +87,8 @@ interface DirectedGraph<E : Any> : Graph<E> {
     fun end(): DirectedNode<E>
 
     /**
-     * The two nodes that compose this edge. [Couplet.first] returns the head / start of
-     * this edge like [start], while [Couplet.second] returns the tail / end of
+     * The two nodes that compose this edge. [Couplet.getFirst] returns the head / start of
+     * this edge like [start], while [Couplet.getSecond] returns the tail / end of
      * this edge like [end].
      */
     override fun endpoints(): Couplet<out DirectedNode<E>>

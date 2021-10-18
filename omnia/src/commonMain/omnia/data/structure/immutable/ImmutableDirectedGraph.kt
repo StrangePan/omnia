@@ -241,17 +241,17 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     DirectedGraph.DirectedEdge<E> {
 
     override fun start(): DirectedGraph.DirectedNode<E> {
-      return getOrCreateNode(endpoints.first())
+      return getOrCreateNode(endpoints.first)
     }
 
     override fun end(): DirectedGraph.DirectedNode<E> {
-      return getOrCreateNode(endpoints.second())
+      return getOrCreateNode(endpoints.second)
     }
 
     override fun endpoints(): Couplet<DirectedNode> {
       return Tuplet.of(
-        getOrCreateNode(endpoints.first()),
-        getOrCreateNode(endpoints.second())
+        getOrCreateNode(endpoints.first),
+        getOrCreateNode(endpoints.second)
       )
     }
 
@@ -264,7 +264,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     override fun hashCode() = hash(endpoints)
 
     override fun toString() =
-      "ImmutableDirectedEdge{from=${endpoints.first()}, to=${endpoints.second()}}"
+      "ImmutableDirectedEdge{from=${endpoints.first}, to=${endpoints.second}}"
 
     private fun graph() = this@ImmutableDirectedGraph
   }

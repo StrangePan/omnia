@@ -183,7 +183,7 @@ class ObservableDirectedGraphTest {
     val edge = of(item, item)
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    graph.addEdge(edge.first(), edge.second())
+    graph.addEdge(edge.first, edge.second)
     val subscriber = graph.observe().mutations().map { it.state() }.test()
     subscriber.assertValue { it.edges().count == 1 }
     subscriber.assertValue { value -> value.edges().first().endpoints().map { it.item() } == edge }

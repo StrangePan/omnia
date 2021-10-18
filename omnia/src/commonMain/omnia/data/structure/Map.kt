@@ -80,11 +80,11 @@ interface Map<K : Any, V : Any> {
 
     private val couple: Couple<K, V> = Tuple.of(key, value)
     override fun key(): K {
-      return couple.first()
+      return couple.first
     }
 
     override fun value(): V {
-      return couple.second()
+      return couple.second
     }
 
     override fun equals(other: Any?): Boolean {
