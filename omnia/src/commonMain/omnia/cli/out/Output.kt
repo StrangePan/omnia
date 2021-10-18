@@ -9,8 +9,7 @@ import omnia.data.structure.mutable.MutableList
 class Output private constructor(spans: List<Span<*>>) {
 
   private val spans: List<Span<*>>
-  val isPopulated: Boolean
-    get() = spans.isPopulated
+  val isPopulated get() = spans.isPopulated
 
   override fun toString(): String {
     return renderWithoutCodes()
@@ -57,6 +56,7 @@ class Output private constructor(spans: List<Span<*>>) {
     private var blinking: Boolean? = null
     private var inverted: Boolean? = null
     private var hidden: Boolean? = null
+
     fun append(string: String): Builder {
       if (string.isNotEmpty()) {
         spans.add(InlineSpan(string, buildFormatting()))
@@ -253,6 +253,7 @@ class Output private constructor(spans: List<Span<*>>) {
   private interface Renderable {
 
     fun render(): StringBuilder
+
     fun renderWithoutCodes(): StringBuilder
   }
 
@@ -348,8 +349,8 @@ class Output private constructor(spans: List<Span<*>>) {
         .append(
           listOfNotNull(
             "0",
-            color?.foregroundCode(),
-            background?.backgroundCode(),
+            color?.foregroundCode,
+            background?.backgroundCode,
             bold?.let { "1" },
             dim?.let { "2" },
             underlined?.let { "4" },
@@ -372,7 +373,7 @@ class Output private constructor(spans: List<Span<*>>) {
     }
   }
 
-  enum class Color16(private val foreground: String, private val background: String) {
+  enum class Color16(val foregroundCode: String, val backgroundCode: String) {
     DEFAULT("39", "49"),
     BLACK("30", "40"),
     RED("31", "41"),
@@ -390,14 +391,6 @@ class Output private constructor(spans: List<Span<*>>) {
     LIGHT_MAGENTA("95", "105"),
     LIGHT_CYAN("96", "106"),
     WHITE("97", "107");
-
-    fun foregroundCode(): String {
-      return foreground
-    }
-
-    fun backgroundCode(): String {
-      return background
-    }
   }
 
   companion object {
