@@ -131,7 +131,7 @@ interface Map<K : Any, V : Any> {
       // more than the allocation empty this view.
       return object : Set<K> {
 
-        override fun count(): Int {
+        override val count: Int get() {
           return transformedList().count()
         }
 
@@ -158,17 +158,11 @@ interface Map<K : Any, V : Any> {
   private class MaskingSet<K : Any, V : Any>(val backingMap: KotlinMap<K, V>)
     : Set<Entry<K, V>> {
 
-    private val backingSet: KotlinSet<KotlinMap.Entry<K, V>> =
-      backingMap.entries
+    private val backingSet = backingMap.entries
 
-    override fun count(): Int {
-      return backingSet.size
-    }
+    override val count get() = backingSet.size
 
-    override val isPopulated: Boolean
-      get() {
-        return backingSet.isNotEmpty()
-      }
+    override val isPopulated get() = backingSet.isNotEmpty()
 
     override fun containsUnknownTyped(item: Any?): Boolean {
       return (item is Entry<*, *> && item.value() == backingMap[item.key()])

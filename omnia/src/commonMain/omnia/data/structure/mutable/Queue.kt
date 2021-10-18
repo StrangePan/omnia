@@ -39,7 +39,7 @@ interface Queue<E : Any> : Countable, Iterable<E> {
           backingList.add(item)
         }
 
-        override fun count(): Int {
+        override val count: Int get() {
           return backingList.size
         }
 

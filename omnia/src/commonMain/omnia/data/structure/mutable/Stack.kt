@@ -27,7 +27,7 @@ interface Stack<E : Any> : Countable, Iterable<E> {
           return backingList.lastOrNull()
         }
 
-        override fun count(): Int {
+        override val count: Int get() {
           return backingList.size
         }
 

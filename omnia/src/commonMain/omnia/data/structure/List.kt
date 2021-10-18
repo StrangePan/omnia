@@ -34,12 +34,9 @@ interface List<E : Any> : Collection<E>, Indexable<E> {
      */
     fun <E : Any> masking(backingList: KotlinList<E>): List<E> {
       return object : List<E> {
-        override val isPopulated: Boolean
-          get() = backingList.isNotEmpty()
+        override val isPopulated get() = backingList.isNotEmpty()
 
-        override fun count(): Int {
-          return backingList.size
-        }
+        override val count get() = backingList.size
 
         override fun containsUnknownTyped(item: Any?): Boolean {
           return backingList.contains(item)

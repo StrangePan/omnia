@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtMostQuintuple
 
 interface Quintuple<A, B, C, D, E> : AtLeastQuintuple<A, B, C, D, E>, AtMostQuintuple {
 
-  override fun count(): Int {
+  override val count: Int get() {
     return 5
   }
 

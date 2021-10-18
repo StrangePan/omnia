@@ -53,7 +53,7 @@ open class MaskingList<E : Any>(private val backingList: KotlinMutableList<E>) :
   override val isPopulated: Boolean
     get() = backingList.isNotEmpty()
 
-  override fun count(): Int {
+  override val count: Int get() {
     return backingList.size
   }
 }

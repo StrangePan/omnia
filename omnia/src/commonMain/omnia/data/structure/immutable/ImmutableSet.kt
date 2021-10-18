@@ -53,12 +53,9 @@ class ImmutableSet<E : Any> : Set<E> {
     return elements.containsUnknownTyped(item)
   }
 
-  override val isPopulated: Boolean
-    get() = elements.isPopulated
+  override val isPopulated get() = elements.isPopulated
 
-  override fun count(): Int {
-    return elements.count()
-  }
+  override val count get() = elements.count
 
   override fun equals(other: Any?): Boolean {
     if (other === this) {
@@ -67,7 +64,7 @@ class ImmutableSet<E : Any> : Set<E> {
     if (other !is ImmutableSet<*>) {
       return false
     }
-    if (other.count() != count()) {
+    if (other.count != count) {
       return false
     }
     for (element in elements) {
@@ -85,7 +82,7 @@ class ImmutableSet<E : Any> : Set<E> {
   private val hashCode = memoize { computeHash() }
 
   private fun computeHash(): Int {
-    val elementCodes = IntArray(count())
+    val elementCodes = IntArray(count)
     elements.forEachIndexed { index, element -> elementCodes[index] = element.hashCode() }
     elementCodes.sort()
     return hash(elementCodes.contentHashCode())

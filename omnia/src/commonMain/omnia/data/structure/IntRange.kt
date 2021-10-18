@@ -45,9 +45,7 @@ class IntRange private constructor(start: Int, length: Int) : Countable, Iterabl
    * The number of indices contained within the range. Equivalent to
    * `{ #end()} - { #start()}`.
    */
-  override fun count(): Int {
-    return length
-  }
+  override val count = length
 
   operator fun contains(n: Int): Boolean {
     return start <= n && n < start + length

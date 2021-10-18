@@ -64,7 +64,7 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
     ) { _, currentState ->
       generateInsertAtMutations(
         currentState,
-        IntRange.just(currentState.count() - 1)
+        IntRange.just(currentState.count - 1)
       )
     }
   }
@@ -76,7 +76,7 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
     ) { previousState, currentState ->
       generateInsertAtMutations(
         currentState,
-        IntRange.startingAt(previousState.count()).endingAt(currentState.count())
+        IntRange.startingAt(previousState.count).endingAt(currentState.count)
       )
     }
   }
@@ -98,7 +98,7 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
       { ImmutableList.empty() }
     ) { previousState, _ ->
       generateRemoveAtMutations(
-        previousState, IntRange.startingAt(0).endingAt(previousState.count())
+        previousState, IntRange.startingAt(0).endingAt(previousState.count)
       )
     }
   }
@@ -128,9 +128,10 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
     return state.containsUnknownTyped(item)
   }
 
-  override fun count(): Int {
-    return state.count()
-  }
+  override val count: Int
+    get() {
+      return state.count
+    }
 
   override val isPopulated: Boolean
     get() = state.isPopulated
@@ -157,9 +158,10 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
         return this@WritableObservableListImpl.containsUnknownTyped(item)
       }
 
-      override fun count(): Int {
-        return this@WritableObservableListImpl.count()
-      }
+      override val count: Int
+        get() {
+          return this@WritableObservableListImpl.count
+        }
 
       override fun itemAt(index: Int): E {
         return this@WritableObservableListImpl.itemAt(index)
@@ -260,7 +262,7 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
   private fun generateMutationEventForNewSubscription(): MutationEvent {
     val state: List<E> = state
     return MutationEvent(
-      state, ImmutableList.of(AddToList(state, IntRange.startingAt(0).endingAt(state.count())))
+      state, ImmutableList.of(AddToList(state, IntRange.startingAt(0).endingAt(state.count)))
     )
   }
 
@@ -272,8 +274,8 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
       val builder: ImmutableList.Builder<ListOperation<E>> = ImmutableList.builder()
 
       // Move must be done before insert to make way for new items
-      if (range.end() < state.count()) {
-        val numItemsMoved = state.count() - range.end()
+      if (range.end() < state.count) {
+        val numItemsMoved = state.count - range.end()
         val moveFromRange: IntRange = IntRange.startingAt(range.start()).withLength(numItemsMoved)
         val moveToRange: IntRange = IntRange.startingAt(range.end()).withLength(numItemsMoved)
         builder.add(MoveInList(state.getSublist(moveToRange), moveFromRange, moveToRange))
@@ -289,8 +291,8 @@ internal class WritableObservableListImpl<E : Any> : WritableObservableList<E> {
 
       /// Removal must be done BEFORE move to make space for moved items
       builder.add(RemoveFromList(previousState.getSublist(range), range))
-      if (range.end() < previousState.count()) {
-        val numItemsMoved = previousState.count() - range.end()
+      if (range.end() < previousState.count) {
+        val numItemsMoved = previousState.count - range.end()
         val moveFromRange: IntRange = IntRange.startingAt(range.end()).withLength(numItemsMoved)
         val moveToRange: IntRange = IntRange.startingAt(range.start()).withLength(numItemsMoved)
         builder.add(

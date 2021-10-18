@@ -66,7 +66,7 @@ class WritableObservableSetTest {
     val contents: Set<Any> = ImmutableSet.of(Any(), Any())
     val set: MutableSet<Any> = WritableObservableSet.create()
     contents.forEach(set::add)
-    assertThat(set).hasCount(contents.count())
+    assertThat(set).hasCount(contents.count)
   }
 
   @Test
@@ -143,9 +143,9 @@ class WritableObservableSetTest {
     // Skip 1 because first emission is the initialization subscription
     val testSubscriber = set.observe().states().skip(1).test()
     addedContents.forEach(set::add)
-    testSubscriber.assertValueCount(addedContents.count())
+    testSubscriber.assertValueCount(addedContents.count)
       .assertValues { SetAlgorithms.intersectionOf(it, finalContents) == it }
-      .assertValue(addedContents.count() - 1) { it == finalContents }
+      .assertValue(addedContents.count - 1) { it == finalContents }
   }
 
   @Test
@@ -159,7 +159,7 @@ class WritableObservableSetTest {
     // Skip 1 because first emission is the initialization subscription
     val testSubscriber = set.observe().mutations().skip(1).test()
     removedContents.forEach(set::remove)
-    testSubscriber.assertValueCount(removedContents.count())
+    testSubscriber.assertValueCount(removedContents.count)
     testSubscriber.values.forEach { assertThat(it.operations()).hasCount(1) }
     val operations: Set<out SetOperation<Any>> =
       testSubscriber.values.flatMap { it.operations() }.toImmutableSet()
@@ -182,7 +182,7 @@ class WritableObservableSetTest {
     val testSubscriber = set.observe().mutations().skip(1).test()
     set.clear()
     testSubscriber.assertValueCount(1)
-    testSubscriber.assertValue { it.operations().count() == contents.count() }
+    testSubscriber.assertValue { it.operations().count == contents.count }
     val operations: Set<out SetOperation<Any>> = testSubscriber.values
       .flatMap { it.operations() }
       .toImmutableSet()

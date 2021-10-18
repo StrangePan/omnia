@@ -167,7 +167,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
     val subscriber = graph.observe().mutations().test()
-    subscriber.assertValue { it.operations().count() == 1 }
+    subscriber.assertValue { it.operations().count == 1 }
     subscriber.assertValue { it.operations().first() is ObservableGraph.AddNodeToGraph<*> }
     subscriber.assertValue {
       it.operations()
@@ -185,7 +185,7 @@ class ObservableDirectedGraphTest {
     graph.addNode(item)
     graph.addEdge(edge.first(), edge.second())
     val subscriber = graph.observe().mutations().map { it.state() }.test()
-    subscriber.assertValue { it.edges().count() == 1 }
+    subscriber.assertValue { it.edges().count == 1 }
     subscriber.assertValue { value -> value.edges().first().endpoints().map { it.item() } == edge }
   }
 
@@ -210,7 +210,7 @@ class ObservableDirectedGraphTest {
     graph.addEdge(item, item)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.removeEdge(item, item)
-    testSubscriber.assertValue { it.operations().count() == 1 }
+    testSubscriber.assertValue { it.operations().count == 1 }
     testSubscriber.assertValue { it.operations().first() is ObservableGraph.RemoveEdgeFromGraph<*> }
     testSubscriber.assertValue {
       (it.operations().first() as ObservableGraph.RemoveEdgeFromGraph<Any>).endpoints() ==
@@ -226,7 +226,7 @@ class ObservableDirectedGraphTest {
     graph.addEdge(item, item)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.removeNode(item)
-    testSubscriber.assertValue { it.operations().count() == 2 }
+    testSubscriber.assertValue { it.operations().count == 2 }
     testSubscriber.assertValue {
       it.operations()
         .filterIsInstance<ObservableGraph.RemoveEdgeFromGraph<*>>()
@@ -248,7 +248,7 @@ class ObservableDirectedGraphTest {
     graph.addNode(original)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.replaceNode(original, replacement)
-    testSubscriber.assertValue { it.operations().count() == 2 }
+    testSubscriber.assertValue { it.operations().count == 2 }
     testSubscriber.assertValue {
       it.operations()
         .filterIsInstance<ObservableGraph.RemoveNodeFromGraph<*>>()
@@ -282,7 +282,7 @@ class ObservableDirectedGraphTest {
     graph.addEdge(original, original)
     val testSubscriber = graph.observe().mutations().skip(1).test()
     graph.replaceNode(original, replacement)
-    testSubscriber.assertValue { it.operations().count() == 4 }
+    testSubscriber.assertValue { it.operations().count == 4 }
     testSubscriber.assertValue {
       it.operations()
         .filterIsInstance<ObservableGraph.RemoveEdgeFromGraph<*>>()

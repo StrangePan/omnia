@@ -78,7 +78,7 @@ interface MutableCollection<E : Any> : Collection<E>, Clearable {
           backingCollection.clear()
         }
 
-        override fun count(): Int {
+        override val count: Int get() {
           return backingCollection.size
         }
 

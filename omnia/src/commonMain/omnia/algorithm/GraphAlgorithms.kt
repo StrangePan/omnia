@@ -114,17 +114,18 @@ object GraphAlgorithms {
       itemsInStack.add(directedNode.item())
       iteratorStack.add(directedNode.successors().iterator())
       while (iteratorStack.isPopulated) {
-        val item = itemStack.itemAt(itemStack.count() - 1)
-        val iterator = iteratorStack.itemAt(iteratorStack.count() - 1)
+        val item = itemStack.itemAt(itemStack.count - 1)
+        val iterator = iteratorStack.itemAt(iteratorStack.count - 1)
         if (iterator.hasNext()) {
           val nextNode = iterator.next()
           val nextItem = nextNode.item()
           if (itemsInStack.contains(nextItem)) {
             // navigate back up the stack, building a list representing the cycle
             return ListAlgorithms.sublistOf(
-                itemStack,
-                itemStack.indexOf(nextItem)!!,
-                itemStack.count())
+              itemStack,
+              itemStack.indexOf(nextItem)!!,
+              itemStack.count
+            )
           }
           if (visitedItems.contains(nextItem)) {
             continue
@@ -135,9 +136,9 @@ object GraphAlgorithms {
         } else {
           // only if all possible paths from the current node are acyclical
           visitedItems.add(item)
-          itemStack.removeAt(itemStack.count() - 1)
+          itemStack.removeAt(itemStack.count - 1)
           itemsInStack.remove(item)
-          iteratorStack.removeAt(iteratorStack.count() - 1)
+          iteratorStack.removeAt(iteratorStack.count - 1)
         }
       }
     }
@@ -212,7 +213,7 @@ object GraphAlgorithms {
     }
     val resultList = result.build()
     require(
-      resultList.count() == graph.nodes().count()
+      resultList.count == graph.nodes().count
     ) { "graph must be acyclic to perform a topological sort" }
     return resultList
   }

@@ -22,7 +22,7 @@ private constructor(comparator: Comparator<in E>, other: Collection<out E>) : So
     return backingSet.containsUnknownTyped(item)
   }
 
-  override fun count() = backingSet.count()
+  override val count = backingSet.count
 
   override val isPopulated get() = backingSet.isPopulated
 

@@ -8,7 +8,7 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
   private var subQueue: FixedArrayQueue<E>
 
   override fun enqueue(item: E) {
-    if (subQueue.capacity() == subQueue.count()) {
+    if (subQueue.capacity() == subQueue.count) {
       subQueue = FixedArrayQueue(subQueue.capacity() * 2, subQueue)
     }
     subQueue.enqueue(item)
@@ -16,7 +16,7 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
 
   override fun dequeue(): E? {
     val item = subQueue.dequeue()
-    if (subQueue.capacity() > minimumCapacity && subQueue.count() <= subQueue.capacity() / 4) {
+    if (subQueue.capacity() > minimumCapacity && subQueue.count <= subQueue.capacity() / 4) {
       subQueue = FixedArrayQueue(max(subQueue.capacity() / 2, minimumCapacity), subQueue)
     }
     return item
@@ -26,9 +26,10 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
     return subQueue.peek()
   }
 
-  override fun count(): Int {
-    return subQueue.count()
-  }
+  override val count: Int
+    get() {
+      return subQueue.count
+    }
 
   override val isPopulated: Boolean
     get() = subQueue.isPopulated
@@ -40,7 +41,7 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
     private var tail = 0
 
     constructor(capacity: Int, other: FixedArrayQueue<E>) : this(capacity) {
-      require(other.count() <= capacity) {
+      require(other.count <= capacity) {
         "Attempted to copy a queue (capacity ${other.capacity()}) into a smaller queue " +
             "(capacity $capacity)"
       }
@@ -74,7 +75,7 @@ class ArrayQueue<E : Any> private constructor(capacity: Int = INITIAL_CAPACITY) 
       return items[head] as E?
     }
 
-    override fun count(): Int {
+    override val count: Int get() {
       if (head < tail) {
         return tail - head
       }

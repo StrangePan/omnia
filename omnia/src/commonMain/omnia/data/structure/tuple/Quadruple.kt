@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtMostQuadruple
 
 interface Quadruple<A, B, C, D> : AtLeastQuadruple<A, B, C, D>, AtMostQuadruple {
 
-  override fun count(): Int {
+  override val count: Int get() {
     return 4
   }
 

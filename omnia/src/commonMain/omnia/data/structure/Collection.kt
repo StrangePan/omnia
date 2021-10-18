@@ -36,12 +36,9 @@ interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E> {
      */
     fun <E : Any> masking(backingCollection: KotlinCollection<E>): Collection<E> {
       return object : Collection<E> {
-        override val isPopulated: Boolean
-          get() = backingCollection.isNotEmpty()
+        override val isPopulated get() = backingCollection.isNotEmpty()
 
-        override fun count(): Int {
-          return backingCollection.size
-        }
+        override val count get() = backingCollection.size
 
         override fun containsUnknownTyped(item: Any?): Boolean {
           return backingCollection.contains(item)
@@ -62,12 +59,9 @@ interface Collection<E : Any> : TypedContainer<E>, Countable, Iterable<E> {
         return false
       }
 
-      override fun count(): Int {
-        return 0
-      }
+      override val count = 0
 
-      override val isPopulated: Boolean
-        get() = false
+      override val isPopulated = false
     }
   }
 }

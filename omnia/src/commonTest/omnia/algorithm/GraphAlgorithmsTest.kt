@@ -530,7 +530,7 @@ class GraphAlgorithmsTest {
 
 private fun <T : Any, C : List<T>> Assertion<C>.isATopologicalSortOf(graph: DirectedGraph<T>):
     Assertion<C> {
-  this.hasCount(graph.nodes().count())
+  this.hasCount(graph.nodes().count)
 
   // O(N)
   for (item in actual) {

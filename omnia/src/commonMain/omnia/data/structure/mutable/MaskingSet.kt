@@ -32,7 +32,7 @@ open class MaskingSet<E : Any, J : KotlinMutableSet<E>>(private val backingSet: 
   override val isPopulated: Boolean
     get() = backingSet.isNotEmpty()
 
-  override fun count(): Int {
+  override val count: Int get() {
     return backingSet.size
   }
 }

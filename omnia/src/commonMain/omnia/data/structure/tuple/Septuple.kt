@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtMostSeptuple
 
 interface Septuple<A, B, C, D, E, F, G> : AtLeastSeptuple<A, B, C, D, E, F, G>, AtMostSeptuple {
 
-  override fun count(): Int {
+  override val count: Int get() {
     return 7
   }
 

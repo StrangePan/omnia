@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtMostOctuple
 
 interface Octuple<A, B, C, D, E, F, G, H> : AtLeastOctuple<A, B, C, D, E, F, G, H>, AtMostOctuple {
 
-  override fun count(): Int {
+  override val count: Int get() {
     return 8
   }
 

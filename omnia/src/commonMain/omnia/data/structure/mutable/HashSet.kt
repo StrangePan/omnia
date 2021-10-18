@@ -66,7 +66,7 @@ class HashSet<E : Any>(
     return if (item != null) backingSet.contains(wrap(item) as Wrapper<*>) else false
   }
 
-  override fun count(): Int {
+  override val count: Int get() {
     return backingSet.size
   }
 

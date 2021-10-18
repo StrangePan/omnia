@@ -33,12 +33,13 @@ class Output private constructor(spans: List<Span<*>>) {
 
   private fun render(propagation: (Renderable) -> StringBuilder): String {
     val output = StringBuilder()
-    for (i in 0 until spans.count()) {
+    for (i in 0 until spans.count) {
       val span = spans.itemAt(i)
       if (i > 0
-          && spans.itemAt(i - 1) is InlineSpan
-          && endsInNewLine((spans.itemAt(i - 1) as InlineSpan).text)
-          && span is LineSpan) {
+        && spans.itemAt(i - 1) is InlineSpan
+        && endsInNewLine((spans.itemAt(i - 1) as InlineSpan).text)
+        && span is LineSpan
+      ) {
         output.append(lineSeparator())
       }
       output.append(propagation(span))

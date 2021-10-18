@@ -8,7 +8,7 @@ object ListAlgorithms {
 
   fun <T : Any> sublistOf(other: List<T>, startingIndex: Int, endingIndex: Int): ImmutableList<T> {
     require(startingIndex in 0..endingIndex)
-    require(endingIndex in startingIndex..other.count())
+    require(endingIndex in startingIndex..other.count)
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
     for (i in startingIndex until endingIndex) {
       sublist.add(other.itemAt(i))
@@ -18,7 +18,7 @@ object ListAlgorithms {
 
   fun <T : Any> reverse(other: List<T>): ImmutableList<T> {
     val sublist: ImmutableList.Builder<T> = ImmutableList.builder()
-    for (i in other.count() - 1 downTo 0) {
+    for (i in other.count - 1 downTo 0) {
       sublist.add(other.itemAt(i))
     }
     return sublist.build()
@@ -33,7 +33,7 @@ object ListAlgorithms {
    * Can have any length, including 0.
    */
   fun <T : Any> toArray(list: List<out T>, template: Array<T?>): Array<T?> {
-    val copy = template.copyOf(list.count())
+    val copy = template.copyOf(list.count)
     list.forEachIndexed { index, item -> copy[index] = item }
     return copy
   }
@@ -50,7 +50,7 @@ object ListAlgorithms {
    */
   fun <T : Any> binarySearch(haystack: List<out T>, needle: T, comparator: Comparator<in T>): Int? {
     var min = 0
-    var max = haystack.count()
+    var max = haystack.count
     while (min < max) {
       val mid = (min + max - 1) / 2
       val midValue = haystack.itemAt(mid)
@@ -76,7 +76,7 @@ object ListAlgorithms {
   fun <T : Any> binarySearchOrInsert(
       haystack: MutableList<T>, needle: T, comparator: Comparator<in T>): Int {
     var min = 0
-    var max = haystack.count() - 1
+    var max = haystack.count - 1
     while (min <= max) {
       val mid = (min + max) / 2
       val midValue = haystack.itemAt(mid)

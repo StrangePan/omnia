@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtMostCouple
 
 interface Couple<A, B> : AtLeastCouple<A, B>, AtMostCouple {
 
-  override fun count(): Int {
+  override val count: Int get() {
     return 2
   }
 

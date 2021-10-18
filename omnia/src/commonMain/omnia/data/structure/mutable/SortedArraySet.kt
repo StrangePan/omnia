@@ -43,7 +43,7 @@ class SortedArraySet<E : Any> private constructor(private val comparator: Compar
     }
   }
 
-  override fun count() = elements.count()
+  override val count get() = elements.count
 
   override fun itemPreceding(other: E): E? {
     return binarySearch(elements, other, comparator)
@@ -65,7 +65,7 @@ class SortedArraySet<E : Any> private constructor(private val comparator: Compar
   override fun itemFollowing(other: E): E? {
     return binarySearch(elements, other, comparator)
       ?.let { it + 1 }
-      ?.takeIf { it < elements.count() }
+      ?.takeIf { it < elements.count }
       ?.let(elements::itemAt)
   }
 

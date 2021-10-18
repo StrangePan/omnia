@@ -116,7 +116,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     if (other !is ImmutableMap<*, *>) {
       return false
     }
-    if (other.entries().count() != entries().count()) {
+    if (other.entries().count != entries().count) {
       return false
     }
     for (entry in entries()) {
@@ -135,7 +135,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
   private val hashCode = memoize { computeHash() }
   private fun computeHash(): Int {
     val entries: Set<out Map.Entry<*, *>> = entries()
-    val entryCodes = IntArray(entries.count())
+    val entryCodes = IntArray(entries.count)
     entries.forEachIndexed { index, entry -> entryCodes[index] = entry.hashCode() }
     entryCodes.sort()
     return hash(entryCodes.contentHashCode())

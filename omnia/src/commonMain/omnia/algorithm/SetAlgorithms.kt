@@ -30,7 +30,7 @@ object SetAlgorithms {
    * @return a new set representing the intersection of sets [a] and [b]
    */
   fun <T : Any> intersectionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
-    val smaller = if (a.count() < b.count()) a else b
+    val smaller = if (a.count < b.count) a else b
     val larger = if (smaller !== a) a else b
     return smaller.filter(larger::containsUnknownTyped).toImmutableSet()
   }
@@ -66,7 +66,7 @@ object SetAlgorithms {
    * @return true if the sets are disjoint, false if any item is present in both.
    */
   fun areDisjoint(a: Set<*>, b: Set<*>): Boolean {
-    val smaller = if (a.count() < b.count()) a else b
+    val smaller = if (a.count < b.count) a else b
     val larger = if (smaller !== a) a else b
     return smaller.any(larger::containsUnknownTyped)
   }

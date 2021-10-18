@@ -38,7 +38,7 @@ open class MaskingMap<K : Any, V : Any>(
         return (item is Map.Entry<*, *> && backingMap[item.key()] == item.value())
       }
 
-      override fun count(): Int {
+      override val count: Int get() {
         return backingMap.size
       }
 

@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtMostSextuple
 
 interface Sextuple<A, B, C, D, E, F> : AtLeastSextuple<A, B, C, D, E, F>, AtMostSextuple {
 
-  override fun count(): Int {
+  override val count: Int get() {
     return 6
   }
 

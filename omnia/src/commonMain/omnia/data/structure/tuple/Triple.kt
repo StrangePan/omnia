@@ -5,7 +5,7 @@ import omnia.data.structure.tuple.Tuples.AtMostTriple
 
 interface Triple<A, B, C> : AtLeastTriple<A, B, C>, AtMostTriple {
 
-  override fun count(): Int {
+  override val count: Int get() {
     return 3
   }
 

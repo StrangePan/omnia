@@ -9,7 +9,7 @@ import omnia.contract.TypedContainer
 import omnia.data.structure.Collection
 
 fun <T : Countable> Assertion<T>.hasCount(expected: Int): Assertion<T> {
-  assertEquals(expected, actual.count(), message)
+  assertEquals(expected, actual.count, message)
   return this
 }
 

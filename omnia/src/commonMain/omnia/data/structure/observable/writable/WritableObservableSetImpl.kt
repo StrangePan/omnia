@@ -87,9 +87,10 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
     return state.containsUnknownTyped(item)
   }
 
-  override fun count(): Int {
-    return state.count()
-  }
+  override val count: Int
+    get() {
+      return state.count
+    }
 
   override val isPopulated: Boolean
     get() = state.isPopulated
@@ -108,9 +109,10 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
         return this@WritableObservableSetImpl.containsUnknownTyped(item)
       }
 
-      override fun count(): Int {
-        return this@WritableObservableSetImpl.count()
-      }
+      override val count: Int
+        get() {
+          return this@WritableObservableSetImpl.count
+        }
     }
   }
 

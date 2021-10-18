@@ -9,12 +9,9 @@ interface Set<E : Any> : Collection<E> {
 
     fun <E : Any> masking(backingSet: KotlinSet<E>): Set<E> {
       return object : Set<E> {
-        override val isPopulated: Boolean
-          get() = backingSet.isNotEmpty()
+        override val isPopulated get() = backingSet.isNotEmpty()
 
-        override fun count(): Int {
-          return backingSet.size
-        }
+        override val count get() = backingSet.size
 
         override fun containsUnknownTyped(item: Any?): Boolean {
           return backingSet.contains(item)
@@ -46,7 +43,7 @@ interface Set<E : Any> : Collection<E> {
       if (a == null || b == null) {
         return false
       }
-      if (a.count() != b.count()) {
+      if (a.count != b.count) {
         return false
       }
       for (element in a) {

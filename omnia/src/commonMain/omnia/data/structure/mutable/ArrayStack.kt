@@ -10,20 +10,21 @@ class ArrayStack<E : Any> private constructor() : Stack<E> {
   }
 
   override fun pop(): E? {
-    return if (backingList.isPopulated) backingList.removeAt(backingList.count() - 1) else null
+    return if (backingList.isPopulated) backingList.removeAt(backingList.count - 1) else null
   }
 
   override fun peek(): E? {
-    return if (backingList.isPopulated) backingList.itemAt(backingList.count() - 1) else null
+    return if (backingList.isPopulated) backingList.itemAt(backingList.count - 1) else null
   }
 
   override fun iterator(): Iterator<E> {
     return backingList.iterator()
   }
 
-  override fun count(): Int {
-    return backingList.count()
-  }
+  override val count: Int
+    get() {
+      return backingList.count
+    }
 
   companion object {
 

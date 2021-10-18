@@ -48,7 +48,7 @@ class ImmutableList<E : Any> : List<E> {
   private constructor(builder: Builder<E>) {
     @Suppress("UNCHECKED_CAST")
     this.elements =
-      Array<Any>(builder.elements.count()) { builder.elements.itemAt(it) } as Array<E>
+      Array<Any>(builder.elements.count) { builder.elements.itemAt(it) } as Array<E>
   }
 
   override fun itemAt(index: Int): E {
@@ -71,8 +71,7 @@ class ImmutableList<E : Any> : List<E> {
     return ArrayIterator(elements)
   }
 
-  override val isPopulated: Boolean
-    get() = elements.isNotEmpty()
+  override val isPopulated: Boolean get() = elements.isNotEmpty()
 
   override fun containsUnknownTyped(item: Any?): Boolean {
     for (element1 in elements) {
@@ -83,16 +82,14 @@ class ImmutableList<E : Any> : List<E> {
     return false
   }
 
-  override fun count(): Int {
-    return elements.size
-  }
+  override val count get() = elements.size
 
   override fun equals(other: Any?): Boolean {
     if (other !is ImmutableList<*>) {
       return false
     }
-    val n = count()
-    if (n != other.count()) {
+    val n = count
+    if (n != other.count) {
       return false
     }
     for (i in 0 until n) {
@@ -108,7 +105,7 @@ class ImmutableList<E : Any> : List<E> {
   override fun hashCode() = elements.contentHashCode()
 
   fun getSublist(intRange: IntRange): ImmutableList<E> {
-    return sublistStartingAt(intRange.start()).length(intRange.count())
+    return sublistStartingAt(intRange.start()).length(intRange.count)
   }
 
   fun sublistStartingAt(startingIndex: Int): SublistBuilder {
