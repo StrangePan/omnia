@@ -20,21 +20,22 @@ internal class SimpleMemoizer<T : Any> : Memoized<T> {
   private var supplier: (() -> T)? = null
 
   @Volatile
-  private var value: T? = null
+  private var memoizedValue: T? = null
 
   constructor(value: T) {
-    this.value = value
+    this.memoizedValue = value
   }
 
   constructor(supplier: () -> T) {
     this.supplier = supplier
   }
 
-  override fun value(): T {
-    if (value == null) {
-      value = supplier!!()
-      supplier = null
+  override val value: T
+    get() {
+      if (memoizedValue == null) {
+        memoizedValue = supplier!!()
+        supplier = null
+      }
+      return memoizedValue!!
     }
-    return value!!
-  }
 }

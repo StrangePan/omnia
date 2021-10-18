@@ -12,15 +12,16 @@ package omnia.data.cache
  */
 internal class SimpleCacher<T : Any>(private val supplier: () -> T) : Cached<T> {
 
-  private var value: T? = null
+  private var cachedValue: T? = null
 
-  override fun value(): T {
-    val value = this.value ?: supplier()
-    this.value = value
-    return value
-  }
+  override val value: T
+    get() {
+      val value = this.cachedValue ?: supplier()
+      this.cachedValue = value
+      return value
+    }
 
   override fun invalidate() {
-    value = null
+    cachedValue = null
   }
 }

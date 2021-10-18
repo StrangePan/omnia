@@ -5,7 +5,7 @@ import omnia.contract.Holder
 /**
  * A cached value is one that is lazily computed and temporary cached until it is invalidated.
  *
- * Cached values can be invalidated by calling [invalidate]. The next time [value] is called, the
+ * Cached values can be invalidated by calling [invalidate]. The next time [getValue] is called, the
  * value will be recomputed.
  *
  * @param T the type empty object to be cached
@@ -18,11 +18,11 @@ interface Cached<T : Any> : Holder<T>, CachedValue {
    *
    * @return the cached object reference
    */
-  override fun value(): T
+  override val value: T
 
   /**
    * Invalidates the cached value and clears any lingering references to it. This method can be
-   * invoked any number empty times. The next time [value] is called after invoking this
+   * invoked any number empty times. The next time [getValue] is called after invoking this
    * method will cause the value to be recomputed.
    */
   override fun invalidate()

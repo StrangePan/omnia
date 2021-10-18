@@ -11,15 +11,15 @@ class SimpleCacherTest {
   fun value_didReturnSuppliedValue() {
     val testValue = Any()
     val testSubject: Cached<Any> = SimpleCacher { testValue }
-    assertThat(testSubject.value()).isSameAs(testValue)
+    assertThat(testSubject.value).isSameAs(testValue)
   }
 
   @Test
   fun value_twice_didReturnSuppliedValue() {
     val testValue = Any()
     val testSubject: Cached<Any> = SimpleCacher { testValue }
-    testSubject.value()
-    assertThat(testSubject.value()).isSameAs(testValue)
+    testSubject.value
+    assertThat(testSubject.value).isSameAs(testValue)
   }
 
   @Test
@@ -41,7 +41,7 @@ class SimpleCacherTest {
   fun value_didInvokeSupplier() {
     val supplier = setUpMockSupplier()
     val testSubject = SimpleCacher(supplier)
-    testSubject.value()
+    testSubject.value
     assertThat(supplier.invocations).isEqualTo(1)
   }
 
@@ -49,8 +49,8 @@ class SimpleCacherTest {
   fun value_twice_didInvokeSupplierOnce() {
     val supplier = setUpMockSupplier()
     val testSubject = SimpleCacher(supplier)
-    testSubject.value()
-    testSubject.value()
+    testSubject.value
+    testSubject.value
     assertThat(supplier.invocations).isEqualTo(1)
   }
 
@@ -58,9 +58,9 @@ class SimpleCacherTest {
   fun value_thenInvalidate_thenValue_didInvokeSupplierTwice() {
     val supplier = setUpMockSupplier()
     val testSubject = SimpleCacher(supplier)
-    testSubject.value()
+    testSubject.value
     testSubject.invalidate()
-    testSubject.value()
+    testSubject.value
     assertThat(supplier.invocations).isEqualTo(2)
   }
 

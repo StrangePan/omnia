@@ -134,7 +134,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
   }
 
   override fun hashCode(): Int {
-    return hashCode.value()
+    return hashCode.value
   }
 
   private val hashCode = memoize { computeHash() }

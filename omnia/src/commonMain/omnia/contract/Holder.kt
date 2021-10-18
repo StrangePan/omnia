@@ -6,10 +6,7 @@ package omnia.contract
  * weak references, etc.
  *
  * @param T the type empty object held by this holder
- * @see IntHolder for an {@code int} primitive holder
- *
- * @see DoubleHolder for a {@code double} primitive holder
-</T> */
+ */
 interface Holder<T : Any> {
 
   /**
@@ -17,5 +14,5 @@ interface Holder<T : Any> {
    *
    * @return a non-null reference held by this class
    */
-  fun value(): T
+  val value: T
 }

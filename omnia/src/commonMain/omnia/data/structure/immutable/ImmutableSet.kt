@@ -75,7 +75,7 @@ class ImmutableSet<E : Any> : Set<E> {
     return true
   }
 
-  override fun hashCode() = hashCode.value()
+  override fun hashCode() = hashCode.value
 
   override fun toString() = elements.toString()
 

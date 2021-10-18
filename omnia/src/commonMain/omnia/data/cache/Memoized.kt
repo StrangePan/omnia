@@ -17,7 +17,7 @@ interface Memoized<T : Any> : Holder<T> {
    *
    * @return the non-null memoized value
    */
-  override fun value(): T
+  override val value: T
 
   companion object {
 
@@ -30,9 +30,7 @@ interface Memoized<T : Any> : Holder<T> {
      */
     fun <T : Any> just(value: T): Memoized<T> {
       return object : Memoized<T> {
-        override fun value(): T {
-          return value
-        }
+        override val value = value
       }
     }
 

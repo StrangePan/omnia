@@ -11,22 +11,22 @@ class SimpleMemoizerTest {
   fun value_didReturnSuppliedResult() {
     val testValue = Any()
     val testSubject: Memoized<Any> = SimpleMemoizer { testValue }
-    assertThat(testSubject.value()).isSameAs(testValue)
+    assertThat(testSubject.value).isSameAs(testValue)
   }
 
   @Test
   fun value_twice_didReturnSuppliedResult() {
     val testValue = Any()
     val testSubject: Memoized<Any> = SimpleMemoizer { testValue }
-    testSubject.value()
-    assertThat(testSubject.value()).isSameAs(testValue)
+    testSubject.value
+    assertThat(testSubject.value).isSameAs(testValue)
   }
 
   @Test
   fun value_didInvokeSupplier() {
     val supplier = setUpSupplier()
     val testSubject: Memoized<Any> = SimpleMemoizer(supplier)
-    testSubject.value()
+    testSubject.value
     assertThat(supplier.invocations).isEqualTo(1)
   }
 
@@ -41,8 +41,8 @@ class SimpleMemoizerTest {
   fun value_twice_onlyInvokedSupplierOnce() {
     val supplier = setUpSupplier()
     val testSubject: Memoized<Any> = SimpleMemoizer(supplier)
-    testSubject.value()
-    testSubject.value()
+    testSubject.value
+    testSubject.value
     assertThat(supplier.invocations).isEqualTo(1)
   }
 
