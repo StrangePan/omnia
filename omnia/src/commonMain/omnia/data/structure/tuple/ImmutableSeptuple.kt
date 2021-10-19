@@ -28,8 +28,7 @@ internal open class ImmutableSeptuple<A, B, C, D, E, F, G>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third},${fourth},${fifth},${sixth},
-      |${seventh}}""".trimMargin()
+    return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth},${seventh}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Septuple<R, B, C, D, E, F, G> {

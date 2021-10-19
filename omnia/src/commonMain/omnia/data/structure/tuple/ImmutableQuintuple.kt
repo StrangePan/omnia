@@ -24,7 +24,7 @@ internal open class ImmutableQuintuple<A, B, C, D, E>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third},${fourth},${fifth}}"""
+    return "Tuple{${first},${second},${third},${fourth},${fifth}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Quintuple<R, B, C, D, E> {

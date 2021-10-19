@@ -35,8 +35,8 @@ internal open class ImmutableDecuple<A, B, C, D, E, F, G, H, I, J>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third},${fourth},${fifth},${sixth},
-      |${seventh},${eighth},${ninth},${tenth}}"""
+    return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth}," +
+      "${seventh},${eighth},${ninth},${tenth}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Decuple<R, B, C, D, E, F, G, H, I, J> {

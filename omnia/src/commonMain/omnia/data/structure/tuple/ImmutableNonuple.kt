@@ -42,8 +42,8 @@ internal open class ImmutableNonuple<A, B, C, D, E, F, G, H, I>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third},${fourth},${fifth},${sixth},
-      |${seventh},${eighth},${ninth}}""".trimMargin()
+    return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth}," +
+      "${seventh},${eighth},${ninth}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Nonuple<R, B, C, D, E, F, G, H, I> {

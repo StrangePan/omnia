@@ -260,8 +260,8 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
     override fun equals(other: Any?): Boolean {
       return other is ImmutableDirectedGraph<*>.DirectedEdge
-          && other.graph() == graph()
-          && endpointContents == other.endpoints
+          && other.graph() === graph()
+          && endpointContents == other.endpointContents
     }
 
     override fun hashCode() = hash(endpointContents)

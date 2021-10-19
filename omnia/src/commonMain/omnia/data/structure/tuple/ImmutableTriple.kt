@@ -20,7 +20,7 @@ internal open class ImmutableTriple<A, B, C>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third}}"""
+    return "Tuple{${first},${second},${third}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Triple<R, B, C> {

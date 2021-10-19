@@ -13,7 +13,7 @@ internal open class ImmutableCouple<A, B>(override val first: A, override val se
 
   override fun hashCode() = hash(first, second)
 
-  override fun toString() = """Tuple{${first},${second}}"""
+  override fun toString() = "Tuple{${first},${second}}"
 
   override fun <R> mapFirst(mapper: (A) -> R): Couple<R, B> {
     return Tuple.of(mapper(first), second)

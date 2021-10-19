@@ -26,7 +26,7 @@ internal open class ImmutableSextuple<A, B, C, D, E, F>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third},${fourth},${fifth},${sixth}}"""
+    return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Sextuple<R, B, C, D, E, F> {

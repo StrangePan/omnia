@@ -22,7 +22,7 @@ internal open class ImmutableQuadruple<A, B, C, D>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third},${fourth}}"""
+    return "Tuple{${first},${second},${third},${fourth}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Quadruple<R, B, C, D> {

@@ -1,5 +1,6 @@
 package omnia.data.structure.mutable
 
+import kotlin.collections.HashSet as KotlinHashSet
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.Collection
 
@@ -15,7 +16,7 @@ class HashSet<E : Any>(
   private val hashFunction: (Any) -> Int = hashFunction ?: Any::hashCode
 
   private val backingSet =
-    kotlin.collections.HashSet(
+    KotlinHashSet(
       (original ?: Collection.empty())
         .map { item -> Wrapper(item, this.equalsFunction, this.hashFunction) })
 

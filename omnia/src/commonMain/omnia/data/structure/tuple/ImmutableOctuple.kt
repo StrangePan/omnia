@@ -30,8 +30,7 @@ internal open class ImmutableOctuple<A, B, C, D, E, F, G, H>(
   }
 
   override fun toString(): String {
-    return """Tuple{${first},${second},${third},${fourth},${fifth},${sixth},
-      |${seventh},${eighth}}""".trimMargin()
+    return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth},${seventh},${eighth}}"
   }
 
   override fun <R> mapFirst(mapper: (A) -> R): Octuple<R, B, C, D, E, F, G, H> {
