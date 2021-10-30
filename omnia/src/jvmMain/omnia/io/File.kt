@@ -11,13 +11,28 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.FileReader
 import java.io.FileWriter
+import java.io.File as JFile
 
-actual class File private constructor(private val path: String) {
+actual class File private constructor(private val jFile: JFile) {
+
+  init {
+    if (!jFile.isFile) {
+      throw NotAFileException(jFile.absolutePath)
+    }
+  }
+
+  actual val name: String get() {
+    return jFile.absoluteFile.name
+  }
+
+  actual val directory: Directory get() {
+    return Directory.fromJFile(jFile.parentFile)
+  }
 
   actual fun clearAndWriteLines(lines: Observable<String>): Observable<String> {
     lateinit var writer: BufferedWriter
 
-    return lines.doOnBeforeSubscribe { writer = BufferedWriter(FileWriter(path)) }
+    return lines.doOnBeforeSubscribe { writer = BufferedWriter(FileWriter(jFile)) }
       .doOnBeforeNext {
         writer.write(it)
         writer.write(System.lineSeparator())
@@ -29,7 +44,7 @@ actual class File private constructor(private val path: String) {
     observable<String> { emitter ->
       if (emitter.isDisposed)
         return@observable
-      BufferedReader(FileReader(path)).use { reader ->
+      BufferedReader(FileReader(jFile)).use { reader ->
         while (!emitter.isDisposed) {
           emitter.onNext(reader.readLine() ?: break)
         }
@@ -47,6 +62,8 @@ actual class File private constructor(private val path: String) {
       }
 
   actual companion object {
-    actual fun fromPath(path: String) = File(path)
+    actual fun fromPath(path: String) = File(JFile(path))
+
+    fun fromJFile(jFile: JFile) = File(jFile)
   }
 }

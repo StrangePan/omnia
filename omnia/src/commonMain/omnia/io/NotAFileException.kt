@@ -1,6 +1,6 @@
 package omnia.io
 
-class NotADirectoryException: IOException {
+class NotAFileException: IOException {
 
   constructor(message: String): super(message)
 
