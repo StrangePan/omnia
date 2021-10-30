@@ -21,13 +21,9 @@ actual class File private constructor(private val jFile: JFile) {
     }
   }
 
-  actual val name: String get() {
-    return jFile.absoluteFile.name
-  }
+  actual val name: String get() = jFile.absoluteFile.name
 
-  actual val directory: Directory get() {
-    return Directory.fromJFile(jFile.parentFile)
-  }
+  actual val directory: Directory get() = Directory.fromJFile(jFile.parentFile)
 
   actual fun clearAndWriteLines(lines: Observable<String>): Observable<String> {
     lateinit var writer: BufferedWriter

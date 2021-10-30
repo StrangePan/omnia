@@ -3,6 +3,9 @@ package omnia.io
 /** A representation of a filesystem directory. Can be used to navigate the file system. */
 expect class Directory {
 
+  /** Gets the simple name for the directory, excluding parent directories. */
+  val name: String
+
   /**
    * Returns the parent [Directory] of this directory, or `null` if this is the root directory of
    * the file system.

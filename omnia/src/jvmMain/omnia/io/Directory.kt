@@ -11,6 +11,8 @@ actual class Directory private constructor(private val jFile: JFile) {
     }
   }
 
+  actual val name: String get() = jFile.absoluteFile.name
+
   actual val parentDirectory: Directory?
     get() = jFile.absoluteFile.parentFile?.let(Directory::fromJFile)
 
@@ -33,11 +35,9 @@ actual class Directory private constructor(private val jFile: JFile) {
 
   actual companion object {
 
-    actual val workingDirectory: Directory
-      get() = Directory(JFile("."))
+    actual val workingDirectory: Directory get() = Directory(JFile("."))
 
-    actual val rootDirectory: Directory
-      get() = Directory(JFile("/"))
+    actual val rootDirectory: Directory get() = Directory(JFile("/"))
 
     actual fun fromPath(path: String): Directory = Directory(JFile(path))
 
