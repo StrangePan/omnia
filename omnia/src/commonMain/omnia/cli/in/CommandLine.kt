@@ -42,6 +42,8 @@ class CommandLine(
 
         if (matchResult != null) {
           val optionName = matchResult.groupValues[1]
+            .ifEmpty { matchResult.groupValues[2] }
+            .ifEmpty { matchResult.groupValues[3] }
           val option = options.options.valueOf(optionName)
             ?: throw ParserException("Unrecognized option '$optionName'")
 
@@ -50,11 +52,12 @@ class CommandLine(
           }
 
           parsedOptions.putMappingIfAbsent(option, ArrayList.Companion::create)
-          if (matchResult.groupValues.size == 3) {
+          val optionValue = matchResult.groupValues[4]
+          if (optionValue.isNotEmpty()) {
             if (!option.expectsArgument) {
               throw ParserException("Option '$optionName' expects no arguments")
             }
-            parsedOptions.valueOf(option)!!.add(matchResult.groupValues[2])
+            parsedOptions.valueOf(option)!!.add(optionValue)
           } else if (option.expectsArgument) {
             pendingOption = Tuple.of(option, optionName)
           }
