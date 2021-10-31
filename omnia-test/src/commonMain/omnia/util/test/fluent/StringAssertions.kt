@@ -47,7 +47,7 @@ fun Assertion<String>.doesNotContain(expected: String): Assertion<String> {
   assertFalse(
       actual.contains(expected),
       message ?: """string contains unexpected substring
-        |  unwated: $expected
+        |  unwanted: $expected
         |  actual: $actual""".trimMargin())
   return this
 }
@@ -57,7 +57,11 @@ fun Assertion<String>.matches(expected: String): Assertion<String> {
 }
 
 fun Assertion<String>.matches(expected: Regex): Assertion<String> {
-  assertTrue(actual.matches(expected), message)
+  assertTrue(
+      actual.matches(expected),
+      message ?: """string does not match expected pattern
+        |  wanted: ${expected.pattern}
+        |  actual: $actual""".trimMargin())
   return this
 }
 
@@ -66,7 +70,11 @@ fun Assertion<String>.doesNotMatch(expected: String): Assertion<String> {
 }
 
 fun Assertion<String>.doesNotMatch(expected: Regex): Assertion<String> {
-  assertFalse(actual.matches(expected), message)
+  assertFalse(
+      actual.matches(expected),
+      message ?: """string matches unwanted pattern
+        |  unwanted: ${expected.pattern}
+        |  actual: $actual""".trimMargin())
   return this
 }
 
@@ -75,7 +83,11 @@ fun Assertion<String>.containsMatch(expected: String): Assertion<String> {
 }
 
 fun Assertion<String>.containsMatch(expected: Regex): Assertion<String> {
-  assertTrue(actual.contains(expected), message)
+  assertTrue(
+      actual.contains(expected),
+      message ?: """string does not contain expected pattern
+          |  wanted: ${expected.pattern}
+          |  actual: $actual""".trimMargin())
   return this
 }
 
@@ -84,6 +96,10 @@ fun Assertion<String>.doesNotContainMatch(expected: String): Assertion<String> {
 }
 
 fun Assertion<String>.doesNotContainMatch(expected: Regex): Assertion<String> {
-  assertFalse(actual.contains(expected), message)
+  assertFalse(
+      actual.contains(expected),
+      message ?: """string contains unwanted pattern
+          |  unwanted: ${expected.pattern}
+          |  actual: $actual""".trimMargin())
   return this
 }

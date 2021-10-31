@@ -88,5 +88,5 @@ class CommandLine(
 
   fun hasOption(option: String) = options.keys.contains(option)
 
-  fun getOptionValues(option: String): ImmutableList<String>? = options.valueOf(option)
+  fun getOptionValues(option: String) = options.valueOf(option)
 }
