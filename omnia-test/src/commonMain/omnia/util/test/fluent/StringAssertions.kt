@@ -35,12 +35,20 @@ fun Assertion<String>.doesNotEndWith(expected: String): Assertion<String> {
 }
 
 fun Assertion<String>.contains(expected: String): Assertion<String> {
-  assertTrue(actual.contains(expected), message)
+  assertTrue(
+      actual.contains(expected),
+      message ?: """string does not contain expected substring
+        |  wanted: $expected
+        |  actual: $actual""".trimMargin())
   return this
 }
 
 fun Assertion<String>.doesNotContain(expected: String): Assertion<String> {
-  assertFalse(actual.contains(expected), message)
+  assertFalse(
+      actual.contains(expected),
+      message ?: """string contains unexpected substring
+        |  unwated: $expected
+        |  actual: $actual""".trimMargin())
   return this
 }
 
