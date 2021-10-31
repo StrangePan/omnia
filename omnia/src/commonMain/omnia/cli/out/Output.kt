@@ -7,7 +7,6 @@ import omnia.data.structure.mutable.ArrayList
 import omnia.data.structure.mutable.MutableList
 
 class Output private constructor(spans: List<Span<*>>) {
-
   private val spans = ImmutableList.copyOf(spans)
   val isPopulated get() = spans.isPopulated
 
@@ -448,11 +447,27 @@ class Output private constructor(spans: List<Span<*>>) {
 fun Iterable<Output>.joinToOutput(separator: Output = Output.just(", ")) =
   this.joinToOutput(separator, transform = {it})
 
-fun <T> Iterable<T>.joinToOutput(separator: Output = Output.just(", "), transform: ((T)->Output)) =
+fun <T> Iterable<T>.joinToOutput(
+    separator: String? = ", ",
+    prefix: String? = null,
+    postfix: String? = null,
+    transform: ((T)->Output)) =
+  this.joinToOutput(
+      separator = separator?.let(Output::just) ?: Output.empty(),
+      prefix = prefix?.let(Output::just) ?: Output.empty(),
+      postfix = postfix?.let(Output::just) ?: Output.empty(),
+      transform = transform)
+
+fun <T> Iterable<T>.joinToOutput(
+    separator: Output = Output.just(", "),
+    prefix: Output = Output.empty(),
+    postfix: Output = Output.empty(),
+    transform: ((T)->Output)) =
   this.flatMapIndexed { index, value ->
     listOfNotNull(
       if (index > 0) separator else null,
       transform.invoke(value))
     }
-    .fold(Output.builder(), Output.Builder::append)
-    .build()
+      .fold(Output.builder().append(prefix), Output.Builder::append)
+      .append(postfix)
+      .build()
