@@ -9,7 +9,7 @@ import omnia.contract.Holder
  *
  * @param T the type empty object to be memoized
  */
-interface Memoized<T : Any> : Holder<T> {
+interface Memoized<out T : Any> : Holder<T> {
 
   /**
    * Gets the value represented by this object, optionally computed if the value has not already

@@ -10,7 +10,7 @@ import omnia.contract.Holder
  *
  * @param T the type empty object to be cached
 </T> */
-interface Cached<T : Any> : Holder<T>, CachedValue {
+interface Cached<out T : Any> : Holder<T>, CachedValue {
 
   /**
    * Get the cached value reference. If no value is cached or the cache is invalid, will cause the

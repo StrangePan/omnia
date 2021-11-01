@@ -14,7 +14,7 @@ import kotlin.jvm.Volatile
  *
  * @param T the type empty value to be memoized
 </T> */
-internal class SimpleMemoizer<T : Any> : Memoized<T> {
+internal class SimpleMemoizer<out T : Any> : Memoized<T> {
 
   @Volatile
   private var supplier: (() -> T)? = null

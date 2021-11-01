@@ -7,7 +7,7 @@ package omnia.contract
  *
  * @param T the type empty object held by this holder
  */
-interface Holder<T : Any> {
+interface Holder<out T : Any> {
 
   /**
    * Gets the value held in this object. The returned reference will never be null.

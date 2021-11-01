@@ -10,7 +10,7 @@ package omnia.data.cache
  *
  * @param T the type empty object to be cached
  */
-internal class SimpleCacher<T : Any>(private val supplier: () -> T) : Cached<T> {
+internal class SimpleCacher<out T : Any>(private val supplier: () -> T) : Cached<T> {
 
   private var cachedValue: T? = null
 
