@@ -235,4 +235,38 @@ class CommandLineTest {
       .isNotNull()
       .containsExactly("value1", "value2", "value3")
   }
+
+  @Test
+  fun parse_withCombinedShortOptions_allOptionsAreSet() {
+    val underTest =
+      CommandLine.parse(
+          ImmutableList.of(
+              "-${NON_REPEATABLE_FLAG.shortName}" +
+                  "${REPEATABLE_FLAG.shortName}" +
+                  "${NON_REPEATABLE_STRING_OPTION.shortName}",
+              "value"),
+          Options().addOption(NON_REPEATABLE_FLAG)
+              .addOption(REPEATABLE_FLAG)
+              .addOption(NON_REPEATABLE_STRING_OPTION))
+
+    assertThat(underTest.hasOption(NON_REPEATABLE_FLAG.shortName!!)).isTrue()
+    assertThat(underTest.hasOption(REPEATABLE_FLAG.shortName!!)).isTrue()
+    assertThat(underTest.hasOption(NON_REPEATABLE_STRING_OPTION.shortName!!)).isTrue()
+    assertThat(underTest.getOptionValues(NON_REPEATABLE_STRING_OPTION.shortName!!)).isNotNull().containsExactly("value")
+  }
+
+  @Test
+  fun parse_withCombinedShortOptions_withValuedOptionInMiddle_throwsParserException() {
+    assertFailsWith(ParserException::class) {
+      CommandLine.parse(
+          ImmutableList.of(
+              "-${NON_REPEATABLE_FLAG.shortName}" +
+                  "${NON_REPEATABLE_STRING_OPTION.shortName}" +
+                  "${REPEATABLE_FLAG.shortName}",
+              "value"),
+          Options().addOption(NON_REPEATABLE_FLAG)
+              .addOption(REPEATABLE_FLAG)
+              .addOption(NON_REPEATABLE_STRING_OPTION))
+    }
+  }
 }

@@ -18,7 +18,7 @@ class CommandLine(
 ) {
   companion object {
 
-    private const val SHORT_OPTION_PATTERN = "^-(\\w)$"
+    private const val SHORT_OPTION_PATTERN = "^-(\\w+)$"
     private const val LONG_OPTION_PATTERN = "^--(\\w(?:\\w|-)*)$"
     private const val OPTION_ARG_PAIR_PATTERN = "^--(\\w(?:\\w|-)*)=(.*)$"
 
@@ -41,25 +41,40 @@ class CommandLine(
             .matchEntire(arg)
 
         if (matchResult != null) {
-          val optionName = matchResult.groupValues[1]
+          val parsedOption = matchResult.groupValues[1]
             .ifEmpty { matchResult.groupValues[2] }
             .ifEmpty { matchResult.groupValues[3] }
-          val option = options.options.valueOf(optionName)
-            ?: throw ParserException("Unrecognized option '$optionName'")
 
-          if (!option.isRepeatable && parsedOptions.keys.contains(option)) {
-            throw ParserException("Option '$optionName' specified more than once")
+          // if short option with multiple characters, treat each character as an independent option
+          val optionNames = if (matchResult.groupValues[1].length > 1) {
+            matchResult.groupValues[1].toList().map { it.toString() }
+          } else {
+            listOf(parsedOption)
           }
 
-          parsedOptions.putMappingIfAbsent(option, ArrayList.Companion::create)
-          val optionValue = matchResult.groupValues[4]
-          if (optionValue.isNotEmpty()) {
-            if (!option.expectsArgument) {
-              throw ParserException("Option '$optionName' expects no arguments")
+          for (optionName in optionNames) {
+            // can happen when multiple short options are combined
+            if (pendingOption != null) {
+              throw ParserException("No argument provided for option '${pendingOption.second}'")
             }
-            parsedOptions.valueOf(option)!!.add(optionValue)
-          } else if (option.expectsArgument) {
-            pendingOption = Tuple.of(option, optionName)
+
+            val option = options.options.valueOf(optionName)
+                ?: throw ParserException("Unrecognized option '$optionName'")
+
+            if (!option.isRepeatable && parsedOptions.keys.contains(option)) {
+              throw ParserException("Option '$optionName' specified more than once")
+            }
+
+            parsedOptions.putMappingIfAbsent(option, ArrayList.Companion::create)
+            val optionValue = matchResult.groupValues[4]
+            if (optionValue.isNotEmpty()) {
+              if (!option.expectsArgument) {
+                throw ParserException("Option '$optionName' expects no arguments")
+              }
+              parsedOptions.valueOf(option)!!.add(optionValue)
+            } else if (option.expectsArgument) {
+              pendingOption = Tuple.of(option, optionName)
+            }
           }
 
           continue@parsingLoop
