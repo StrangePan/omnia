@@ -12,6 +12,8 @@ import java.io.BufferedWriter
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.File as JFile
+import com.badoo.reaktive.completable.Completable
+import com.badoo.reaktive.observable.asCompletable
 
 actual class File private constructor(private val jFile: JFile) {
 
@@ -25,15 +27,16 @@ actual class File private constructor(private val jFile: JFile) {
 
   actual val directory: Directory get() = Directory.fromJFile(jFile.parentFile)
 
-  actual fun clearAndWriteLines(lines: Observable<String>): Observable<String> {
+  actual fun clearAndWriteLines(lines: Observable<String>): Completable {
     lateinit var writer: BufferedWriter
 
     return lines.doOnBeforeSubscribe { writer = BufferedWriter(FileWriter(jFile)) }
-      .doOnBeforeNext {
-        writer.write(it)
-        writer.write(System.lineSeparator())
-      }
-      .doOnAfterFinally { writer.close() }
+        .doOnBeforeNext {
+          writer.write(it)
+          writer.write(System.lineSeparator())
+        }
+        .doOnAfterFinally { writer.close() }
+        .asCompletable()
   }
 
   actual fun readLines(): Observable<String> =
