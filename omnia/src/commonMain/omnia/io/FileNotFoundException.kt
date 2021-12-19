@@ -1,10 +1,10 @@
 package omnia.io
 
-expect class FileNotFoundException: IOException {
+class FileNotFoundException: IOException {
 
-  constructor(message: String)
+  constructor(message: String): super(message)
 
-  constructor(message: String, cause: Throwable)
+  constructor(message: String, cause: Throwable): super(message, cause)
 
-  constructor(cause: Throwable)
+  constructor(cause: Throwable): super(cause)
 }
