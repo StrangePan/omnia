@@ -3,9 +3,9 @@ package omnia.data.iterate
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import omnia.util.test.fluent.Assertion.Companion.assertThat
-import omnia.util.test.fluent.isA
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
+import omnia.util.test.fluent.isNotA
 import omnia.util.test.fluent.isTrue
 
 class ArrayIteratorTest {
@@ -78,7 +78,7 @@ class ArrayIteratorTest {
 
   @Test
   fun iterator_isNotMutable() {
-    assertThat(ArrayIterator(setUpTestArray())).isA(MutableIterator::class)
+    assertThat(ArrayIterator(setUpTestArray())).isNotA(MutableIterator::class)
   }
 
   companion object {

@@ -2,6 +2,7 @@ package omnia.util.reaktive.observable.test
 
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import kotlin.test.assertTrue
+import omnia.util.test.assertGreater
 import omnia.util.test.assertGreaterOrEqual
 
 fun <T> TestObservableObserver<T>.assertValue(predicate: (T) -> Boolean): TestObservableObserver<T> {
@@ -11,7 +12,7 @@ fun <T> TestObservableObserver<T>.assertValue(predicate: (T) -> Boolean): TestOb
 fun <T> TestObservableObserver<T>.assertValue(index: Int, predicate: (T) -> Boolean):
     TestObservableObserver<T> {
   assertGreaterOrEqual(0, index)
-  assertGreaterOrEqual(index, this.values.size)
+  assertGreater(index, this.values.size)
   assertTrue(predicate(this.values[index]))
   return this
 }

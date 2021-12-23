@@ -48,11 +48,15 @@ fun <T> Assertion<T>.isNotSameAs(expected: Any?): Assertion<T> {
 }
 
 fun <T> Assertion<T>.isA(expected: KClass<*>): Assertion<T> {
-  assertTrue(expected.isInstance(actual), message)
+  assertTrue(
+      expected.isInstance(actual),
+      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is not an instance of ${expected.qualifiedName}")
   return this
 }
 
 fun <T> Assertion<T>.isNotA(expected: KClass<*>): Assertion<T> {
-  assertFalse(expected.isInstance(actual), message)
+  assertFalse(
+      expected.isInstance(actual),
+      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is an instance of ${expected.qualifiedName}")
   return this
 }

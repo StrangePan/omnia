@@ -35,7 +35,7 @@ interface Memoized<out T : Any> : Holder<T> {
     }
 
     /**
-     * Creates a [Memoized] implementation that uses the provided [Supplier] as the
+     * Creates a [Memoized] implementation that uses the provided [supplier] as the
      * factory that supplies the value to be memoized.
      *
      * @param supplier the supplier that will create the value to be memoized
@@ -43,7 +43,10 @@ interface Memoized<out T : Any> : Holder<T> {
      * @return a new [Memoized] instance that will memoize the created value
      */
     fun <T : Any> memoize(supplier: () -> T): Memoized<T> {
-      return SimpleMemoizer(supplier)
+      return object : Memoized<T> {
+        private val lazy = lazy(supplier)
+        override val value get() = lazy.value
+      }
     }
   }
 }

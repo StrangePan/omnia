@@ -141,7 +141,7 @@ class WritableObservableSetTest {
     originalContents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.states.skip(1).test()
+    val testSubscriber = set.observables.states.skip(1).test(autoFreeze = false)
     addedContents.forEach(set::add)
     testSubscriber.assertValueCount(addedContents.count)
       .assertValues { SetAlgorithms.intersectionOf(it, finalContents) == it }
@@ -157,7 +157,7 @@ class WritableObservableSetTest {
     originalContents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.mutations.skip(1).test()
+    val testSubscriber = set.observables.mutations.skip(1).test(autoFreeze = false)
     removedContents.forEach(set::remove)
     testSubscriber.assertValueCount(removedContents.count)
     testSubscriber.values.forEach { assertThat(it.operations).hasCount(1) }
@@ -179,7 +179,7 @@ class WritableObservableSetTest {
     contents.forEach { set.add(it) }
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.mutations.skip(1).test()
+    val testSubscriber = set.observables.mutations.skip(1).test(autoFreeze = false)
     set.clear()
     testSubscriber.assertValueCount(1)
     testSubscriber.assertValue { it.operations.count == contents.count }
@@ -202,7 +202,7 @@ class WritableObservableSetTest {
     contents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.states.skip(1).test()
+    val testSubscriber = set.observables.states.skip(1).test(autoFreeze = false)
     set.clear()
     testSubscriber.assertValueCount(1)
     testSubscriber.assertValue { areEqual(it, ImmutableSet.empty<Any>()) }
