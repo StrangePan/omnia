@@ -56,6 +56,13 @@ kotlin {
       }
     }
 
+    val iosMain by creating {
+      kotlin.srcDir("src/iosMain")
+      dependsOn(commonMain)
+      iosX64Main.dependsOn(this)
+      iosArm64Main.dependsOn(this)
+    }
+
     val androidMain by getting {
       kotlin.srcDir("src/androidMain")
       dependencies {
