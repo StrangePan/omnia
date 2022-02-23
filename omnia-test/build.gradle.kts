@@ -32,7 +32,7 @@ kotlin {
     val iosX64Main by getting {
       kotlin.srcDir("src/iosX64Main")
       dependencies {
-        implementation("com.badoo.reaktive:reaktive-iossim:1.2.0")
+        implementation("com.badoo.reaktive:reaktive-iosx64:1.2.1")
       }
     }
 
