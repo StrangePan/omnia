@@ -76,11 +76,6 @@ class ArrayIteratorTest {
     assertFailsWith(NoSuchElementException::class) { testSubject.next() }
   }
 
-  @Test
-  fun iterator_isNotMutable() {
-    assertThat(ArrayIterator(setUpTestArray())).isNotA(MutableIterator::class)
-  }
-
   companion object {
     private fun setUpTestArray(): Array<String> {
       return arrayOf(
