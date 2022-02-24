@@ -7,16 +7,17 @@ project.setBuildDir("out")
 
 kotlin {
   jvm()
+  android()
   iosX64()
   iosArm64()
-  android()
+  iosSimulatorArm64()
 
   sourceSets {
     val commonMain by getting {
       kotlin.srcDir("src/commonMain")
       dependencies {
-        implementation(project(":omnia"))
         implementation(kotlin("test"))
+        implementation(project(":omnia"))
         implementation("com.badoo.reaktive:reaktive:1.2.1")
         implementation("com.badoo.reaktive:reaktive-testing:1.2.1")
       }
@@ -24,30 +25,22 @@ kotlin {
 
     val jvmMain by getting {
       kotlin.srcDir("src/jvmMain")
-      dependencies {
-        implementation("com.badoo.reaktive:reaktive-jvm:1.2.1")
-      }
-    }
-
-    val iosX64Main by getting {
-      kotlin.srcDir("src/iosX64Main")
-      dependencies {
-        implementation("com.badoo.reaktive:reaktive-iosx64:1.2.1")
-      }
-    }
-
-    val iosArm64Main by getting {
-      kotlin.srcDir("src/iosArm64Main")
-      dependencies {
-        implementation("com.badoo.reaktive:reaktive-iosarm64:1.2.1")
-      }
     }
 
     val androidMain by getting {
       kotlin.srcDir("src/androidMain")
-      dependencies {
-        implementation("com.badoo.reaktive:reaktive-android:1.2.1")
-      }
+    }
+
+    val iosX64Main by getting {
+      kotlin.srcDir("src/iosX64Main")
+    }
+
+    val iosArm64Main by getting {
+      kotlin.srcDir("src/iosArm64Main")
+    }
+
+    val iosSimulatorArm64Main by getting {
+      kotlin.srcDir("src/iosSimulatorArm64Main")
     }
   }
 }
