@@ -9,6 +9,7 @@ kotlin {
   jvm()
   iosX64()
   iosArm64()
+  iosSimulatorArm64()
   android()
 
   sourceSets {
@@ -68,6 +69,14 @@ kotlin {
         api("com.badoo.reaktive:reaktive-iosarm64:1.2.1")
       }
     }
+    val iosSimulatorArm64Main by getting {
+      kotlin.srcDir("src/iosSimulatorArm64Main")
+      dependsOn(iosMain)
+      dependencies {
+        api("com.badoo.reaktive:reaktive-iossimulatorarm64:1.2.1")
+      }
+    }
+
 
     val androidMain by getting {
       kotlin.srcDir("src/androidMain")
