@@ -276,23 +276,20 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     return { item: E -> getOrCreateNode(item) }
   }
 
-  private val nodeCache: WeakCache<E, DirectedNode> = WeakCache()
   private fun getOrCreateNode(item: E): DirectedNode {
-    return nodeCache.getOrCache(item) { DirectedNode(item) }
+    return DirectedNode(item)
   }
 
   private fun toEdge(): (Couplet<out E>) -> DirectedEdge {
     return { getOrCreateEdge(it) }
   }
 
-  private val edgeCache: WeakCache<Couplet<out E>, DirectedEdge> = WeakCache()
-
   private fun getOrCreateEdge(from: E, to: E): DirectedEdge {
     return getOrCreateEdge(Tuplet.of(from, to))
   }
 
   private fun getOrCreateEdge(endpoints: Couplet<out E>): DirectedEdge {
-    return edgeCache.getOrCache(endpoints) { DirectedEdge(endpoints) }
+    return DirectedEdge(endpoints)
   }
 
   class UnknownNodeException(node: Any?) :
