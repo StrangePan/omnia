@@ -11,6 +11,7 @@ import omnia.data.structure.observable.writable.WritableObservableDirectedGraph
 import omnia.data.structure.tuple.Couplet.Companion.of
 import omnia.data.structure.tuple.Tuplet
 import omnia.util.reaktive.observable.test.assertValue
+import omnia.util.reaktive.observable.test.assertValueCount
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.containsExactly
 import omnia.util.test.fluent.containsExactlyElementsIn
@@ -133,14 +134,14 @@ class ObservableDirectedGraphTest {
 
   @Test
   fun observeStates_whenInit_emitsEmpty() {
-    WritableObservableDirectedGraph.create<Any>().observables.states.test(autoFreeze = false)
+    WritableObservableDirectedGraph.create<Any>().observables.states.test()
       .assertValue { !it.contents.isPopulated }
   }
 
   @Test
   fun observeMutations_whenInit_emitsEmptyState() {
     WritableObservableDirectedGraph.create<Any>().observables.mutations.map { obj -> obj.state }
-      .test(autoFreeze = false)
+      .test()
       .assertValue { !it.contents.isPopulated }
   }
 
@@ -148,7 +149,7 @@ class ObservableDirectedGraphTest {
   fun observeMutations_whenInit_emitsNoOperations() {
     WritableObservableDirectedGraph.create<Any>().observables.mutations
       .map { it.operations }
-      .test(autoFreeze = false)
+      .test()
       .assertValue { !it.isPopulated }
   }
 
@@ -157,7 +158,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    graph.observables.mutations.map { it.state }.test(autoFreeze = false)
+    graph.observables.mutations.map { it.state }.test()
       .assertValue { it.contents.contains(item) }
   }
 
@@ -166,7 +167,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    val subscriber = graph.observables.mutations.test(autoFreeze = false)
+    val subscriber = graph.observables.mutations.test()
     subscriber.assertValue { it.operations.count == 1 }
     subscriber.assertValue { it.operations.first() is ObservableGraph.AddNodeToGraph<*> }
     subscriber.assertValue {
@@ -184,7 +185,9 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
     graph.addEdge(edge.first, edge.second)
-    val subscriber = graph.observables.mutations.map { it.state }.test(autoFreeze = false)
+    graph.observables.states.test().assertValueCount(1)
+    graph.observables.mutations.test().assertValueCount(1)
+    val subscriber = graph.observables.mutations.map { it.state }.test()
     subscriber.assertValue { it.edges.count == 1 }
     subscriber.assertValue { value -> value.edges.first().endpoints.map { it.item } == edge }
   }
@@ -194,7 +197,7 @@ class ObservableDirectedGraphTest {
     val item = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
-    val testSubscriber = graph.observables.mutations.skip(1).test(autoFreeze = false)
+    val testSubscriber = graph.observables.mutations.skip(1).test()
     graph.removeNode(item)
     testSubscriber.assertValue { it.operations.first() is ObservableGraph.RemoveNodeFromGraph<*> }
     testSubscriber.assertValue {
@@ -208,7 +211,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
     graph.addEdge(item, item)
-    val testSubscriber = graph.observables.mutations.skip(1).test(autoFreeze = false)
+    val testSubscriber = graph.observables.mutations.skip(1).test()
     graph.removeEdge(item, item)
     testSubscriber.assertValue { it.operations.count == 1 }
     testSubscriber.assertValue { it.operations.first() is ObservableGraph.RemoveEdgeFromGraph<*> }
@@ -224,7 +227,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
     graph.addEdge(item, item)
-    val testSubscriber = graph.observables.mutations.skip(1).test(autoFreeze = false)
+    val testSubscriber = graph.observables.mutations.skip(1).test()
     graph.removeNode(item)
     testSubscriber.assertValue { it.operations.count == 2 }
     testSubscriber.assertValue {
@@ -246,7 +249,7 @@ class ObservableDirectedGraphTest {
     val replacement = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(original)
-    val testSubscriber = graph.observables.mutations.skip(1).test(autoFreeze = false)
+    val testSubscriber = graph.observables.mutations.skip(1).test()
     graph.replaceNode(original, replacement)
     testSubscriber.assertValue { it.operations.count == 2 }
     testSubscriber.assertValue {
@@ -280,7 +283,7 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(original)
     graph.addEdge(original, original)
-    val testSubscriber = graph.observables.mutations.skip(1).test(autoFreeze = false)
+    val testSubscriber = graph.observables.mutations.skip(1).test()
     graph.replaceNode(original, replacement)
     testSubscriber.assertValue { it.operations.count == 4 }
     testSubscriber.assertValue {
