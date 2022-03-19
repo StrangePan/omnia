@@ -41,9 +41,9 @@ class WritableObservableSetTest {
   @Test
   fun getIsPopulated_whenItemsAddedThenRemoved_isEmpty() {
     val set: MutableSet<Any> = WritableObservableSet.create()
-    val `object` = Any()
-    set.add(`object`)
-    set.remove(`object`)
+    val value = Any()
+    set.add(value)
+    set.remove(value)
     assertThat(set.isPopulated).isFalse()
   }
 
@@ -141,7 +141,7 @@ class WritableObservableSetTest {
     originalContents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.states.skip(1).test(autoFreeze = false)
+    val testSubscriber = set.observables.states.skip(1).test()
     addedContents.forEach(set::add)
     testSubscriber.assertValueCount(addedContents.count)
       .assertValues { SetAlgorithms.intersectionOf(it, finalContents) == it }
@@ -157,7 +157,7 @@ class WritableObservableSetTest {
     originalContents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.mutations.skip(1).test(autoFreeze = false)
+    val testSubscriber = set.observables.mutations.skip(1).test()
     removedContents.forEach(set::remove)
     testSubscriber.assertValueCount(removedContents.count)
     testSubscriber.values.forEach { assertThat(it.operations).hasCount(1) }
@@ -179,7 +179,7 @@ class WritableObservableSetTest {
     contents.forEach { set.add(it) }
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.mutations.skip(1).test(autoFreeze = false)
+    val testSubscriber = set.observables.mutations.skip(1).test()
     set.clear()
     testSubscriber.assertValueCount(1)
     testSubscriber.assertValue { it.operations.count == contents.count }
@@ -202,7 +202,7 @@ class WritableObservableSetTest {
     contents.forEach(set::add)
 
     // Skip 1 because first emission is the initialization subscription
-    val testSubscriber = set.observables.states.skip(1).test(autoFreeze = false)
+    val testSubscriber = set.observables.states.skip(1).test()
     set.clear()
     testSubscriber.assertValueCount(1)
     testSubscriber.assertValue { areEqual(it, ImmutableSet.empty<Any>()) }

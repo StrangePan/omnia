@@ -1,23 +1,17 @@
 package omnia.data.structure.observable.writable
 
-import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
-import com.badoo.reaktive.observable.observable
-import com.badoo.reaktive.subject.publish.PublishSubject
-import kotlin.jvm.Volatile
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import omnia.algorithm.SetAlgorithms
-import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.observable.ObservableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
+import omnia.util.reaktive.observable.map
 
 internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
-  @Volatile
-  private var currentState = ImmutableSet.empty<E>()
-  private val mutationEvents = PublishSubject<MutationEvent>()
-  override val observables = Observables()
+  val subject = BehaviorSubject(MutationEvent(ImmutableSet.empty(), ImmutableSet.empty()))
 
   override fun add(item: E) {
     mutateState(
@@ -65,19 +59,19 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
   private fun mutateState(
     shouldMutate: (ImmutableSet<E>) -> Boolean,
     mutator: (ImmutableSet<E>) -> ImmutableSet<E>,
-    mutationsGenerator: (ImmutableSet<E>, ImmutableSet<E>) -> Set<SetOperation<E>>
+    mutationsGenerator: (ImmutableSet<E>, ImmutableSet<E>) -> ImmutableSet<SetOperation<E>>
   ): Boolean {
-    val previousState = currentState
+    val previousState = subject.value.state
     if (!shouldMutate(previousState)) {
       return false
     }
     val newState = mutator(previousState)
-    currentState = newState
-    mutationEvents.onNext(
-      MutationEvent(newState, mutationsGenerator(previousState, newState))
-    )
+    val event = MutationEvent(newState, mutationsGenerator(previousState, newState))
+    subject.onNext(event)
     return true
   }
+
+  private val state get() = subject.value.state
 
   override fun iterator(): Iterator<E> {
     return state.iterator()
@@ -117,31 +111,22 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
     }
   }
 
-  private val state: ImmutableSet<E> get() = currentState
-
   private class AddToSet<E : Any>(override val item: E) : ObservableSet.AddToSet<E>
 
   private class RemoveFromSet<E : Any>(override val item: E) : ObservableSet.RemoveFromSet<E>
 
-  inner class Observables : GenericObservables<Set<E>, MutationEvent>(
-    observable<Set<E>> {
-      it.onNext(state)
-      it.onComplete()
-    }
-      .concatWith(mutationEvents.map { it.state }),
-    observable<MutationEvent> {
-      it.onNext(generateMutationEventForNewSubscription())
-      it.onComplete()
-    }
-      .concatWith(mutationEvents)),
-    ObservableSet.Observables<E>
+  override val observables = object : ObservableSet.Observables<E> {
 
-  inner class MutationEvent(state: Set<E>, operations: Set<SetOperation<E>>) :
-    GenericMutationEvent<Set<E>, Set<SetOperation<E>>>(state, operations),
+    override val states = subject.map { event -> event.state }
+
+    override val mutations = subject.map { index, event -> if (index == 0) createEventForNewSubscription(event.state) else event }
+  }
+
+  inner class MutationEvent(state: ImmutableSet<E>, operations: ImmutableSet<SetOperation<E>>) :
+    GenericMutationEvent<ImmutableSet<E>, ImmutableSet<SetOperation<E>>>(state, operations),
     ObservableSet.MutationEvent<E>
 
-  private fun generateMutationEventForNewSubscription(): MutationEvent {
-    val state: Set<E> = state
-    return MutationEvent(state, state.map { AddToSet(it) }.toImmutableSet())
+  private fun createEventForNewSubscription(set: ImmutableSet<E>): MutationEvent {
+    return MutationEvent(set, set.map { AddToSet(it) }.toImmutableSet())
   }
 }
