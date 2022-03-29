@@ -1,9 +1,10 @@
 package omnia.data.structure.observable.writable
 
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.doOnAfterNext
-import com.badoo.reaktive.observable.doOnBeforeNext
+import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.publish
+import com.badoo.reaktive.observable.take
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Set
@@ -14,7 +15,6 @@ import omnia.data.structure.observable.ObservableDirectedGraph
 import omnia.data.structure.observable.ObservableGraph
 import omnia.data.structure.observable.ObservableGraph.GraphOperation
 import omnia.data.structure.tuple.Couplet
-import omnia.util.reaktive.observable.map
 
 internal class WritableObservableDirectedGraphImpl<E : Any>(
     original: DirectedGraph<E> = ImmutableDirectedGraph.empty()) :
@@ -209,12 +209,11 @@ internal class WritableObservableDirectedGraphImpl<E : Any>(
 
   override val observables = object : ObservableDirectedGraph.Observables<E> {
 
-    override val states =
-      subject.map { event -> event.state }
+    override val states = subject.map { it.state }
 
-    override val mutations: Observable<MutationEvent<E>> =
-      subject.map { i, event ->
-        if (i == 0) MutationEvent(event.state, creationOperationsFor(event.state)) else event
+    override val mutations: Observable<ObservableDirectedGraph.MutationEvent<E>> =
+      subject.publish {
+        it.take(1).map { MutationEvent(it.state, creationOperationsFor(it.state)) }.concatWith(it)
       }
   }
 

@@ -17,6 +17,8 @@ import omnia.util.reaktive.observable.test.assertThatValue
 import omnia.util.reaktive.observable.test.assertValueCount
 import omnia.util.reaktive.observable.test.assertValues
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.allMatch
+import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.containsExactlyElementsIn
 import omnia.util.test.fluent.hasCount
 import omnia.util.test.fluent.isA
@@ -207,5 +209,38 @@ class WritableObservableSetTest {
     val testSubscriber = set.observables.states.skip(1).test()
     set.clear()
     testSubscriber.assertValueCount(1).assertThatValue().isEmpty()
+  }
+
+  @Test
+  fun observeMutations_multipleSubscribers_eachReceivesIndependentMutations() {
+    val contents1 = ImmutableSet.of(1, 2)
+    val contents2 = contents1.toBuilder().add(3).build()
+    val contents3 = contents2.toBuilder().add(4).build()
+
+    val set = WritableObservableSet.create<Int>()
+    val observable = set.observables.mutations
+    set.addAll(contents1)
+
+    val subscriber1 = observable.test()
+    set.addAll(contents2)
+    val subscriber2 = observable.test()
+    set.addAll(contents3)
+    val subscriber3 = observable.test()
+
+    subscriber1.assertValueCount(3)
+        .assertThatValue(0) { it.operations }
+        .allMatch { it is ObservableSet.AddToSet<*> }
+        .andThat { it.map { it as ObservableSet.AddToSet<Int> }.map { it.item }.toImmutableSet() }
+        .isEqualTo(contents1)
+    subscriber2.assertValueCount(2)
+        .assertThatValue(0) { it.operations }
+        .allMatch { it is ObservableSet.AddToSet<*> }
+        .andThat { it.map { it as ObservableSet.AddToSet<Int> }.map { it.item }.toImmutableSet() }
+        .isEqualTo(contents2)
+    subscriber3.assertValueCount(1)
+        .assertThatValue(0) { it.operations }
+        .allMatch { it is ObservableSet.AddToSet<*> }
+        .andThat { it.map { it as ObservableSet.AddToSet<Int> }.map { it.item }.toImmutableSet() }
+        .isEqualTo(contents3)
   }
 }

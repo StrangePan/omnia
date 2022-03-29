@@ -1,13 +1,15 @@
 package omnia.data.structure.observable.writable
 
+import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.publish
+import com.badoo.reaktive.observable.take
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import omnia.algorithm.SetAlgorithms
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.observable.ObservableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
-import omnia.util.reaktive.observable.map
 
 internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
@@ -117,9 +119,10 @@ internal class WritableObservableSetImpl<E : Any> : WritableObservableSet<E> {
 
   override val observables = object : ObservableSet.Observables<E> {
 
-    override val states = subject.map { event -> event.state }
+    override val states = subject.map { it.state }
 
-    override val mutations = subject.map { index, event -> if (index == 0) createEventForNewSubscription(event.state) else event }
+    override val mutations =
+      subject.publish { it.take(1).map { createEventForNewSubscription(it.state) }.concatWith(it) }
   }
 
   inner class MutationEvent(state: ImmutableSet<E>, operations: ImmutableSet<SetOperation<E>>) :
