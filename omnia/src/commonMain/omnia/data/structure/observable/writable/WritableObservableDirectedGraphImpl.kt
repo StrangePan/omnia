@@ -1,15 +1,11 @@
 package omnia.data.structure.observable.writable
 
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.ObservableEmitter
-import com.badoo.reaktive.observable.doOnBeforeComplete
-import com.badoo.reaktive.observable.doOnBeforeError
-import com.badoo.reaktive.observable.doOnBeforeNext
+import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
-import com.badoo.reaktive.observable.observable
-import com.badoo.reaktive.observable.subscribe
-import com.badoo.reaktive.subject.publish.PublishSubject
-import kotlin.jvm.Volatile
+import com.badoo.reaktive.observable.publish
+import com.badoo.reaktive.observable.take
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableDirectedGraph
@@ -20,20 +16,13 @@ import omnia.data.structure.observable.ObservableGraph
 import omnia.data.structure.observable.ObservableGraph.GraphOperation
 import omnia.data.structure.tuple.Couplet
 
-internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservableDirectedGraph<E> {
+internal class WritableObservableDirectedGraphImpl<E : Any>(
+    original: DirectedGraph<E> = ImmutableDirectedGraph.empty()) :
+   WritableObservableDirectedGraph<E> {
 
-  @Volatile
-  private var state: ImmutableDirectedGraph<E>
-
-  private val mutationEvents = PublishSubject<MutationEvent<E>>()
-
-  constructor() {
-    state = ImmutableDirectedGraph.empty()
-  }
-
-  constructor(original: DirectedGraph<E>) {
-    state = ImmutableDirectedGraph.copyOf(original)
-  }
+  private val subject =
+    BehaviorSubject(
+        MutationEvent(ImmutableDirectedGraph.copyOf(original), creationOperationsFor(original)))
 
   override fun addNode(item: E) {
     mutateState(
@@ -134,28 +123,16 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
   private fun mutateState(
     shouldChange: (ImmutableDirectedGraph<E>) -> Boolean,
     mutateState: (ImmutableDirectedGraph<E>) -> ImmutableDirectedGraph<E>,
-    mutationOperations: (ImmutableDirectedGraph<E>, ImmutableDirectedGraph<E>) -> Set<GraphOperation<E>>
+    mutationOperations: (ImmutableDirectedGraph<E>, ImmutableDirectedGraph<E>) -> ImmutableSet<GraphOperation<E>>
   ): Boolean {
     val nextState: ImmutableDirectedGraph<E>
-    val previousState: ImmutableDirectedGraph<E> = state
+    val previousState: ImmutableDirectedGraph<E> = getState()
     if (!shouldChange(previousState)) {
       return false
     }
     nextState = mutateState(previousState)
-    state = nextState
     val operations = mutationOperations(previousState, nextState)
-    mutationEvents.onNext(
-      object : MutationEvent<E> {
-        override val state: DirectedGraph<E>
-          get() {
-            return nextState
-          }
-
-        override val operations: Set<GraphOperation<E>>
-          get() {
-            return operations
-          }
-      })
+    subject.onNext(MutationEvent(nextState, operations))
     return true
   }
 
@@ -230,64 +207,31 @@ internal class WritableObservableDirectedGraphImpl<E : Any> : WritableObservable
     }
   }
 
-  override val observables: ObservableDirectedGraph.Observables<E>
-    get() {
-      return object : ObservableDirectedGraph.Observables<E> {
-        override val states: Observable<DirectedGraph<E>>
-          get() {
-            return observable { emitter: ObservableEmitter<DirectedGraph<E>> ->
-              emitter.onNext(getState())
-              emitter.setDisposable(
-                mutationEvents.map { it.state }
-                  .doOnBeforeNext(emitter::onNext)
-                  .doOnBeforeError(emitter::onError)
-                  .doOnBeforeComplete(emitter::onComplete)
-                  .subscribe())
-            }
-          }
+  override val observables = object : ObservableDirectedGraph.Observables<E> {
 
-        override val mutations: Observable<MutationEvent<E>>
-          get() {
-            return observable { emitter: ObservableEmitter<MutationEvent<E>> ->
-              val state = getState()
-              val operations: Set<GraphOperation<E>> =
-                state.nodes.map { AddNodeToGraph.create(it.item) }
-                  .plus(
-                    state.edges
-                      .map { AddEdgeToGraph.create(it.endpoints.map { i -> i.item }) })
-                  .toImmutableSet()
-              emitter.onNext(object : MutationEvent<E> {
-                override val state: DirectedGraph<E>
-                  get() {
-                    return state
-                  }
+    override val states = subject.map { it.state }
 
-                override val operations: Set<GraphOperation<E>>
-                  get() {
-                    return operations
-                  }
-              })
-              emitter.setDisposable(
-                mutationEvents
-                  .doOnBeforeNext(emitter::onNext)
-                  .doOnBeforeError(emitter::onError)
-                  .doOnBeforeComplete(emitter::onComplete)
-                  .subscribe()
-              )
-            }
-          }
+    override val mutations: Observable<ObservableDirectedGraph.MutationEvent<E>> =
+      subject.publish {
+        it.take(1).map { MutationEvent(it.state, creationOperationsFor(it.state)) }.concatWith(it)
       }
-    }
-
-  private fun getState(): ImmutableDirectedGraph<E> {
-    return state
   }
 
-  internal interface MutationEvent<E : Any> : ObservableDirectedGraph.MutationEvent<E> {
+  private fun getState(): ImmutableDirectedGraph<E> {
+    return subject.value.state
+  }
 
-    override val state: DirectedGraph<E>
+  internal class MutationEvent<E: Any>(
+      override val state: ImmutableDirectedGraph<E>,
+      override val operations: ImmutableSet<GraphOperation<E>>):
+    ObservableDirectedGraph.MutationEvent<E>
 
-    override val operations: Set<GraphOperation<E>>
+  companion object {
+
+    fun <E : Any> creationOperationsFor(graph: DirectedGraph<E>): ImmutableSet<GraphOperation<E>> =
+      graph.nodes.map { AddNodeToGraph.create(it.item) }
+          .plus(graph.edges.map { AddEdgeToGraph.create(it.endpoints.map { i -> i.item }) })
+          .toImmutableSet()
   }
 
   private abstract class NodeOperation<E : Any>(override val item: E) :

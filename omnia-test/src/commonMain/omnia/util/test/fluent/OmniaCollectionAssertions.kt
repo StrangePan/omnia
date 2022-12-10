@@ -64,3 +64,10 @@ fun <T, C : TypedContainer<T>> Assertion<C>.doesNotContain(vararg expected: T): 
   }
   return this
 }
+
+fun <T, C : Iterable<T>> Assertion<C>.allMatch(matcher: (T) -> Boolean): Assertion<C> {
+  for (item in actual) {
+    assertTrue(matcher(item), message)
+  }
+  return this
+}

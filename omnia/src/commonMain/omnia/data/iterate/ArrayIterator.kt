@@ -1,5 +1,7 @@
 package omnia.data.iterate
 
+import kotlin.collections.Iterator
+
 /** A simple read-only iterator that iterates over the elements of an array in sequential order. */
 class ArrayIterator<E>(private val elements: Array<E>) : Iterator<E> {
 

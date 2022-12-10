@@ -8,19 +8,22 @@ import kotlin.test.Test
 import omnia.algorithm.SetAlgorithms
 import omnia.algorithm.SetAlgorithms.unionOf
 import omnia.data.structure.Set
-import omnia.data.structure.Set.Companion.areEqual
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.mutable.MutableSet
 import omnia.data.structure.observable.ObservableSet.SetOperation
 import omnia.data.structure.observable.writable.WritableObservableSet
-import omnia.util.reaktive.observable.test.assertValue
+import omnia.util.reaktive.observable.test.assertThatValue
 import omnia.util.reaktive.observable.test.assertValueCount
 import omnia.util.reaktive.observable.test.assertValues
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.allMatch
+import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.containsExactlyElementsIn
 import omnia.util.test.fluent.hasCount
 import omnia.util.test.fluent.isA
+import omnia.util.test.fluent.isEmpty
+import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
 import omnia.util.test.fluent.isTrue
 
@@ -41,9 +44,9 @@ class WritableObservableSetTest {
   @Test
   fun getIsPopulated_whenItemsAddedThenRemoved_isEmpty() {
     val set: MutableSet<Any> = WritableObservableSet.create()
-    val `object` = Any()
-    set.add(`object`)
-    set.remove(`object`)
+    val value = Any()
+    set.add(value)
+    set.remove(value)
     assertThat(set.isPopulated).isFalse()
   }
 
@@ -90,15 +93,15 @@ class WritableObservableSetTest {
   @Test
   fun observeStates_whenEmpty_emitsEmpty() {
     val set: ObservableSet<Any> = WritableObservableSet.create()
-    set.observables.states.test().assertValue { !it.isPopulated }
+    set.observables.states.test().assertThatValue().isEmpty()
   }
 
   @Test
   fun observeMutations_whenEmpty_emitsEmpty() {
     val set: ObservableSet<Any> = WritableObservableSet.create()
     val subscriber = set.observables.mutations.test()
-    subscriber.assertValue { !it.state.isPopulated }
-    subscriber.assertValue { !it.operations.isPopulated }
+    subscriber.assertThatValue { it.state }.isEmpty()
+    subscriber.assertThatValue { it.operations }.isEmpty()
   }
 
   @Test
@@ -106,7 +109,7 @@ class WritableObservableSetTest {
     val contents: Set<Any> = ImmutableSet.of(Any(), Any(), Any())
     val set = WritableObservableSet.create<Any>()
     contents.forEach(set::add)
-    set.observables.states.test().assertValue { areEqual(it, contents) }
+    set.observables.states.test().assertThatValue().containsExactlyElementsIn(contents)
   }
 
   @Test
@@ -114,8 +117,9 @@ class WritableObservableSetTest {
     val contents: Set<Any> = ImmutableSet.of(Any(), Any(), Any())
     val set = WritableObservableSet.create<Any>()
     contents.forEach(set::add)
-    val testSubscriber = set.observables.mutations.map { it.state }.test()
-    testSubscriber.assertValue { areEqual(it, contents) }
+     set.observables.mutations.map { it.state }.test()
+        .assertThatValue()
+        .containsExactlyElementsIn(contents)
   }
 
   @Test
@@ -145,7 +149,7 @@ class WritableObservableSetTest {
     addedContents.forEach(set::add)
     testSubscriber.assertValueCount(addedContents.count)
       .assertValues { SetAlgorithms.intersectionOf(it, finalContents) == it }
-      .assertValue(addedContents.count - 1) { it == finalContents }
+      .assertThatValue(addedContents.count - 1).isEqualTo(finalContents)
   }
 
   @Test
@@ -182,7 +186,7 @@ class WritableObservableSetTest {
     val testSubscriber = set.observables.mutations.skip(1).test()
     set.clear()
     testSubscriber.assertValueCount(1)
-    testSubscriber.assertValue { it.operations.count == contents.count }
+    testSubscriber.assertThatValue { it.operations }.hasCount(contents.count)
     val operations: Set<out SetOperation<Any>> = testSubscriber.values
       .flatMap { it.operations }
       .toImmutableSet()
@@ -204,7 +208,39 @@ class WritableObservableSetTest {
     // Skip 1 because first emission is the initialization subscription
     val testSubscriber = set.observables.states.skip(1).test()
     set.clear()
-    testSubscriber.assertValueCount(1)
-    testSubscriber.assertValue { areEqual(it, ImmutableSet.empty<Any>()) }
+    testSubscriber.assertValueCount(1).assertThatValue().isEmpty()
+  }
+
+  @Test
+  fun observeMutations_multipleSubscribers_eachReceivesIndependentMutations() {
+    val contents1 = ImmutableSet.of(1, 2)
+    val contents2 = contents1.toBuilder().add(3).build()
+    val contents3 = contents2.toBuilder().add(4).build()
+
+    val set = WritableObservableSet.create<Int>()
+    val observable = set.observables.mutations
+    set.addAll(contents1)
+
+    val subscriber1 = observable.test()
+    set.addAll(contents2)
+    val subscriber2 = observable.test()
+    set.addAll(contents3)
+    val subscriber3 = observable.test()
+
+    subscriber1.assertValueCount(3)
+        .assertThatValue(0) { it.operations }
+        .allMatch { it is ObservableSet.AddToSet<*> }
+        .andThat { it.map { it as ObservableSet.AddToSet<Int> }.map { it.item }.toImmutableSet() }
+        .isEqualTo(contents1)
+    subscriber2.assertValueCount(2)
+        .assertThatValue(0) { it.operations }
+        .allMatch { it is ObservableSet.AddToSet<*> }
+        .andThat { it.map { it as ObservableSet.AddToSet<Int> }.map { it.item }.toImmutableSet() }
+        .isEqualTo(contents2)
+    subscriber3.assertValueCount(1)
+        .assertThatValue(0) { it.operations }
+        .allMatch { it is ObservableSet.AddToSet<*> }
+        .andThat { it.map { it as ObservableSet.AddToSet<Int> }.map { it.item }.toImmutableSet() }
+        .isEqualTo(contents3)
   }
 }

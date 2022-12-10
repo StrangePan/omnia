@@ -26,7 +26,6 @@ actual class Directory private constructor(private val jFile: JFile) {
     return builder.build()
   }
 
-  /** Iterable for all non-directory files in the current directory. May be empty. */
   actual val files: Iterable<File> get() =
     jFile.listFiles()!!.toList().filter(JFile::isFile).map(File::fromJFile)
 

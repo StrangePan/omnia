@@ -1,6 +1,7 @@
 package omnia.util.test.fluent
 
 import kotlin.reflect.KClass
+import kotlin.reflect.cast
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -10,6 +11,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import omnia.data.structure.immutable.ImmutableList
+import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.IncompleteAssertion.Companion.assertWithMessage
 
 fun <T> Assertion<T>.isEqualTo(expected: Any?): Assertion<T> {
@@ -47,12 +49,25 @@ fun <T> Assertion<T>.isNotSameAs(expected: Any?): Assertion<T> {
   return this
 }
 
-fun <T> Assertion<T>.isA(expected: KClass<*>): Assertion<T> {
-  assertTrue(expected.isInstance(actual), message)
-  return this
+fun <T, R: Any> Assertion<T>.isA(expected: KClass<R>): Assertion<R> {
+  assertTrue(
+      expected.isInstance(actual),
+      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is not an instance of ${expected.qualifiedName}")
+  return assertThat(expected.cast(actual))
 }
 
 fun <T> Assertion<T>.isNotA(expected: KClass<*>): Assertion<T> {
-  assertFalse(expected.isInstance(actual), message)
+  assertFalse(
+      expected.isInstance(actual),
+      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is an instance of ${expected.qualifiedName}")
+  return this
+}
+
+fun <T, R> Assertion<T>.andThat(mapper: (T) -> R): Assertion<R> {
+  return assertThat(mapper(this.actual))
+}
+
+fun <T, R> Assertion<T>.andThat(mapper: (T) -> R, asserter: (Assertion<R>) -> Unit): Assertion<T> {
+  asserter(this.andThat(mapper))
   return this
 }
