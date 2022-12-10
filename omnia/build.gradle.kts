@@ -12,6 +12,7 @@ kotlin {
   iosArm64()
   iosSimulatorArm64()
 
+  @Suppress("UNUSED_VARIABLE")
   sourceSets {
     val commonMain by getting {
       kotlin.srcDir("src/commonMain")
@@ -19,7 +20,6 @@ kotlin {
         api("com.badoo.reaktive:reaktive:1.2.1")
       }
     }
-
     val commonTest by getting {
       kotlin.srcDir("src/commonTest")
       dependencies {
@@ -28,12 +28,10 @@ kotlin {
         api("com.badoo.reaktive:reaktive-testing:1.2.1")
       }
     }
-
     val javaMain by creating {
       kotlin.srcDir("src/javaMain")
       dependsOn(commonMain)
     }
-
     val jvmMain by getting {
       kotlin.srcDir("src/jvmMain")
       dependsOn(javaMain)
@@ -41,24 +39,20 @@ kotlin {
         api("com.badoo.reaktive:reaktive-jvm:1.2.1")
       }
     }
-
     val jvmTest by getting {
       kotlin.srcDir("src/jvmTest")
       dependencies {
         implementation(kotlin("test-junit"))
       }
     }
-
     val androidMain by getting {
       kotlin.srcDir("src/androidMain")
       dependsOn(javaMain)
     }
-
     val iosMain by creating {
       kotlin.srcDir("src/iosMain")
       dependsOn(commonMain)
     }
-
     val iosX64Main by getting {
       kotlin.srcDir("src/iosX64Main")
       dependsOn(iosMain)
@@ -66,7 +60,6 @@ kotlin {
         api("com.badoo.reaktive:reaktive-iosx64:1.2.1")
       }
     }
-
     val iosArm64Main by getting {
       kotlin.srcDir("src/iosArm64Main")
       dependsOn(iosMain)
@@ -74,7 +67,6 @@ kotlin {
         api("com.badoo.reaktive:reaktive-iosarm64:1.2.1")
       }
     }
-
     val iosSimulatorArm64Main by getting {
       kotlin.srcDir("src/iosSimulatorArm64Main")
       dependsOn(iosMain)

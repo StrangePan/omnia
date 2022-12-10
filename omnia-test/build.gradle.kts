@@ -12,6 +12,7 @@ kotlin {
   iosArm64()
   iosSimulatorArm64()
 
+  @Suppress("UNUSED_VARIABLE")
   sourceSets {
     val commonMain by getting {
       kotlin.srcDir("src/commonMain")
@@ -22,23 +23,18 @@ kotlin {
         implementation("com.badoo.reaktive:reaktive-testing:1.2.1")
       }
     }
-
     val jvmMain by getting {
       kotlin.srcDir("src/jvmMain")
     }
-
     val androidMain by getting {
       kotlin.srcDir("src/androidMain")
     }
-
     val iosX64Main by getting {
       kotlin.srcDir("src/iosX64Main")
     }
-
     val iosArm64Main by getting {
       kotlin.srcDir("src/iosArm64Main")
     }
-
     val iosSimulatorArm64Main by getting {
       kotlin.srcDir("src/iosSimulatorArm64Main")
     }
