@@ -15,7 +15,7 @@ import java.io.File as JFile
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.observable.asCompletable
 
-actual class File private constructor(private val jFile: JFile) {
+actual class File private constructor(private val jFile: JFile): FileSystemObject {
 
   init {
     if (!jFile.isFile) {
@@ -23,7 +23,9 @@ actual class File private constructor(private val jFile: JFile) {
     }
   }
 
-  actual val name: String get() = jFile.absoluteFile.name
+  actual override val name: String get() = jFile.absoluteFile.name
+
+  actual override val fullName: String get() = jFile.absolutePath
 
   actual val directory: Directory get() = Directory.fromJFile(jFile.parentFile!!)
 

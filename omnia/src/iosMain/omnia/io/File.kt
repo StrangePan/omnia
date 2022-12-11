@@ -23,15 +23,18 @@ import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
 /** An interface for interfacing with file system files.  */
-actual class File private constructor(private val path: String) {
+actual class File private constructor(private val path: String): FileSystemObject {
+
   init {
     if (!isRegularFile(path)) {
       throw NotAFileException(path)
     }
   }
 
-  actual val name get() =
+  actual override val name get() =
     path.asNSString().lastPathComponent.asNSString().stringByDeletingPathExtension
+
+  actual override val fullName get() = path
 
   actual val directory get() =
     Directory.fromPath(path.asNSString().stringByDeletingLastPathComponent)

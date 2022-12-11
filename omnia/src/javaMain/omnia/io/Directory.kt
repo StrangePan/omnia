@@ -3,7 +3,7 @@ package omnia.io
 import java.io.File as JFile
 import omnia.data.structure.immutable.ImmutableList
 
-actual class Directory private constructor(private val jFile: JFile) {
+actual class Directory private constructor(private val jFile: JFile): FileSystemObject {
 
   init {
     if (!jFile.isDirectory) {
@@ -11,7 +11,9 @@ actual class Directory private constructor(private val jFile: JFile) {
     }
   }
 
-  actual val name: String get() = jFile.absoluteFile.name
+  actual override val name: String get() = jFile.absoluteFile.name
+
+  actual override val fullName: String get() = jFile.absolutePath
 
   actual val parentDirectory: Directory?
     get() = jFile.absoluteFile.parentFile?.let(Directory::fromJFile)
@@ -31,6 +33,17 @@ actual class Directory private constructor(private val jFile: JFile) {
 
   actual val subdirectories: Iterable<Directory> get() =
     jFile.listFiles()!!.asList().filter(JFile::isDirectory).map(Directory::fromJFile)
+
+  actual fun createFile(name: String): File {
+    val newJFile = JFile(jFile, name)
+    try {
+      if (newJFile.createNewFile())
+        return File.fromJFile(newJFile)
+      throw FileAlreadyExistsException(File.fromJFile(newJFile))
+    } catch (e: java.io.IOException) {
+      throw IOException(e)
+    }
+  }
 
   actual companion object {
 

@@ -4,15 +4,10 @@ import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.objcPtr
 import omnia.data.structure.immutable.ImmutableList
 import omnia.platform.swift.asNSString
-import platform.Foundation.NSFileManager
-import platform.Foundation.NSFileWrapper
+import platform.Foundation.*
 import platform.Foundation.NSURL.Companion.URLWithString
-import platform.Foundation.lastPathComponent
-import platform.Foundation.stringByAppendingPathComponent
-import platform.Foundation.stringByDeletingLastPathComponent
-import platform.Foundation.stringByDeletingPathExtension
 
-actual class Directory private constructor(private val path: String) {
+actual class Directory private constructor(private val path: String): FileSystemObject {
 
   init {
     if (!isDirectory(path)) {
@@ -20,8 +15,10 @@ actual class Directory private constructor(private val path: String) {
     }
   }
 
-  actual val name: String get() =
+  actual override val name get() =
     path.asNSString().lastPathComponent.asNSString().stringByDeletingPathExtension
+
+  actual override val fullName get() = path
 
   actual val parentDirectory: Directory?
     get() {
@@ -56,6 +53,13 @@ actual class Directory private constructor(private val path: String) {
   }
 
   private val fileWrapper get() = NSFileWrapper(URLWithString(path)!!, 0, null)
+
+  actual fun createFile(name: String): File {
+    files.firstOrNull { it.name == name }?.let { throw FileAlreadyExistsException(it) }
+    return fileWrapper.addRegularFileWithContents(NSData(), name)
+        .also { assert(it == name) }
+        .let { File.fromPath(it) }
+  }
 
   actual companion object {
 
