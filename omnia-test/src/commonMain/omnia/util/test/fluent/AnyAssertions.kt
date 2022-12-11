@@ -50,6 +50,7 @@ fun <T> Assertion<T>.isNotSameAs(expected: Any?): Assertion<T> {
 }
 
 fun <T, R: Any> Assertion<T>.isA(expected: KClass<R>): Assertion<R> {
+  @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
   assertTrue(
       expected.isInstance(actual),
       message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is not an instance of ${expected.qualifiedName}")
@@ -57,6 +58,7 @@ fun <T, R: Any> Assertion<T>.isA(expected: KClass<R>): Assertion<R> {
 }
 
 fun <T> Assertion<T>.isNotA(expected: KClass<*>): Assertion<T> {
+  @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
   assertFalse(
       expected.isInstance(actual),
       message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is an instance of ${expected.qualifiedName}")
