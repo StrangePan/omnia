@@ -19,8 +19,8 @@ kotlin {
       dependencies {
         implementation(kotlin("test"))
         implementation(project(":omnia"))
-        implementation("com.badoo.reaktive:reaktive:1.2.1")
-        implementation("com.badoo.reaktive:reaktive-testing:1.2.1")
+        implementation("com.badoo.reaktive:reaktive:1.2.2")
+        implementation("com.badoo.reaktive:reaktive-testing:1.2.2")
       }
     }
     val jvmMain by getting {
