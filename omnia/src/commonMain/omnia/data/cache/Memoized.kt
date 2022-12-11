@@ -19,6 +19,12 @@ interface Memoized<out T : Any> : Holder<T> {
    */
   override val value: T
 
+  /**
+   * Gets the value held in this object if it has previously been computed. If it has not already
+   * been computed and a value is not memoized, then the null optional is returned.
+   */
+  val optionalValue: T?
+
   companion object {
 
     /**
@@ -31,6 +37,7 @@ interface Memoized<out T : Any> : Holder<T> {
     fun <T : Any> just(value: T): Memoized<T> {
       return object : Memoized<T> {
         override val value = value
+        override val optionalValue get() = value
       }
     }
 
@@ -46,6 +53,7 @@ interface Memoized<out T : Any> : Holder<T> {
       return object : Memoized<T> {
         private val lazy = lazy(supplier)
         override val value get() = lazy.value
+        override val optionalValue get() = if (lazy.isInitialized()) lazy.value else null
       }
     }
   }
