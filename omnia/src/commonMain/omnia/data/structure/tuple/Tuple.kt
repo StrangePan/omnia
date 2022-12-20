@@ -7,15 +7,15 @@ interface Tuple : Countable {
   companion object {
 
     fun <A, B> of(first: A, second: B): Couple<A, B> {
-      return ImmutableCouple(first, second)
+      return Couple(first, second)
     }
 
     fun <A, B, C> of(first: A, second: B, third: C): Triple<A, B, C> {
-      return ImmutableTriple(first, second, third)
+      return Triple(first, second, third)
     }
 
     fun <A, B, C, D> of(first: A, second: B, third: C, fourth: D): Quadruple<A, B, C, D> {
-      return ImmutableQuadruple(first, second, third, fourth)
+      return Quadruple(first, second, third, fourth)
     }
 
     fun <A, B, C, D, E> of(
@@ -25,7 +25,7 @@ interface Tuple : Countable {
         fourth: D,
         fifth: E
     ): Quintuple<A, B, C, D, E> {
-      return ImmutableQuintuple(first, second, third, fourth, fifth)
+      return Quintuple(first, second, third, fourth, fifth)
     }
 
     fun <A, B, C, D, E, F> of(
@@ -36,7 +36,7 @@ interface Tuple : Countable {
         fifth: E,
         sixth: F
     ): Sextuple<A, B, C, D, E, F> {
-      return ImmutableSextuple(first, second, third, fourth, fifth, sixth)
+      return Sextuple(first, second, third, fourth, fifth, sixth)
     }
 
     fun <A, B, C, D, E, F, G> of(
@@ -48,7 +48,7 @@ interface Tuple : Countable {
         sixth: F,
         seventh: G
     ): Septuple<A, B, C, D, E, F, G> {
-      return ImmutableSeptuple(first, second, third, fourth, fifth, sixth, seventh)
+      return Septuple(first, second, third, fourth, fifth, sixth, seventh)
     }
 
     fun <A, B, C, D, E, F, G, H> of(
@@ -61,7 +61,7 @@ interface Tuple : Countable {
         seventh: G,
         eighth: H
     ): Octuple<A, B, C, D, E, F, G, H> {
-      return ImmutableOctuple(first, second, third, fourth, fifth, sixth, seventh, eighth)
+      return Octuple(first, second, third, fourth, fifth, sixth, seventh, eighth)
     }
 
     fun <A, B, C, D, E, F, G, H, I> of(
@@ -75,7 +75,7 @@ interface Tuple : Countable {
         eighth: H,
         ninth: I
     ): Nonuple<A, B, C, D, E, F, G, H, I> {
-      return ImmutableNonuple(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
+      return Nonuple(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
     }
 
     fun <A, B, C, D, E, F, G, H, I, J> of(
@@ -90,7 +90,7 @@ interface Tuple : Countable {
         ninth: I,
         tenth: J
     ): Decuple<A, B, C, D, E, F, G, H, I, J> {
-      return ImmutableDecuple(
+      return Decuple(
           first,
           second,
           third,
