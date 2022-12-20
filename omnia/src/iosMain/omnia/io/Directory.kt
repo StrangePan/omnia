@@ -4,8 +4,14 @@ import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.objcPtr
 import omnia.data.structure.immutable.ImmutableList
 import omnia.platform.swift.asNSString
-import platform.Foundation.*
+import platform.Foundation.NSData
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSFileWrapper
 import platform.Foundation.NSURL.Companion.URLWithString
+import platform.Foundation.lastPathComponent
+import platform.Foundation.stringByAppendingPathComponent
+import platform.Foundation.stringByDeletingLastPathComponent
+import platform.Foundation.stringByDeletingPathExtension
 
 actual class Directory private constructor(private val path: String): FileSystemObject {
 
