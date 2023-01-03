@@ -5,6 +5,9 @@ import kotlin.collections.Set as KotlinSet
 import omnia.data.iterate.ReadOnlyIterator
 
 interface Set<E : Any> : Collection<E> {
+
+  fun toKotlinSet() = this.toSet()
+
   companion object {
 
     fun <E : Any> masking(backingSet: KotlinSet<E>): Set<E> {
