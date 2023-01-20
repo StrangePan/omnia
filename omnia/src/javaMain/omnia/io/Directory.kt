@@ -37,8 +37,21 @@ actual class Directory private constructor(private val jFile: JFile): FileSystem
   actual fun createFile(name: String): File {
     val newJFile = JFile(jFile, name)
     try {
-      if (newJFile.createNewFile())
+      if (newJFile.createNewFile()) {
         return File.fromJFile(newJFile)
+      }
+      throw FileAlreadyExistsException(File.fromJFile(newJFile))
+    } catch (e: java.io.IOException) {
+      throw IOException(e)
+    }
+  }
+
+  actual fun createSubdirectory(name: String): Directory {
+    val newJFile = JFile(jFile, name)
+    try {
+      if (newJFile.mkdir()) {
+        return fromJFile(newJFile)
+      }
       throw FileAlreadyExistsException(File.fromJFile(newJFile))
     } catch (e: java.io.IOException) {
       throw IOException(e)

@@ -1,13 +1,12 @@
 package omnia.io
 
-import kotlinx.cinterop.interpretCPointer
-import kotlinx.cinterop.objcPtr
 import omnia.data.structure.immutable.ImmutableList
 import omnia.platform.swift.asNSString
-import platform.Foundation.NSData
+import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileWrapper
-import platform.Foundation.NSURL.Companion.URLWithString
+import platform.Foundation.NSURL.Companion.fileURLWithPath
+import platform.Foundation.NSUserDomainMask
 import platform.Foundation.lastPathComponent
 import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.stringByDeletingLastPathComponent
@@ -55,32 +54,39 @@ actual class Directory private constructor(private val path: String): FileSystem
     return (fileWrapper.fileWrappers as Map<String, NSFileWrapper>)
         .entries
         .filter { it.value.directory }
-        .map {fromPath(path.asNSString().stringByAppendingPathComponent(it.key)) }
+        .map { fromPath(path.asNSString().stringByAppendingPathComponent(it.key)) }
   }
 
-  private val fileWrapper get() = NSFileWrapper(URLWithString(path)!!, 0, null)
+  private val fileWrapper get() = NSFileWrapper(fileURLWithPath(path), 0, null)
 
   actual fun createFile(name: String): File {
     files.firstOrNull { it.name == name }?.let { throw FileAlreadyExistsException(it) }
-    return fileWrapper.addRegularFileWithContents(NSData(), name)
-        .also { assert(it == name) }
+    return "$path/$name"
+        .also { assert(NSFileManager.defaultManager.createFileAtPath("$path/$name", null, emptyMap<Any?, Any?>())) }
         .let { File.fromPath(it) }
+  }
+
+  actual fun createSubdirectory(name: String): Directory {
+    files.firstOrNull { it.name == name }?.let { throw FileAlreadyExistsException(it) }
+    return "$path/$name"
+      .also { assert(NSFileManager.defaultManager.createDirectoryAtPath(it, emptyMap<Any?, Any?>())) }
+      .let { fromPath(it) }
   }
 
   actual companion object {
 
-    actual val workingDirectory get() = fromPath(NSFileManager.defaultManager.currentDirectoryPath)
+    actual val workingDirectory get() =
+      NSFileManager.defaultManager.URLForDirectory(
+          NSDocumentDirectory, NSUserDomainMask, null, true, null)
+        .let { it?.path!! }
+        .let { fromPath(it) }
 
     actual val rootDirectory get() = fromPath("/")
 
     actual fun fromPath(path: String) = Directory(path)
 
     private fun isDirectory(path: String): Boolean {
-      val isDirectory = false
-      val exists =
-        NSFileManager.defaultManager.fileExistsAtPath(
-            path, isDirectory=interpretCPointer(isDirectory.objcPtr()))
-      return exists && isDirectory
+      return getFileInfo(path).let { it.exists && it.isDirectory }
     }
   }
 }

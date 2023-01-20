@@ -32,6 +32,8 @@ expect class Directory: FileSystemObject {
 
   fun createFile(name: String): File
 
+  fun createSubdirectory(name: String): Directory
+
   companion object {
     /** The directory for the programs current working directory. */
     val workingDirectory: Directory
@@ -42,4 +44,12 @@ expect class Directory: FileSystemObject {
     /** Looks up a file system directory with the given path. */
     fun fromPath(path: String): Directory
   }
+}
+
+fun Directory.getOrCreateFile(name: String): File {
+  return this.files.firstOrNull { it.name == name } ?: this.createFile(name)
+}
+
+fun Directory.getOrCreateSubdirectory(name: String): Directory {
+  return this.subdirectories.firstOrNull { it.name == name } ?: this.createSubdirectory(name)
 }
