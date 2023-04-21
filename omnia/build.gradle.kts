@@ -17,7 +17,7 @@ kotlin {
     val commonMain by getting {
       kotlin.srcDir("src/commonMain")
       dependencies {
-        api("com.badoo.reaktive:reaktive:1.2.2")
+        api(libraries.reaktive.core)
       }
     }
     val commonTest by getting {
@@ -25,7 +25,7 @@ kotlin {
       dependencies {
         implementation(kotlin("test"))
         implementation(project(":omnia-test"))
-        api("com.badoo.reaktive:reaktive-testing:1.2.2")
+        api(libraries.reaktive.testing)
       }
     }
     val javaMain by creating {
@@ -36,7 +36,7 @@ kotlin {
       kotlin.srcDir("src/jvmMain")
       dependsOn(javaMain)
       dependencies {
-        api("com.badoo.reaktive:reaktive-jvm:1.2.2")
+        api(libraries.reaktive.jvm)
       }
     }
     val jvmTest by getting {
@@ -57,21 +57,21 @@ kotlin {
       kotlin.srcDir("src/iosX64Main")
       dependsOn(iosMain)
       dependencies {
-        api("com.badoo.reaktive:reaktive-iosx64:1.2.2")
+        api(libraries.reaktive.iosx64)
       }
     }
     val iosArm64Main by getting {
       kotlin.srcDir("src/iosArm64Main")
       dependsOn(iosMain)
       dependencies {
-        api("com.badoo.reaktive:reaktive-iosarm64:1.2.2")
+        api(libraries.reaktive.iosarm64)
       }
     }
     val iosSimulatorArm64Main by getting {
       kotlin.srcDir("src/iosSimulatorArm64Main")
       dependsOn(iosMain)
       dependencies {
-        api("com.badoo.reaktive:reaktive-iossimulatorarm64:1.2.2")
+        api(libraries.reaktive.iossimulatorarm64)
       }
     }
   }
