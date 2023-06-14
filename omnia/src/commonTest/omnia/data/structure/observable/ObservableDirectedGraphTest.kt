@@ -8,7 +8,6 @@ import kotlin.test.assertFailsWith
 import omnia.data.structure.immutable.ImmutableDirectedGraph.UnknownNodeException
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.observable.writable.WritableObservableDirectedGraph
-import omnia.data.structure.tuple.Couplet.Companion.of
 import omnia.data.structure.tuple.Tuplet
 import omnia.util.reaktive.observable.test.assertThatValue
 import omnia.util.reaktive.observable.test.assertValueCount
@@ -89,7 +88,7 @@ class ObservableDirectedGraphTest {
     graph.addNode(item2)
     graph.addEdge(item1, item2)
     assertThat(graph.edges.firstOrNull()?.endpoints?.map { it.item })
-        .isEqualTo(of(item1, item2))
+        .isEqualTo(Tuplet.of(item1, item2))
   }
 
   @Test
@@ -133,7 +132,7 @@ class ObservableDirectedGraphTest {
     graph.addEdge(original, original)
     graph.replaceNode(original, replacement)
     assertThat(graph.edges.map { edge -> edge.endpoints.map { it.item } })
-      .containsExactly(of(replacement, replacement))
+      .containsExactly(Tuplet.of(replacement, replacement))
   }
 
   @Test
@@ -179,7 +178,7 @@ class ObservableDirectedGraphTest {
   @Test
   fun observeMutations_whenHasEdge_emitsStateWithEdge() {
     val item = Any()
-    val edge = of(item, item)
+    val edge = Tuplet.of(item, item)
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(item)
     graph.addEdge(edge.first, edge.second)
@@ -226,7 +225,7 @@ class ObservableDirectedGraphTest {
     graph.removeNode(item)
     testSubscriber.assertThatValue { it.operations }.hasCount(2)
         .andThat { it.filterIsInstance<ObservableGraph.RemoveEdgeFromGraph<*>>() }.hasCount(1)
-        .andThat { it.first().endpoints }.isEqualTo(of(item, item))
+        .andThat { it.first().endpoints }.isEqualTo(Tuplet.of(item, item))
   }
 
   @Test
@@ -259,10 +258,10 @@ class ObservableDirectedGraphTest {
     testSubscriber.assertThatValue { it.operations }
         .hasCount(4)
         .andThat({ it.filterIsInstance<ObservableGraph.RemoveEdgeFromGraph<*>>() }) {
-          it.hasCount(1).andThat { it.first().endpoints }.isEqualTo(of(original, original))
+          it.hasCount(1).andThat { it.first().endpoints }.isEqualTo(Tuplet.of(original, original))
         }
         .andThat({ it.filterIsInstance<ObservableGraph.AddEdgeToGraph<*>>() }) {
-          it.hasCount(1).andThat { it.first().endpoints }.isEqualTo(of(replacement, replacement))
+          it.hasCount(1).andThat { it.first().endpoints }.isEqualTo(Tuplet.of(replacement, replacement))
         }
   }
 }
