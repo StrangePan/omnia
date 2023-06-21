@@ -48,13 +48,13 @@ fun <T, C : Collection<T>> Assertion<C>.containsExactly(vararg expected: T): Ass
 
 fun <T, C : Collection<T>> Assertion<C>.containsExactlyElementsIn(expected: Iterable<T>):
     Assertion<C> {
-  hasCount(expected.count())
+  Assertion<C>(this.actual, "collection has incorrect number of elements").hasCount(expected.count())
   return containsElementsIn(expected)
 }
 
 fun <T, C : Collection<T>> Assertion<C>.containsExactlyUnknownTyped(vararg expected: Any?):
     Assertion<C> {
-  hasCount(expected.count())
+  Assertion<C>(this.actual, "collection has incorrect number of elements").hasCount(expected.count())
   return containsUnknownTyped(*expected)
 }
 

@@ -247,12 +247,37 @@ object GraphAlgorithms {
     return ImmutableSet.copyOf(set)
   }
 
-  /** Finds and returns all transitive predecessors of the specified nodes. */
+  /**
+   * Finds and returns all transitive predecessors of the specified nodes, including the nodes themselves.
+   *
+   * @param nodes The nodes to start the search at. These will be included in the result.
+   */
   fun <T : DirectedNode<*>> findAllPredecessorsOf(nodes: Iterable<T>): ImmutableSet<T> {
+    return findAllPredecessorsOf(nodes) { true }
+  }
+
+  /**
+   * Finds and returns all transitive predecessors of the specified nodes, including the nodes themselves.
+   *
+   * @param nodes The nodes to start the search at. These will be included in the result if they pass the given filter.
+   * @param filter A filter function that all returned nodes must pass in order to be included in the result. Nodes that
+   * do not pass the filter will not be traversed, and thus their predecessors will also be skipped. This filter is
+   * useful for trimming the graph traversal.
+   */
+  fun <T : DirectedNode<*>> findAllPredecessorsOf(nodes: Iterable<T>, filter: (T) -> Boolean): ImmutableSet<T> {
     val seenNodes = HashSet.copyOf(nodes)
+    val resultNodes = HashSet<T>()
     val queue = ArrayQueue.create<T>()
+
+    val maybeEnqueueResult: (T) -> Unit = { node ->
+      if (filter(node)) {
+        resultNodes.add(node)
+        queue.enqueue(node)
+      }
+    }
+
     for (node in nodes) {
-      queue.enqueue(node)
+      maybeEnqueueResult(node)
     }
     while (queue.isPopulated) {
       val node = queue.dequeue()!!
@@ -260,19 +285,44 @@ object GraphAlgorithms {
         @Suppress("UNCHECKED_CAST")
         if (predecessor as T !in seenNodes) {
           seenNodes.add(predecessor)
-          queue.enqueue(predecessor)
+          maybeEnqueueResult(predecessor)
         }
       }
     }
-    return ImmutableSet.copyOf(seenNodes)
+    return ImmutableSet.copyOf(resultNodes)
   }
 
-  /** Finds all transitive successors of the specified nodes. */
+  /**
+   * Finds all transitive successors of the specified nodes, including the nodes themselves.
+   *
+   * @param nodes The nodes to start the search at. These will be included in the result.
+   */
   fun <T : DirectedNode<*>> findAllSuccessorsOf(nodes: Iterable<T>): ImmutableSet<T> {
+    return findAllSuccessorsOf(nodes) { true }
+  }
+
+  /**
+   * Finds all transitive successors of the specified nodes, including the nodes themselves.
+   *
+   * @param nodes The nodes to start the search at. These will be included in the result if they pass the given filter.
+   * @param filter A filter function that all returned nodes must pass in order to be included in the result. Nodes that
+   * do not pass the filter will not be traversed, and thus their successors will also be skipped. This filter is useful
+   * for trimming the graph traversal.
+   */
+  fun <T : DirectedNode<*>> findAllSuccessorsOf(nodes: Iterable<T>, filter: (T) -> Boolean): ImmutableSet<T> {
     val seenNodes = HashSet.copyOf(nodes)
+    val resultNodes = HashSet<T>()
     val queue = ArrayQueue.create<T>()
+
+    val maybeEnqueueResult: (T) -> Unit = { node ->
+      if (filter(node)) {
+        resultNodes.add(node)
+        queue.enqueue(node)
+      }
+    }
+
     for (node in nodes) {
-      queue.enqueue(node)
+      maybeEnqueueResult(node)
     }
     while (queue.isPopulated) {
       val node = queue.dequeue()!!
@@ -280,11 +330,11 @@ object GraphAlgorithms {
         @Suppress("UNCHECKED_CAST")
         if (successor as T !in seenNodes) {
           seenNodes.add(successor)
-          queue.enqueue(successor)
+          maybeEnqueueResult(successor)
         }
       }
     }
-    return ImmutableSet.copyOf(seenNodes)
+    return ImmutableSet.copyOf(resultNodes)
   }
 
   /**
