@@ -2,7 +2,7 @@ package omnia.cli.`in`
 
 open class StringOption(
     longName: String,
-    shortName: String,
+    shortName: String?,
     description: String,
     repeatable: Parameter.Repeatable,
     semanticDescription: String? = null)
