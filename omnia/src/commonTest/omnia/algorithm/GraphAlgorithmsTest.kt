@@ -32,7 +32,7 @@ import omnia.util.test.fluent.isNotNull
 import omnia.util.test.fluent.isNull
 import omnia.util.test.fluent.isTrue
 
-class GraphAlgorithms_IsolatedElementsTest {
+class GraphAlgorithmsTest {
 
   @Test
   fun isolatedElements_whenGraphEmpty_returnsEmpty() {
@@ -64,9 +64,6 @@ class GraphAlgorithms_IsolatedElementsTest {
     )
       .isEmpty()
   }
-}
-
-class GraphAlgorithms_SourceElementsTest {
 
   @Test
   fun sourceElements_whenGraphEmpty_returnsEmpty() {
@@ -105,9 +102,6 @@ class GraphAlgorithms_SourceElementsTest {
     )
       .isEmpty()
   }
-}
-
-class GraphAlgorithms_SinkElements {
 
   @Test
   fun sinkElements_whenGraphEmpty_returnsEmpty() {
@@ -146,9 +140,6 @@ class GraphAlgorithms_SinkElements {
     )
       .isEmpty()
   }
-}
-
-class GraphAlgorithms_IsCyclicalTest {
 
   @Test
   fun isCyclical_whenEmpty_isFalse() {
@@ -267,9 +258,6 @@ class GraphAlgorithms_IsCyclicalTest {
       .build()
     assertThat(isCyclical(graph)).isFalse()
   }
-}
-
-class GraphAlgorithms_FindAnyCycleTest {
 
   @Test
   fun findAnyCycle_whenEmpty_isEmpty() {
@@ -300,9 +288,6 @@ class GraphAlgorithms_FindAnyCycleTest {
                     .build()))
         .isEqualTo(ImmutableList.of(1, 2))
   }
-}
-
-class GraphAlgorithms_TopologicallySortTest {
 
   @Test
   fun topologicallySort_whenSingleNode_whenCyclical_throwsException() {
@@ -458,14 +443,6 @@ class GraphAlgorithms_TopologicallySortTest {
     assertThat(topologicallySort(graph)).isATopologicalSortOf(graph)
   }
 
-  private interface TopologicalAssertion<T : Any> {
-
-    fun isATopologicalSortOf(graph: DirectedGraph<T>)
-  }
-}
-
-class GraphAlgorithms_FindOtherNodesInSubgraphContainingTest {
-
   @Test
   fun findOtherNodesInSubgraphContaining_returnsNeighboringNodesAndSelf() {
     val graph = ImmutableDirectedGraph.builder<Int>()
@@ -523,9 +500,6 @@ class GraphAlgorithms_FindOtherNodesInSubgraphContainingTest {
     @Suppress("UNCHECKED_CAST")
     return items.asIterable().map { graph.nodeOf(it) as N }.toImmutableList()
   }
-}
-
-class GraphAlgorithms_FindAllPredecessorsTest {
 
   @Test
   fun findAllPredecessorsOf_whenEmpty_returnsEmpty() {
@@ -563,9 +537,6 @@ class GraphAlgorithms_FindAllPredecessorsTest {
     assertThat(GraphAlgorithms.findAllPredecessorsOf(listOf(graph.nodeOf(4)!!)) { it.item != 2 })
       .containsExactlyElementsIn(listOf(3, 4).map { graph.nodeOf(it)!! })
   }
-}
-
-class GraphAlgorithms_FindAllSuccessorsTest {
 
   @Test
   fun findAllSuccessorsOf_whenEmpty_returnsEmpty() {
