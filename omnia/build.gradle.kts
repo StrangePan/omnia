@@ -6,6 +6,7 @@ plugins {
 project.setBuildDir("out")
 
 kotlin {
+  jvmToolchain(17)
   jvm()
   android()
   iosX64()
@@ -83,5 +84,9 @@ android {
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
   defaultConfig {
     minSdk = 26
+  }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
   }
 }
