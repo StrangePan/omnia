@@ -1,7 +1,6 @@
 package omnia.data.structure.immutable
 
 import omnia.algorithm.HashAlgorithms.Companion.hash
-import omnia.data.cache.WeakCache
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Map
 import omnia.data.structure.Set
@@ -17,7 +16,7 @@ import omnia.data.structure.tuple.Couplet
 import omnia.data.structure.tuple.Tuple
 import omnia.data.structure.tuple.Tuplet
 
-class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
+class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
 
   override val contents: ImmutableSet<E>
   private val neighborMap: ImmutableMap<E, ImmutableSet<E>>
@@ -28,7 +27,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     return Builder(contents, successorMap, predecessorMap)
   }
 
-  class Builder<E : Any> {
+  class Builder<E: Any> {
 
     val nodes: MutableSet<E>
     val successors: MutableMap<E, MutableSet<E>>
@@ -40,12 +39,10 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
       predecessors = HashMap.create()
     }
 
-    constructor(
-      nodes: Set<out E>, successors: Map<E, out Set<E>>, predecessors: Map<E, out Set<E>>,
-    ) {
+    constructor(nodes: Set<out E>, successors: Map<E, out Set<E>>, predecessors: Map<E, out Set<E>>) {
       this.nodes = HashSet.copyOf(nodes)
-      this.successors = deepCopy(successors)
-      this.predecessors = deepCopy(predecessors)
+      this.successors = successors.deepCopy()
+      this.predecessors = predecessors.deepCopy()
     }
 
     fun addNode(element: E): Builder<E> {
@@ -59,8 +56,8 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
 
     fun removeUnknownTypedNode(element: Any?): Builder<E> {
       nodes.removeUnknownTyped(element)
-      deepRemove(successors, element)
-      deepRemove(predecessors, element)
+      successors.deepRemove(element)
+      predecessors.deepRemove(element)
       return this
     }
 
@@ -71,8 +68,8 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
       if (nodes.contains(replacement)) {
         throw DuplicateNodeException(original, replacement)
       }
-      deepReplace(successors, original, replacement)
-      deepReplace(predecessors, original, replacement)
+      successors.deepReplace(original, replacement)
+      predecessors.deepReplace(original, replacement)
       nodes.remove(original)
       nodes.add(replacement)
       return this
@@ -90,9 +87,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
       return this
     }
 
-    fun removeEdge(from: E, to: E): Builder<E> {
-      return removeEdgeUnknownEdge(from, to)
-    }
+    fun removeEdge(from: E, to: E) = removeEdgeUnknownEdge(from, to)
 
     fun removeEdgeUnknownEdge(from: Any?, to: Any?): Builder<E> {
       successors.valueOfUnknownTyped(from)?.removeUnknownTyped(to)
@@ -100,26 +95,22 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
       return this
     }
 
-    fun build(): ImmutableDirectedGraph<E> {
-      return ImmutableDirectedGraph(this)
-    }
+    fun build() = ImmutableDirectedGraph(this)
 
     companion object {
 
-      private fun <E : Any> deepCopy(other: Map<E, out Set<E>>): MutableMap<E, MutableSet<E>> {
-        return other.entries.toHashMap({ it.key }, { HashSet.copyOf(it.value) })
+      private fun <E: Any> Map<E, out Set<E>>.deepCopy(): MutableMap<E, MutableSet<E>> {
+        return entries.toHashMap({ it.key }, { HashSet.copyOf(it.value) })
       }
 
-      private fun <T : Any> deepRemove(map: MutableMap<T, MutableSet<T>>, item: Any?) {
-        map.removeUnknownTypedKey(item)
-        map.values.forEach { it.removeUnknownTyped(item) }
+      private fun <T: Any> MutableMap<T, MutableSet<T>>.deepRemove(item: Any?) {
+        removeUnknownTypedKey(item)
+        this.values.forEach { it.removeUnknownTyped(item) }
       }
 
-      private fun <T : Any> deepReplace(
-        map: MutableMap<T, MutableSet<T>>, original: T, replacement: T,
-      ) {
-        map.removeKey(original)?.let { set -> map.putMapping(replacement, set) }
-        map.values.forEach {
+      private fun <T: Any> MutableMap<T, MutableSet<T>>.deepReplace(original: T, replacement: T) {
+        this.removeKey(original)?.let { set -> putMapping(replacement, set) }
+        this.values.forEach {
           if (it.removeUnknownTyped(original)) {
             it.add(replacement)
           }
@@ -301,7 +292,7 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     }
   }
 
-  class DuplicateNodeException(original: Any?, replacement: Any?) : IllegalStateException(
+  class DuplicateNodeException(original: Any?, replacement: Any?): IllegalStateException(
     "Attempt to replace an existing node with itself or an equal node. Original: "
         + original
         + ", replacement: "
@@ -319,16 +310,16 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
     private val EMPTY_IMMUTABLE_DIRECTED_GRAPH: ImmutableDirectedGraph<*> =
       ImmutableDirectedGraph<Any>()
 
-    fun <E : Any> empty(): ImmutableDirectedGraph<E> {
+    fun <E: Any> empty(): ImmutableDirectedGraph<E> {
       @Suppress("UNCHECKED_CAST")
       return EMPTY_IMMUTABLE_DIRECTED_GRAPH as ImmutableDirectedGraph<E>
     }
 
-    fun <E : Any> copyOf(original: DirectedGraph<E>): ImmutableDirectedGraph<E> {
+    fun <E: Any> copyOf(original: DirectedGraph<E>): ImmutableDirectedGraph<E> {
       return buildUpon(original).build()
     }
 
-    fun <E : Any, R : Any> copyOf(
+    fun <E: Any, R: Any> copyOf(
       original: DirectedGraph<E>, mapper: (E) -> R,
     ): ImmutableDirectedGraph<R> {
       val builder: Builder<R> = builder()
@@ -345,11 +336,11 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
       return builder.build()
     }
 
-    fun <E : Any> builder(): Builder<E> {
+    fun <E: Any> builder(): Builder<E> {
       return Builder()
     }
 
-    fun <E : Any> buildUpon(original: DirectedGraph<out E>): Builder<E> {
+    fun <E: Any> buildUpon(original: DirectedGraph<out E>): Builder<E> {
       return if (original is ImmutableDirectedGraph<*>) {
         @Suppress("UNCHECKED_CAST")
         (original as ImmutableDirectedGraph<E>).toBuilder()
@@ -365,13 +356,13 @@ class ImmutableDirectedGraph<E : Any> : DirectedGraph<E> {
           .toHashMap({ it.key }, { it.value.toHashSet() }))
     }
 
-    private fun <E : Any> deepCopy(other: Map<E, out Set<E>>): ImmutableMap<E, ImmutableSet<E>> {
+    private fun <E: Any> deepCopy(other: Map<E, out Set<E>>): ImmutableMap<E, ImmutableSet<E>> {
       return other.entries
         .map { Tuple.of(it.key, ImmutableSet.copyOf(it.value)) }
         .toImmutableMap()
     }
 
-    private fun <T : Any> toCouplets(entry: Map.Entry<T, out Set<T>>): Iterable<Couplet<T>> {
+    private fun <T: Any> toCouplets(entry: Map.Entry<T, out Set<T>>): Iterable<Couplet<T>> {
       return entry.value.map { Tuplet.of(entry.key, it) }
     }
   }
