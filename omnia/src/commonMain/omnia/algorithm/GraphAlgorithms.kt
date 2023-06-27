@@ -3,6 +3,7 @@ package omnia.algorithm
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.DirectedGraph.DirectedNode
 import omnia.data.structure.Graph
+import omnia.data.structure.Graph.Node
 import omnia.data.structure.List
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableList
@@ -33,10 +34,10 @@ object GraphAlgorithms {
    * @return The set of items in the graph that have no outgoing edges but has incoming edges. May
    * return the empty set.
    */
-  fun <E : Any> sinkElements(graph: DirectedGraph<out E>): ImmutableSet<E> {
+  fun <E: Any> sinkElements(graph: DirectedGraph<out E>): ImmutableSet<E> {
     return graph.nodes
-      .filter { hasNoOutgoingEdges(it) }
-      .filter { hasIncomingEdges(it) }
+      .filter { it.hasNoOutgoingEdges() }
+      .filter { it.hasIncomingEdges() }
       .map { it.item }
       .toImmutableSet()
   }
@@ -49,10 +50,10 @@ object GraphAlgorithms {
    * @return The set of items in the graph that have no incoming edges but has outgoing edges. May
    * return the empty set.
    */
-  fun <E : Any> sourceElements(graph: DirectedGraph<E>): Set<E> {
+  fun <E: Any> sourceElements(graph: DirectedGraph<E>): Set<E> {
     return graph.nodes
-      .filter { hasNoIncomingEdges(it) }
-      .filter { hasOutgoingEdges(it) }
+      .filter { it.hasNoIncomingEdges() }
+      .filter { it.hasOutgoingEdges() }
       .map { it.item }
       .toImmutableSet()
   }
@@ -64,9 +65,9 @@ object GraphAlgorithms {
    * @param E the type of items the graph contains
    * @return The set of items in the graph that have no edges. May return the empty set.
    */
-  fun <E : Any> isolatedElements(graph: Graph<E>): Set<E> {
+  fun <E: Any> isolatedElements(graph: Graph<E>): Set<E> {
     return graph.nodes
-      .filter { hasNoNeighbors(it) }
+      .filter { it.hasNoNeighbors() }
       .map { it.item }
       .toImmutableSet()
   }
@@ -106,7 +107,7 @@ object GraphAlgorithms {
    * @param T the type of item contained in the graph
    * @return a list of nodes that form a cycle, or nothing if no cycles were found
    */
-  fun <T : Any> findAnyCycle(graph: DirectedGraph<T>): List<T>? {
+  fun <T: Any> findAnyCycle(graph: DirectedGraph<T>): List<T>? {
     val visitedItems: MutableSet<T> = HashSet.create()
 
     // iterate over every node, skipping over those we've already visited in another inner loop
@@ -169,7 +170,7 @@ object GraphAlgorithms {
    *   that every node will appear in the list before its successors
    * @throws IllegalArgumentException if the graph is given graph is cyclic
    */
-  fun <T : Any> topologicallySort(graph: DirectedGraph<out T>): ImmutableList<T> {
+  fun <T: Any> topologicallySort(graph: DirectedGraph<out T>): ImmutableList<T> {
     // iterative depth-first search with back tracking
     val result: ImmutableList.Builder<T> = ImmutableList.builder()
     val itemsInResult: MutableSet<DirectedNode<out T>> = HashSet.create()
@@ -235,7 +236,7 @@ object GraphAlgorithms {
    * does not return the subgraph itself. Callers need to know how to assemble a graph from the
    * returned results.
    */
-  fun <T : Graph.Node<*>> findOtherNodesInSubgraphContaining(source: T): ImmutableSet<T> {
+  fun <T: Graph.Node<*>> findOtherNodesInSubgraphContaining(source: T): ImmutableSet<T> {
     val set: MutableSet<T> = HashSet.create()
     val queue: Queue<T> = ArrayQueue.create()
     queue.enqueue(source)
@@ -263,7 +264,7 @@ object GraphAlgorithms {
    *
    * @param nodes The nodes to start the search at. These will be included in the result.
    */
-  fun <T : DirectedNode<*>> findAllPredecessorsOf(nodes: Iterable<T>): ImmutableSet<T> {
+  fun <T: DirectedNode<*>> findAllPredecessorsOf(nodes: Iterable<T>): ImmutableSet<T> {
     return findAllPredecessorsOf(nodes) { true }
   }
 
@@ -275,7 +276,7 @@ object GraphAlgorithms {
    * do not pass the filter will not be traversed, and thus their predecessors will also be skipped. This filter is
    * useful for trimming the graph traversal.
    */
-  fun <T : DirectedNode<*>> findAllPredecessorsOf(nodes: Iterable<T>, filter: (T) -> Boolean): ImmutableSet<T> {
+  fun <T: DirectedNode<*>> findAllPredecessorsOf(nodes: Iterable<T>, filter: (T) -> Boolean): ImmutableSet<T> {
     val seenNodes = HashSet.copyOf(nodes)
     val resultNodes = HashSet<T>()
     val queue = ArrayQueue.create<T>()
@@ -308,7 +309,7 @@ object GraphAlgorithms {
    *
    * @param nodes The nodes to start the search at. These will be included in the result.
    */
-  fun <T : DirectedNode<*>> findAllSuccessorsOf(nodes: Iterable<T>): ImmutableSet<T> {
+  fun <T: DirectedNode<*>> findAllSuccessorsOf(nodes: Iterable<T>): ImmutableSet<T> {
     return findAllSuccessorsOf(nodes) { true }
   }
 
@@ -320,7 +321,7 @@ object GraphAlgorithms {
    * do not pass the filter will not be traversed, and thus their successors will also be skipped. This filter is useful
    * for trimming the graph traversal.
    */
-  fun <T : DirectedNode<*>> findAllSuccessorsOf(nodes: Iterable<T>, filter: (T) -> Boolean): ImmutableSet<T> {
+  fun <T: DirectedNode<*>> findAllSuccessorsOf(nodes: Iterable<T>, filter: (T) -> Boolean): ImmutableSet<T> {
     val seenNodes = HashSet.copyOf(nodes)
     val resultNodes = HashSet<T>()
     val queue = ArrayQueue.create<T>()
@@ -354,7 +355,7 @@ object GraphAlgorithms {
    * nodes that are not transitive successors or predecessors of the specified nodes; neighboring
    * nodes are not intrinsically included.
    */
-  fun <T : DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(nodes: Iterable<T>):
+  fun <T: DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(nodes: Iterable<T>):
     ImmutableSet<T> {
     return SetAlgorithms.unionOf(findAllPredecessorsOf(nodes), findAllSuccessorsOf(nodes))
   }
@@ -365,33 +366,21 @@ object GraphAlgorithms {
    * nodes that are not transitive successors or predecessors of the specified nodes; neighboring
    * nodes are not intrinsically included.
    */
-  fun <T : DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(node: T):
+  fun <T: DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(node: T):
     ImmutableSet<T> {
     return SetAlgorithms.unionOf(
       findAllPredecessorsOf(ImmutableSet.of(node)), findAllSuccessorsOf(ImmutableSet.of(node)))
   }
+  
+  private fun Node<*>.hasNeighbors() = neighbors.isPopulated
 
-  private fun hasNeighbors(node: Graph.Node<*>): Boolean {
-    return node.neighbors.isPopulated
-  }
+  private fun Node<*>.hasNoNeighbors() = !hasNeighbors()
 
-  private fun hasNoNeighbors(node: Graph.Node<*>): Boolean {
-    return !hasNeighbors(node)
-  }
+  private fun DirectedNode<*>.hasOutgoingEdges() = outgoingEdges.isPopulated
 
-  private fun hasOutgoingEdges(directedNode: DirectedNode<*>): Boolean {
-    return directedNode.outgoingEdges.isPopulated
-  }
+  private fun DirectedNode<*>.hasNoOutgoingEdges() = !hasOutgoingEdges()
 
-  private fun hasNoOutgoingEdges(directedNode: DirectedNode<*>): Boolean {
-    return !hasOutgoingEdges(directedNode)
-  }
+  private fun DirectedNode<*>.hasIncomingEdges() = incomingEdges.isPopulated
 
-  private fun hasIncomingEdges(directedNode: DirectedNode<*>): Boolean {
-    return directedNode.incomingEdges.isPopulated
-  }
-
-  private fun hasNoIncomingEdges(directedNode: DirectedNode<*>): Boolean {
-    return !hasIncomingEdges(directedNode)
-  }
+  private fun DirectedNode<*>.hasNoIncomingEdges() = !hasIncomingEdges()
 }
