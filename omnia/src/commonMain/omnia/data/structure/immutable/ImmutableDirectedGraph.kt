@@ -19,8 +19,11 @@ import omnia.data.structure.tuple.Tuplet
 class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
 
   override val contents: ImmutableSet<E>
+  /** Simply the merger of [sucessorMap] and [predecessorMap]. */
   private val neighborMap: ImmutableMap<E, ImmutableSet<E>>
+  /** The canonical map of edges. */
   private val successorMap: ImmutableMap<E, ImmutableSet<E>>
+  /** Simply the inverse of [successorMap]. */
   private val predecessorMap: ImmutableMap<E, ImmutableSet<E>>
 
   fun toBuilder(): Builder<E> {
@@ -186,6 +189,14 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
         .map(toEdge())
         .toImmutableSet()
     }
+
+  override fun equals(other: Any?) =
+    other === this
+    || other is ImmutableDirectedGraph<*>
+    && other.contents == this.contents
+    && other.successorMap == this.successorMap
+
+  override fun hashCode() = hash(contents, successorMap)
 
   inner class DirectedNode internal constructor(override val item: E) :
     DirectedGraph.DirectedNode<E> {
