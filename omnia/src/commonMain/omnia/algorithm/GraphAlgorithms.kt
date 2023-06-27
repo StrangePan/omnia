@@ -237,7 +237,7 @@ object GraphAlgorithms {
    * does not return the subgraph itself. Callers need to know how to assemble a graph from the
    * returned results.
    */
-  fun <T: Graph.Node<*>> findOtherNodesInSubgraphContaining(source: T): ImmutableSet<T> {
+  fun <T: Node<*>> findOtherNodesInSubgraphContaining(source: T): ImmutableSet<T> {
     val set: MutableSet<T> = HashSet.create()
     val queue: Queue<T> = ArrayQueue.create()
     queue.enqueue(source)

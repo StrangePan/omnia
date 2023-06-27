@@ -19,7 +19,7 @@ import omnia.data.structure.tuple.Tuplet
 class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
 
   override val contents: ImmutableSet<E>
-  /** Simply the merger of [sucessorMap] and [predecessorMap]. */
+  /** Simply the merger of [successorMap] and [predecessorMap]. */
   private val neighborMap: ImmutableMap<E, ImmutableSet<E>>
   /** The canonical map of edges. */
   private val successorMap: ImmutableMap<E, ImmutableSet<E>>
