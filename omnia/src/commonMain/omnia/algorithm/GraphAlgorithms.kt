@@ -35,10 +35,10 @@ object GraphAlgorithms {
    */
   fun <E : Any> sinkElements(graph: DirectedGraph<out E>): ImmutableSet<E> {
     return graph.nodes
-        .filter { hasNoOutgoingEdges(it) }
-        .filter { hasIncomingEdges(it) }
-        .map { it.item }
-        .toImmutableSet()
+      .filter { hasNoOutgoingEdges(it) }
+      .filter { hasIncomingEdges(it) }
+      .map { it.item }
+      .toImmutableSet()
   }
 
   /**
@@ -51,10 +51,10 @@ object GraphAlgorithms {
    */
   fun <E : Any> sourceElements(graph: DirectedGraph<E>): Set<E> {
     return graph.nodes
-        .filter { hasNoIncomingEdges(it) }
-        .filter { hasOutgoingEdges(it) }
-        .map { it.item }
-        .toImmutableSet()
+      .filter { hasNoIncomingEdges(it) }
+      .filter { hasOutgoingEdges(it) }
+      .map { it.item }
+      .toImmutableSet()
   }
 
   /**
@@ -344,7 +344,7 @@ object GraphAlgorithms {
    * nodes are not intrinsically included.
    */
   fun <T : DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(nodes: Iterable<T>):
-      ImmutableSet<T> {
+    ImmutableSet<T> {
     return SetAlgorithms.unionOf(findAllPredecessorsOf(nodes), findAllSuccessorsOf(nodes))
   }
 
@@ -355,7 +355,7 @@ object GraphAlgorithms {
    * nodes are not intrinsically included.
    */
   fun <T : DirectedNode<*>> findAllPredecessorsAndSuccessorsOf(node: T):
-      ImmutableSet<T> {
+    ImmutableSet<T> {
     return SetAlgorithms.unionOf(
       findAllPredecessorsOf(ImmutableSet.of(node)), findAllSuccessorsOf(ImmutableSet.of(node)))
   }
