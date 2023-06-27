@@ -177,18 +177,16 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
     return getOrCreateEdge(from as E, to as E)
   }
 
-  override val nodes: ImmutableSet<DirectedNode>
-    get() {
-      return contents.map(toNode()).toImmutableSet()
-    }
+  override val nodes: ImmutableSet<DirectedNode> get() {
+    return contents.map(toNode()).toImmutableSet()
+  }
 
-  override val edges: ImmutableSet<DirectedEdge>
-    get() {
-      return successorMap.entries
-        .flatMap(::toCouplets)
-        .map(toEdge())
-        .toImmutableSet()
-    }
+  override val edges: ImmutableSet<DirectedEdge> get() {
+    return successorMap.entries
+      .flatMap(::toCouplets)
+      .map(toEdge())
+      .toImmutableSet()
+  }
 
   override fun equals(other: Any?) =
     other === this
@@ -341,12 +339,10 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
     }
 
     fun <E: Any> copyOf(original: DirectedGraph<E>): ImmutableDirectedGraph<E> {
-      return buildUpon(original).build()
+      return if (original is ImmutableDirectedGraph<E>) original else buildUpon(original).build()
     }
 
-    fun <E: Any, R: Any> copyOf(
-      original: DirectedGraph<E>, mapper: (E) -> R,
-    ): ImmutableDirectedGraph<R> {
+    fun <E: Any, R: Any> copyOf(original: DirectedGraph<E>, mapper: (E) -> R): ImmutableDirectedGraph<R> {
       val builder: Builder<R> = builder()
       val convertedTasks: Map<E, R> = original.contents
         .map { Tuple.of(it, mapper(it)) }
