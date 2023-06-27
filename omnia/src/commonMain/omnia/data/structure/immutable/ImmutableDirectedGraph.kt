@@ -101,6 +101,14 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
           ?.takeIf { it.remove(original) }
           ?.add(replacement)
       }
+      removedSuccessors
+        ?.map { if (it == original) replacement else it }
+        ?.toHashSet()
+        ?.also { successors.putMapping(replacement, it) }
+      removedPredecessors
+        ?.map { if (it == original) replacement else it }
+        ?.toHashSet()
+        ?.also { predecessors.putMapping(replacement, it) }
       nodes.remove(original)
       nodes.add(replacement)
       return this
