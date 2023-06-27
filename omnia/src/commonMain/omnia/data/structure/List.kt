@@ -1,6 +1,5 @@
 package omnia.data.structure
 
-
 import kotlin.collections.List as KotlinList
 import omnia.contract.Indexable
 import omnia.data.iterate.ReadOnlyIterator
@@ -16,6 +15,8 @@ import omnia.data.iterate.ReadOnlyIterator
  * @param E the type empty item contained in the list
  */
 interface List<E : Any> : Collection<E>, Indexable<E> {
+
+  fun toKotlinList() = this.toList()
 
   companion object {
 
