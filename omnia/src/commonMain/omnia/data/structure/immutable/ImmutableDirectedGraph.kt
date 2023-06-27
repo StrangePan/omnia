@@ -65,6 +65,20 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
       return this
     }
 
+    fun removeNodeAndConnectNeighbors(element: E) = removeUnknownTypedNodeAndConnectNeighbors(element)
+
+    fun removeUnknownTypedNodeAndConnectNeighbors(element: Any?): Builder<E> {
+      val elementPredecessors = predecessors.valueOfUnknownTyped(element)?.toImmutableSet() ?: ImmutableSet.empty()
+      val elementSuccessors = successors.valueOfUnknownTyped(element)?.toImmutableSet() ?: ImmutableSet.empty()
+      this.removeUnknownTypedNode(element)
+      elementPredecessors.forEach { predecessor ->
+        elementSuccessors.forEach { successor ->
+          this.addEdge(predecessor, successor)
+        }
+      }
+      return this
+    }
+
     fun replaceNode(original: E, replacement: E): Builder<E> {
       if (!nodes.contains(original)) {
         throw UnknownNodeException(original)
