@@ -50,14 +50,18 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
       return this
     }
 
-    fun removeNode(element: E): Builder<E> {
-      return removeUnknownTypedNode(element)
-    }
+    fun removeNode(element: E) = removeUnknownTypedNode(element)
 
     fun removeUnknownTypedNode(element: Any?): Builder<E> {
       nodes.removeUnknownTyped(element)
-      successors.deepRemove(element)
-      predecessors.deepRemove(element)
+      val removedSuccessors = successors.removeUnknownTypedKey(element)
+      val removedPredecessors = predecessors.removeUnknownTypedKey(element)
+      removedPredecessors?.forEach { predecessor ->
+        successors.valueOf(predecessor)?.removeUnknownTyped(element)
+      }
+      removedSuccessors?.forEach { successor ->
+        predecessors.valueOf(successor)?.removeUnknownTyped(element)
+      }
       return this
     }
 
@@ -68,8 +72,18 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
       if (nodes.contains(replacement)) {
         throw DuplicateNodeException(original, replacement)
       }
-      successors.deepReplace(original, replacement)
-      predecessors.deepReplace(original, replacement)
+      val removedSuccessors = successors.removeKey(original)
+      val removedPredecessors = predecessors.removeKey(original)
+      removedSuccessors?.forEach { successor ->
+        predecessors.valueOf(successor)
+          ?.takeIf { it.remove(original) }
+          ?.add(replacement)
+      }
+      removedPredecessors?.forEach { predecessor ->
+        successors.valueOf(predecessor)
+          ?.takeIf { it.remove(original) }
+          ?.add(replacement)
+      }
       nodes.remove(original)
       nodes.add(replacement)
       return this
@@ -101,20 +115,6 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
 
       private fun <E: Any> Map<E, out Set<E>>.deepCopy(): MutableMap<E, MutableSet<E>> {
         return entries.toHashMap({ it.key }, { HashSet.copyOf(it.value) })
-      }
-
-      private fun <T: Any> MutableMap<T, MutableSet<T>>.deepRemove(item: Any?) {
-        removeUnknownTypedKey(item)
-        this.values.forEach { it.removeUnknownTyped(item) }
-      }
-
-      private fun <T: Any> MutableMap<T, MutableSet<T>>.deepReplace(original: T, replacement: T) {
-        this.removeKey(original)?.let { set -> putMapping(replacement, set) }
-        this.values.forEach {
-          if (it.removeUnknownTyped(original)) {
-            it.add(replacement)
-          }
-        }
       }
     }
   }
