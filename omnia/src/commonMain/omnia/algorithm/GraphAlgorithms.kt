@@ -72,6 +72,17 @@ object GraphAlgorithms {
   }
 
   /**
+   * Tests if the provided graph is acyclical, that is NOT cyclical. Simply returns the inverse of
+   * [findAnyCycle]
+   *
+   * @param graph the graph to test
+   * @return true if the graph is acyclical, false if the graph is cyclical
+   */
+  fun isAcyclical(graph: DirectedGraph<*>): Boolean {
+    return !isCyclical(graph)
+  }
+
+  /**
    * Tests if the given directed graph is cyclical, meaning there exists a set of directed edges
    * that forms a loop.
    *
@@ -358,17 +369,6 @@ object GraphAlgorithms {
     ImmutableSet<T> {
     return SetAlgorithms.unionOf(
       findAllPredecessorsOf(ImmutableSet.of(node)), findAllSuccessorsOf(ImmutableSet.of(node)))
-  }
-
-  /**
-   * Tests if the provided graph is acyclical, that is NOT cyclical. Simply returns the inverse of
-   * [findAnyCycle]
-   *
-   * @param graph the graph to test
-   * @return true if the graph is acyclical, false if the graph is cyclical
-   */
-  fun isAcyclical(graph: DirectedGraph<*>): Boolean {
-    return !isCyclical(graph)
   }
 
   private fun hasNeighbors(node: Graph.Node<*>): Boolean {
