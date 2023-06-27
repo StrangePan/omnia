@@ -574,6 +574,51 @@ class GraphAlgorithmsTest {
     assertThat(GraphAlgorithms.findAllSuccessorsOf(listOf(graph.nodeOf(1)!!)) { it.item != 3 })
       .containsExactlyElementsIn(listOf(1, 2).map { graph.nodeOf(it)!! })
   }
+
+  @Test
+  fun simplify_returnsNewSimplifiedGraph() {
+    val original = ImmutableDirectedGraph.builder<Int>()
+      .addNode(1)
+      .addNode(2)
+      .addNode(3)
+      .addNode(4)
+      .addNode(5)
+      .addEdge(1, 3)
+      .addEdge(2, 3)
+      .addEdge(3, 4)
+      .addEdge(3, 5)
+      .build()
+
+    val simplified = GraphAlgorithms.simplify(original) { it.item != 3 }
+
+    val expected = ImmutableDirectedGraph.builder<Int>()
+      .addNode(1)
+      .addNode(2)
+      .addNode(4)
+      .addNode(5)
+      .addEdge(1, 4)
+      .addEdge(1, 5)
+      .addEdge(2, 4)
+      .addEdge(2, 5)
+      .build()
+
+    assertThat(simplified).isEqualTo(expected)
+  }
+
+  @Test
+  fun simplify_whenAllNodesMatch_returnsCopyOfGraph() {
+    val original = ImmutableDirectedGraph.builder<Int>()
+      .addNode(1)
+      .addNode(2)
+      .addNode(3)
+      .addEdge(1, 2)
+      .addEdge(2, 3)
+      .build()
+
+    val simplified = GraphAlgorithms.simplify(original) { true }
+
+    assertThat(simplified).isEqualTo(original)
+  }
 }
 
 private fun <T : Any, C : List<T>> Assertion<C>.isATopologicalSortOf(graph: DirectedGraph<T>):

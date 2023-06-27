@@ -6,6 +6,7 @@ import omnia.data.structure.Graph
 import omnia.data.structure.Graph.Node
 import omnia.data.structure.List
 import omnia.data.structure.Set
+import omnia.data.structure.immutable.ImmutableDirectedGraph
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
@@ -371,7 +372,29 @@ object GraphAlgorithms {
     return SetAlgorithms.unionOf(
       findAllPredecessorsOf(ImmutableSet.of(node)), findAllSuccessorsOf(ImmutableSet.of(node)))
   }
-  
+
+  /**
+   * Simplify the input graph, producing a new [ImmutableDirectedGraph] that contains only the nodes that pass the given
+   * filter, and creates edges between transitively connected nodes in the original graph.
+   *
+   * Produces a new graph that contains only the nodes from the original graph that pass the given filter. If two nodes
+   * that pass the filter are transitively connected by a node that did not pass the filter, then the new graph will
+   * contain a new edge directly connecting the two nodes.
+   */
+  fun <T : Any> simplify(original: DirectedGraph<T>, filter: (DirectedNode<T>) -> Boolean): ImmutableDirectedGraph<T> {
+    val nodesToExclude = original.nodes.filterNot(filter::invoke).toImmutableSet()
+    if (!nodesToExclude.isPopulated)
+      return ImmutableDirectedGraph.copyOf(original)
+    return ImmutableDirectedGraph.buildUpon(original)
+      .let { builder ->
+        nodesToExclude.forEach { nodeToExclude ->
+          builder.removeNodeAndConnectNeighbors(nodeToExclude.item)
+        }
+        builder
+      }
+      .build()
+  }
+
   private fun Node<*>.hasNeighbors() = neighbors.isPopulated
 
   private fun Node<*>.hasNoNeighbors() = !hasNeighbors()
