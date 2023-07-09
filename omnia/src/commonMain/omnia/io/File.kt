@@ -19,5 +19,7 @@ expect class File: FileSystemObject {
 
   companion object {
     fun fromPath(path: String): File
+
+    fun fromResource(resource: String): File
   }
 }

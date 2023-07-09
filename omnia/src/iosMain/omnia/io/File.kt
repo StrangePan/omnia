@@ -79,5 +79,9 @@ actual class File private constructor(private val path: String): FileSystemObjec
     fun isRegularFile(path: String): Boolean {
       return getFileInfo(path).let { it.exists && !it.isDirectory }
     }
+
+    actual fun fromResource(resource: String): File {
+      TODO("not implemented")
+    }
   }
 }

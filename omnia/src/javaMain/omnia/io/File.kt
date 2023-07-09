@@ -1,6 +1,9 @@
 package omnia.io
 
+import java.io.File as JFile
+import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.asCompletable
 import com.badoo.reaktive.observable.doOnAfterFinally
 import com.badoo.reaktive.observable.doOnBeforeNext
 import com.badoo.reaktive.observable.doOnBeforeSubscribe
@@ -11,9 +14,6 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.FileReader
 import java.io.FileWriter
-import java.io.File as JFile
-import com.badoo.reaktive.completable.Completable
-import com.badoo.reaktive.observable.asCompletable
 
 actual class File private constructor(private val jFile: JFile): FileSystemObject {
 
@@ -66,5 +66,8 @@ actual class File private constructor(private val jFile: JFile): FileSystemObjec
     actual fun fromPath(path: String) = File(JFile(path))
 
     fun fromJFile(jFile: JFile) = File(jFile)
+
+    actual fun fromResource(resource: String) =
+      File.fromPath(ClassLoader.getSystemResource(resource).file)
   }
 }
