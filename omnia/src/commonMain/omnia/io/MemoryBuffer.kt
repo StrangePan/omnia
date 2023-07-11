@@ -36,6 +36,6 @@ class MemoryBuffer private constructor(val lines: ArrayList<String>): Buffer {
   }
 
   override fun toString(): String {
-    return lines.joinToString(separator = "\n", postfix = "\n")
+    return lines.flatMap { listOf(it, "\n") }.joinToString(separator = "")
   }
 }
