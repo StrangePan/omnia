@@ -43,6 +43,15 @@ fun Assertion<String>.contains(expected: String): Assertion<String> {
   return this
 }
 
+fun Assertion<String>.containsIgnoringCase(expected: String): Assertion<String> {
+  assertTrue(
+      actual.contains(expected, ignoreCase = true),
+      message ?: """string does not contain expected substring (ignoring case)
+        |  wanted: $expected
+        |  actual: $actual""".trimMargin())
+  return this
+}
+
 fun Assertion<String>.doesNotContain(expected: String): Assertion<String> {
   assertFalse(
       actual.contains(expected),
