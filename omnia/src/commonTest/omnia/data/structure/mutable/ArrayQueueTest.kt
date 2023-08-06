@@ -1,11 +1,12 @@
 package omnia.data.structure.mutable
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.mutable.ArrayQueue.Companion.createWithInitialCapacity
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.assertThatCode
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.hasCount
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
@@ -29,9 +30,7 @@ class ArrayQueueTest {
 
   @Test
   fun init_withCapacityZero_didThrowException() {
-    assertFailsWith(IllegalArgumentException::class) {
-      createWithInitialCapacity<Any>(capacity = 0)
-    }
+    assertThatCode { createWithInitialCapacity<Any>(capacity = 0) }.failsWith(IllegalArgumentException::class)
   }
 
   @Test

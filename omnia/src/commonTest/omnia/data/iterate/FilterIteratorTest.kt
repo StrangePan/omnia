@@ -1,10 +1,11 @@
 package omnia.data.iterate
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.assertThatCode
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
 import omnia.util.test.fluent.isTrue
@@ -25,7 +26,7 @@ class FilterIteratorTest {
     assertThat(underTest.next()).isEqualTo(8)
     assertThat(underTest.next()).isEqualTo(9)
     assertThat(underTest.next()).isEqualTo(10)
-    assertFailsWith(NoSuchElementException::class) { underTest.next() }
+    assertThatCode { underTest.next() }.failsWith(NoSuchElementException::class)
   }
 
   @Test
@@ -37,7 +38,7 @@ class FilterIteratorTest {
     assertThat(underTest.next()).isEqualTo(6)
     assertThat(underTest.next()).isEqualTo(8)
     assertThat(underTest.next()).isEqualTo(10)
-    assertFailsWith(NoSuchElementException::class) { underTest.next() }
+    assertThatCode { underTest.next() }.failsWith(NoSuchElementException::class)
   }
 
   @Test
@@ -48,13 +49,13 @@ class FilterIteratorTest {
     assertThat(underTest.next()).isEqualTo(5)
     assertThat(underTest.next()).isEqualTo(7)
     assertThat(underTest.next()).isEqualTo(9)
-    assertFailsWith(NoSuchElementException::class) { underTest.next() }
+    assertThatCode { underTest.next() }.failsWith(NoSuchElementException::class)
   }
 
   @Test
   fun iterate_whenPredicateMatchesNone_iteratesOverNone() {
     val underTest: Iterator<Int> = FilterIterator(TEST_DATA.iterator()) { false }
-    assertFailsWith(NoSuchElementException::class) { underTest.next() }
+    assertThatCode { underTest.next() }.failsWith(NoSuchElementException::class)
   }
 
   @Test

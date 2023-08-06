@@ -1,11 +1,11 @@
 package omnia.data.iterate
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.assertThatCode
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
-import omnia.util.test.fluent.isNotA
 import omnia.util.test.fluent.isTrue
 
 class ArrayIteratorTest {
@@ -17,7 +17,7 @@ class ArrayIteratorTest {
 
   @Test
   fun next_whenEmptyArray_didThrowNoSuchElementException() {
-    assertFailsWith(NoSuchElementException::class) { ArrayIterator(arrayOfNulls<Any>(0)).next() }
+    assertThatCode { ArrayIterator(arrayOfNulls<Any>(0)).next() }.failsWith(NoSuchElementException::class)
   }
 
   @Test
@@ -73,7 +73,7 @@ class ArrayIteratorTest {
     for (i in testData.indices) {
       testSubject.next()
     }
-    assertFailsWith(NoSuchElementException::class) { testSubject.next() }
+    assertThatCode { testSubject.next() }.failsWith(NoSuchElementException::class)
   }
 
   companion object {

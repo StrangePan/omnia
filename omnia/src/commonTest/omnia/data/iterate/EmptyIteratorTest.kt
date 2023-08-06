@@ -1,8 +1,9 @@
 package omnia.data.iterate
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.assertThatCode
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
 
@@ -15,9 +16,9 @@ class EmptyIteratorTest {
 
   @Test
   fun next_throwsNoSuchElementException() {
-    assertFailsWith(NoSuchElementException::class) {
+    assertThatCode {
       EmptyIterator.create<Any>().next()
-    }
+    }.failsWith(NoSuchElementException::class)
   }
 
   @Test

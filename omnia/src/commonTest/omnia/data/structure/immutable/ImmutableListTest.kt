@@ -1,9 +1,10 @@
 package omnia.data.structure.immutable
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.data.structure.List
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.assertThatCode
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.hasCount
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
@@ -33,19 +34,19 @@ class ImmutableListTest {
 
   @Test
   fun getAt_whenEmpty_didThrowException() {
-    assertFailsWith(IndexOutOfBoundsException::class) {
+    assertThatCode {
       ImmutableList.builder<Any>().build().itemAt(0)
-    }
+    }.failsWith(IndexOutOfBoundsException::class)
   }
 
   @Test
   fun getAt_negative_didThrowException() {
-    assertFailsWith(IndexOutOfBoundsException::class) { createTestSubject().itemAt(-1) }
+    assertThatCode { createTestSubject().itemAt(-1) }.failsWith(IndexOutOfBoundsException::class)
   }
 
   @Test
   fun getAt_tooHigh_didThrowException() {
-    assertFailsWith(IndexOutOfBoundsException::class) { createTestSubject().itemAt(20) }
+    assertThatCode { createTestSubject().itemAt(20) }.failsWith(IndexOutOfBoundsException::class)
   }
 
   @Test

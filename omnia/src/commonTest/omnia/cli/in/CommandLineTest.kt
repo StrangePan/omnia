@@ -1,14 +1,14 @@
 package omnia.cli.`in`
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.cli.`in`.Parameter.Repeatable.NOT_REPEATABLE
 import omnia.cli.`in`.Parameter.Repeatable.REPEATABLE
 import omnia.data.structure.immutable.ImmutableList
 import omnia.util.test.fluent.Assertion.Companion.assertThat
-import omnia.util.test.fluent.contains
+import omnia.util.test.fluent.assertThatCode
 import omnia.util.test.fluent.containsExactly
 import omnia.util.test.fluent.containsExactlyElementsIn
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.isEmpty
 import omnia.util.test.fluent.isNotNull
 import omnia.util.test.fluent.isTrue
@@ -24,12 +24,12 @@ class CommandLineTest {
 
   @Test
   fun parse_withUnknownOption_throwsParserException() {
-    assertFailsWith(ParserException::class) {
+    assertThatCode {
       CommandLine.parse(
         ImmutableList.of("--unknown"),
         Options()
       )
-    }
+    }.failsWith(ParserException::class)
   }
 
   @Test
@@ -96,11 +96,11 @@ class CommandLineTest {
 
   @Test
   fun parse_withNonRepeatableFlag_repeated_throwsParserException() {
-    assertFailsWith(ParserException::class) {
+    assertThatCode {
       CommandLine.parse(
         ImmutableList.of("-${NON_REPEATABLE_FLAG.shortName}", "--${NON_REPEATABLE_FLAG.longName}"),
         Options().addOption(NON_REPEATABLE_FLAG))
-    }
+    }.failsWith(ParserException::class)
   }
 
   @Test
@@ -153,16 +153,16 @@ class CommandLineTest {
 
   @Test
   fun parse_withStringOption_withoutValue_throwsParserException() {
-    assertFailsWith(ParserException::class) {
+    assertThatCode {
       CommandLine.parse(
         ImmutableList.of("--${NON_REPEATABLE_STRING_OPTION.longName}"),
         Options().addOption(NON_REPEATABLE_STRING_OPTION))
-    }
+    }.failsWith(ParserException::class)
   }
 
   @Test
   fun parse_withStringOption_repeated_throwsParserException() {
-    assertFailsWith(ParserException::class) {
+    assertThatCode {
       CommandLine.parse(
         ImmutableList.of(
           "--${NON_REPEATABLE_STRING_OPTION.longName}",
@@ -170,7 +170,7 @@ class CommandLineTest {
           "-${NON_REPEATABLE_STRING_OPTION.shortName}",
           "val"),
         Options().addOption(NON_REPEATABLE_STRING_OPTION))
-    }
+    }.failsWith(ParserException::class)
   }
 
   @Test
@@ -204,14 +204,14 @@ class CommandLineTest {
 
   @Test
   fun parse_withRepeatableStringOption_withoutValue_throwsParserException() {
-    assertFailsWith(ParserException::class) {
+    assertThatCode {
       CommandLine.parse(
         ImmutableList.of(
           "--${REPEATABLE_STRING_OPTION.longName}",
           "val",
           "-${REPEATABLE_STRING_OPTION.shortName}"),
         Options().addOption(REPEATABLE_STRING_OPTION))
-    }
+    }.failsWith(ParserException::class)
   }
 
   @Test
@@ -257,7 +257,7 @@ class CommandLineTest {
 
   @Test
   fun parse_withCombinedShortOptions_withValuedOptionInMiddle_throwsParserException() {
-    assertFailsWith(ParserException::class) {
+    assertThatCode {
       CommandLine.parse(
           ImmutableList.of(
               "-${NON_REPEATABLE_FLAG.shortName}" +
@@ -267,6 +267,6 @@ class CommandLineTest {
           Options().addOption(NON_REPEATABLE_FLAG)
               .addOption(REPEATABLE_FLAG)
               .addOption(NON_REPEATABLE_STRING_OPTION))
-    }
+    }.failsWith(ParserException::class)
   }
 }

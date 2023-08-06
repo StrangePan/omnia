@@ -1,7 +1,6 @@
 package omnia.algorithm
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.algorithm.GraphAlgorithms.findAnyCycle
 import omnia.algorithm.GraphAlgorithms.findOtherNodesInSubgraphContaining
 import omnia.algorithm.GraphAlgorithms.isCyclical
@@ -20,10 +19,12 @@ import omnia.data.structure.mutable.HashSet
 import omnia.data.structure.mutable.MutableSet
 import omnia.util.test.fluent.Assertion
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.assertThatCode
 import omnia.util.test.fluent.contains
 import omnia.util.test.fluent.containsExactly
 import omnia.util.test.fluent.containsExactlyElementsIn
 import omnia.util.test.fluent.doesNotContain
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.hasCount
 import omnia.util.test.fluent.isEmpty
 import omnia.util.test.fluent.isEqualTo
@@ -291,19 +292,19 @@ class GraphAlgorithmsTest {
 
   @Test
   fun topologicallySort_whenSingleNode_whenCyclical_throwsException() {
-    assertFailsWith(IllegalArgumentException::class) {
+     assertThatCode {
       topologicallySort(
         ImmutableDirectedGraph.builder<Any>()
           .addNode(1)
           .addEdge(1, 1)
           .build()
       )
-    }
+    }.failsWith(IllegalArgumentException::class)
   }
 
   @Test
   fun topologicallySort_whenLollipop_throwsException() {
-    assertFailsWith(IllegalArgumentException::class) {
+    assertThatCode {
       topologicallySort(
         ImmutableDirectedGraph.builder<Any>()
           .addNode(1)
@@ -314,12 +315,12 @@ class GraphAlgorithmsTest {
           .addEdge(3, 2)
           .build()
       )
-    }
+    }.failsWith(IllegalArgumentException::class)
   }
 
   @Test
   fun topologicallySort_whenCycle_withTwoNodes_throwsException() {
-    assertFailsWith(IllegalArgumentException::class) {
+    assertThatCode {
       topologicallySort(
         ImmutableDirectedGraph.builder<Any>()
           .addNode(1)
@@ -328,12 +329,12 @@ class GraphAlgorithmsTest {
           .addEdge(2, 1)
           .build()
       )
-    }
+    }.failsWith(IllegalArgumentException::class)
   }
 
   @Test
   fun topologicallySort_whenCycle_withThreeNodes_throwsException() {
-    assertFailsWith(IllegalArgumentException::class) {
+    assertThatCode {
       topologicallySort(
         ImmutableDirectedGraph.builder<Any>()
           .addNode(1)
@@ -344,7 +345,7 @@ class GraphAlgorithmsTest {
           .addEdge(3, 1)
           .build()
       )
-    }
+    }.failsWith(IllegalArgumentException::class)
   }
 
   @Test

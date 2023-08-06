@@ -4,7 +4,6 @@ import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.skip
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import omnia.data.structure.immutable.ImmutableDirectedGraph.UnknownNodeException
 import omnia.data.structure.immutable.ImmutableSet
 import omnia.data.structure.observable.writable.WritableObservableDirectedGraph
@@ -13,9 +12,11 @@ import omnia.util.reaktive.observable.test.assertThatValue
 import omnia.util.reaktive.observable.test.assertValueCount
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
+import omnia.util.test.fluent.assertThatCode
 import omnia.util.test.fluent.contains
 import omnia.util.test.fluent.containsExactly
 import omnia.util.test.fluent.containsExactlyElementsIn
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.hasCount
 import omnia.util.test.fluent.isA
 import omnia.util.test.fluent.isEmpty
@@ -74,9 +75,9 @@ class ObservableDirectedGraphTest {
 
   @Test
   fun addEdge_unrecognizedEdges_throwsException() {
-    assertFailsWith(UnknownNodeException::class) {
+    assertThatCode {
       WritableObservableDirectedGraph.create<Any>().addEdge(Any(), Any())
-    }
+    }.failsWith(UnknownNodeException::class)
   }
 
   @Test
@@ -96,9 +97,9 @@ class ObservableDirectedGraphTest {
     val original = Any()
     val replacement = Any()
     val graph = WritableObservableDirectedGraph.create<Any>()
-    assertFailsWith(IllegalArgumentException::class) {
+    assertThatCode {
       graph.replaceNode(original, replacement)
-    }
+    }.failsWith(IllegalArgumentException::class)
   }
 
   @Test
@@ -108,9 +109,9 @@ class ObservableDirectedGraphTest {
     val graph = WritableObservableDirectedGraph.create<Any>()
     graph.addNode(original)
     graph.addNode(replacement)
-    assertFailsWith(IllegalArgumentException::class) {
+    assertThatCode {
       graph.replaceNode(original, replacement)
-    }
+    }.failsWith(IllegalArgumentException::class)
   }
 
   @Test
