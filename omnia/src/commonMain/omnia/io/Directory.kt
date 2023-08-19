@@ -46,10 +46,14 @@ expect class Directory: FileSystemObject {
   }
 }
 
-fun Directory.getOrCreateFile(name: String): File {
-  return this.files.firstOrNull { it.name == name } ?: this.createFile(name)
-}
+fun Directory.getOrCreateFile(name: String): File =
+  this.getFile(name) ?: this.createFile(name)
 
-fun Directory.getOrCreateSubdirectory(name: String): Directory {
-  return this.subdirectories.firstOrNull { it.name == name } ?: this.createSubdirectory(name)
-}
+fun Directory.getFile(name: String) =
+  this.files.firstOrNull { it.name == name }
+
+fun Directory.getOrCreateSubdirectory(name: String): Directory =
+  this.getSubdirectory(name) ?: this.createSubdirectory(name)
+
+fun Directory.getSubdirectory(name: String): Directory? =
+  this.subdirectories.firstOrNull { it.name == name }
