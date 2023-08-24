@@ -1,6 +1,5 @@
-package omnia.io
+package omnia.io.filesystem
 
-import java.io.File as JFile
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.asCompletable
@@ -14,8 +13,9 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.FileReader
 import java.io.FileWriter
+import omnia.io.IOException
 
-actual class File private constructor(private val jFile: JFile): FileSystemObject {
+actual class File private constructor(private val jFile: java.io.File): FileSystemObject {
 
   init {
     if (!jFile.isFile) {
@@ -63,9 +63,9 @@ actual class File private constructor(private val jFile: JFile): FileSystemObjec
       }
 
   actual companion object {
-    actual fun fromPath(path: String) = File(JFile(path))
+    actual fun fromPath(path: String) = File(java.io.File(path))
 
-    fun fromJFile(jFile: JFile) = File(jFile)
+    fun fromJFile(jFile: java.io.File) = File(jFile)
 
     actual fun fromResource(resource: String) =
       File.fromPath(ClassLoader.getSystemResource(resource).file)

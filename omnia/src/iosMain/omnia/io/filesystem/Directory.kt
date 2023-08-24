@@ -1,4 +1,4 @@
-package omnia.io
+package omnia.io.filesystem
 
 import omnia.data.structure.immutable.ImmutableList
 import omnia.platform.swift.asNSString
@@ -77,7 +77,7 @@ actual class Directory private constructor(private val path: String): FileSystem
 
     actual val workingDirectory get() =
       NSFileManager.defaultManager.URLForDirectory(
-          NSDocumentDirectory, NSUserDomainMask, null, true, null)
+        NSDocumentDirectory, NSUserDomainMask, null, true, null)
         .let { it?.path!! }
         .let { fromPath(it) }
 

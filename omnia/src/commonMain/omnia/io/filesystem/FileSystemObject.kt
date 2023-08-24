@@ -1,4 +1,4 @@
-package omnia.io
+package omnia.io.filesystem
 
 interface FileSystemObject {
 

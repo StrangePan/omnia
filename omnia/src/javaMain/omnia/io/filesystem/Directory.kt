@@ -1,9 +1,10 @@
-package omnia.io
+package omnia.io.filesystem
 
-import java.io.File as JFile
 import omnia.data.structure.immutable.ImmutableList
+import omnia.data.structure.immutable.ImmutableList.Companion
+import omnia.io.IOException
 
-actual class Directory private constructor(private val jFile: JFile): FileSystemObject {
+actual class Directory private constructor(private val jFile: java.io.File): FileSystemObject {
 
   init {
     if (!jFile.isDirectory) {
@@ -29,13 +30,13 @@ actual class Directory private constructor(private val jFile: JFile): FileSystem
   }
 
   actual val files: Iterable<File> get() =
-    jFile.listFiles()!!.toList().filter(JFile::isFile).map(File::fromJFile)
+    jFile.listFiles()!!.toList().filter(java.io.File::isFile).map(File.Companion::fromJFile)
 
   actual val subdirectories: Iterable<Directory> get() =
-    jFile.listFiles()!!.asList().filter(JFile::isDirectory).map(Directory::fromJFile)
+    jFile.listFiles()!!.asList().filter(java.io.File::isDirectory).map(Directory::fromJFile)
 
   actual fun createFile(name: String): File {
-    val newJFile = JFile(jFile, name)
+    val newJFile = java.io.File(jFile, name)
     try {
       if (newJFile.createNewFile()) {
         return File.fromJFile(newJFile)
@@ -47,7 +48,7 @@ actual class Directory private constructor(private val jFile: JFile): FileSystem
   }
 
   actual fun createSubdirectory(name: String): Directory {
-    val newJFile = JFile(jFile, name)
+    val newJFile = java.io.File(jFile, name)
     try {
       if (newJFile.mkdir()) {
         return fromJFile(newJFile)
@@ -60,12 +61,12 @@ actual class Directory private constructor(private val jFile: JFile): FileSystem
 
   actual companion object {
 
-    actual val workingDirectory: Directory get() = Directory(JFile("."))
+    actual val workingDirectory: Directory get() = omnia.io.filesystem.Directory(java.io.File("."))
 
-    actual val rootDirectory: Directory get() = Directory(JFile("/"))
+    actual val rootDirectory: Directory get() = omnia.io.filesystem.Directory(java.io.File("/"))
 
-    actual fun fromPath(path: String): Directory = Directory(JFile(path))
+    actual fun fromPath(path: String): Directory = omnia.io.filesystem.Directory(java.io.File(path))
 
-    fun fromJFile(jFile: JFile): Directory = Directory(jFile)
+    fun fromJFile(jFile: java.io.File): Directory = omnia.io.filesystem.Directory(jFile)
   }
 }

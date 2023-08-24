@@ -1,4 +1,6 @@
-package omnia.io
+package omnia.io.filesystem
+
+import omnia.io.IOException
 
 class NotAFileException: IOException {
 

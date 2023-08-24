@@ -1,4 +1,4 @@
-package omnia.io
+package omnia.io.filesystem
 
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.maybe.switchIfEmpty
@@ -17,6 +17,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import omnia.cli.out.lineSeparator
+import omnia.io.IOException
 import omnia.platform.swift.asNSString
 import omnia.util.reaktive.observable.collectIntoImmutableList
 import platform.Foundation.NSError
@@ -65,8 +66,8 @@ actual class File private constructor(private val path: String): FileSystemObjec
 
   actual fun readLines(): Observable<String> {
     return singleFromFunction {
-        NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null)
-      }
+      NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null)
+    }
       .notNull()
       .switchIfEmpty(singleDefer { singleOfError(NotAFileException(path)) })
       .flatMapIterable { it.splitToSequence("\n").asIterable() }

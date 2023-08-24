@@ -1,4 +1,4 @@
-package omnia.io
+package omnia.io.filesystem
 
 /** A representation of a filesystem directory. Can be used to navigate the file system. */
 expect class Directory: FileSystemObject {
