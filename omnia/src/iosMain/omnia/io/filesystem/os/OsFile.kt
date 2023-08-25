@@ -1,4 +1,4 @@
-package omnia.io.filesystem
+package omnia.io.filesystem.os
 
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.maybe.switchIfEmpty
@@ -18,6 +18,8 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import omnia.cli.out.lineSeparator
 import omnia.io.IOException
+import omnia.io.filesystem.File
+import omnia.io.filesystem.NotAFileException
 import omnia.platform.swift.asNSString
 import omnia.util.reaktive.observable.collectIntoImmutableList
 import platform.Foundation.NSError
@@ -29,8 +31,7 @@ import platform.Foundation.stringByDeletingPathExtension
 import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
-/** An interface for interfacing with file system files.  */
-actual class File private constructor(private val path: String): FileSystemObject {
+actual class OsFile private constructor(private val path: String): File {
 
   init {
     if (!isRegularFile(path)) {
@@ -43,10 +44,10 @@ actual class File private constructor(private val path: String): FileSystemObjec
 
   actual override val fullName get() = path
 
-  actual val directory get() =
-    Directory.fromPath(path.asNSString().stringByDeletingLastPathComponent)
+  actual override val directory get() =
+    OsDirectory.fromPath(path.asNSString().stringByDeletingLastPathComponent)
 
-  actual fun clearAndWriteLines(lines: Observable<String>): Completable {
+  actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     return lines.collectIntoImmutableList()
         .map { it.joinToString(lineSeparator()) }
         .doOnAfterSuccess {
@@ -64,7 +65,7 @@ actual class File private constructor(private val path: String): FileSystemObjec
         .asCompletable()
   }
 
-  actual fun readLines(): Observable<String> {
+  actual override fun readLines(): Observable<String> {
     return singleFromFunction {
       NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null)
     }
@@ -75,13 +76,13 @@ actual class File private constructor(private val path: String): FileSystemObjec
 
   actual companion object {
 
-    actual fun fromPath(path: String) = File(path)
+    actual fun fromPath(path: String) = OsFile(path)
 
     fun isRegularFile(path: String): Boolean {
       return getFileInfo(path).let { it.exists && !it.isDirectory }
     }
 
-    actual fun fromResource(resource: String): File {
+    actual fun fromResource(resource: String): OsFile {
       TODO("not implemented")
     }
   }

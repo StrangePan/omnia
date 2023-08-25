@@ -1,6 +1,9 @@
-package omnia.io.filesystem
+package omnia.io.filesystem.os
 
 import omnia.data.structure.immutable.ImmutableList
+import omnia.io.filesystem.Directory
+import omnia.io.filesystem.FileAlreadyExistsException
+import omnia.io.filesystem.NotADirectoryException
 import omnia.platform.swift.asNSString
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -12,7 +15,7 @@ import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.stringByDeletingLastPathComponent
 import platform.Foundation.stringByDeletingPathExtension
 
-actual class Directory private constructor(private val path: String): FileSystemObject {
+actual class OsDirectory private constructor(private val path: String): Directory {
 
   init {
     if (!isDirectory(path)) {
@@ -25,14 +28,14 @@ actual class Directory private constructor(private val path: String): FileSystem
 
   actual override val fullName get() = path
 
-  actual val parentDirectory: Directory?
+  actual override val parentDirectory: OsDirectory?
     get() {
       val parentDirectoryPath = path.asNSString().stringByDeletingLastPathComponent
       return if (isDirectory(parentDirectoryPath)) fromPath(parentDirectoryPath) else null
     }
 
-  actual val parentDirectories: Iterable<Directory> get() {
-    val builder = ImmutableList.builder<Directory>()
+  actual override val parentDirectories: Iterable<OsDirectory> get() {
+    val builder = ImmutableList.builder<OsDirectory>()
     var parent = parentDirectory
     while (parent != null) {
       builder.add(parent)
@@ -41,15 +44,15 @@ actual class Directory private constructor(private val path: String): FileSystem
     return builder.build()
   }
 
-  actual val files: Iterable<File> get() {
+  actual override val files: Iterable<OsFile> get() {
     @Suppress("UNCHECKED_CAST")
     return (fileWrapper.fileWrappers as Map<String, NSFileWrapper>)
         .entries
         .filter { it.value.regularFile }
-        .map { File.fromPath(path.asNSString().stringByAppendingPathComponent(it.key)) }
+        .map { OsFile.fromPath(path.asNSString().stringByAppendingPathComponent(it.key)) }
   }
 
-  actual val subdirectories: Iterable<Directory> get() {
+  actual override val subdirectories: Iterable<OsDirectory> get() {
     @Suppress("UNCHECKED_CAST")
     return (fileWrapper.fileWrappers as Map<String, NSFileWrapper>)
         .entries
@@ -59,14 +62,14 @@ actual class Directory private constructor(private val path: String): FileSystem
 
   private val fileWrapper get() = NSFileWrapper(fileURLWithPath(path), 0, null)
 
-  actual fun createFile(name: String): File {
+  actual override fun createFile(name: String): OsFile {
     files.firstOrNull { it.name == name }?.let { throw FileAlreadyExistsException(it) }
     return "$path/$name"
         .also { assert(NSFileManager.defaultManager.createFileAtPath("$path/$name", null, emptyMap<Any?, Any?>())) }
-        .let { File.fromPath(it) }
+        .let { OsFile.fromPath(it) }
   }
 
-  actual fun createSubdirectory(name: String): Directory {
+  actual override fun createSubdirectory(name: String): OsDirectory {
     files.firstOrNull { it.name == name }?.let { throw FileAlreadyExistsException(it) }
     return "$path/$name"
       .also { assert(NSFileManager.defaultManager.createDirectoryAtPath(it, emptyMap<Any?, Any?>())) }
@@ -83,7 +86,7 @@ actual class Directory private constructor(private val path: String): FileSystem
 
     actual val rootDirectory get() = fromPath("/")
 
-    actual fun fromPath(path: String) = Directory(path)
+    actual fun fromPath(path: String) = OsDirectory(path)
 
     private fun isDirectory(path: String): Boolean {
       return getFileInfo(path).let { it.exists && it.isDirectory }

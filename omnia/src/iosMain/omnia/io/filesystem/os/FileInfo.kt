@@ -1,4 +1,4 @@
-package omnia.io.filesystem
+package omnia.io.filesystem.os
 
 import kotlinx.cinterop.BooleanVar
 import kotlinx.cinterop.alloc

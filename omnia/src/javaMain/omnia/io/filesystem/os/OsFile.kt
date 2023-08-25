@@ -1,4 +1,4 @@
-package omnia.io.filesystem
+package omnia.io.filesystem.os
 
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.observable.Observable
@@ -14,8 +14,11 @@ import java.io.BufferedWriter
 import java.io.FileReader
 import java.io.FileWriter
 import omnia.io.IOException
+import omnia.io.filesystem.File
+import omnia.io.filesystem.FileNotFoundException
+import omnia.io.filesystem.NotAFileException
 
-actual class File private constructor(private val jFile: java.io.File): FileSystemObject {
+actual class OsFile private constructor(private val jFile: java.io.File): File {
 
   init {
     if (!jFile.isFile) {
@@ -27,9 +30,9 @@ actual class File private constructor(private val jFile: java.io.File): FileSyst
 
   actual override val fullName: String get() = jFile.absolutePath
 
-  actual val directory: Directory get() = Directory.fromJFile(jFile.parentFile!!)
+  actual override val directory: OsDirectory get() = OsDirectory.fromJFile(jFile.parentFile!!)
 
-  actual fun clearAndWriteLines(lines: Observable<String>): Completable {
+  actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     lateinit var writer: BufferedWriter
 
     return lines.doOnBeforeSubscribe { writer = BufferedWriter(FileWriter(jFile)) }
@@ -41,7 +44,7 @@ actual class File private constructor(private val jFile: java.io.File): FileSyst
         .asCompletable()
   }
 
-  actual fun readLines(): Observable<String> =
+  actual override fun readLines(): Observable<String> =
     observable<String> { emitter ->
       if (emitter.isDisposed)
         return@observable
@@ -63,11 +66,11 @@ actual class File private constructor(private val jFile: java.io.File): FileSyst
       }
 
   actual companion object {
-    actual fun fromPath(path: String) = File(java.io.File(path))
+    actual fun fromPath(path: String) = OsFile(java.io.File(path))
 
-    fun fromJFile(jFile: java.io.File) = File(jFile)
+    fun fromJFile(jFile: java.io.File) = OsFile(jFile)
 
     actual fun fromResource(resource: String) =
-      File.fromPath(ClassLoader.getSystemResource(resource).file)
+      OsFile.fromPath(ClassLoader.getSystemResource(resource).file)
   }
 }

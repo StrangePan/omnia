@@ -1,11 +1,7 @@
 package omnia.io.filesystem
 
 /** A representation of a filesystem directory. Can be used to navigate the file system. */
-expect class Directory: FileSystemObject {
-
-  override val name: String
-
-  override val fullName: String
+interface Directory: FileSystemObject {
 
   /**
    * Returns the parent [Directory] of this directory, or `null` if this is the root directory of
@@ -30,20 +26,15 @@ expect class Directory: FileSystemObject {
    */
   val subdirectories: Iterable<Directory>
 
+  /**
+   * Creates a new file with the given name within the current directory and returns the newly created file.
+   */
   fun createFile(name: String): File
 
+  /**
+   * Attempts to create a new subdirectory within the current directory and returns the newly created directory.
+   */
   fun createSubdirectory(name: String): Directory
-
-  companion object {
-    /** The directory for the programs current working directory. */
-    val workingDirectory: Directory
-
-    /** The root file system directory. */
-    val rootDirectory: Directory
-
-    /** Looks up a file system directory with the given path. */
-    fun fromPath(path: String): Directory
-  }
 }
 
 fun Directory.getOrCreateFile(name: String): File =
