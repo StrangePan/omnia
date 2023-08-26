@@ -11,6 +11,7 @@ import com.badoo.reaktive.observable.observableOfError
 import com.badoo.reaktive.observable.onErrorResumeNext
 import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.io.File as JavaFile
 import java.io.FileReader
 import java.io.FileWriter
 import omnia.io.IOException
@@ -18,23 +19,29 @@ import omnia.io.filesystem.File
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.NotAFileException
 
-actual class OsFile private constructor(private val jFile: java.io.File): File {
+actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, private val jFile: JavaFile): File {
+
+  internal constructor(fileSystem: OsFileSystem, path: String) : this(fileSystem, JavaFile(path))
 
   init {
-    if (!jFile.isFile) {
+    if (!fileSystem.isFile(jFile)) {
       throw NotAFileException(jFile.absolutePath)
     }
   }
 
-  actual override val name: String get() = jFile.absoluteFile.name
+  actual override val name: String get() =
+    jFile.absoluteFile.name
 
-  actual override val fullName: String get() = jFile.absolutePath
+  actual override val fullName: String get() =
+    jFile.absolutePath
 
-  actual override val directory: OsDirectory get() = OsDirectory.fromJFile(jFile.parentFile!!)
+  actual override val directory: OsDirectory get() =
+    OsDirectory(fileSystem, jFile.parentFile!!)
 
   actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     lateinit var writer: BufferedWriter
 
+    // TODO can we rewrite this to use the singleUsing variant?
     return lines.doOnBeforeSubscribe { writer = BufferedWriter(FileWriter(jFile)) }
         .doOnBeforeNext {
           writer.write(it)
@@ -48,6 +55,7 @@ actual class OsFile private constructor(private val jFile: java.io.File): File {
     observable<String> { emitter ->
       if (emitter.isDisposed)
         return@observable
+      // TODO fix IDE warning with "use" method
       BufferedReader(FileReader(jFile)).use { reader ->
         while (!emitter.isDisposed) {
           emitter.onNext(reader.readLine() ?: break)
@@ -65,12 +73,9 @@ actual class OsFile private constructor(private val jFile: java.io.File): File {
         }
       }
 
-  actual companion object {
-    actual fun fromPath(path: String) = OsFile(java.io.File(path))
-
-    fun fromJFile(jFile: java.io.File) = OsFile(jFile)
-
-    actual fun fromResource(resource: String) =
-      OsFile.fromPath(ClassLoader.getSystemResource(resource).file)
-  }
+  // TODO implement as a system resources file system object
+  // companion object {
+  //   fun fromResource(resource: String) =
+  //     OsFile.fromPath(ClassLoader.getSystemResource(resource).file)
+  // }
 }

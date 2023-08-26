@@ -2,23 +2,19 @@ package omnia.io.filesystem.os
 
 import omnia.data.structure.immutable.ImmutableList
 import omnia.io.filesystem.Directory
-import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.NotADirectoryException
 import omnia.platform.swift.asNSString
-import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileWrapper
 import platform.Foundation.NSURL.Companion.fileURLWithPath
-import platform.Foundation.NSUserDomainMask
 import platform.Foundation.lastPathComponent
 import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.stringByDeletingLastPathComponent
 import platform.Foundation.stringByDeletingPathExtension
 
-actual class OsDirectory private constructor(private val path: String): Directory {
+actual class OsDirectory internal constructor(internal val fileSystem: OsFileSystem, private val path: String): Directory {
 
   init {
-    if (!isDirectory(path)) {
+    if (!fileSystem.isDirectory(path)) {
       throw NotADirectoryException(path)
     }
   }
@@ -31,7 +27,7 @@ actual class OsDirectory private constructor(private val path: String): Director
   actual override val parentDirectory: OsDirectory?
     get() {
       val parentDirectoryPath = path.asNSString().stringByDeletingLastPathComponent
-      return if (isDirectory(parentDirectoryPath)) fromPath(parentDirectoryPath) else null
+      return if (fileSystem.isDirectory(parentDirectoryPath)) OsDirectory(fileSystem, parentDirectoryPath) else null
     }
 
   actual override val parentDirectories: Iterable<OsDirectory> get() {
@@ -49,7 +45,7 @@ actual class OsDirectory private constructor(private val path: String): Director
     return (fileWrapper.fileWrappers as Map<String, NSFileWrapper>)
         .entries
         .filter { it.value.regularFile }
-        .map { OsFile.fromPath(path.asNSString().stringByAppendingPathComponent(it.key)) }
+        .map { OsFile(fileSystem, path.asNSString().stringByAppendingPathComponent(it.key)) }
   }
 
   actual override val subdirectories: Iterable<OsDirectory> get() {
@@ -57,39 +53,14 @@ actual class OsDirectory private constructor(private val path: String): Director
     return (fileWrapper.fileWrappers as Map<String, NSFileWrapper>)
         .entries
         .filter { it.value.directory }
-        .map { fromPath(path.asNSString().stringByAppendingPathComponent(it.key)) }
+        .map { OsDirectory(fileSystem, path.asNSString().stringByAppendingPathComponent(it.key)) }
   }
 
-  private val fileWrapper get() = NSFileWrapper(fileURLWithPath(path), 0, null)
+  private val fileWrapper get() = NSFileWrapper(fileURLWithPath(path), 0u, null)
 
-  actual override fun createFile(name: String): OsFile {
-    files.firstOrNull { it.name == name }?.let { throw FileAlreadyExistsException(it) }
-    return "$path/$name"
-        .also { assert(NSFileManager.defaultManager.createFileAtPath("$path/$name", null, emptyMap<Any?, Any?>())) }
-        .let { OsFile.fromPath(it) }
-  }
+  actual override fun createFile(name: String): OsFile =
+    fileSystem.createFile("$path/$name")
 
-  actual override fun createSubdirectory(name: String): OsDirectory {
-    files.firstOrNull { it.name == name }?.let { throw FileAlreadyExistsException(it) }
-    return "$path/$name"
-      .also { assert(NSFileManager.defaultManager.createDirectoryAtPath(it, emptyMap<Any?, Any?>())) }
-      .let { fromPath(it) }
-  }
-
-  actual companion object {
-
-    actual val workingDirectory get() =
-      NSFileManager.defaultManager.URLForDirectory(
-        NSDocumentDirectory, NSUserDomainMask, null, true, null)
-        .let { it?.path!! }
-        .let { fromPath(it) }
-
-    actual val rootDirectory get() = fromPath("/")
-
-    actual fun fromPath(path: String) = OsDirectory(path)
-
-    private fun isDirectory(path: String): Boolean {
-      return getFileInfo(path).let { it.exists && it.isDirectory }
-    }
-  }
+  actual override fun createSubdirectory(name: String): OsDirectory =
+    fileSystem.createDirectory("$path/$name")
 }

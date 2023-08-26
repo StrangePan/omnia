@@ -16,12 +16,4 @@ expect class OsFile: File {
   override fun clearAndWriteLines(lines: Observable<String>): Completable
 
   override fun readLines(): Observable<String>
-
-  companion object {
-    /** Looks for a file with the given path in the operating system's filesystem. */
-    fun fromPath(path: String): OsFile
-
-    /** Looks for a file with the given path in the application's resources directory. */
-    fun fromResource(resource: String): OsFile
-  }
 }

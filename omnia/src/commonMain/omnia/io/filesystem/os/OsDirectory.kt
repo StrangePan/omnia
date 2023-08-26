@@ -20,15 +20,4 @@ expect class OsDirectory: Directory {
   override fun createFile(name: String): OsFile
 
   override fun createSubdirectory(name: String): OsDirectory
-
-  companion object {
-    /** The directory for the program's current working directory. */
-    val workingDirectory: OsDirectory
-
-    /** The root file system [OsDirectory]. */
-    val rootDirectory: OsDirectory
-
-    /** Looks for a directory with the given path in the operating system's filesystem. */
-    fun fromPath(path: String): OsDirectory
-  }
 }

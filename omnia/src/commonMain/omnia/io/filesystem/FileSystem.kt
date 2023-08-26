@@ -10,11 +10,17 @@ interface FileSystem {
   /** The application's current working [Directory] within the file system. */
   val workingDirectory: Directory
 
+  /** Checks if a file system object exists at the given path, and if that object is a directory. */
+  fun isDirectory(path: String): Boolean
+
+  /** Checks if a file system object exists at the given path, and if that object is a file. */
+  fun isFile(path: String): Boolean
+
   /** Searches the file system for a directory at the given path and returns it, or null if it doesn't exist. */
-  fun getDirectory(path: String): Directory?
+  fun getDirectory(path: String): Directory
 
   /** Searches the file system for a file at the given path and returns it, or null if it doesn't exist. */
-  fun getFile(path: String): File?
+  fun getFile(path: String): File
 
   /**
    * Create a directory at the given path if the parent directory already exists. If the directory already exists,
@@ -27,10 +33,4 @@ interface FileSystem {
    * returns the existing file instead of creating a new one.
    */
   fun createFile(path: String): File
-
-  /** Creates a directory and all missing intermediate parent directories. */
-  fun createDirectoryAndParentDirectories(path: String): Directory
-
-  /** Creates a regular file at the given path, and all missing intermediate parent directories. */
-  fun createFileAndParentDirectories(path: String): File
 }

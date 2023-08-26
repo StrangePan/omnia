@@ -31,10 +31,10 @@ import platform.Foundation.stringByDeletingPathExtension
 import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
-actual class OsFile private constructor(private val path: String): File {
+actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, private val path: String): File {
 
   init {
-    if (!isRegularFile(path)) {
+    if (!fileSystem.isFile(path)) {
       throw NotAFileException(path)
     }
   }
@@ -45,7 +45,7 @@ actual class OsFile private constructor(private val path: String): File {
   actual override val fullName get() = path
 
   actual override val directory get() =
-    OsDirectory.fromPath(path.asNSString().stringByDeletingLastPathComponent)
+    OsDirectory(fileSystem, path.asNSString().stringByDeletingLastPathComponent)
 
   actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     return lines.collectIntoImmutableList()
@@ -72,18 +72,5 @@ actual class OsFile private constructor(private val path: String): File {
       .notNull()
       .switchIfEmpty(singleDefer { singleOfError(NotAFileException(path)) })
       .flatMapIterable { it.splitToSequence("\n").asIterable() }
-  }
-
-  actual companion object {
-
-    actual fun fromPath(path: String) = OsFile(path)
-
-    fun isRegularFile(path: String): Boolean {
-      return getFileInfo(path).let { it.exists && !it.isDirectory }
-    }
-
-    actual fun fromResource(resource: String): OsFile {
-      TODO("not implemented")
-    }
   }
 }
