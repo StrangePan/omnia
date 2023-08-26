@@ -1,5 +1,6 @@
 package omnia.io.filesystem.os
 
+import java.io.File as JavaFile
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.asCompletable
@@ -7,11 +8,9 @@ import com.badoo.reaktive.observable.doOnAfterFinally
 import com.badoo.reaktive.observable.doOnBeforeNext
 import com.badoo.reaktive.observable.doOnBeforeSubscribe
 import com.badoo.reaktive.observable.observable
-import com.badoo.reaktive.observable.observableOfError
-import com.badoo.reaktive.observable.onErrorResumeNext
+import com.badoo.reaktive.observable.observableUsing
 import java.io.BufferedReader
 import java.io.BufferedWriter
-import java.io.File as JavaFile
 import java.io.FileReader
 import java.io.FileWriter
 import omnia.io.IOException
@@ -40,8 +39,6 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
 
   actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     lateinit var writer: BufferedWriter
-
-    // TODO can we rewrite this to use the singleUsing variant?
     return lines.doOnBeforeSubscribe { writer = BufferedWriter(FileWriter(jFile)) }
         .doOnBeforeNext {
           writer.write(it)
@@ -52,30 +49,23 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
   }
 
   actual override fun readLines(): Observable<String> =
-    observable<String> { emitter ->
-      if (emitter.isDisposed)
-        return@observable
-      // TODO fix IDE warning with "use" method
-      BufferedReader(FileReader(jFile)).use { reader ->
-        while (!emitter.isDisposed) {
-          emitter.onNext(reader.readLine() ?: break)
-        }
-        if (!emitter.isDisposed) {
-          emitter.onComplete()
+    observableUsing(
+      resourceSupplier = { BufferedReader(FileReader(jFile)) },
+      resourceCleanup = { it.close() },
+      eager = true) { reader: BufferedReader ->
+        observable<String> { emitter ->
+          while (!emitter.isDisposed) {
+            try {
+              emitter.onNext(reader.readLine() ?: break)
+            } catch (e: java.io.FileNotFoundException) {
+              throw FileNotFoundException(e)
+            } catch (e: java.io.IOException) {
+              throw IOException(e)
+            }
+          }
+          if (!emitter.isDisposed) {
+            emitter.onComplete()
+          }
         }
       }
-    }
-      .onErrorResumeNext { error ->
-        when (error) {
-          is java.io.FileNotFoundException -> observableOfError(FileNotFoundException(cause = error))
-          is java.io.IOException -> observableOfError(IOException(cause = error))
-          else -> observableOfError(error)
-        }
-      }
-
-  // TODO implement as a system resources file system object
-  // companion object {
-  //   fun fromResource(resource: String) =
-  //     OsFile.fromPath(ClassLoader.getSystemResource(resource).file)
-  // }
 }
