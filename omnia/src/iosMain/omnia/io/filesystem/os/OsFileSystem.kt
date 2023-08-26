@@ -7,7 +7,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-actual class OsFileSystem: FileSystem {
+actual class OsFileSystem actual constructor(): FileSystem {
 
   actual override val rootDirectory get() =
     OsDirectory(this, "/")
@@ -29,6 +29,9 @@ actual class OsFileSystem: FileSystem {
 
   actual override fun getFile(path: String) =
     OsFile(this, path)
+
+  actual fun getResource(path: String): OsFile =
+    TODO("not implemented")
 
   internal fun getFileSystemObject(path: String): FileSystemObject? =
     getFileInfo(path).let { info ->

@@ -2,7 +2,7 @@ package omnia.io.filesystem.os
 
 import omnia.io.filesystem.FileSystem
 
-expect class OsFileSystem: FileSystem {
+expect class OsFileSystem(): FileSystem {
 
   override val rootDirectory: OsDirectory
 
@@ -15,6 +15,8 @@ expect class OsFileSystem: FileSystem {
   override fun getDirectory(path: String): OsDirectory
 
   override fun getFile(path: String): OsFile
+
+  fun getResource(path: String): OsFile
 
   override fun createDirectory(path: String): OsDirectory
 
