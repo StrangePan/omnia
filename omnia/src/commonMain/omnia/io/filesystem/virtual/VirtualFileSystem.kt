@@ -17,9 +17,11 @@ class VirtualFileSystem(private val workingDirectoryPath: String): FileSystem {
 
   init {
     createDirectory("/")
-    checkDirectoryPath(workingDirectoryPath)
-      .extractParentDirectoryPaths()
-      .map(::createDirectory)
+    if (workingDirectoryPath != "/") {
+      checkDirectoryPath(workingDirectoryPath)
+        .extractParentDirectoryPaths()
+        .map(::createDirectory)
+    }
   }
 
   override val rootDirectory: VirtualDirectory get() =
@@ -79,4 +81,7 @@ class VirtualFileSystem(private val workingDirectoryPath: String): FileSystem {
 }
 
 internal fun String.extractParentDirectoryPaths() =
-  this.split("/").scan("") { previousPath, newComponent -> "$previousPath/$newComponent" }
+  this.split("/")
+    .drop(1)
+    .scan("") { previousPath, newComponent -> "$previousPath/$newComponent" }
+    .drop(1)
