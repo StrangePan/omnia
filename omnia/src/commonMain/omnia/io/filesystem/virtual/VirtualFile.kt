@@ -34,4 +34,13 @@ class VirtualFile internal constructor(private val fileSystem: VirtualFileSystem
 
   override fun readLines(): Observable<String> =
     this.lines.asObservable()
+
+  override fun toString() =
+    "VirtualFile@$fullName"
+
+  override fun equals(other: Any?) =
+    other is VirtualFile && this.fileSystem === other.fileSystem && this.fullName == other.fullName
+
+  override fun hashCode() =
+    fullName.hashCode()
 }
