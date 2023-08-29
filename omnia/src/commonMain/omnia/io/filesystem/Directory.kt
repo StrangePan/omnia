@@ -37,10 +37,11 @@ interface Directory: FileSystemObject {
   fun createSubdirectory(name: String): Directory
 }
 
+// TODO These extension functions are not good enough. Replace with a more comprehensive, specializable API.
 fun Directory.getOrCreateFile(name: String): File =
   this.getFile(name) ?: this.createFile(name)
 
-fun Directory.getFile(name: String) =
+fun Directory.getFile(name: String): File? =
   this.files.firstOrNull { it.name == name }
 
 fun Directory.getOrCreateSubdirectory(name: String): Directory =

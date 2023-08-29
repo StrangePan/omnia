@@ -11,6 +11,10 @@ import omnia.io.filesystem.Directory
 import omnia.io.filesystem.File
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
+import omnia.io.filesystem.getFile
+import omnia.io.filesystem.getOrCreateFile
+import omnia.io.filesystem.getOrCreateSubdirectory
+import omnia.io.filesystem.getSubdirectory
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.containsExactly
@@ -164,5 +168,103 @@ class VirtualDirectoryTest {
   fun createSubdirectory_specifyingSubdirectory_whenNotExists_fails() {
     assertThat { underTest.createFile("subdirectory/subdirectory") }
       .failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun getOrCreateFile_whenNotExists_returnsCreatedDirectory() {
+    assertThat(underTest.getOrCreateFile("file"))
+      .andThat(File::name) { it.isEqualTo("file") }
+      .andThat(File::directory) { it.isEqualTo(underTest) }
+  }
+
+  @Test
+  fun getOrCreateFile_whenExists_returnsExistingFile() {
+    val file = underTest.createFile("file")
+    assertThat(underTest.getOrCreateFile("file"))
+      .isEqualTo(file)
+  }
+
+  @Test
+  fun getOrCreateFile_whenIsDirectory_fails() {
+    underTest.createSubdirectory("object")
+    assertThat { underTest.getOrCreateFile("object") }
+      .failsWith(FileAlreadyExistsException::class)
+  }
+
+  @Test
+  fun getFile_whenExists_returnsFile() {
+    val file = underTest.createFile("file")
+    assertThat(underTest.getFile("file"))
+      .isNotNull()
+      .isEqualTo(file)
+  }
+
+  @Test
+  fun getFile_whenNotExists_returnsNull() {
+    assertThat(underTest.getFile("file")).isNull()
+  }
+
+  @Test
+  fun getFile_whenIsSubdirectory_returnsNull() {
+    underTest.createSubdirectory("object")
+    assertThat(underTest.getFile("object")).isNull()
+  }
+
+  @Test
+  fun getFile_inSubdirectory_returnsFile() {
+    val subdirectory = underTest.createSubdirectory("subdirectory")
+    val file = subdirectory.createFile("file")
+    assertThat(underTest.getFile("subdirectory/file"))
+      .isNotNull()
+      .isEqualTo(file)
+  }
+
+  @Test
+  fun getOrCreateSubdirectory_whenNotExists_returnsCreatedDirectory() {
+    assertThat(underTest.getOrCreateSubdirectory("subdirectory"))
+      .andThat(Directory::name) { it.isEqualTo("subdirectory") }
+      .andThat(Directory::parentDirectory) { it.isNotNull().isEqualTo(underTest) }
+  }
+
+  @Test
+  fun getOrCreateSubdirectory_whenExists_returnsExistingSubdirectory() {
+    val subdirectory = underTest.createSubdirectory("subdirectory")
+    assertThat(underTest.getOrCreateSubdirectory("subdirectory"))
+      .isEqualTo(subdirectory)
+  }
+
+  @Test
+  fun getOrCreateSubdirectory_whenIsFile_fails() {
+    underTest.createFile("object")
+    assertThat { underTest.getOrCreateSubdirectory("object") }
+      .failsWith(FileAlreadyExistsException::class)
+  }
+
+  @Test
+  fun getSubdirectory_whenExists_returnsSubdirectory() {
+    val subdirectory = underTest.createSubdirectory("subdirectory")
+    assertThat(underTest.getSubdirectory("subdirectory"))
+      .isNotNull()
+      .isEqualTo(subdirectory)
+  }
+
+  @Test
+  fun getSubdirectory_inSubdirectory_returnsSubdirectory() {
+    val subdirectory1 = underTest.createSubdirectory("subdirectory1")
+    val subdirectory2 = subdirectory1.createSubdirectory("subdirectory2")
+    assertThat(underTest.getSubdirectory("subdirectory1/subdirectory2"))
+      .isNotNull()
+      .isEqualTo(subdirectory2)
+  }
+
+  @Test
+  fun getSubdirectory_whenNotExists_returnsNull() {
+    assertThat(underTest.getSubdirectory("subdirectory")).isNull()
+  }
+
+  @Test
+  fun getSubdirectory_whenIsFile_returnsNull() {
+    underTest.createFile("object")
+    assertThat(underTest.getSubdirectory("object")).isNull()
   }
 }
