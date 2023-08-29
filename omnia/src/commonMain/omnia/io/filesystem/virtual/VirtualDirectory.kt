@@ -17,9 +17,13 @@ class VirtualDirectory internal constructor(private val fileSystem: VirtualFileS
     path
 
   override val parentDirectory: VirtualDirectory? =
-    path.substringBeforeLast("/", missingDelimiterValue = "")
-      .takeIf(String::isNotEmpty)
-      ?.let(fileSystem::getDirectory)
+    if (path == "/") {
+      null
+    } else {
+      path.substringBeforeLast("/", missingDelimiterValue = "")
+        .ifEmpty { "/" }
+        .let(fileSystem::getDirectory)
+    }
 
   override val parentDirectories: Iterable<VirtualDirectory> get() {
     val parentDirectories = ImmutableList.builder<VirtualDirectory>()
