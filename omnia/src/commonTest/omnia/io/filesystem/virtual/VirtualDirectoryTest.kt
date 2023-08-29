@@ -59,6 +59,17 @@ class VirtualDirectoryTest {
   }
 
   @Test
+  fun files_whenRoot_returnsAllFiles() {
+    val underTest = fileSystem.rootDirectory
+
+    val firstFile = underTest.createFile("first")
+    val secondFile = underTest.createFile("second")
+    val thirdFile = underTest.createFile("third")
+
+    assertThat(underTest.files.toImmutableSet()).containsExactly(firstFile, secondFile, thirdFile)
+  }
+
+  @Test
   fun subdirectories_whenEmpty_returnsNothing() {
     assertThat(underTest.subdirectories).isEmpty()
   }
@@ -78,6 +89,17 @@ class VirtualDirectoryTest {
     assertThat(underTest.createFile("file"))
       .andThat(File::name) { it.isEqualTo("file") }
       .andThat(File::fullName) { it.isEqualTo("/parent/directory/file") }
+      .andThat(File::directory) { it.isEqualTo(underTest) }
+      .andThat(File::readLines) { it.actual.test().assertNoValues().assertComplete() }
+  }
+
+  @Test
+  fun createFile_whenRoot_returnsCreatedFile() {
+    val underTest = fileSystem.rootDirectory
+
+    assertThat(underTest.createFile("file"))
+      .andThat(File::name) { it.isEqualTo("file") }
+      .andThat(File::fullName) { it.isEqualTo("/file") }
       .andThat(File::directory) { it.isEqualTo(underTest) }
       .andThat(File::readLines) { it.actual.test().assertNoValues().assertComplete() }
   }
@@ -107,6 +129,18 @@ class VirtualDirectoryTest {
     assertThat(underTest.createSubdirectory("subdirectory"))
       .andThat(Directory::name) { it.isEqualTo("subdirectory") }
       .andThat(Directory::fullName) { it.isEqualTo("/parent/directory/subdirectory") }
+      .andThat(Directory::files) { it.isEmpty() }
+      .andThat(Directory::subdirectories) { it.isEmpty() }
+      .andThat(Directory::parentDirectory) { it.isNotNull().isEqualTo(underTest) }
+  }
+
+  @Test
+  fun createSubdirectory_whenRoot_returnsCreatedDirectory() {
+    val underTest = fileSystem.rootDirectory
+
+    assertThat(underTest.createSubdirectory("subdirectory"))
+      .andThat(Directory::name) { it.isEqualTo("subdirectory") }
+      .andThat(Directory::fullName) { it.isEqualTo("/subdirectory") }
       .andThat(Directory::files) { it.isEmpty() }
       .andThat(Directory::subdirectories) { it.isEmpty() }
       .andThat(Directory::parentDirectory) { it.isNotNull().isEqualTo(underTest) }

@@ -43,10 +43,10 @@ class VirtualFileSystem(private val workingDirectoryPath: String): FileSystem {
     checkFilePath(path).let { tree.getFile(it) ?: throw FileNotFoundException(it) }
 
   internal fun getDirectoriesInDirectory(directory: VirtualDirectory): ImmutableList<VirtualDirectory> =
-    tree.getDirectoriesInDirectory(directory.fullName + "/")
+    tree.getDirectoriesInDirectory(if (directory.fullName == "/") "/" else directory.fullName + "/")
 
   internal fun getFilesInDirectory(directory: VirtualDirectory): ImmutableList<VirtualFile> =
-    tree.getFilesInDirectory(directory.fullName + "/")
+    tree.getFilesInDirectory(if (directory.fullName == "/") "/" else directory.fullName + "/")
 
   override fun createDirectory(path: String): VirtualDirectory {
     val directory = checkDirectoryPath(path).let { VirtualDirectory(this, it) }

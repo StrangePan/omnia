@@ -44,11 +44,11 @@ class VirtualDirectory internal constructor(private val fileSystem: VirtualFileS
 
   // TODO Add better path parsing and concatenation
   override fun createFile(name: String): VirtualFile =
-    fileSystem.createFile("$path/$name")
+    fileSystem.createFile(if (path == "/") "/$name" else "$path/$name")
 
   // TODO Add better path parsing and concatenation
   override fun createSubdirectory(name: String): VirtualDirectory =
-    fileSystem.createDirectory("$path/$name")
+    fileSystem.createDirectory(if (path == "/") "/$name" else "$path/$name")
 
   override fun toString() =
     "VirtualDirectory@$fullName"

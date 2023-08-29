@@ -25,7 +25,9 @@ class VirtualFile internal constructor(private val fileSystem: VirtualFileSystem
     path
 
   override val directory: VirtualDirectory get() =
-    path.substringBeforeLast("/", missingDelimiterValue = "/").let(fileSystem::getDirectory)
+    path.substringBeforeLast("/", missingDelimiterValue = "/")
+      .ifEmpty { "/" }
+      .let(fileSystem::getDirectory)
 
   override fun clearAndWriteLines(lines: Observable<String>): Completable =
     lines.doOnBeforeSubscribe { this.lines.clear() }
