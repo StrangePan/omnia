@@ -16,6 +16,8 @@ class ImmutableList<E : Any> : List<E> {
 
   class Builder<E : Any> : AbstractBuilder<E, Builder<E>, ImmutableList<E>>() {
 
+    val count get() = elements.count
+
     fun insertAt(index: Int, item: E): Builder<E> {
       elements.insertAt(index, item)
       return self
