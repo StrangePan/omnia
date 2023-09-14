@@ -16,21 +16,30 @@ import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
  * @property components The child components (directories) of this path, applied after the [trimmedParents] number of
  * parents are trimmed.
  */
-// TODO tests!
 data class RelativePath(val trimmedParents: Int = 0, val components: ImmutableList<PathComponent> = ImmutableList.empty()) {
 
   /**
-   * @throws IllegalArgumentException if [trimmedParents] is negative.
    * @throws PathParseException if [components] contains an illegal component.
    */
-  constructor(trimmedParents: Int = 0, vararg components: String):
-    this(trimmedParents, components.asIterable())
+  constructor(vararg components: String): this(components.asIterable());
 
   /**
    * @throws IllegalArgumentException if [trimmedParents] is negative.
    * @throws PathParseException if [components] contains an illegal component.
    */
-  constructor(trimmedParents: Int = 0, components: Iterable<String>):
+  constructor(trimmedParents: Int, vararg components: String):
+    this(trimmedParents, components.asIterable())
+
+  /**
+   * @throws PathParseException if [components] contains an illegal component.
+   */
+  constructor(components: Iterable<String>): this(0, components)
+
+  /**
+   * @throws IllegalArgumentException if [trimmedParents] is negative.
+   * @throws PathParseException if [components] contains an illegal component.
+   */
+  constructor(trimmedParents: Int, components: Iterable<String>):
     this(trimmedParents, components.map(::PathComponent).toImmutableList())
 
   init {
@@ -81,6 +90,9 @@ data class RelativePath(val trimmedParents: Int = 0, val components: ImmutableLi
      * @throws [PathParseException] if the path is malformed or contains illegal components
      */
     fun parse(string: String): RelativePath {
+      if (string.isEmpty()) {
+        return RelativePath(0, ImmutableList.empty<PathComponent>())
+      }
       if (string.first() == '/') {
         throw PathParseException("Relative path cannot begin with a '/'")
       }

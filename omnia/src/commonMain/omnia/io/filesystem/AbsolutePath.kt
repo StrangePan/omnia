@@ -12,7 +12,6 @@ import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
  *
  * @property components The components (directories) of this path.
  */
-// TODO tests!
 // TODO integrate into FileSystem API
 data class AbsolutePath(val components: ImmutableList<PathComponent> = ImmutableList.empty()) {
 
@@ -66,7 +65,7 @@ data class AbsolutePath(val components: ImmutableList<PathComponent> = Immutable
         throw PathParseException("Absolute path must begin with a '/'")
       }
       if (string.last() == '/') {
-        throw PathParseException("Relative path cannot end with a '/'")
+        throw PathParseException("Absolute path cannot end with a '/'")
       }
 
       val components = string.split('/')
