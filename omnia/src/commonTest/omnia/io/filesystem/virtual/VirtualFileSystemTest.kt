@@ -29,7 +29,6 @@ class VirtualFileSystemTest {
   @Test
   fun rootDirectory_isCreated() {
     assertThat(underTest.rootDirectory.fullPath.toString()).isEqualTo("/")
-    // TODO how should we handle getting the name of the root directory?
     assertThat { underTest.rootDirectory.name }.failsWith(Throwable::class)
     assertThat(underTest.isDirectory("/".asAbsolutePath())).isTrue()
   }

@@ -13,7 +13,7 @@ class VirtualDirectory internal constructor(private val fileSystem: VirtualFileS
   VirtualFileSystemObject, Directory {
 
   override val name: PathComponent get() =
-    // TODO how should we handle the directory name of the root directory, which has no name
+    // TODO how should we handle the directory name of the root directory, which has no name?
     fullPath.components.last()
 
   override val parentDirectory: VirtualDirectory? =
