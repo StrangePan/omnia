@@ -2,6 +2,7 @@ package omnia.io.filesystem.os
 
 import java.io.File as JavaFile
 import omnia.io.IOException
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileSystem
 
@@ -13,29 +14,29 @@ actual class OsFileSystem actual constructor(): FileSystem {
   actual override val workingDirectory get() =
     OsDirectory(this, ".")
 
-  actual override fun isDirectory(path: String) =
-    isFile(JavaFile(path))
+  actual override fun isDirectory(path: AbsolutePath) =
+    isFile(JavaFile(path.toString()))
 
   internal fun isDirectory(javaFile: JavaFile) =
     javaFile.isDirectory
 
-  actual override fun isFile(path: String) =
-    isFile(JavaFile(path))
+  actual override fun isFile(path: AbsolutePath) =
+    isFile(JavaFile(path.toString()))
 
   internal fun isFile(javaFile: JavaFile) =
     javaFile.isFile
 
-  actual override fun getDirectory(path: String) =
-    OsDirectory(this, path)
+  actual override fun getDirectory(path: AbsolutePath) =
+    OsDirectory(this, path.toString())
 
-  actual override fun getFile(path: String) =
-    OsFile(this, path)
+  actual override fun getFile(path: AbsolutePath) =
+    OsFile(this, path.toString())
 
   actual fun getResource(path: String): OsFile =
     OsFile(this, ClassLoader.getSystemResource(path).file)
 
-  actual override fun createDirectory(path: String): OsDirectory =
-    createDirectory(JavaFile(path))
+  actual override fun createDirectory(path: AbsolutePath): OsDirectory =
+    createDirectory(JavaFile(path.toString()))
 
   internal fun createDirectory(javaFile: JavaFile): OsDirectory =
     try {
@@ -48,8 +49,8 @@ actual class OsFileSystem actual constructor(): FileSystem {
       throw IOException(e)
     }
 
-  actual override fun createFile(path: String): OsFile =
-    createFile(JavaFile(path))
+  actual override fun createFile(path: AbsolutePath): OsFile =
+    createFile(JavaFile(path.toString()))
 
   internal fun createFile(javaFile: JavaFile): OsFile =
     try {

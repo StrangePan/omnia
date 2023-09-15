@@ -18,6 +18,7 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import omnia.cli.out.lineSeparator
 import omnia.io.IOException
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.File
 import omnia.io.filesystem.NotAFileException
 import omnia.platform.swift.asNSString
@@ -25,27 +26,22 @@ import omnia.util.reaktive.observable.collectIntoImmutableList
 import platform.Foundation.NSError
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
-import platform.Foundation.lastPathComponent
-import platform.Foundation.stringByDeletingLastPathComponent
-import platform.Foundation.stringByDeletingPathExtension
 import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
-actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, private val path: String): File {
+actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, actual override val fullPath: AbsolutePath): File {
 
   init {
-    if (!fileSystem.isFile(path)) {
-      throw NotAFileException(path)
+    if (!fileSystem.isFile(fullPath)) {
+      throw NotAFileException(fullPath.toString())
     }
   }
 
   actual override val name get() =
-    path.asNSString().lastPathComponent.asNSString().stringByDeletingPathExtension
-
-  actual override val fullName get() = path
+    fullPath.components.last()
 
   actual override val directory get() =
-    OsDirectory(fileSystem, path.asNSString().stringByDeletingLastPathComponent)
+    OsDirectory(fileSystem, fullPath - 1)
 
   actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     return lines.collectIntoImmutableList()
@@ -54,7 +50,7 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
           memScoped {
             val error = alloc<ObjCObjectVar<NSError?>>()
             it.asNSString().writeToFile(
-              path,
+              fullPath.toString(),
               atomically = true,
               encoding = NSUTF8StringEncoding,
               error = error.ptr
@@ -67,10 +63,10 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
 
   actual override fun readLines(): Observable<String> {
     return singleFromFunction {
-      NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null)
+      NSString.stringWithContentsOfFile(fullPath.toString(), NSUTF8StringEncoding, null)
     }
       .notNull()
-      .switchIfEmpty(singleDefer { singleOfError(NotAFileException(path)) })
+      .switchIfEmpty(singleDefer { singleOfError(NotAFileException(fullPath.toString())) })
       .flatMapIterable { it.splitToSequence("\n").asIterable() }
   }
 }

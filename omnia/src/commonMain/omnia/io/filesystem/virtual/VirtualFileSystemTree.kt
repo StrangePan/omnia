@@ -3,8 +3,7 @@ package omnia.io.filesystem.virtual
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 import omnia.data.structure.mutable.HashMap
-import omnia.io.filesystem.Directory
-import omnia.io.filesystem.File
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileNotFoundException
 
 /**
@@ -13,65 +12,63 @@ import omnia.io.filesystem.FileNotFoundException
  */
 internal class VirtualFileSystemTree {
 
-  private val directories = HashMap.create<String, VirtualDirectory>()
-  private val files = HashMap.create<String, VirtualFile>()
+  private val directories = HashMap.create<AbsolutePath, VirtualDirectory>()
+  private val files = HashMap.create<AbsolutePath, VirtualFile>()
 
-  fun getDirectory(path: String) =
+  fun getDirectory(path: AbsolutePath) =
     directories.valueOf(path)
 
-  fun getFile(path: String) =
+  fun getFile(path: AbsolutePath) =
     files.valueOf(path)
 
-  fun getFileSystemObject(path: String): VirtualFileSystemObject? =
+  fun getFileSystemObject(path: AbsolutePath): VirtualFileSystemObject? =
     getDirectory(path) ?: getFile(path)
 
   fun addDirectory(directory: VirtualDirectory): Boolean =
-    if (directories.valueOf(directory.fullName) == null && files.valueOf(directory.fullName) == null) {
-      directory.fullName
+    if (directories.valueOf(directory.fullPath) == null && files.valueOf(directory.fullPath) == null) {
+      directory.fullPath
         .extractParentDirectoryPaths()
-        .dropLast(1)
         .forEach { parentDirectoryPath ->
           if (getDirectory(parentDirectoryPath) == null) {
             throw FileNotFoundException(
-              "Cannot create directory '${directory.fullName}' when missing parent directory '$parentDirectoryPath' " +
+              "Cannot create directory '${directory.fullPath}' when missing parent directory '$parentDirectoryPath' " +
                 "does not exist.")
           }
         }
-      directories.putMapping(directory.fullName, directory)
+      directories.putMapping(directory.fullPath, directory)
       true
     } else {
       false
     }
 
   fun addFile(file: VirtualFile): Boolean =
-    if (directories.valueOf(file.fullName) == null && files.valueOf(file.fullName) == null) {
-      file.fullName
+    if (directories.valueOf(file.fullPath) == null && files.valueOf(file.fullPath) == null) {
+      file.fullPath
         .extractParentDirectoryPaths()
-        .dropLast(1)
         .forEach { parentDirectoryPath ->
           if (getDirectory(parentDirectoryPath) == null) {
             throw FileNotFoundException(
-              "Cannot create directory '${file.fullName}' when missing parent directory '$parentDirectoryPath' does " +
+              "Cannot create directory '${file.fullPath}' when missing parent directory '$parentDirectoryPath' does " +
                 "not exist.")
           }
         }
-      files.putMapping(file.fullName, file)
+      files.putMapping(file.fullPath, file)
       true
     } else {
       false
     }
 
-  fun getFilesInDirectory(path: String): ImmutableList<VirtualFile> =
+  fun getFilesInDirectory(path: AbsolutePath): ImmutableList<VirtualFile> =
     files.entries
-      .filter { it.key.startsWith(path) && !it.key.substring(path.length).contains("/") }
+      .filter { (it.key.components.count - 1) == path.components.count && (it.key - 1) == path }
       .map { it.value }
-      .sortedBy(File::name)
+      .sortedBy { it.name.name }
       .toImmutableList()
 
-  fun getDirectoriesInDirectory(path: String): ImmutableList<VirtualDirectory> =
+  fun getDirectoriesInDirectory(path: AbsolutePath): ImmutableList<VirtualDirectory> =
     directories.entries
-      .filter { it.key.startsWith(path) && !it.key.substring(path.length).contains("/") }
+      .filter { (it.key.components.count - 1) == path.components.count && (it.key - 1) == path }
       .map { it.value }
-      .sortedBy(Directory::name)
+      .sortedBy { it.name.name }
       .toImmutableList()
 }

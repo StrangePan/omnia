@@ -1,6 +1,7 @@
 package omnia.io.filesystem
 
 import kotlin.math.max
+import omnia.data.cache.Memoized.Companion.memoize
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 
@@ -69,18 +70,29 @@ data class RelativePath(val trimmedParents: Int = 0, val components: ImmutableLi
   operator fun plus(string: String): RelativePath =
     this + parse(string)
 
-  override fun toString(): String =
-    buildString(trimmedParents * 3 + components.sumOf { it.name.length } + components.count) { ->
-      repeat(trimmedParents) {
-        this.append("../")
-      }
-      components.forEach {
-        this.append(it).append('/')
-      }
-      if (trimmedParents > 0 || components.isPopulated) {
-        this.deleteAt(this.length - 1)
+  operator fun plus(component: PathComponent): RelativePath =
+    this + RelativePath(0, ImmutableList.of(component))
+
+  operator fun minus(components: Int): RelativePath =
+    this + RelativePath(components)
+
+  private val memoizedToString =
+    memoize {
+      buildString(trimmedParents * 3 + components.sumOf { it.name.length } + components.count) { ->
+        repeat(trimmedParents) {
+          this.append("../")
+        }
+        components.forEach {
+          this.append(it).append('/')
+        }
+        if (trimmedParents > 0 || components.isPopulated) {
+          this.deleteAt(this.length - 1)
+        }
       }
     }
+
+  override fun toString(): String =
+    memoizedToString.value
 
   companion object {
     /**

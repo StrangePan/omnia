@@ -14,6 +14,7 @@ import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import omnia.data.structure.immutable.ImmutableList
 import omnia.io.filesystem.Directory
+import omnia.io.filesystem.asAbsolutePath
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.contains
@@ -22,12 +23,12 @@ import omnia.util.test.fluent.isEqualTo
 class VirtualFileTest {
 
   val fileSystem = VirtualFileSystem()
-  val underTest = fileSystem.createFile("/file")
+  val underTest = fileSystem.createFile("/file".asAbsolutePath())
 
   @Test
   fun directory_returnsParentDirectory() {
     assertThat(underTest.directory)
-      .andThat(Directory::fullName) { it.isEqualTo("/") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/") }
       .andThat(Directory::files) { it.contains(underTest) }
   }
 

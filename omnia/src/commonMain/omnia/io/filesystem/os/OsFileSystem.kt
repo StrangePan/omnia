@@ -1,5 +1,6 @@
 package omnia.io.filesystem.os
 
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileSystem
 
 expect class OsFileSystem(): FileSystem {
@@ -8,17 +9,17 @@ expect class OsFileSystem(): FileSystem {
 
   override val workingDirectory: OsDirectory
 
-  override fun isDirectory(path: String): Boolean
+  override fun isDirectory(path: AbsolutePath): Boolean
 
-  override fun isFile(path: String): Boolean
+  override fun isFile(path: AbsolutePath): Boolean
 
-  override fun getDirectory(path: String): OsDirectory
+  override fun getDirectory(path: AbsolutePath): OsDirectory
 
-  override fun getFile(path: String): OsFile
+  override fun getFile(path: AbsolutePath): OsFile
 
   fun getResource(path: String): OsFile
 
-  override fun createDirectory(path: String): OsDirectory
+  override fun createDirectory(path: AbsolutePath): OsDirectory
 
-  override fun createFile(path: String): OsFile
+  override fun createFile(path: AbsolutePath): OsFile
 }

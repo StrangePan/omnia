@@ -1,5 +1,6 @@
 package omnia.io.filesystem
 
+import omnia.data.cache.Memoized.Companion.memoize
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 
@@ -12,7 +13,6 @@ import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
  *
  * @property components The components (directories) of this path.
  */
-// TODO integrate into FileSystem API
 data class AbsolutePath(val components: ImmutableList<PathComponent> = ImmutableList.empty()) {
 
   /** @throws PathParseException if [components] contains an illegal component. */
@@ -42,7 +42,7 @@ data class AbsolutePath(val components: ImmutableList<PathComponent> = Immutable
    */
   operator fun plus(other: RelativePath): AbsolutePath {
     require(other.trimmedParents <= this.components.count) {
-      "Cannot combine paths: relative path would access outside of the absolute path's root directory. \"$this\" + \"other\"."
+      "Cannot combine paths: relative path would access outside of the absolute path's root directory. \"$this\" + \"$other\"."
     }
     return AbsolutePath(
       ImmutableList.builder<PathComponent>()
@@ -54,7 +54,17 @@ data class AbsolutePath(val components: ImmutableList<PathComponent> = Immutable
   operator fun plus(string: String): AbsolutePath =
     this + RelativePath.parse(string)
 
-  override fun toString(): String = "/" + components.joinToString(separator = "/")
+  operator fun plus(component: PathComponent): AbsolutePath =
+    this + RelativePath(0, ImmutableList.of(component))
+
+  operator fun minus(components: Int): AbsolutePath =
+    this + RelativePath(components)
+
+  private val memoizedToString =
+    memoize { "/" + components.joinToString(separator = "/") }
+
+  override fun toString(): String =
+    memoizedToString.value
 
   companion object {
     fun parse(string: String): AbsolutePath {

@@ -2,8 +2,12 @@ package omnia.io.filesystem.os
 
 import java.io.File as JavaFile
 import omnia.data.structure.immutable.ImmutableList
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.Directory
 import omnia.io.filesystem.NotADirectoryException
+import omnia.io.filesystem.PathComponent
+import omnia.io.filesystem.asAbsolutePath
+import omnia.io.filesystem.asPathComponent
 
 actual class OsDirectory internal constructor(private val fileSystem: OsFileSystem, private val javaFile: JavaFile):
     Directory {
@@ -16,11 +20,11 @@ actual class OsDirectory internal constructor(private val fileSystem: OsFileSyst
     }
   }
 
-  actual override val name: String get() =
-    javaFile.absoluteFile.name
+  actual override val name: PathComponent get() =
+    javaFile.absoluteFile.name.asPathComponent()
 
-  actual override val fullName: String get() =
-    javaFile.absolutePath
+  actual override val fullPath: AbsolutePath get() =
+    javaFile.absolutePath.asAbsolutePath()
 
   actual override val parentDirectory: OsDirectory? get() =
     javaFile.absoluteFile.parentFile?.let { OsDirectory(fileSystem, it) }
@@ -41,9 +45,9 @@ actual class OsDirectory internal constructor(private val fileSystem: OsFileSyst
   actual override val subdirectories: Iterable<OsDirectory> get() =
     javaFile.listFiles()!!.asList().filter(JavaFile::isDirectory).map { OsDirectory(fileSystem, it) }
 
-  actual override fun createFile(name: String): OsFile =
-    fileSystem.createFile(JavaFile(javaFile, name))
+  actual override fun createFile(name: PathComponent): OsFile =
+    fileSystem.createFile(JavaFile(javaFile, name.name))
 
-  actual override fun createSubdirectory(name: String): OsDirectory =
-    fileSystem.createDirectory(JavaFile(javaFile, name))
+  actual override fun createSubdirectory(name: PathComponent): OsDirectory =
+    fileSystem.createDirectory(JavaFile(javaFile, name.name))
 }

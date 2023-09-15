@@ -1,28 +1,26 @@
 package omnia.io.filesystem.virtual
 
 import omnia.data.structure.immutable.ImmutableList
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.Directory
+import omnia.io.filesystem.PathComponent
 
 /**
  * An in-memory virtual directory object. Useful for tests, intermediate migration steps, and other situations where
  * we want to run file-manipulation algorithms without accessing the operating system's storage.
  */
-class VirtualDirectory internal constructor(private val fileSystem: VirtualFileSystem, private val path: String):
+class VirtualDirectory internal constructor(private val fileSystem: VirtualFileSystem, override val fullPath: AbsolutePath):
   VirtualFileSystemObject, Directory {
 
-  override val name: String get() =
-    path.substringAfterLast("/")
-
-  override val fullName: String get() =
-    path
+  override val name: PathComponent get() =
+    // TODO how should we handle the directory name of the root directory, which has no name
+    fullPath.components.last()
 
   override val parentDirectory: VirtualDirectory? =
-    if (path == "/") {
+    if (fullPath.isRoot) {
       null
     } else {
-      path.substringBeforeLast("/", missingDelimiterValue = "")
-        .ifEmpty { "/" }
-        .let(fileSystem::getDirectory)
+      fileSystem.getDirectory(fullPath - 1)
     }
 
   override val parentDirectories: Iterable<VirtualDirectory> get() {
@@ -42,20 +40,18 @@ class VirtualDirectory internal constructor(private val fileSystem: VirtualFileS
   override val subdirectories: Iterable<VirtualDirectory> get() =
     fileSystem.getDirectoriesInDirectory(this)
 
-  // TODO Add better path parsing and concatenation
-  override fun createFile(name: String): VirtualFile =
-    fileSystem.createFile(if (path == "/") "/$name" else "$path/$name")
+  override fun createFile(name: PathComponent): VirtualFile =
+    fileSystem.createFile(fullPath + name)
 
-  // TODO Add better path parsing and concatenation
-  override fun createSubdirectory(name: String): VirtualDirectory =
-    fileSystem.createDirectory(if (path == "/") "/$name" else "$path/$name")
+  override fun createSubdirectory(name: PathComponent): VirtualDirectory =
+    fileSystem.createDirectory(fullPath + name)
 
   override fun toString() =
-    "VirtualDirectory@$fullName"
+    "VirtualDirectory@$fullPath"
 
   override fun equals(other: Any?) =
-    other is VirtualDirectory && this.fileSystem === other.fileSystem && this.fullName == other.fullName
+    other is VirtualDirectory && this.fileSystem === other.fileSystem && this.fullPath == other.fullPath
 
   override fun hashCode() =
-    fullName.hashCode()
+    fullPath.hashCode()
 }

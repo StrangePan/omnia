@@ -29,23 +29,23 @@ interface Directory: FileSystemObject {
   /**
    * Creates a new file with the given name within the current directory and returns the newly created file.
    */
-  fun createFile(name: String): File
+  fun createFile(name: PathComponent): File
 
   /**
    * Attempts to create a new subdirectory within the current directory and returns the newly created directory.
    */
-  fun createSubdirectory(name: String): Directory
+  fun createSubdirectory(name: PathComponent): Directory
 }
 
 // TODO These extension functions are not good enough. Replace with a more comprehensive, specializable API.
-fun Directory.getOrCreateFile(name: String): File =
+fun Directory.getOrCreateFile(name: PathComponent): File =
   this.getFile(name) ?: this.createFile(name)
 
-fun Directory.getFile(name: String): File? =
+fun Directory.getFile(name: PathComponent): File? =
   this.files.firstOrNull { it.name == name }
 
-fun Directory.getOrCreateSubdirectory(name: String): Directory =
+fun Directory.getOrCreateSubdirectory(name: PathComponent): Directory =
   this.getSubdirectory(name) ?: this.createSubdirectory(name)
 
-fun Directory.getSubdirectory(name: String): Directory? =
+fun Directory.getSubdirectory(name: PathComponent): Directory? =
   this.subdirectories.firstOrNull { it.name == name }

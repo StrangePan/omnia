@@ -10,7 +10,8 @@ import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.io.filesystem.Directory
 import omnia.io.filesystem.File
 import omnia.io.filesystem.FileAlreadyExistsException
-import omnia.io.filesystem.FileNotFoundException
+import omnia.io.filesystem.asAbsolutePath
+import omnia.io.filesystem.asPathComponent
 import omnia.io.filesystem.getFile
 import omnia.io.filesystem.getOrCreateFile
 import omnia.io.filesystem.getOrCreateSubdirectory
@@ -27,14 +28,14 @@ import omnia.util.test.fluent.isNull
 class VirtualDirectoryTest {
 
   val fileSystem = VirtualFileSystem()
-  val parentDirectory = fileSystem.createDirectory("/parent")
-  val underTest = fileSystem.createDirectory("/parent/directory")
+  val parentDirectory = fileSystem.createDirectory("/parent".asAbsolutePath())
+  val underTest = fileSystem.createDirectory("/parent/directory".asAbsolutePath())
 
   @Test
   fun parentDirectory_returnsParent() {
     assertThat(underTest.parentDirectory)
       .isNotNull()
-      .andThat(Directory::name) { it.isEqualTo("parent") }
+      .andThat({ it.name.toString() }) { it.isEqualTo("parent") }
   }
 
   @Test
@@ -55,9 +56,9 @@ class VirtualDirectoryTest {
 
   @Test
   fun files_returnsAllFiles() {
-    val firstFile = underTest.createFile("first")
-    val secondFile = underTest.createFile("second")
-    val thirdFile = underTest.createFile("third")
+    val firstFile = underTest.createFile("first".asPathComponent())
+    val secondFile = underTest.createFile("second".asPathComponent())
+    val thirdFile = underTest.createFile("third".asPathComponent())
 
     assertThat(underTest.files.toImmutableSet()).containsExactly(firstFile, secondFile, thirdFile)
   }
@@ -66,9 +67,9 @@ class VirtualDirectoryTest {
   fun files_whenRoot_returnsAllFiles() {
     val underTest = fileSystem.rootDirectory
 
-    val firstFile = underTest.createFile("first")
-    val secondFile = underTest.createFile("second")
-    val thirdFile = underTest.createFile("third")
+    val firstFile = underTest.createFile("first".asPathComponent())
+    val secondFile = underTest.createFile("second".asPathComponent())
+    val thirdFile = underTest.createFile("third".asPathComponent())
 
     assertThat(underTest.files.toImmutableSet()).containsExactly(firstFile, secondFile, thirdFile)
   }
@@ -80,9 +81,9 @@ class VirtualDirectoryTest {
 
   @Test
   fun subdirectories_returnsAllSubdirectories() {
-    val firstSubdirectory = underTest.createSubdirectory("first")
-    val secondSubdirectory = underTest.createSubdirectory("second")
-    val thirdSubdirectory = underTest.createSubdirectory("third")
+    val firstSubdirectory = underTest.createSubdirectory("first".asPathComponent())
+    val secondSubdirectory = underTest.createSubdirectory("second".asPathComponent())
+    val thirdSubdirectory = underTest.createSubdirectory("third".asPathComponent())
 
     assertThat(underTest.subdirectories.toImmutableSet())
       .containsExactly(firstSubdirectory, secondSubdirectory, thirdSubdirectory)
@@ -90,9 +91,9 @@ class VirtualDirectoryTest {
 
   @Test
   fun createFile_returnsCreatedFile() {
-    assertThat(underTest.createFile("file"))
-      .andThat(File::name) { it.isEqualTo("file") }
-      .andThat(File::fullName) { it.isEqualTo("/parent/directory/file") }
+    assertThat(underTest.createFile("file".asPathComponent()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("file") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/parent/directory/file") }
       .andThat(File::directory) { it.isEqualTo(underTest) }
       .andThat(File::readLines) { it.actual.test().assertNoValues().assertComplete() }
   }
@@ -101,38 +102,32 @@ class VirtualDirectoryTest {
   fun createFile_whenRoot_returnsCreatedFile() {
     val underTest = fileSystem.rootDirectory
 
-    assertThat(underTest.createFile("file"))
-      .andThat(File::name) { it.isEqualTo("file") }
-      .andThat(File::fullName) { it.isEqualTo("/file") }
+    assertThat(underTest.createFile("file".asPathComponent()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("file") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/file") }
       .andThat(File::directory) { it.isEqualTo(underTest) }
       .andThat(File::readLines) { it.actual.test().assertNoValues().assertComplete() }
   }
 
   @Test
   fun createFile_whenFileAlreadyExists_fails() {
-    underTest.createFile("file")
-    assertThat { underTest.createFile("file") }
+    underTest.createFile("file".asPathComponent())
+    assertThat { underTest.createFile("file".asPathComponent()) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun createFile_whenSubdirectoryAlreadyExists_fails() {
-    underTest.createSubdirectory("object")
-    assertThat { underTest.createFile("object") }
+    underTest.createSubdirectory("object".asPathComponent())
+    assertThat { underTest.createFile("object".asPathComponent()) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
-  fun createFile_specifyingSubdirectory_whenNotExists_fails() {
-    assertThat { underTest.createFile("subdirectory/file") }
-      .failsWith(FileNotFoundException::class)
-  }
-
-  @Test
   fun createSubdirectory_returnsCreatedDirectory() {
-    assertThat(underTest.createSubdirectory("subdirectory"))
-      .andThat(Directory::name) { it.isEqualTo("subdirectory") }
-      .andThat(Directory::fullName) { it.isEqualTo("/parent/directory/subdirectory") }
+    assertThat(underTest.createSubdirectory("subdirectory".asPathComponent()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("subdirectory") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/parent/directory/subdirectory") }
       .andThat(Directory::files) { it.isEmpty() }
       .andThat(Directory::subdirectories) { it.isEmpty() }
       .andThat(Directory::parentDirectory) { it.isNotNull().isEqualTo(underTest) }
@@ -142,9 +137,9 @@ class VirtualDirectoryTest {
   fun createSubdirectory_whenRoot_returnsCreatedDirectory() {
     val underTest = fileSystem.rootDirectory
 
-    assertThat(underTest.createSubdirectory("subdirectory"))
-      .andThat(Directory::name) { it.isEqualTo("subdirectory") }
-      .andThat(Directory::fullName) { it.isEqualTo("/subdirectory") }
+    assertThat(underTest.createSubdirectory("subdirectory".asPathComponent()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("subdirectory") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/subdirectory") }
       .andThat(Directory::files) { it.isEmpty() }
       .andThat(Directory::subdirectories) { it.isEmpty() }
       .andThat(Directory::parentDirectory) { it.isNotNull().isEqualTo(underTest) }
@@ -152,119 +147,95 @@ class VirtualDirectoryTest {
 
   @Test
   fun createSubdirectory_whenSubdirectoryAlreadyExists_fails() {
-    underTest.createSubdirectory("subdirectory")
-    assertThat { underTest.createSubdirectory("subdirectory") }
+    underTest.createSubdirectory("subdirectory".asPathComponent())
+    assertThat { underTest.createSubdirectory("subdirectory".asPathComponent()) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun createSubdirectory_whenFileAlreadyExists_fails() {
-    underTest.createFile("object")
-    assertThat { underTest.createSubdirectory("object") }
+    underTest.createFile("object".asPathComponent())
+    assertThat { underTest.createSubdirectory("object".asPathComponent()) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
-  fun createSubdirectory_specifyingSubdirectory_whenNotExists_fails() {
-    assertThat { underTest.createFile("subdirectory/subdirectory") }
-      .failsWith(FileNotFoundException::class)
-  }
-
-  @Test
   fun getOrCreateFile_whenNotExists_returnsCreatedDirectory() {
-    assertThat(underTest.getOrCreateFile("file"))
-      .andThat(File::name) { it.isEqualTo("file") }
+    assertThat(underTest.getOrCreateFile("file".asPathComponent()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("file") }
       .andThat(File::directory) { it.isEqualTo(underTest) }
   }
 
   @Test
   fun getOrCreateFile_whenExists_returnsExistingFile() {
-    val file = underTest.createFile("file")
-    assertThat(underTest.getOrCreateFile("file"))
+    val file = underTest.createFile("file".asPathComponent())
+    assertThat(underTest.getOrCreateFile("file".asPathComponent()))
       .isEqualTo(file)
   }
 
   @Test
   fun getOrCreateFile_whenIsDirectory_fails() {
-    underTest.createSubdirectory("object")
-    assertThat { underTest.getOrCreateFile("object") }
+    underTest.createSubdirectory("object".asPathComponent())
+    assertThat { underTest.getOrCreateFile("object".asPathComponent()) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun getFile_whenExists_returnsFile() {
-    val file = underTest.createFile("file")
-    assertThat(underTest.getFile("file"))
+    val file = underTest.createFile("file".asPathComponent())
+    assertThat(underTest.getFile("file".asPathComponent()))
       .isNotNull()
       .isEqualTo(file)
   }
 
   @Test
   fun getFile_whenNotExists_returnsNull() {
-    assertThat(underTest.getFile("file")).isNull()
+    assertThat(underTest.getFile("file".asPathComponent())).isNull()
   }
 
   @Test
   fun getFile_whenIsSubdirectory_returnsNull() {
-    underTest.createSubdirectory("object")
-    assertThat(underTest.getFile("object")).isNull()
-  }
-
-  @Test
-  fun getFile_inSubdirectory_returnsFile() {
-    val subdirectory = underTest.createSubdirectory("subdirectory")
-    val file = subdirectory.createFile("file")
-    assertThat(underTest.getFile("subdirectory/file"))
-      .isNotNull()
-      .isEqualTo(file)
+    underTest.createSubdirectory("object".asPathComponent())
+    assertThat(underTest.getFile("object".asPathComponent())).isNull()
   }
 
   @Test
   fun getOrCreateSubdirectory_whenNotExists_returnsCreatedDirectory() {
-    assertThat(underTest.getOrCreateSubdirectory("subdirectory"))
-      .andThat(Directory::name) { it.isEqualTo("subdirectory") }
+    assertThat(underTest.getOrCreateSubdirectory("subdirectory".asPathComponent()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("subdirectory") }
       .andThat(Directory::parentDirectory) { it.isNotNull().isEqualTo(underTest) }
   }
 
   @Test
   fun getOrCreateSubdirectory_whenExists_returnsExistingSubdirectory() {
-    val subdirectory = underTest.createSubdirectory("subdirectory")
-    assertThat(underTest.getOrCreateSubdirectory("subdirectory"))
+    val subdirectory = underTest.createSubdirectory("subdirectory".asPathComponent())
+    assertThat(underTest.getOrCreateSubdirectory("subdirectory".asPathComponent()))
       .isEqualTo(subdirectory)
   }
 
   @Test
   fun getOrCreateSubdirectory_whenIsFile_fails() {
-    underTest.createFile("object")
-    assertThat { underTest.getOrCreateSubdirectory("object") }
+    underTest.createFile("object".asPathComponent())
+    assertThat { underTest.getOrCreateSubdirectory("object".asPathComponent()) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun getSubdirectory_whenExists_returnsSubdirectory() {
-    val subdirectory = underTest.createSubdirectory("subdirectory")
-    assertThat(underTest.getSubdirectory("subdirectory"))
+    val subdirectory = underTest.createSubdirectory("subdirectory".asPathComponent())
+    assertThat(underTest.getSubdirectory("subdirectory".asPathComponent()))
       .isNotNull()
       .isEqualTo(subdirectory)
   }
 
   @Test
-  fun getSubdirectory_inSubdirectory_returnsSubdirectory() {
-    val subdirectory1 = underTest.createSubdirectory("subdirectory1")
-    val subdirectory2 = subdirectory1.createSubdirectory("subdirectory2")
-    assertThat(underTest.getSubdirectory("subdirectory1/subdirectory2"))
-      .isNotNull()
-      .isEqualTo(subdirectory2)
-  }
-
-  @Test
   fun getSubdirectory_whenNotExists_returnsNull() {
-    assertThat(underTest.getSubdirectory("subdirectory")).isNull()
+    assertThat(underTest.getSubdirectory("subdirectory".asPathComponent())).isNull()
   }
 
   @Test
   fun getSubdirectory_whenIsFile_returnsNull() {
-    underTest.createFile("object")
-    assertThat(underTest.getSubdirectory("object")).isNull()
+    underTest.createFile("object".asPathComponent())
+    assertThat(underTest.getSubdirectory("object".asPathComponent())).isNull()
   }
 }

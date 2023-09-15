@@ -8,6 +8,7 @@ import omnia.io.filesystem.Directory
 import omnia.io.filesystem.File
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
+import omnia.io.filesystem.asAbsolutePath
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.contains
@@ -27,9 +28,10 @@ class VirtualFileSystemTest {
 
   @Test
   fun rootDirectory_isCreated() {
-    assertThat(underTest.rootDirectory.fullName).isEqualTo("/")
-    assertThat(underTest.rootDirectory.name).isEqualTo("")
-    assertThat(underTest.isDirectory("/")).isTrue()
+    assertThat(underTest.rootDirectory.fullPath.toString()).isEqualTo("/")
+    // TODO how should we handle getting the name of the root directory?
+    assertThat { underTest.rootDirectory.name }.failsWith(Throwable::class)
+    assertThat(underTest.isDirectory("/".asAbsolutePath())).isTrue()
   }
 
   @Test
@@ -39,34 +41,34 @@ class VirtualFileSystemTest {
 
   @Test
   fun workingDirectory_whenSpecified_createsParentDirectories() {
-    val underTest = VirtualFileSystem("/working/directory/path")
+    val underTest = VirtualFileSystem("/working/directory/path".asAbsolutePath())
 
-    assertThat(underTest.workingDirectory.fullName).isEqualTo("/working/directory/path")
-    assertThat(underTest.isDirectory("/working")).isTrue()
-    assertThat(underTest.isDirectory("/working/directory")).isTrue()
-    assertThat(underTest.isDirectory("/working/directory/path")).isTrue()
+    assertThat(underTest.workingDirectory.fullPath.toString()).isEqualTo("/working/directory/path")
+    assertThat(underTest.isDirectory("/working".asAbsolutePath())).isTrue()
+    assertThat(underTest.isDirectory("/working/directory".asAbsolutePath())).isTrue()
+    assertThat(underTest.isDirectory("/working/directory/path".asAbsolutePath())).isTrue()
   }
 
   @Test
   fun createDirectory_returnsCreatedEmptyDirectory() {
-    assertThat(underTest.createDirectory("/directory"))
-      .andThat(Directory::name) { it.isEqualTo("directory") }
-      .andThat(Directory::fullName) { it.isEqualTo("/directory") }
+    assertThat(underTest.createDirectory("/directory".asAbsolutePath()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("directory") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/directory") }
       .andThat(Directory::files) { it.isEmpty() }
       .andThat(Directory::subdirectories) { it.isEmpty() }
   }
 
   @Test
   fun createDirectory_inSubdirectory_returnsCreatedDirectory() {
-    underTest.createDirectory("/some")
-    assertThat(underTest.createDirectory("/some/directory"))
-      .andThat(Directory::name) { it.isEqualTo("directory") }
-      .andThat(Directory::fullName) { it.isEqualTo("/some/directory") }
+    underTest.createDirectory("/some".asAbsolutePath())
+    assertThat(underTest.createDirectory("/some/directory".asAbsolutePath()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("directory") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/some/directory") }
   }
 
   @Test
   fun createDirectory_withoutCreatingParentDirectories_fails() {
-    assertThat { underTest.createDirectory("/some/directory") }
+    assertThat { underTest.createDirectory("/some/directory".asAbsolutePath()) }
       .failsWith(FileNotFoundException::class)
       .hasMessageThat {
         it.isNotNull()
@@ -75,50 +77,40 @@ class VirtualFileSystemTest {
   }
 
   @Test
-  fun createDirectory_withoutLeadingSlash_fails() {
-    assertThat { underTest.createDirectory("directory") }
-      .failsWith(IllegalArgumentException::class)
-  }
-
-  @Test
-  fun createDirectory_withTrailingSlash_fails() {
-    assertThat { underTest.createDirectory("/directory/") }
-      .failsWith(IllegalArgumentException::class)
-  }
-
-  @Test
   fun createDirectory_withSamePathAsExistingFile_fails() {
-    underTest.createFile("/object")
-    assertThat { underTest.createDirectory("/object") }
+    val path = "/object".asAbsolutePath()
+    underTest.createFile(path)
+    assertThat { underTest.createDirectory(path) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun createDirectory_withSamePathAsExistingDirectory_fails() {
-    underTest.createDirectory("/directory")
-    assertThat { underTest.createDirectory("/directory") }
+    val path = "/directory".asAbsolutePath()
+    underTest.createDirectory(path)
+    assertThat { underTest.createDirectory(path) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun createFile_returnsCreatedEmptyFile() {
-    assertThat(underTest.createFile("/file"))
-      .andThat(File::name) { it.isEqualTo("file") }
-      .andThat(File::fullName) { it.isEqualTo("/file") }
+    assertThat(underTest.createFile("/file".asAbsolutePath()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("file") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/file") }
       .andThat(File::readLines) { it.actual.test().assertNoValues().assertComplete() }
   }
 
   @Test
   fun createFile_inSubdirectory_returnsCreatedFile() {
-    underTest.createDirectory("/some")
-    assertThat(underTest.createFile("/some/file"))
-      .andThat(File::name) { it.isEqualTo("file") }
-      .andThat(File::fullName) { it.isEqualTo("/some/file") }
+    underTest.createDirectory("/some".asAbsolutePath())
+    assertThat(underTest.createFile("/some/file".asAbsolutePath()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("file") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/some/file") }
   }
 
   @Test
   fun createFile_withoutCreatingParentDirectories_fails() {
-    assertThat { underTest.createFile("/some/file") }
+    assertThat { underTest.createFile("/some/file".asAbsolutePath()) }
       .failsWith(FileNotFoundException::class)
       .hasMessageThat {
         it.isNotNull()
@@ -128,104 +120,94 @@ class VirtualFileSystemTest {
   }
 
   @Test
-  fun createFile_withoutLeadingSlash_fails() {
-    assertThat { underTest.createFile("file") }
-      .failsWith(IllegalArgumentException::class)
-  }
-
-  @Test
-  fun createFile_withTrailingSlash_fails() {
-    assertThat { underTest.createFile("/file/") }
-      .failsWith(IllegalArgumentException::class)
-  }
-
-  @Test
   fun createFile_withSamePathAsExistingDirectory_fails() {
-    underTest.createDirectory("/object")
-    assertThat { underTest.createDirectory("/object") }
+    val path = "/object".asAbsolutePath()
+    underTest.createDirectory(path)
+    assertThat { underTest.createDirectory(path) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun createFile_withSamePathAsExistingFile_fails() {
-    underTest.createFile("/file")
-    assertThat { underTest.createFile("/file") }
+    val path = "/file".asAbsolutePath()
+    underTest.createFile(path)
+    assertThat { underTest.createFile(path) }
       .failsWith(FileAlreadyExistsException::class)
   }
 
   @Test
   fun isDirectory_whenNotExists_isFalse() {
-    assertThat(underTest.isDirectory("/directory")).isFalse()
+    assertThat(underTest.isDirectory("/directory".asAbsolutePath())).isFalse()
   }
 
   @Test
   fun isDirectory_whenExistsAndIsDirectory_isTrue() {
-    underTest.createDirectory("/directory")
-    assertThat(underTest.isDirectory("/directory")).isTrue()
+    underTest.createDirectory("/directory".asAbsolutePath())
+    assertThat(underTest.isDirectory("/directory".asAbsolutePath())).isTrue()
   }
 
   @Test
   fun isDirectory_whenIsFile_isFalse() {
-    underTest.createFile("/object")
-    assertThat(underTest.isDirectory("/object")).isFalse()
+    underTest.createFile("/object".asAbsolutePath())
+    assertThat(underTest.isDirectory("/object".asAbsolutePath())).isFalse()
   }
 
   @Test
   fun isFile_whenNotExists_isFalse() {
-    assertThat(underTest.isFile("/file")).isFalse()
+    assertThat(underTest.isFile("/file".asAbsolutePath())).isFalse()
   }
 
   @Test
   fun isFile_whenExistsAndIsDirectory_isTrue() {
-    underTest.createFile("/file")
-    assertThat(underTest.isFile("/file")).isTrue()
+    underTest.createFile("/file".asAbsolutePath())
+    assertThat(underTest.isFile("/file".asAbsolutePath())).isTrue()
   }
 
   @Test
   fun isFile_whenIsDirectory_isFalse() {
-    underTest.createDirectory("/object")
-    assertThat(underTest.isFile("/object")).isFalse()
+    underTest.createDirectory("/object".asAbsolutePath())
+    assertThat(underTest.isFile("/object".asAbsolutePath())).isFalse()
   }
 
   @Test
   fun getDirectory_whenExists_returnsDirectory() {
-    underTest.createDirectory("/directory")
-    assertThat(underTest.getDirectory("/directory"))
-      .andThat(Directory::name) { it.isEqualTo("directory") }
-      .andThat(Directory::fullName) { it.isEqualTo("/directory") }
+    underTest.createDirectory("/directory".asAbsolutePath())
+    assertThat(underTest.getDirectory("/directory".asAbsolutePath()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("directory") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/directory") }
   }
 
   @Test
   fun getDirectory_whenNotExists_fails() {
-    assertThat { underTest.getDirectory("/directory") }
+    assertThat { underTest.getDirectory("/directory".asAbsolutePath()) }
       .failsWith(FileNotFoundException::class)
   }
 
   @Test
   fun getDirectory_whenIsFile_fails() {
-    underTest.createFile("/object")
-    assertThat { underTest.getDirectory("/object") }
+    underTest.createFile("/object".asAbsolutePath())
+    assertThat { underTest.getDirectory("/object".asAbsolutePath()) }
       .failsWith(FileNotFoundException::class)
   }
 
   @Test
   fun getFile_whenExists_returnsFile() {
-    underTest.createFile("/file")
-    assertThat(underTest.getFile("/file"))
-      .andThat(File::name) { it.isEqualTo("file") }
-      .andThat(File::fullName) { it.isEqualTo("/file") }
+    underTest.createFile("/file".asAbsolutePath())
+    assertThat(underTest.getFile("/file".asAbsolutePath()))
+      .andThat({ it.name.toString() }) { it.isEqualTo("file") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/file") }
   }
 
   @Test
   fun getFile_whenNotExists_fails() {
-    assertThat { underTest.getFile("/file") }
+    assertThat { underTest.getFile("/file".asAbsolutePath()) }
       .failsWith(FileNotFoundException::class)
   }
 
   @Test
   fun getFile_whenIsDirectory_fails() {
-    underTest.createDirectory("/object")
-    assertThat { underTest.getFile("/object") }
+    underTest.createDirectory("/object".asAbsolutePath())
+    assertThat { underTest.getFile("/object".asAbsolutePath()) }
       .failsWith(FileNotFoundException::class)
   }
 }

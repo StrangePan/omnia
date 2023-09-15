@@ -14,9 +14,13 @@ import java.io.BufferedWriter
 import java.io.FileReader
 import java.io.FileWriter
 import omnia.io.IOException
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.File
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.NotAFileException
+import omnia.io.filesystem.PathComponent
+import omnia.io.filesystem.asAbsolutePath
+import omnia.io.filesystem.asPathComponent
 
 actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, private val jFile: JavaFile): File {
 
@@ -28,11 +32,11 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
     }
   }
 
-  actual override val name: String get() =
-    jFile.absoluteFile.name
+  actual override val name: PathComponent get() =
+    jFile.absoluteFile.name.asPathComponent()
 
-  actual override val fullName: String get() =
-    jFile.absolutePath
+  actual override val fullPath: AbsolutePath get() =
+    jFile.absolutePath.asAbsolutePath()
 
   actual override val directory: OsDirectory get() =
     OsDirectory(fileSystem, jFile.parentFile!!)

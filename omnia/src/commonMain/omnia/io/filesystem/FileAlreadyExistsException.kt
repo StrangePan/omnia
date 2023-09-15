@@ -4,15 +4,16 @@ import omnia.io.IOException
 
 class FileAlreadyExistsException: IOException {
 
-  constructor(file: FileSystemObject): super(file.fullName)
+  constructor(file: FileSystemObject): super(file.fullPath.toString())
 
   constructor(file: FileSystemObject, message: String): super(msg(file, message))
 
   constructor(file: FileSystemObject, message: String, cause: Throwable): super(msg(file, message), cause)
 
-  constructor(file: FileSystemObject, cause: Throwable): super(file.fullName, cause)
+  constructor(file: FileSystemObject, cause: Throwable): super(file.fullPath.toString(), cause)
 
   companion object {
-    fun msg(file: FileSystemObject, message: String) = message + ":\n" + file.fullName
+    fun msg(file: FileSystemObject, message: String) =
+      message + ":\n" + file.fullPath.toString()
   }
 }

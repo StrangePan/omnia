@@ -1,13 +1,15 @@
 package omnia.io.filesystem.os
 
+import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.Directory
+import omnia.io.filesystem.PathComponent
 
 /** A representation of a directory in the operating system's filesystem. */
 expect class OsDirectory: Directory {
 
-  override val name: String
+  override val name: PathComponent
 
-  override val fullName: String
+  override val fullPath: AbsolutePath
 
   override val parentDirectory: OsDirectory?
 
@@ -17,7 +19,7 @@ expect class OsDirectory: Directory {
 
   override val subdirectories: Iterable<OsDirectory>
 
-  override fun createFile(name: String): OsFile
+  override fun createFile(name: PathComponent): OsFile
 
-  override fun createSubdirectory(name: String): OsDirectory
+  override fun createSubdirectory(name: PathComponent): OsDirectory
 }
