@@ -1,4 +1,4 @@
-package omnia.io
+package omnia.io.filesystem.os
 
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.maybe.switchIfEmpty
@@ -17,42 +17,40 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import omnia.cli.out.lineSeparator
+import omnia.io.IOException
+import omnia.io.filesystem.AbsolutePath
+import omnia.io.filesystem.File
+import omnia.io.filesystem.NotAFileException
 import omnia.platform.swift.asNSString
 import omnia.util.reaktive.observable.collectIntoImmutableList
 import platform.Foundation.NSError
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
-import platform.Foundation.lastPathComponent
-import platform.Foundation.stringByDeletingLastPathComponent
-import platform.Foundation.stringByDeletingPathExtension
 import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
-/** An interface for interfacing with file system files.  */
-actual class File private constructor(private val path: String): FileSystemObject {
+actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, actual override val fullPath: AbsolutePath): File {
 
   init {
-    if (!isRegularFile(path)) {
-      throw NotAFileException(path)
+    if (!fileSystem.isFile(fullPath)) {
+      throw NotAFileException(fullPath.toString())
     }
   }
 
   actual override val name get() =
-    path.asNSString().lastPathComponent.asNSString().stringByDeletingPathExtension
+    fullPath.components.last()
 
-  actual override val fullName get() = path
+  actual override val directory get() =
+    OsDirectory(fileSystem, fullPath - 1)
 
-  actual val directory get() =
-    Directory.fromPath(path.asNSString().stringByDeletingLastPathComponent)
-
-  actual fun clearAndWriteLines(lines: Observable<String>): Completable {
+  actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     return lines.collectIntoImmutableList()
         .map { it.joinToString(lineSeparator()) }
         .doOnAfterSuccess {
           memScoped {
             val error = alloc<ObjCObjectVar<NSError?>>()
             it.asNSString().writeToFile(
-              path,
+              fullPath.toString(),
               atomically = true,
               encoding = NSUTF8StringEncoding,
               error = error.ptr
@@ -63,25 +61,12 @@ actual class File private constructor(private val path: String): FileSystemObjec
         .asCompletable()
   }
 
-  actual fun readLines(): Observable<String> {
+  actual override fun readLines(): Observable<String> {
     return singleFromFunction {
-        NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null)
-      }
+      NSString.stringWithContentsOfFile(fullPath.toString(), NSUTF8StringEncoding, null)
+    }
       .notNull()
-      .switchIfEmpty(singleDefer { singleOfError(NotAFileException(path)) })
+      .switchIfEmpty(singleDefer { singleOfError(NotAFileException(fullPath.toString())) })
       .flatMapIterable { it.splitToSequence("\n").asIterable() }
-  }
-
-  actual companion object {
-
-    actual fun fromPath(path: String) = File(path)
-
-    fun isRegularFile(path: String): Boolean {
-      return getFileInfo(path).let { it.exists && !it.isDirectory }
-    }
-
-    actual fun fromResource(resource: String): File {
-      TODO("not implemented")
-    }
   }
 }

@@ -1,0 +1,75 @@
+package omnia.io.filesystem.os
+
+import java.io.File as JavaFile
+import com.badoo.reaktive.completable.Completable
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.asCompletable
+import com.badoo.reaktive.observable.doOnAfterFinally
+import com.badoo.reaktive.observable.doOnBeforeNext
+import com.badoo.reaktive.observable.doOnBeforeSubscribe
+import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.observable.observableUsing
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.FileReader
+import java.io.FileWriter
+import omnia.io.IOException
+import omnia.io.filesystem.AbsolutePath
+import omnia.io.filesystem.File
+import omnia.io.filesystem.FileNotFoundException
+import omnia.io.filesystem.NotAFileException
+import omnia.io.filesystem.PathComponent
+import omnia.io.filesystem.asAbsolutePath
+import omnia.io.filesystem.asPathComponent
+
+actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, private val jFile: JavaFile): File {
+
+  internal constructor(fileSystem: OsFileSystem, path: String) : this(fileSystem, JavaFile(path))
+
+  init {
+    if (!fileSystem.isFile(jFile)) {
+      throw NotAFileException(jFile.absolutePath)
+    }
+  }
+
+  actual override val name: PathComponent get() =
+    jFile.absoluteFile.name.asPathComponent()
+
+  actual override val fullPath: AbsolutePath get() =
+    jFile.absolutePath.asAbsolutePath()
+
+  actual override val directory: OsDirectory get() =
+    OsDirectory(fileSystem, jFile.parentFile!!)
+
+  actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
+    lateinit var writer: BufferedWriter
+    return lines.doOnBeforeSubscribe { writer = BufferedWriter(FileWriter(jFile)) }
+        .doOnBeforeNext {
+          writer.write(it)
+          writer.write(System.lineSeparator())
+        }
+        .doOnAfterFinally { writer.close() }
+        .asCompletable()
+  }
+
+  actual override fun readLines(): Observable<String> =
+    observableUsing(
+      resourceSupplier = { BufferedReader(FileReader(jFile)) },
+      resourceCleanup = { it.close() },
+      eager = true) { reader: BufferedReader ->
+        observable<String> { emitter ->
+          while (!emitter.isDisposed) {
+            try {
+              emitter.onNext(reader.readLine() ?: break)
+            } catch (e: java.io.FileNotFoundException) {
+              throw FileNotFoundException(e)
+            } catch (e: java.io.IOException) {
+              throw IOException(e)
+            }
+          }
+          if (!emitter.isDisposed) {
+            emitter.onComplete()
+          }
+        }
+      }
+}

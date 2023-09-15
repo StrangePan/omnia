@@ -1,11 +1,7 @@
-package omnia.io
+package omnia.io.filesystem
 
 /** A representation of a filesystem directory. Can be used to navigate the file system. */
-expect class Directory: FileSystemObject {
-
-  override val name: String
-
-  override val fullName: String
+interface Directory: FileSystemObject {
 
   /**
    * Returns the parent [Directory] of this directory, or `null` if this is the root directory of
@@ -30,30 +26,26 @@ expect class Directory: FileSystemObject {
    */
   val subdirectories: Iterable<Directory>
 
-  fun createFile(name: String): File
+  /**
+   * Creates a new file with the given name within the current directory and returns the newly created file.
+   */
+  fun createFile(name: PathComponent): File
 
-  fun createSubdirectory(name: String): Directory
-
-  companion object {
-    /** The directory for the programs current working directory. */
-    val workingDirectory: Directory
-
-    /** The root file system directory. */
-    val rootDirectory: Directory
-
-    /** Looks up a file system directory with the given path. */
-    fun fromPath(path: String): Directory
-  }
+  /**
+   * Attempts to create a new subdirectory within the current directory and returns the newly created directory.
+   */
+  fun createSubdirectory(name: PathComponent): Directory
 }
 
-fun Directory.getOrCreateFile(name: String): File =
+// TODO These extension functions are not good enough. Replace with a more comprehensive, specializable API.
+fun Directory.getOrCreateFile(name: PathComponent): File =
   this.getFile(name) ?: this.createFile(name)
 
-fun Directory.getFile(name: String) =
+fun Directory.getFile(name: PathComponent): File? =
   this.files.firstOrNull { it.name == name }
 
-fun Directory.getOrCreateSubdirectory(name: String): Directory =
+fun Directory.getOrCreateSubdirectory(name: PathComponent): Directory =
   this.getSubdirectory(name) ?: this.createSubdirectory(name)
 
-fun Directory.getSubdirectory(name: String): Directory? =
+fun Directory.getSubdirectory(name: PathComponent): Directory? =
   this.subdirectories.firstOrNull { it.name == name }

@@ -1,6 +1,8 @@
-package omnia.io
+package omnia.io.filesystem
 
-class NotADirectoryException: IOException {
+import omnia.io.IOException
+
+class FileNotFoundException: IOException {
 
   constructor(message: String): super(message)
 
