@@ -24,3 +24,6 @@ data class PathComponent internal constructor (val name: String) {
 
   override fun toString() = name
 }
+
+fun String.asPathComponent() =
+  PathComponent(this)
