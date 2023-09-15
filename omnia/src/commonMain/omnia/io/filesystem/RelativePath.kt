@@ -126,3 +126,6 @@ data class RelativePath(val trimmedParents: Int = 0, val components: ImmutableLi
     }
   }
 }
+
+fun String.asRelativePath() =
+  RelativePath.parse(this)

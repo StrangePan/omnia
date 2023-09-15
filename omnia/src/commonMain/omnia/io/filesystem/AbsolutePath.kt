@@ -93,3 +93,6 @@ data class AbsolutePath(val components: ImmutableList<PathComponent> = Immutable
     }
   }
 }
+
+fun String.asAbsolutePath() =
+  AbsolutePath.parse(this)
