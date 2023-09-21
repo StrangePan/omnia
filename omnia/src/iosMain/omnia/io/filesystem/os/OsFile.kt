@@ -11,6 +11,8 @@ import com.badoo.reaktive.single.notNull
 import com.badoo.reaktive.single.singleDefer
 import com.badoo.reaktive.single.singleFromFunction
 import com.badoo.reaktive.single.singleOfError
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -29,6 +31,7 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, actual override val fullPath: AbsolutePath): File {
 
   init {

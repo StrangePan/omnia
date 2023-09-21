@@ -1,5 +1,7 @@
 package omnia.io.filesystem.os
 
+import kotlin.experimental.ExperimentalNativeApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileSystem
@@ -9,6 +11,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
+@OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
 actual class OsFileSystem actual constructor(): FileSystem {
 
   actual override val rootDirectory get() =

@@ -1,5 +1,6 @@
 package omnia.io.filesystem.os
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import omnia.data.structure.immutable.ImmutableList
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.Directory
@@ -9,6 +10,7 @@ import omnia.io.filesystem.asPathComponent
 import platform.Foundation.NSFileWrapper
 import platform.Foundation.NSURL.Companion.fileURLWithPath
 
+@OptIn(ExperimentalForeignApi::class)
 actual class OsDirectory internal constructor(internal val fileSystem: OsFileSystem, actual override val fullPath: AbsolutePath): Directory {
 
   init {

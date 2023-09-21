@@ -1,6 +1,7 @@
 package omnia.io.filesystem.os
 
 import kotlinx.cinterop.BooleanVar
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
@@ -10,6 +11,7 @@ import platform.Foundation.NSFileManager
 
 data class FileInfo(val exists: Boolean, val isDirectory: Boolean)
 
+@OptIn(ExperimentalForeignApi::class)
 fun getFileInfo(path: AbsolutePath): FileInfo {
   return memScoped {
     val isDirectory = alloc<BooleanVar>()

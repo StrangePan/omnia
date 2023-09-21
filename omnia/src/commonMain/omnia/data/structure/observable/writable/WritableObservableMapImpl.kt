@@ -4,7 +4,7 @@ import com.badoo.reaktive.observable.concatWith
 import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.subject.publish.PublishSubject
-import kotlin.jvm.Volatile
+import kotlin.concurrent.Volatile
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set

@@ -1,5 +1,8 @@
 package omnia.reference
 
+import kotlin.experimental.ExperimentalNativeApi
+
+@OptIn(ExperimentalNativeApi::class)
 actual class WeakReference<T : Any> private constructor(value: T? = null) {
   private val weakReference = value?.let { kotlin.native.ref.WeakReference(it) }
 
