@@ -35,6 +35,26 @@ interface Directory: FileSystemObject {
    * Attempts to create a new subdirectory within the current directory and returns the newly created directory.
    */
   fun createSubdirectory(name: PathComponent): Directory
+
+  /**
+   * Deletes this directory from the filesystem along with all subdirectories and files contained within. Note that the
+   * root directory and the working directory cannot be deleted.
+   * @see FileSystemObject.delete
+   */
+  override fun delete()
+
+  /**
+   * Moves this directory to a new location if that new location is not already occupied. Note that the root directory
+   * and the working directory cannot be moved.
+   * @see FileSystemObject.moveTo
+   */
+  override fun moveTo(path: AbsolutePath)
+
+  /**
+   * Creates a copy of this directory at a new location if that location is not already occupied.
+   * @see FileSystemObject.copyTo
+   */
+  override fun copyTo(path: AbsolutePath): Directory
 }
 
 // TODO These extension functions are not good enough. Replace with a more comprehensive, specializable API.
