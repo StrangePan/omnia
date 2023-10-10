@@ -15,14 +15,18 @@ import omnia.io.filesystem.PathComponent
  * An in-memory virtual file object. Useful for tests, intermediate migration steps, and other situations where
  * we want to run file-manipulation algorithms without accessing the operating system's storage.
  */
-class VirtualFile internal constructor(private val fileSystem: VirtualFileSystem, override val fullPath: AbsolutePath):
+// TODO rewrite so that the file contents are stored in the filesystem, not here in this object
+class VirtualFile internal constructor(
+  internal val fileSystem: VirtualFileSystem,
+  internal var fullPathMutable: AbsolutePath,
+  internal val lines: ArrayList<String> = ArrayList.create()):
   VirtualFileSystemObject, File {
 
-    init {
-      require(!fullPath.isRoot)
-    }
+  init {
+    require(!fullPath.isRoot)
+  }
 
-  private val lines = ArrayList.create<String>()
+  override val fullPath: AbsolutePath get() = this.fullPathMutable
 
   override val name: PathComponent get() =
     fullPath.components.last()
@@ -31,7 +35,9 @@ class VirtualFile internal constructor(private val fileSystem: VirtualFileSystem
     fileSystem.getDirectory(fullPath - 1)
 
   override fun clearAndWriteLines(lines: Observable<String>): Completable =
-    lines.doOnBeforeSubscribe { this.lines.clear() }
+    lines
+      .doOnBeforeSubscribe { require(this.fileSystem.getFile(fullPath) == this) }
+      .doOnBeforeSubscribe { this.lines.clear() }
       .doOnAfterNext { this.lines.add(it) }
       .asCompletable()
 
@@ -42,8 +48,24 @@ class VirtualFile internal constructor(private val fileSystem: VirtualFileSystem
     "VirtualFile@$fullPath"
 
   override fun equals(other: Any?) =
-    other is VirtualFile && this.fileSystem === other.fileSystem && this.fullPath == other.fullPath
+    other === this // equivalency is important since this file object actually holds the contents of the file
 
   override fun hashCode() =
     fullPath.hashCode()
+
+  override fun delete() {
+    require(fileSystem.getFile(fullPath) == this)
+    fileSystem.tree.deleteFile(fullPath)
+  }
+
+  override fun moveTo(path: AbsolutePath) {
+    require(fileSystem.getFile(fullPath) == this)
+    fileSystem.tree.moveFile(fullPath, path)
+    this.fullPathMutable = path
+  }
+
+  override fun copyTo(path: AbsolutePath): VirtualFile {
+    require(fileSystem.getFile(fullPath) == this)
+    return fileSystem.tree.copyFile(fullPath, path)
+  }
 }

@@ -14,7 +14,7 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
 
   constructor(): this(ROOT_DIRECTORY_PATH)
 
-  private val tree = VirtualFileSystemTree()
+  internal val tree = VirtualFileSystemTree()
 
   init {
     createDirectory(ROOT_DIRECTORY_PATH)
