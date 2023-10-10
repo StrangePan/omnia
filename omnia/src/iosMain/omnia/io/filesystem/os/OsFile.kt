@@ -72,4 +72,16 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
       .switchIfEmpty(singleDefer { singleOfError(NotAFileException(fullPath.toString())) })
       .flatMapIterable { it.splitToSequence("\n").asIterable() }
   }
+
+  actual override fun delete() {
+    TODO("Not yet implemented")
+  }
+
+  actual override fun moveTo(path: AbsolutePath) {
+    TODO("Not yet implemented")
+  }
+
+  actual override fun copyTo(path: AbsolutePath): OsFile {
+    TODO("Not yet implemented")
+  }
 }

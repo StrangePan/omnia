@@ -72,4 +72,16 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
           }
         }
       }
+
+  actual override fun delete() {
+    TODO("Not yet implemented")
+  }
+
+  actual override fun moveTo(path: AbsolutePath) {
+    TODO("Not yet implemented")
+  }
+
+  actual override fun copyTo(path: AbsolutePath): OsFile {
+    TODO("Not yet implemented")
+  }
 }

@@ -22,4 +22,10 @@ expect class OsDirectory: Directory {
   override fun createFile(name: PathComponent): OsFile
 
   override fun createSubdirectory(name: PathComponent): OsDirectory
+
+  override fun delete()
+
+  override fun moveTo(path: AbsolutePath)
+
+  override fun copyTo(path: AbsolutePath): OsDirectory
 }

@@ -18,4 +18,10 @@ expect class OsFile: File {
   override fun clearAndWriteLines(lines: Observable<String>): Completable
 
   override fun readLines(): Observable<String>
+
+  override fun delete()
+
+  override fun moveTo(path: AbsolutePath)
+
+  override fun copyTo(path: AbsolutePath): OsFile
 }

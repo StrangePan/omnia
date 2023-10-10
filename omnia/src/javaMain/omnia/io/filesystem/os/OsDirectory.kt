@@ -50,4 +50,16 @@ actual class OsDirectory internal constructor(private val fileSystem: OsFileSyst
 
   actual override fun createSubdirectory(name: PathComponent): OsDirectory =
     fileSystem.createDirectory(JavaFile(javaFile, name.name))
+
+  actual override fun delete() {
+    TODO("Not yet implemented")
+  }
+
+  actual override fun moveTo(path: AbsolutePath) {
+    TODO("Not yet implemented")
+  }
+
+  actual override fun copyTo(path: AbsolutePath): OsDirectory {
+    TODO("Not yet implemented")
+  }
 }
