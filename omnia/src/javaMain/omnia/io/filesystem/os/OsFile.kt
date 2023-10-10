@@ -74,14 +74,26 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
       }
 
   actual override fun delete() {
-    TODO("Not yet implemented")
+    if (!jFile.delete()) {
+      throw IOException("Unable to delete file: $fullPath")
+    }
   }
 
   actual override fun moveTo(path: AbsolutePath) {
-    TODO("Not yet implemented")
+    if (!jFile.renameTo(JavaFile(path.toString()))) {
+      throw IOException("Unable to move file: $fullPath => $path")
+    }
   }
 
   actual override fun copyTo(path: AbsolutePath): OsFile {
-    TODO("Not yet implemented")
+    try {
+      return OsFile(fileSystem, jFile.copyTo(JavaFile(path.toString()), overwrite = false))
+    } catch (e: kotlin.io.NoSuchFileException) {
+      throw omnia.io.filesystem.FileNotFoundException(e)
+    } catch (e: kotlin.io.FileAlreadyExistsException) {
+      throw omnia.io.filesystem.FileAlreadyExistsException(path, e)
+    } catch (e: java.io.IOException) {
+      throw omnia.io.IOException(e)
+    }
   }
 }

@@ -2,8 +2,11 @@ package omnia.io.filesystem.os
 
 import java.io.File as JavaFile
 import omnia.data.structure.immutable.ImmutableList
+import omnia.io.IOException
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.Directory
+import omnia.io.filesystem.FileAlreadyExistsException
+import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.NotADirectoryException
 import omnia.io.filesystem.PathComponent
 import omnia.io.filesystem.asAbsolutePath
@@ -52,14 +55,30 @@ actual class OsDirectory internal constructor(private val fileSystem: OsFileSyst
     fileSystem.createDirectory(JavaFile(javaFile, name.name))
 
   actual override fun delete() {
-    TODO("Not yet implemented")
+    if (!javaFile.deleteRecursively()) {
+      throw IOException("Unable to fully delete directory $fullPath")
+    }
   }
 
   actual override fun moveTo(path: AbsolutePath) {
-    TODO("Not yet implemented")
+    if (!javaFile.renameTo(JavaFile(path.toString()))) {
+      throw IOException("Unable to move directory: $fullPath => $path")
+    }
   }
 
   actual override fun copyTo(path: AbsolutePath): OsDirectory {
-    TODO("Not yet implemented")
+    try {
+      val target = JavaFile(path.toString())
+      if (!javaFile.copyRecursively(target, overwrite = false)) {
+        throw IOException("Unable to copy directory: $fullPath => $path")
+      }
+      return OsDirectory(fileSystem, target)
+    } catch (e: kotlin.io.NoSuchFileException) {
+      throw FileNotFoundException(e)
+    } catch (e: kotlin.io.FileAlreadyExistsException) {
+      throw FileAlreadyExistsException(path, e)
+    } catch (e: java.io.IOException) {
+      throw IOException(e)
+    }
   }
 }
