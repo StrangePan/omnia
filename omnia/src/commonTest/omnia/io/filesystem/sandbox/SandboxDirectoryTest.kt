@@ -79,4 +79,6 @@ class SandboxDirectoryTest {
       .andThat(SandboxDirectory::files) { it.isEmpty() }
       .andThat(SandboxDirectory::subdirectories) { it.isEmpty() }
   }
+
+  // TODO tests for move, copy, delete
 }

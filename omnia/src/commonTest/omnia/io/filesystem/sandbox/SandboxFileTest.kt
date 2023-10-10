@@ -71,4 +71,6 @@ class SandboxFileTest {
 
     underTest.readLines().test().assertComplete().assertValues(lines)
   }
+
+  // TODO tests for move, copy, delete
 }

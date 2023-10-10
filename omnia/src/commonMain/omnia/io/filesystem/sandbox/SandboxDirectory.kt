@@ -36,7 +36,6 @@ class SandboxDirectory internal constructor(
   override val files: Iterable<SandboxFile> get() =
     baseDirectory.files.map { SandboxFile(fileSystem, it) }
 
-
   override val subdirectories: Iterable<SandboxDirectory> get() =
     baseDirectory.subdirectories.map { SandboxDirectory(fileSystem, it) }
 
@@ -46,4 +45,22 @@ class SandboxDirectory internal constructor(
   override fun createSubdirectory(name: PathComponent): SandboxDirectory =
     SandboxDirectory(fileSystem, baseDirectory.createSubdirectory(name))
 
+  override fun delete() {
+    require(!fullPath.isRoot) { "Cannot delete root directory" }
+    require(!fullPath.contains(fileSystem.workingDirectory.fullPath)) { "Cannot delete working directory" }
+    baseDirectory.delete()
+  }
+
+  override fun moveTo(path: AbsolutePath) {
+    require(!fullPath.isRoot) { "Cannot move root directory" }
+    require(!path.isRoot) { "Cannot move to root directory" }
+    require(!fullPath.contains(fileSystem.workingDirectory.fullPath)) { "Cannot move working directory: $fullPath => $path" }
+    baseDirectory.moveTo(fileSystem.toBasePath(path))
+  }
+
+  override fun copyTo(path: AbsolutePath): SandboxDirectory {
+    require(!path.isRoot) { "Cannot copy to root directory" }
+    require(!fullPath.contains(path)) { "Cannot copy directory into itself: $fullPath => $path"}
+    return SandboxDirectory(fileSystem, baseDirectory.copyTo(fileSystem.toBasePath(path)))
+  }
 }

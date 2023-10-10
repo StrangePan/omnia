@@ -26,4 +26,13 @@ class SandboxFile internal constructor(private val fileSystem: SandboxFileSystem
 
   override fun readLines(): Observable<String> =
     baseFile.readLines()
+
+  override fun delete() =
+    baseFile.delete()
+
+  override fun moveTo(path: AbsolutePath) =
+    baseFile.moveTo(fileSystem.toBasePath(path))
+
+  override fun copyTo(path: AbsolutePath): SandboxFile =
+    SandboxFile(fileSystem, baseFile.copyTo(fileSystem.toBasePath(path)))
 }
