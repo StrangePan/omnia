@@ -128,7 +128,7 @@ internal class VirtualFileSystemTree {
   fun moveDirectory(from: AbsolutePath, to: AbsolutePath) {
     require(!from.isRoot) { "Cannot move the root directory"}
     require(!to.isRoot) { "Cannot move the root directory"}
-    require(!from.contains(to)) { "Cannot move a directory into itself" }
+    require(!from.contains(to)) { "Cannot move a directory into itself: $from => $to" }
     val directory = getFileSystemObject(from) ?: throw FileNotFoundException(from.toString())
     if (directory !is Directory) {
       throw NotADirectoryException(from.toString())
@@ -157,8 +157,8 @@ internal class VirtualFileSystemTree {
   }
 
   fun copyFile(from: AbsolutePath, to: AbsolutePath): VirtualFile {
-    require(!from.isRoot) { "cannot copy the root directory" }
-    require(!to.isRoot) { "cannot copy the root directory" }
+    require(!from.isRoot) { "Cannot copy the root directory" }
+    require(!to.isRoot) { "Cannot copy the root directory" }
     val file = files.valueOf(from)
     if (file == null) {
       if (directories.valueOf(from) != null) {
