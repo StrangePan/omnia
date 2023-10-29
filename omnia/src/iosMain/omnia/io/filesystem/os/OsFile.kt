@@ -13,17 +13,13 @@ import com.badoo.reaktive.single.singleFromFunction
 import com.badoo.reaktive.single.singleOfError
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.ObjCObjectVar
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.value
 import omnia.cli.out.lineSeparator
 import omnia.io.IOException
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.File
 import omnia.io.filesystem.NotAFileException
 import omnia.platform.swift.asNSString
+import omnia.platform.swift.invokeWithErrorPointer
 import omnia.util.reaktive.observable.collectIntoImmutableList
 import platform.Foundation.NSError
 import platform.Foundation.NSString
@@ -49,16 +45,17 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
   actual override fun clearAndWriteLines(lines: Observable<String>): Completable {
     return lines.collectIntoImmutableList()
         .map { it.joinToString(lineSeparator()) }
-        .doOnAfterSuccess {
-          memScoped {
-            val error = alloc<ObjCObjectVar<NSError?>>()
-            it.asNSString().writeToFile(
-              fullPath.toString(),
-              atomically = true,
-              encoding = NSUTF8StringEncoding,
-              error = error.ptr
-            )
-            error.value?.also { throw IOException(it.localizedDescription) }
+        .doOnAfterSuccess { path ->
+          try {
+            invokeWithErrorPointer<NSError, Unit> { errorPtr ->
+              path.asNSString().writeToFile(
+                fullPath.toString(),
+                atomically = true,
+                encoding = NSUTF8StringEncoding,
+                error = errorPtr)
+            }
+          } catch (e: Throwable) {
+            throw IOException(e)
           }
         }
         .asCompletable()
