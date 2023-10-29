@@ -18,23 +18,28 @@ import omnia.io.IOException
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.File
 import omnia.io.filesystem.NotAFileException
+import omnia.platform.swift.WrappedNSError
 import omnia.platform.swift.asNSString
 import omnia.platform.swift.invokeWithErrorPointer
 import omnia.util.reaktive.observable.collectIntoImmutableList
 import platform.Foundation.NSError
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, actual override val fullPath: AbsolutePath): File {
+actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): File {
 
   init {
     if (!fileSystem.isFile(fullPath)) {
       throw NotAFileException(fullPath.toString())
     }
   }
+
+  actual override val fullPath get() =
+    mutablePath
 
   actual override val name get() =
     fullPath.components.last()
@@ -71,14 +76,41 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
   }
 
   actual override fun delete() {
-    TODO("Not yet implemented")
+    val success = invokeWithErrorPointer { errorPtr ->
+      NSFileManager.defaultManager.removeItemAtPath(fullPath.toString(), errorPtr)
+    }
+    if (!success) {
+      throw IOException("Unable to delete file $fullPath")
+    }
   }
 
   actual override fun moveTo(path: AbsolutePath) {
-    TODO("Not yet implemented")
+    val success: Boolean
+    try {
+      success = invokeWithErrorPointer { errorPtr ->
+        NSFileManager.defaultManager.moveItemAtPath(fullPath.toString(), path.toString(), errorPtr)
+      }
+    } catch (e: WrappedNSError) {
+      throw IOException("Unable to move file $fullPath to $path", e)
+    }
+    if (!success) {
+      throw IOException("Unable to move file $fullPath to $path")
+    }
+    mutablePath = path
   }
 
   actual override fun copyTo(path: AbsolutePath): OsFile {
-    TODO("Not yet implemented")
+    val success: Boolean
+    try {
+      success = invokeWithErrorPointer { errorPtr ->
+        NSFileManager.defaultManager.copyItemAtPath(fullPath.toString(), path.toString(), errorPtr)
+      }
+    } catch (e: WrappedNSError) {
+      throw IOException("Unable to copy file $fullPath to $path", e)
+    }
+    if (!success) {
+      throw IOException("Unable to copy file $fullPath to $path")
+    }
+    return OsFile(fileSystem, path)
   }
 }
