@@ -8,11 +8,15 @@ import com.badoo.reaktive.test.observable.assertNoValues
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
+import omnia.io.filesystem.FileAlreadyExistsException
+import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.asPathComponent
 import omnia.io.filesystem.virtual.VirtualFileSystem
 import omnia.util.test.fluent.Assertion.Companion.assertThat
+import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.isEqualTo
+import omnia.util.test.fluent.isFalse
 
 class SandboxFileTest {
 
@@ -72,5 +76,74 @@ class SandboxFileTest {
     underTest.readLines().test().assertComplete().assertValues(lines)
   }
 
-  // TODO tests for move, copy, delete
+  @Test
+  fun moveTo_whenAlreadyExists_fails() {
+    sandboxFileSystem.createFile("/existing".asAbsolutePath())
+
+    assertThat { underTest.moveTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
+  }
+
+  @Test
+  fun moveTo_whenAlreadyDeleted_fails() {
+    underTest.delete()
+
+    assertThat { underTest.moveTo("/newlocation".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun moveTo_moves() {
+    val contents = listOf("first", "second", "third")
+
+    underTest.clearAndWriteLines(contents.asObservable()).test().assertComplete()
+
+    underTest.moveTo("/newlocation".asAbsolutePath())
+    assertThat(underTest.fullPath).isEqualTo("/newlocation".asAbsolutePath())
+    assertThat(underTest.name).isEqualTo("newlocation".asPathComponent())
+    underTest.readLines().test().assertValues(contents).assertComplete()
+  }
+
+  @Test
+  fun copyTo_whenAlreadyExists_fails() {
+    sandboxFileSystem.createFile("/existing".asAbsolutePath())
+
+    assertThat { underTest.copyTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
+  }
+
+  @Test
+  fun copyTo_whenAlreadyDeleted_fails() {
+    underTest.delete()
+
+    assertThat { underTest.copyTo("/newlocation".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun copyTo_copies() {
+    val contents = listOf("first", "second", "third")
+
+    underTest.clearAndWriteLines(contents.asObservable()).test().assertComplete()
+
+    val copy = underTest.copyTo("/newlocation".asAbsolutePath())
+
+    assertThat(copy.fullPath).isEqualTo("/newlocation".asAbsolutePath())
+    assertThat(copy.name).isEqualTo("newlocation".asPathComponent())
+    copy.readLines().test().assertValues(contents).assertComplete()
+    assertThat(underTest.fullPath).isEqualTo("/file".asAbsolutePath())
+    assertThat(underTest.name).isEqualTo("file".asPathComponent())
+    underTest.readLines().test().assertValues(contents).assertComplete()
+  }
+
+  @Test
+  fun delete_whenAlreadyDeleted_fails() {
+    underTest.delete()
+
+    assertThat { underTest.delete() }.failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun delete_deletes() {
+    underTest.delete()
+
+    assertThat(sandboxFileSystem.isFile(underTest.fullPath)).isFalse()
+    assertThat(baseFileSystem.isFile(sandboxFileSystem.toBasePath(underTest.fullPath))).isFalse()
+  }
 }
