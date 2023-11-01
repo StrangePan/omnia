@@ -17,8 +17,7 @@ class VirtualDirectory internal constructor(
   override val fullPath: AbsolutePath get() = this.fullPathMutable
 
   override val name: PathComponent get() =
-    // TODO how should we handle the directory name of the root directory, which has no name?
-    fullPath.components.last()
+    fullPath.components.lastOrNull() ?: throw IllegalStateException("Root directory does not have a name")
 
   override val parentDirectory: VirtualDirectory? =
     if (fullPath.isRoot) {
