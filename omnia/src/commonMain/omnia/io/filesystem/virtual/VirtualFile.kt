@@ -15,7 +15,6 @@ import omnia.io.filesystem.PathComponent
  * An in-memory virtual file object. Useful for tests, intermediate migration steps, and other situations where
  * we want to run file-manipulation algorithms without accessing the operating system's storage.
  */
-// TODO rewrite so that the file contents are stored in the filesystem, not here in this object
 class VirtualFile internal constructor(
   internal val fileSystem: VirtualFileSystem,
   internal var fullPathMutable: AbsolutePath,
