@@ -391,7 +391,7 @@ class ImmutableDirectedGraph<E: Any>: DirectedGraph<E> {
         .toImmutableMap()
     }
 
-    private fun <T: Any> toCouplets(entry: Map.Entry<T, out Set<T>>): Iterable<Couplet<T>> {
+    private fun <T: Any> toCouplets(entry: Map.Entry<T, Set<T>>): Iterable<Couplet<T>> {
       return entry.value.map { Tuplet.of(entry.key, it) }
     }
   }

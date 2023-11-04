@@ -35,8 +35,8 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       return this
     }
 
-    fun putAll(iterable: Iterable<Map.Entry<out K, out V>>): Builder<K, V> {
-      iterable.forEach { e: Map.Entry<out K, out V> -> putMapping(e.key, e.value) }
+    fun putAll(iterable: Iterable<Map.Entry<K, V>>): Builder<K, V> {
+      iterable.forEach { e: Map.Entry<K, V> -> putMapping(e.key, e.value) }
       return this
     }
 
@@ -100,7 +100,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
         override fun hashCode() = hash(key, value)
 
         override fun toString(): String {
-          return key.toString() + " => " + value.toString()
+          return "$key => $value"
         }
       }
       return backingMap.entries.map { Entry(it) }.toImmutableSet()
@@ -174,7 +174,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       } else builder<K, V>().putAll(otherMap).build()
     }
 
-    fun <K : Any, V : Any> copyOf(iterable: Iterable<Map.Entry<out K, out V>>): ImmutableMap<K, V> {
+    fun <K : Any, V : Any> copyOf(iterable: Iterable<Map.Entry<K, V>>): ImmutableMap<K, V> {
       return builder<K, V>().putAll(iterable).build()
     }
 
