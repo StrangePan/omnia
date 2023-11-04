@@ -6,7 +6,7 @@ import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.File
 import omnia.io.filesystem.PathComponent
 
-class SandboxFile internal constructor(private val fileSystem: SandboxFileSystem, private val baseFile: File): File {
+class SandboxFile internal constructor(private val fileSystem: SandboxFileSystem, private val baseFile: File): File, SandboxFileSystemObject {
 
   init {
     require(fileSystem.baseRootPath.contains(baseFile.directory.fullPath))

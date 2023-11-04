@@ -13,7 +13,7 @@ import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.asPathComponent
 
 actual class OsDirectory internal constructor(private val fileSystem: OsFileSystem, private val javaFile: JavaFile):
-    Directory {
+    Directory, OsFileSystemObject {
 
   internal constructor(fileSystem: OsFileSystem, path: String): this(fileSystem, JavaFile(path))
 
@@ -41,6 +41,19 @@ actual class OsDirectory internal constructor(private val fileSystem: OsFileSyst
     }
     return builder.build()
   }
+
+  actual override val contents: Iterable<OsFileSystemObject> get() =
+    javaFile.listFiles()!!
+      .asList()
+      .mapNotNull {
+        if (it.isFile) {
+          OsFile(fileSystem, it)
+        } else if (it.isDirectory) {
+          OsDirectory(fileSystem, it)
+        } else {
+          null
+        }
+      }
 
   actual override val files: Iterable<OsFile> get() =
     javaFile.listFiles()!!.toList().filter(JavaFile::isFile).map { OsFile(fileSystem, it) }

@@ -33,17 +33,26 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
   override val workingDirectory: VirtualDirectory get() =
     getDirectory(workingDirectoryPath)
 
+  override fun objectExistsAt(path: AbsolutePath): Boolean =
+    tree.getFileSystemObject(path) != null
+
   override fun isDirectory(path: AbsolutePath): Boolean =
     tree.getDirectory(path) != null
 
   override fun isFile(path: AbsolutePath): Boolean =
     tree.getFile(path) != null
 
+  override fun getObjectAt(path: AbsolutePath): VirtualFileSystemObject =
+    tree.getFileSystemObject(path) ?: throw FileNotFoundException(path.toString())
+
   override fun getDirectory(path: AbsolutePath): VirtualDirectory =
     tree.getDirectory(path) ?: throw FileNotFoundException(path.toString())
 
   override fun getFile(path: AbsolutePath): VirtualFile =
     tree.getFile(path) ?: throw FileNotFoundException(path.toString())
+
+  internal fun getContentsInDirectory(directory: VirtualDirectory): ImmutableList<VirtualFileSystemObject> =
+    tree.getContentsInDirectory(directory.fullPath)
 
   internal fun getDirectoriesInDirectory(directory: VirtualDirectory): ImmutableList<VirtualDirectory> =
     tree.getDirectoriesInDirectory(directory.fullPath)

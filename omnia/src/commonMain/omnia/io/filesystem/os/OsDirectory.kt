@@ -5,7 +5,7 @@ import omnia.io.filesystem.Directory
 import omnia.io.filesystem.PathComponent
 
 /** A representation of a directory in the operating system's filesystem. */
-expect class OsDirectory: Directory {
+expect class OsDirectory: Directory, OsFileSystemObject {
 
   override val name: PathComponent
 
@@ -14,6 +14,8 @@ expect class OsDirectory: Directory {
   override val parentDirectory: OsDirectory?
 
   override val parentDirectories: Iterable<OsDirectory>
+
+  override val contents: Iterable<OsFileSystemObject>
 
   override val files: Iterable<OsFile>
 

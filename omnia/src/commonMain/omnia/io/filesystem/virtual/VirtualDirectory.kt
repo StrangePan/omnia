@@ -3,6 +3,7 @@ package omnia.io.filesystem.virtual
 import omnia.data.structure.immutable.ImmutableList
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.Directory
+import omnia.io.filesystem.FileSystemObject
 import omnia.io.filesystem.PathComponent
 
 /**
@@ -36,6 +37,9 @@ class VirtualDirectory internal constructor(
     }
     return parentDirectories.build()
   }
+
+  override val contents: Iterable<FileSystemObject> get() =
+    fileSystem.getContentsInDirectory(this)
 
   override val files: Iterable<VirtualFile> get() =
     fileSystem.getFilesInDirectory(this)

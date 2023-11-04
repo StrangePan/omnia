@@ -1,5 +1,6 @@
 package omnia.io.filesystem.virtual
 
+import omnia.data.structure.Map
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 import omnia.data.structure.mutable.ArrayList
@@ -63,19 +64,14 @@ internal class VirtualFileSystemTree {
       false
     }
 
+  fun getContentsInDirectory(path: AbsolutePath): ImmutableList<VirtualFileSystemObject> =
+    files.entries.plus(directories.entries).filterAndSort(path)
+
   fun getFilesInDirectory(path: AbsolutePath): ImmutableList<VirtualFile> =
-    files.entries
-      .filter { (it.key.components.count - 1) == path.components.count && (it.key - 1) == path }
-      .map { it.value }
-      .sortedBy { it.name.name }
-      .toImmutableList()
+    files.entries.filterAndSort(path)
 
   fun getDirectoriesInDirectory(path: AbsolutePath): ImmutableList<VirtualDirectory> =
-    directories.entries
-      .filter { (it.key.components.count - 1) == path.components.count && (it.key - 1) == path }
-      .map { it.value }
-      .sortedBy { it.name.name }
-      .toImmutableList()
+    directories.entries.filterAndSort(path)
 
   fun deleteFile(path: AbsolutePath) {
     val file = files.removeKey(path)
@@ -207,3 +203,9 @@ internal class VirtualFileSystemTree {
     return directories.valueOf(to)!!
   }
 }
+
+private fun <ValueType: VirtualFileSystemObject> Iterable<Map.Entry<AbsolutePath, ValueType>>.filterAndSort(path: AbsolutePath): ImmutableList<ValueType> =
+  this.filter { (it.key.components.count - 1) == path.components.count && (it.key - 1) == path }
+    .map { it.value }
+    .sortedBy { it.name.name }
+    .toImmutableList()

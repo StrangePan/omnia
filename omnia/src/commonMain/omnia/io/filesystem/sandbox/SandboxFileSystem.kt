@@ -32,8 +32,21 @@ class SandboxFileSystem(
     return AbsolutePath(basePath.components.drop(baseRootPath.components.count).toImmutableList())
   }
 
+  override fun objectExistsAt(path: AbsolutePath): Boolean =
+    baseFileSystem.objectExistsAt(toBasePath(path))
+
   override fun isFile(path: AbsolutePath): Boolean =
     baseFileSystem.isFile(toBasePath(path))
+
+  override fun isDirectory(path: AbsolutePath): Boolean =
+    baseFileSystem.isDirectory(toBasePath(path))
+
+  override fun getObjectAt(path: AbsolutePath): SandboxFileSystemObject =
+    if (isFile(path)) {
+      getFile(path)
+    } else {
+      getDirectory(path)
+    }
 
   override fun getDirectory(path: AbsolutePath): SandboxDirectory =
     SandboxDirectory(this, baseFileSystem.getDirectory(toBasePath(path)))
@@ -49,9 +62,6 @@ class SandboxFileSystem(
 
   internal fun toBasePath(sandboxPath: AbsolutePath): AbsolutePath =
     AbsolutePath((baseRootPath.components + sandboxPath.components).toImmutableList())
-
-  override fun isDirectory(path: AbsolutePath): Boolean =
-    baseFileSystem.isDirectory(toBasePath(path))
 }
 
 

@@ -38,7 +38,7 @@ interface Map<K : Any, V : Any> {
   fun keysOfUnknownTyped(value: Any?): Set<K>
 
   /** An [Entry] is read-only representing empty a single key-value mapping.   */
-  interface Entry<K : Any, V : Any> {
+  interface Entry<out K : Any, out V : Any> {
 
     val key: K
 

@@ -10,11 +10,17 @@ interface FileSystem {
   /** The application's current working [Directory] within the file system. */
   val workingDirectory: Directory
 
+  /** Checks if a file system object exists at the given path. */
+  fun objectExistsAt(path: AbsolutePath): Boolean
+
   /** Checks if a file system object exists at the given path, and if that object is a directory. */
   fun isDirectory(path: AbsolutePath): Boolean
 
   /** Checks if a file system object exists at the given path, and if that object is a file. */
   fun isFile(path: AbsolutePath): Boolean
+
+  /** Searches the file system for a file system object at the given path and returns it. */
+  fun getObjectAt(path: AbsolutePath): FileSystemObject
 
   /** Searches the file system for a directory at the given path and returns it, or null if it doesn't exist. */
   fun getDirectory(path: AbsolutePath): Directory

@@ -15,7 +15,7 @@ import platform.Foundation.NSFileWrapper
 import platform.Foundation.NSURL.Companion.fileURLWithPath
 
 @OptIn(ExperimentalForeignApi::class)
-actual class OsDirectory internal constructor(internal val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): Directory {
+actual class OsDirectory internal constructor(internal val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): Directory, OsFileSystemObject {
 
   init {
     if (!fileSystem.isDirectory(fullPath)) {
@@ -45,6 +45,21 @@ actual class OsDirectory internal constructor(internal val fileSystem: OsFileSys
       parent = parent.parentDirectory
     }
     return builder.build()
+  }
+
+  actual override val contents: Iterable<OsFileSystemObject> get() {
+    @Suppress("UNCHECKED_CAST")
+    return (fileWrapper.fileWrappers as Map<String, NSFileWrapper>)
+      .entries
+      .mapNotNull {
+        if (it.value.regularFile) {
+          OsFile(fileSystem, fullPath + it.key.asPathComponent())
+        } else if (it.value.directory) {
+          OsDirectory(fileSystem, fullPath + it.key.asPathComponent())
+        } else {
+          null
+        }
+      }
   }
 
   actual override val files: Iterable<OsFile> get() {

@@ -10,7 +10,7 @@ import omnia.io.filesystem.PathComponent
 class SandboxDirectory internal constructor(
   private val fileSystem: SandboxFileSystem,
   private val baseDirectory: Directory):
-  Directory {
+  Directory, SandboxFileSystemObject {
 
   init {
     require(fileSystem.baseRootPath.contains(baseDirectory.fullPath))
@@ -32,6 +32,9 @@ class SandboxDirectory internal constructor(
   override val parentDirectories: Iterable<SandboxDirectory> get() =
     baseDirectory.parentDirectories.takeWhile { fileSystem.baseRootPath.contains(it.fullPath) }
       .map { SandboxDirectory(fileSystem, it) }
+
+  override val contents: Iterable<SandboxFileSystemObject> get() =
+    files.plus(subdirectories)
 
   override val files: Iterable<SandboxFile> get() =
     baseDirectory.files.map { SandboxFile(fileSystem, it) }

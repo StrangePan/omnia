@@ -17,6 +17,12 @@ interface Directory: FileSystemObject {
    */
   val parentDirectories: Iterable<Directory>
 
+  /**
+   * Iterable for all `FileSystemObjects` contained within this directory. May be empty. Does not recurse into
+   * subdirectories.
+   */
+  val contents: Iterable<FileSystemObject>
+
   /** Iterable for all non-directory files in the current directory. May be empty. */
   val files: Iterable<File>
 
