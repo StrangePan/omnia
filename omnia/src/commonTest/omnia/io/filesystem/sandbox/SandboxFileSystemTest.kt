@@ -7,6 +7,7 @@ import omnia.io.filesystem.virtual.VirtualFileSystem
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.fails
+import omnia.util.test.fluent.isA
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isTrue
 
@@ -55,6 +56,29 @@ class SandboxFileSystemTest {
   fun createDirectoryInBase_createsDirectoryInSandbox() {
     baseFileSystem.createDirectory(baseWorkingDirectory.fullPath + "directory")
     assertThat(underTest.isDirectory("/working/directory".asAbsolutePath()))
+  }
+
+  @Test
+  fun getObjectInSandbox_whenIsFile_getsFileInBase() {
+    baseFileSystem.getDirectory("/sandbox/working".asAbsolutePath())
+      .createSubdirectory("subdirectory".asPathComponent())
+      .createFile("file".asPathComponent())
+
+    assertThat(underTest.getObjectAt("/working/subdirectory/file".asAbsolutePath()))
+      .isA(SandboxFile::class)
+      .andThat({ it.name.name }) { it.isEqualTo("file") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/working/subdirectory/file") }
+  }
+
+  @Test
+  fun getObjectInSandbox_whenIsDirectory_getsDirectoryInBase() {
+    baseFileSystem.createDirectory("/sandbox/working/subdirectory".asAbsolutePath())
+      .createSubdirectory("directory".asPathComponent())
+
+    assertThat(underTest.getObjectAt("/working/subdirectory/directory".asAbsolutePath()))
+      .isA(SandboxDirectory::class)
+      .andThat({ it.name.name }) { it.isEqualTo("directory") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/working/subdirectory/directory") }
   }
 
   @Test

@@ -15,6 +15,7 @@ import omnia.util.test.fluent.contains
 import omnia.util.test.fluent.containsIgnoringCase
 import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.hasMessageThat
+import omnia.util.test.fluent.isA
 import omnia.util.test.fluent.isEmpty
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
@@ -135,6 +136,23 @@ class VirtualFileSystemTest {
   }
 
   @Test
+  fun objectExistsAt_whenNotExists_isFalse() {
+    assertThat(underTest.objectExistsAt("/object".asAbsolutePath())).isFalse()
+  }
+
+  @Test
+  fun objectExistsAt_whenExistsAndIsDirectory_isTrue() {
+    underTest.createDirectory("/directory".asAbsolutePath())
+    assertThat(underTest.objectExistsAt("/directory".asAbsolutePath())).isTrue()
+  }
+
+  @Test
+  fun objectExistsAt_whenExistsAndIsFile_isTrue() {
+    underTest.createFile("/file".asAbsolutePath())
+    assertThat(underTest.objectExistsAt("/file".asAbsolutePath())).isTrue()
+  }
+
+  @Test
   fun isDirectory_whenNotExists_isFalse() {
     assertThat(underTest.isDirectory("/directory".asAbsolutePath())).isFalse()
   }
@@ -166,6 +184,30 @@ class VirtualFileSystemTest {
   fun isFile_whenIsDirectory_isFalse() {
     underTest.createDirectory("/object".asAbsolutePath())
     assertThat(underTest.isFile("/object".asAbsolutePath())).isFalse()
+  }
+
+  @Test
+  fun getObjectAt_whenExistsAndIsDirectory_returnsObject() {
+    underTest.createDirectory("/directory".asAbsolutePath())
+    assertThat(underTest.getObjectAt("/directory".asAbsolutePath()))
+      .isA(VirtualDirectory::class)
+      .andThat({ it.name.toString() }) { it.isEqualTo("directory") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/directory") }
+  }
+
+  @Test
+  fun getObjectAt_whenExistsAndIsFile_returnsObject() {
+    underTest.createFile("/file".asAbsolutePath())
+    assertThat(underTest.getObjectAt("/file".asAbsolutePath()))
+      .isA(VirtualFile::class)
+      .andThat({ it.name.toString() }) { it.isEqualTo("file") }
+      .andThat({ it.fullPath.toString() }) { it.isEqualTo("/file") }
+  }
+
+  @Test
+  fun getObjectAt_whenNotExists_fails() {
+    assertThat { underTest.getObjectAt("/object".asAbsolutePath()) }
+      .failsWith(FileNotFoundException::class)
   }
 
   @Test

@@ -59,6 +59,24 @@ class VirtualDirectoryTest {
   }
 
   @Test
+  fun contents_whenEmpty_returnsNothing() {
+    assertThat(underTest.contents).isEmpty()
+  }
+
+  @Test
+  fun contents_returnsAllFiles() {
+    val firstFile = underTest.createFile("first_file".asPathComponent())
+    val secondFile = underTest.createFile("second_file".asPathComponent())
+    val thirdFile = underTest.createFile("third_file".asPathComponent())
+    val firstSubdirectory = underTest.createSubdirectory("first_directory".asPathComponent())
+    val secondSubdirectory = underTest.createSubdirectory("second_directory".asPathComponent())
+    val thirdSubdirectory = underTest.createSubdirectory("third_directory".asPathComponent())
+
+    assertThat(underTest.contents.toImmutableSet())
+      .containsExactly(firstFile, secondFile, thirdFile, firstSubdirectory, secondSubdirectory, thirdSubdirectory)
+  }
+
+  @Test
   fun files_whenEmpty_returnsNothing() {
     assertThat(underTest.files).isEmpty()
   }
@@ -68,6 +86,9 @@ class VirtualDirectoryTest {
     val firstFile = underTest.createFile("first".asPathComponent())
     val secondFile = underTest.createFile("second".asPathComponent())
     val thirdFile = underTest.createFile("third".asPathComponent())
+    underTest.createSubdirectory("first_directory".asPathComponent())
+    underTest.createSubdirectory("second_directory".asPathComponent())
+    underTest.createSubdirectory("third_directory".asPathComponent())
 
     assertThat(underTest.files.toImmutableSet()).containsExactly(firstFile, secondFile, thirdFile)
   }
@@ -90,9 +111,12 @@ class VirtualDirectoryTest {
 
   @Test
   fun subdirectories_returnsAllSubdirectories() {
-    val firstSubdirectory = underTest.createSubdirectory("first".asPathComponent())
-    val secondSubdirectory = underTest.createSubdirectory("second".asPathComponent())
-    val thirdSubdirectory = underTest.createSubdirectory("third".asPathComponent())
+    underTest.createFile("first_file".asPathComponent())
+    underTest.createFile("second_file".asPathComponent())
+    underTest.createFile("third_file".asPathComponent())
+    val firstSubdirectory = underTest.createSubdirectory("first_directory".asPathComponent())
+    val secondSubdirectory = underTest.createSubdirectory("second_directory".asPathComponent())
+    val thirdSubdirectory = underTest.createSubdirectory("third_directory".asPathComponent())
 
     assertThat(underTest.subdirectories.toImmutableSet())
       .containsExactly(firstSubdirectory, secondSubdirectory, thirdSubdirectory)
