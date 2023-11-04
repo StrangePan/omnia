@@ -9,9 +9,13 @@ expect class OsFileSystem(): FileSystem {
 
   override val workingDirectory: OsDirectory
 
+  override fun objectExistsAt(path: AbsolutePath): Boolean
+
   override fun isDirectory(path: AbsolutePath): Boolean
 
   override fun isFile(path: AbsolutePath): Boolean
+
+  override fun getObjectAt(path: AbsolutePath): OsFileSystemObject
 
   override fun getDirectory(path: AbsolutePath): OsDirectory
 

@@ -20,4 +20,6 @@ interface File: FileSystemObject {
    * contained within until the end of the file.
    */
   fun readLines(): Observable<String>
+
+  override fun copyTo(path: AbsolutePath): File
 }

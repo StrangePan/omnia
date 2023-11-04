@@ -6,7 +6,7 @@ import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.File
 import omnia.io.filesystem.PathComponent
 
-class SandboxFile internal constructor(private val fileSystem: SandboxFileSystem, private val baseFile: File): File {
+class SandboxFile internal constructor(private val fileSystem: SandboxFileSystem, private val baseFile: File): File, SandboxFileSystemObject {
 
   init {
     require(fileSystem.baseRootPath.contains(baseFile.directory.fullPath))
@@ -26,4 +26,13 @@ class SandboxFile internal constructor(private val fileSystem: SandboxFileSystem
 
   override fun readLines(): Observable<String> =
     baseFile.readLines()
+
+  override fun delete() =
+    baseFile.delete()
+
+  override fun moveTo(path: AbsolutePath) =
+    baseFile.moveTo(fileSystem.toBasePath(path))
+
+  override fun copyTo(path: AbsolutePath): SandboxFile =
+    SandboxFile(fileSystem, baseFile.copyTo(fileSystem.toBasePath(path)))
 }

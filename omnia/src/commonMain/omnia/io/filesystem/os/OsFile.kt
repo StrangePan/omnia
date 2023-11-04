@@ -7,7 +7,7 @@ import omnia.io.filesystem.File
 import omnia.io.filesystem.PathComponent
 
 /** A representation of a file in the operating system's filesystem. */
-expect class OsFile: File {
+expect class OsFile: File, OsFileSystemObject {
 
   override val name: PathComponent
 
@@ -18,4 +18,10 @@ expect class OsFile: File {
   override fun clearAndWriteLines(lines: Observable<String>): Completable
 
   override fun readLines(): Observable<String>
+
+  override fun delete()
+
+  override fun moveTo(path: AbsolutePath)
+
+  override fun copyTo(path: AbsolutePath): OsFile
 }

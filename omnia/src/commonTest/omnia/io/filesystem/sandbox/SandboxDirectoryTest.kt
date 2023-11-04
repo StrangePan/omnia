@@ -1,16 +1,24 @@
 package omnia.io.filesystem.sandbox
 
+import com.badoo.reaktive.observable.observableOf
+import com.badoo.reaktive.test.completable.assertComplete
+import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
+import omnia.io.filesystem.FileAlreadyExistsException
+import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.asPathComponent
 import omnia.io.filesystem.virtual.VirtualFileSystem
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.containsExactly
+import omnia.util.test.fluent.failsWith
+import omnia.util.test.fluent.hasCount
 import omnia.util.test.fluent.isEmpty
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isNull
@@ -78,5 +86,141 @@ class SandboxDirectoryTest {
       .andThat(SandboxDirectory::fullPath) { it.isEqualTo("/subdirectory".asAbsolutePath()) }
       .andThat(SandboxDirectory::files) { it.isEmpty() }
       .andThat(SandboxDirectory::subdirectories) { it.isEmpty() }
+  }
+
+  @Test
+  fun moveTo_whenAlreadyExists_fails() {
+    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+
+    sandboxFileSystem.createDirectory("/existing".asAbsolutePath())
+
+    assertThat { underTest.moveTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
+    assertThat(sandboxFileSystem.isDirectory("/undertest".asAbsolutePath())).isTrue()
+  }
+
+  @Test
+  fun moveTo_whenAlreadyDeleted_fails() {
+    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+
+    underTest.delete()
+
+    assertThat { underTest.moveTo("/newlocation".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun moveTo_movesContents() {
+    val underTest = sandboxFileSystem.rootDirectory.createSubdirectory("undertest".asPathComponent())
+    underTest.createSubdirectory("subdirectory".asPathComponent())
+    underTest.createFile("file".asPathComponent())
+      .clearAndWriteLines(observableOf("line1", "line2", "line3"))
+      .test()
+      .assertComplete()
+
+    underTest.moveTo("/newlocation".asAbsolutePath())
+
+    assertThat(underTest.fullPath).isEqualTo("/newlocation".asAbsolutePath())
+    assertThat(underTest.name).isEqualTo("newlocation".asPathComponent())
+    assertThat(underTest.subdirectories.toImmutableList())
+      .hasCount(1)
+      .andThat { it.first().fullPath }
+      .isEqualTo("/newlocation/subdirectory".asAbsolutePath())
+    assertThat(underTest.files.toImmutableList())
+      .hasCount(1)
+      .andThat { it.first() }
+      .andThat(SandboxFile::fullPath) { it.isEqualTo("/newlocation/file".asAbsolutePath()) }
+      .actual
+      .readLines()
+      .test()
+      .assertValues("line1", "line2", "line3")
+      .assertComplete()
+    assertThat { sandboxFileSystem.getDirectory("/undertest".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun copyTo_whenAlreadyExists_fails() {
+    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+
+    sandboxFileSystem.createDirectory("/existing".asAbsolutePath())
+
+    assertThat { underTest.copyTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
+    assertThat(sandboxFileSystem.isDirectory("/undertest".asAbsolutePath())).isTrue()
+  }
+
+  @Test
+  fun copyTo_whenAlreadyDeleted_fails() {
+    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+
+    underTest.delete()
+
+    assertThat { underTest.copyTo("/newlocation".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun copyTo_copyContents() {
+    val underTest = sandboxFileSystem.rootDirectory.createSubdirectory("undertest".asPathComponent())
+    underTest.createSubdirectory("subdirectory".asPathComponent())
+    underTest.createFile("file".asPathComponent())
+      .clearAndWriteLines(observableOf("line1", "line2", "line3"))
+      .test()
+      .assertComplete()
+
+    val underTestCopy = underTest.copyTo("/newlocation".asAbsolutePath())
+
+    assertThat(underTest.fullPath).isEqualTo("/undertest".asAbsolutePath())
+    assertThat(underTest.name).isEqualTo("undertest".asPathComponent())
+    assertThat(underTest.subdirectories.toImmutableList())
+      .hasCount(1)
+      .andThat { it.first().fullPath }
+      .isEqualTo("/undertest/subdirectory".asAbsolutePath())
+    assertThat(underTest.files.toImmutableList())
+      .hasCount(1)
+      .andThat { it.first() }
+      .andThat(SandboxFile::fullPath) { it.isEqualTo("/undertest/file".asAbsolutePath()) }
+      .actual
+      .readLines()
+      .test()
+      .assertValues("line1", "line2", "line3")
+      .assertComplete()
+
+    assertThat(underTestCopy.fullPath).isEqualTo("/newlocation".asAbsolutePath())
+    assertThat(underTestCopy.name).isEqualTo("newlocation".asPathComponent())
+    assertThat(underTestCopy.subdirectories.toImmutableList())
+      .hasCount(1)
+      .andThat { it.first().fullPath }
+      .isEqualTo("/newlocation/subdirectory".asAbsolutePath())
+    assertThat(underTestCopy.files.toImmutableList())
+      .hasCount(1)
+      .andThat { it.first() }
+      .andThat(SandboxFile::fullPath) { it.isEqualTo("/newlocation/file".asAbsolutePath()) }
+      .actual
+      .readLines()
+      .test()
+      .assertValues("line1", "line2", "line3")
+      .assertComplete()
+  }
+
+  @Test
+  fun delete_whenAlreadyDeleted_fails() {
+    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+
+    underTest.delete()
+
+    assertThat { underTest.delete() }.failsWith(FileNotFoundException::class)
+  }
+
+  @Test
+  fun delete_deletesContents() {
+    val underTest = sandboxFileSystem.rootDirectory.createSubdirectory("undertest".asPathComponent())
+    underTest.createSubdirectory("subdirectory".asPathComponent())
+    underTest.createFile("file".asPathComponent())
+      .clearAndWriteLines(observableOf("line1", "line2", "line3"))
+      .test()
+      .assertComplete()
+
+    underTest.delete()
+
+    assertThat { sandboxFileSystem.getDirectory("/undertest".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+    assertThat { sandboxFileSystem.getDirectory("/undertest/subdirectory".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+    assertThat { sandboxFileSystem.getFile("/undertest/file".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
   }
 }

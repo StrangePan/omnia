@@ -23,11 +23,21 @@ actual class OsFileSystem actual constructor(): FileSystem {
       .let { it?.path!! }
       .let { OsDirectory(this, it.asAbsolutePath()) }
 
+  actual override fun objectExistsAt(path: AbsolutePath): Boolean =
+    getFileInfo(path).exists
+
   actual override fun isDirectory(path: AbsolutePath) =
     getFileInfo(path).let { it.exists && it.isDirectory }
 
   actual override fun isFile(path: AbsolutePath) =
     getFileInfo(path).let { it.exists && !it.isDirectory }
+
+  actual override fun getObjectAt(path: AbsolutePath) =
+    if (isDirectory(path)) {
+      getDirectory(path)
+    } else {
+      getFile(path)
+    }
 
   actual override fun getDirectory(path: AbsolutePath) =
     OsDirectory(this, path)

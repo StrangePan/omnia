@@ -13,4 +13,22 @@ interface FileSystemObject {
    * Cannot be empty unless this object represents the root directory.
    */
   val fullPath: AbsolutePath
+
+  /**
+   * Attempts to delete this file system object. Beware that this may invalidate any lingering references to this
+   * [FileSystemObject] held in the program.
+   */
+  fun delete()
+
+  /**
+   * Relocates this object to a new location. Bewre that this may invalidate any lingering references to this
+   * [FileSystemObject] held in the program.
+   */
+  fun moveTo(path: AbsolutePath)
+
+  /**
+   * Creates a copy of this object at a new location if the new path is not already occupied by a file system object.
+   * Returns the newly created [FileSystemObject].
+   */
+  fun copyTo(path: AbsolutePath): FileSystemObject
 }

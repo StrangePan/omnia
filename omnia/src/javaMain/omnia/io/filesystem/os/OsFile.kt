@@ -22,7 +22,8 @@ import omnia.io.filesystem.PathComponent
 import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.asPathComponent
 
-actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, private val jFile: JavaFile): File {
+actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, private val jFile: JavaFile):
+    File, OsFileSystemObject {
 
   internal constructor(fileSystem: OsFileSystem, path: String) : this(fileSystem, JavaFile(path))
 
@@ -72,4 +73,28 @@ actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, 
           }
         }
       }
+
+  actual override fun delete() {
+    if (!jFile.delete()) {
+      throw IOException("Unable to delete file: $fullPath")
+    }
+  }
+
+  actual override fun moveTo(path: AbsolutePath) {
+    if (!jFile.renameTo(JavaFile(path.toString()))) {
+      throw IOException("Unable to move file: $fullPath => $path")
+    }
+  }
+
+  actual override fun copyTo(path: AbsolutePath): OsFile {
+    try {
+      return OsFile(fileSystem, jFile.copyTo(JavaFile(path.toString()), overwrite = false))
+    } catch (e: kotlin.io.NoSuchFileException) {
+      throw omnia.io.filesystem.FileNotFoundException(e)
+    } catch (e: kotlin.io.FileAlreadyExistsException) {
+      throw omnia.io.filesystem.FileAlreadyExistsException(path, e)
+    } catch (e: java.io.IOException) {
+      throw omnia.io.IOException(e)
+    }
+  }
 }
