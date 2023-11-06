@@ -33,7 +33,7 @@ import platform.Foundation.writeToFile
 actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): File, OsFileSystemObject {
 
   init {
-    if (!fileSystem.isFile(fullPath)) {
+    if (!fileSystem.fileExistsAt(fullPath)) {
       throw NotAFileException(fullPath.toString())
     }
   }

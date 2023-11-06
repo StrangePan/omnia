@@ -24,7 +24,7 @@ class SandboxDirectory internal constructor(
 
   override val parentDirectory: SandboxDirectory? get() =
     if (fullPath.components.isPopulated) {
-      fileSystem.getDirectory(fullPath - 1)
+      fileSystem.getDirectoryAt(fullPath - 1)
     } else {
       null
     }

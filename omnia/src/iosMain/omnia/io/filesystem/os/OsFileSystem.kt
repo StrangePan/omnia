@@ -26,23 +26,23 @@ actual class OsFileSystem actual constructor(): FileSystem {
   actual override fun objectExistsAt(path: AbsolutePath): Boolean =
     getFileInfo(path).exists
 
-  actual override fun isDirectory(path: AbsolutePath) =
+  actual override fun directoryExistsAt(path: AbsolutePath) =
     getFileInfo(path).let { it.exists && it.isDirectory }
 
-  actual override fun isFile(path: AbsolutePath) =
+  actual override fun fileExistsAt(path: AbsolutePath) =
     getFileInfo(path).let { it.exists && !it.isDirectory }
 
   actual override fun getObjectAt(path: AbsolutePath) =
-    if (isDirectory(path)) {
-      getDirectory(path)
+    if (directoryExistsAt(path)) {
+      getDirectoryAt(path)
     } else {
-      getFile(path)
+      getFileAt(path)
     }
 
-  actual override fun getDirectory(path: AbsolutePath) =
+  actual override fun getDirectoryAt(path: AbsolutePath) =
     OsDirectory(this, path)
 
-  actual override fun getFile(path: AbsolutePath) =
+  actual override fun getFileAt(path: AbsolutePath) =
     OsFile(this, path)
 
   actual fun getResource(path: String): OsFile =
@@ -59,7 +59,7 @@ actual class OsFileSystem actual constructor(): FileSystem {
       }
     }
 
-  actual override fun createDirectory(path: AbsolutePath): OsDirectory =
+  actual override fun createDirectoryAt(path: AbsolutePath): OsDirectory =
     path
       .also {
         getFileSystemObject(it)?.let { fsObject -> throw FileAlreadyExistsException(fsObject) }
@@ -69,7 +69,7 @@ actual class OsFileSystem actual constructor(): FileSystem {
       }
       .let { OsDirectory(this, it) }
 
-  actual override fun createFile(path: AbsolutePath): OsFile =
+  actual override fun createFileAt(path: AbsolutePath): OsFile =
     path
       .also {
         getFileSystemObject(it)?.let { fsObject -> throw FileAlreadyExistsException(fsObject) }

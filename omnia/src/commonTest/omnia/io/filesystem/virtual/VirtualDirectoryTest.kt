@@ -37,8 +37,8 @@ import omnia.util.test.fluent.isTrue
 class VirtualDirectoryTest {
 
   val fileSystem = VirtualFileSystem()
-  val parentDirectory = fileSystem.createDirectory("/parent".asAbsolutePath())
-  val underTest = fileSystem.createDirectory("/parent/directory".asAbsolutePath())
+  val parentDirectory = fileSystem.createDirectoryAt("/parent".asAbsolutePath())
+  val underTest = fileSystem.createDirectoryAt("/parent/directory".asAbsolutePath())
 
   @Test
   fun parentDirectory_returnsParent() {
@@ -277,8 +277,8 @@ class VirtualDirectoryTest {
     val originalPath = underTest.fullPath
     underTest.delete()
 
-    assertThat(fileSystem.isDirectory(originalPath)).isFalse()
-    assertThat { fileSystem.getDirectory(originalPath) }.failsWith(FileNotFoundException::class)
+    assertThat(fileSystem.directoryExistsAt(originalPath)).isFalse()
+    assertThat { fileSystem.getDirectoryAt(originalPath) }.failsWith(FileNotFoundException::class)
     assertThat(parentDirectory.subdirectories).isEmpty()
   }
 
@@ -289,8 +289,8 @@ class VirtualDirectoryTest {
 
     underTest.delete()
 
-    assertThat{ fileSystem.getFile(subFile) }.failsWith(FileNotFoundException::class)
-    assertThat{ fileSystem.getDirectory(subDirectory) }.failsWith(FileNotFoundException::class)
+    assertThat{ fileSystem.getFileAt(subFile) }.failsWith(FileNotFoundException::class)
+    assertThat{ fileSystem.getDirectoryAt(subDirectory) }.failsWith(FileNotFoundException::class)
   }
 
   @Test
@@ -328,12 +328,12 @@ class VirtualDirectoryTest {
     underTest.moveTo(newPath)
 
     assertThat(underTest.fullPath).isEqualTo(newPath)
-    assertThat { fileSystem.getDirectory(originalPath) }.failsWith(FileNotFoundException::class)
-    assertThat(fileSystem.getDirectory(newPath)).isEqualTo(underTest)
+    assertThat { fileSystem.getDirectoryAt(originalPath) }.failsWith(FileNotFoundException::class)
+    assertThat(fileSystem.getDirectoryAt(newPath)).isEqualTo(underTest)
     assertThat(newPath.contains(subDirectory.fullPath)).isTrue()
-    assertThat(fileSystem.isDirectory(newPath + "subdirectory"))
+    assertThat(fileSystem.directoryExistsAt(newPath + "subdirectory"))
     assertThat(subDirectory.fullPath.contains(subFile.fullPath))
-    assertThat(fileSystem.isFile(newPath + "subdirectory/file"))
+    assertThat(fileSystem.fileExistsAt(newPath + "subdirectory/file"))
     assertThat(underTest.subdirectories).contains(subDirectory)
     assertThat(subDirectory.files).contains(subFile)
   }
@@ -343,7 +343,7 @@ class VirtualDirectoryTest {
     val existingPath = "/existing".asAbsolutePath()
     val originalPath = underTest.fullPath
 
-    fileSystem.createDirectory(existingPath)
+    fileSystem.createDirectoryAt(existingPath)
 
     assertThat { underTest.moveTo(existingPath) }.failsWith(FileAlreadyExistsException::class)
     assertThat(underTest.fullPath).isEqualTo(originalPath)
@@ -354,7 +354,7 @@ class VirtualDirectoryTest {
     val existingPath = "/existing".asAbsolutePath()
     val originalPath = underTest.fullPath
 
-    fileSystem.createFile(existingPath)
+    fileSystem.createFileAt(existingPath)
 
     assertThat { underTest.moveTo(existingPath) }.failsWith(FileAlreadyExistsException::class)
     assertThat(underTest.fullPath).isEqualTo(originalPath)
@@ -371,19 +371,19 @@ class VirtualDirectoryTest {
 
     val copy = underTest.copyTo(newPath)
 
-    assertThat(fileSystem.isDirectory(originalPath))
+    assertThat(fileSystem.directoryExistsAt(originalPath))
     assertThat(underTest.fullPath).isEqualTo(originalPath)
     assertThat(subDirectory.fullPath).isEqualTo(originalPath + "subdirectory")
     assertThat(subFile.fullPath).isEqualTo(originalPath + "subdirectory/file")
 
-    assertThat(fileSystem.isDirectory(newPath))
+    assertThat(fileSystem.directoryExistsAt(newPath))
     assertThat(copy.fullPath).isEqualTo(newPath)
     assertThat(copy.subdirectories.toImmutableSet())
       .hasCount(1)
       .andThat { it.first() }
       .andThat(VirtualDirectory::fullPath) { it.isEqualTo(newPath + "subdirectory") }
 
-   assertThat(fileSystem.getDirectory(newPath + "subdirectory"))
+   assertThat(fileSystem.getDirectoryAt(newPath + "subdirectory"))
      .andThat { it.files.toImmutableSet() }
      .hasCount(1)
      .andThat { it.first() }
@@ -399,7 +399,7 @@ class VirtualDirectoryTest {
   fun copy_whenDirectoryAlreadyExists_fails() {
     val existingPath = "/existing".asAbsolutePath()
 
-    fileSystem.createDirectory(existingPath)
+    fileSystem.createDirectoryAt(existingPath)
 
     assertThat { underTest.copyTo(existingPath) }.failsWith(FileAlreadyExistsException::class)
   }
@@ -408,7 +408,7 @@ class VirtualDirectoryTest {
   fun copy_whenFileAlreadyExists_fails() {
     val existingPath = "/existing".asAbsolutePath()
 
-    fileSystem.createFile(existingPath)
+    fileSystem.createFileAt(existingPath)
 
     assertThat { underTest.copyTo(existingPath) }.failsWith(FileAlreadyExistsException::class)
   }

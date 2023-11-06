@@ -31,11 +31,11 @@ class VirtualFile internal constructor(
     fullPath.components.last()
 
   override val directory: VirtualDirectory get() =
-    fileSystem.getDirectory(fullPath - 1)
+    fileSystem.getDirectoryAt(fullPath - 1)
 
   override fun clearAndWriteLines(lines: Observable<String>): Completable =
     lines
-      .doOnBeforeSubscribe { require(this.fileSystem.getFile(fullPath) == this) }
+      .doOnBeforeSubscribe { require(this.fileSystem.getFileAt(fullPath) == this) }
       .doOnBeforeSubscribe { this.lines.clear() }
       .doOnAfterNext { this.lines.add(it) }
       .asCompletable()
@@ -53,18 +53,18 @@ class VirtualFile internal constructor(
     fullPath.hashCode()
 
   override fun delete() {
-    require(fileSystem.getFile(fullPath) == this)
+    require(fileSystem.getFileAt(fullPath) == this)
     fileSystem.tree.deleteFile(fullPath)
   }
 
   override fun moveTo(path: AbsolutePath) {
-    require(fileSystem.getFile(fullPath) == this)
+    require(fileSystem.getFileAt(fullPath) == this)
     fileSystem.tree.moveFile(fullPath, path)
     this.fullPathMutable = path
   }
 
   override fun copyTo(path: AbsolutePath): VirtualFile {
-    require(fileSystem.getFile(fullPath) == this)
+    require(fileSystem.getFileAt(fullPath) == this)
     return fileSystem.tree.copyFile(fullPath, path)
   }
 }

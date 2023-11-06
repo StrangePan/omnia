@@ -14,8 +14,8 @@ import omnia.util.test.fluent.isTrue
 class SandboxFileSystemTest {
 
   val baseFileSystem = VirtualFileSystem()
-  val baseRootDirectory = baseFileSystem.createDirectory("/sandbox".asAbsolutePath())
-  val baseWorkingDirectory = baseFileSystem.createDirectory("/sandbox/working".asAbsolutePath())
+  val baseRootDirectory = baseFileSystem.createDirectoryAt("/sandbox".asAbsolutePath())
+  val baseWorkingDirectory = baseFileSystem.createDirectoryAt("/sandbox/working".asAbsolutePath())
   val underTest = SandboxFileSystem(baseFileSystem, baseRootDirectory, baseWorkingDirectory)
 
   @Test
@@ -33,34 +33,34 @@ class SandboxFileSystemTest {
   }
 
   @Test
-  fun createFileInSandbox_createsFileInBase() {
-    underTest.createFile("/file".asAbsolutePath())
-    assertThat(baseFileSystem.isFile(baseRootDirectory.fullPath + "file"))
+  fun createFileAt_inSandbox_createsFileInBase() {
+    underTest.createFileAt("/file".asAbsolutePath())
+    assertThat(baseFileSystem.fileExistsAt(baseRootDirectory.fullPath + "file"))
       .isTrue()
   }
 
   @Test
-  fun createDirectoryInSandbox_createsDirectoryInBase() {
-    underTest.createDirectory("/directory".asAbsolutePath())
-    assertThat(baseFileSystem.isDirectory(baseRootDirectory.fullPath + "directory"))
+  fun createDirectoryAt_inSandbox_createsDirectoryInBase() {
+    underTest.createDirectoryAt("/directory".asAbsolutePath())
+    assertThat(baseFileSystem.directoryExistsAt(baseRootDirectory.fullPath + "directory"))
       .isTrue()
   }
 
   @Test
-  fun createFileInBase_createsFileInSandbox() {
-    baseFileSystem.createFile(baseWorkingDirectory.fullPath + "file")
-    assertThat(underTest.isFile("/working/file".asAbsolutePath()))
+  fun createFileAt_inBase_createsFileInSandbox() {
+    baseFileSystem.createFileAt(baseWorkingDirectory.fullPath + "file")
+    assertThat(underTest.fileExistsAt("/working/file".asAbsolutePath()))
   }
 
   @Test
-  fun createDirectoryInBase_createsDirectoryInSandbox() {
-    baseFileSystem.createDirectory(baseWorkingDirectory.fullPath + "directory")
-    assertThat(underTest.isDirectory("/working/directory".asAbsolutePath()))
+  fun createDirectoryAt_inBase_createsDirectoryInSandbox() {
+    baseFileSystem.createDirectoryAt(baseWorkingDirectory.fullPath + "directory")
+    assertThat(underTest.directoryExistsAt("/working/directory".asAbsolutePath()))
   }
 
   @Test
-  fun getObjectInSandbox_whenIsFile_getsFileInBase() {
-    baseFileSystem.getDirectory("/sandbox/working".asAbsolutePath())
+  fun getObjectAt_inSandbox_whenIsFile_getsFileInBase() {
+    baseFileSystem.getDirectoryAt("/sandbox/working".asAbsolutePath())
       .createSubdirectory("subdirectory".asPathComponent())
       .createFile("file".asPathComponent())
 
@@ -71,8 +71,8 @@ class SandboxFileSystemTest {
   }
 
   @Test
-  fun getObjectInSandbox_whenIsDirectory_getsDirectoryInBase() {
-    baseFileSystem.createDirectory("/sandbox/working/subdirectory".asAbsolutePath())
+  fun getObjectAt_inSandbox_whenIsDirectory_getsDirectoryInBase() {
+    baseFileSystem.createDirectoryAt("/sandbox/working/subdirectory".asAbsolutePath())
       .createSubdirectory("directory".asPathComponent())
 
     assertThat(underTest.getObjectAt("/working/subdirectory/directory".asAbsolutePath()))
@@ -82,22 +82,22 @@ class SandboxFileSystemTest {
   }
 
   @Test
-  fun getFileInSandbox_getsFileInBase() {
-    baseFileSystem.getDirectory("/sandbox/working".asAbsolutePath())
+  fun getFileAt_inSandbox_getsFileInBase() {
+    baseFileSystem.getDirectoryAt("/sandbox/working".asAbsolutePath())
       .createSubdirectory("subdirectory".asPathComponent())
       .createFile("file".asPathComponent())
 
-    assertThat(underTest.getFile("/working/subdirectory/file".asAbsolutePath()))
+    assertThat(underTest.getFileAt("/working/subdirectory/file".asAbsolutePath()))
       .andThat({ it.name.name }) { it.isEqualTo("file") }
       .andThat({ it.fullPath.toString() }) { it.isEqualTo("/working/subdirectory/file") }
   }
 
   @Test
-  fun getDirectoryInSandbox_getsDirectoryInBase() {
-    baseFileSystem.createDirectory("/sandbox/working/subdirectory".asAbsolutePath())
+  fun getDirectoryAt_inSandbox_getsDirectoryInBase() {
+    baseFileSystem.createDirectoryAt("/sandbox/working/subdirectory".asAbsolutePath())
       .createSubdirectory("directory".asPathComponent())
 
-    assertThat(underTest.getDirectory("/working/subdirectory/directory".asAbsolutePath()))
+    assertThat(underTest.getDirectoryAt("/working/subdirectory/directory".asAbsolutePath()))
       .andThat({ it.name.name }) { it.isEqualTo("directory") }
       .andThat({ it.fullPath.toString() }) { it.isEqualTo("/working/subdirectory/directory") }
   }

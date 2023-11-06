@@ -35,30 +35,30 @@ class SandboxFileSystem(
   override fun objectExistsAt(path: AbsolutePath): Boolean =
     baseFileSystem.objectExistsAt(toBasePath(path))
 
-  override fun isFile(path: AbsolutePath): Boolean =
-    baseFileSystem.isFile(toBasePath(path))
+  override fun fileExistsAt(path: AbsolutePath): Boolean =
+    baseFileSystem.fileExistsAt(toBasePath(path))
 
-  override fun isDirectory(path: AbsolutePath): Boolean =
-    baseFileSystem.isDirectory(toBasePath(path))
+  override fun directoryExistsAt(path: AbsolutePath): Boolean =
+    baseFileSystem.directoryExistsAt(toBasePath(path))
 
   override fun getObjectAt(path: AbsolutePath): SandboxFileSystemObject =
-    if (isFile(path)) {
-      getFile(path)
+    if (fileExistsAt(path)) {
+      getFileAt(path)
     } else {
-      getDirectory(path)
+      getDirectoryAt(path)
     }
 
-  override fun getDirectory(path: AbsolutePath): SandboxDirectory =
-    SandboxDirectory(this, baseFileSystem.getDirectory(toBasePath(path)))
+  override fun getDirectoryAt(path: AbsolutePath): SandboxDirectory =
+    SandboxDirectory(this, baseFileSystem.getDirectoryAt(toBasePath(path)))
 
-  override fun getFile(path: AbsolutePath): SandboxFile =
-    SandboxFile(this, baseFileSystem.getFile(toBasePath(path)))
+  override fun getFileAt(path: AbsolutePath): SandboxFile =
+    SandboxFile(this, baseFileSystem.getFileAt(toBasePath(path)))
 
-  override fun createDirectory(path: AbsolutePath): SandboxDirectory =
-    SandboxDirectory(this, baseFileSystem.createDirectory(toBasePath(path)))
+  override fun createDirectoryAt(path: AbsolutePath): SandboxDirectory =
+    SandboxDirectory(this, baseFileSystem.createDirectoryAt(toBasePath(path)))
 
-  override fun createFile(path: AbsolutePath): SandboxFile =
-    SandboxFile(this, baseFileSystem.createFile(toBasePath(path)))
+  override fun createFileAt(path: AbsolutePath): SandboxFile =
+    SandboxFile(this, baseFileSystem.createFileAt(toBasePath(path)))
 
   internal fun toBasePath(sandboxPath: AbsolutePath): AbsolutePath =
     AbsolutePath((baseRootPath.components + sandboxPath.components).toImmutableList())

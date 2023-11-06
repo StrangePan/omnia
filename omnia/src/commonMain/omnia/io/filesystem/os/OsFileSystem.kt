@@ -11,19 +11,19 @@ expect class OsFileSystem(): FileSystem {
 
   override fun objectExistsAt(path: AbsolutePath): Boolean
 
-  override fun isDirectory(path: AbsolutePath): Boolean
+  override fun directoryExistsAt(path: AbsolutePath): Boolean
 
-  override fun isFile(path: AbsolutePath): Boolean
+  override fun fileExistsAt(path: AbsolutePath): Boolean
 
   override fun getObjectAt(path: AbsolutePath): OsFileSystemObject
 
-  override fun getDirectory(path: AbsolutePath): OsDirectory
+  override fun getDirectoryAt(path: AbsolutePath): OsDirectory
 
-  override fun getFile(path: AbsolutePath): OsFile
+  override fun getFileAt(path: AbsolutePath): OsFile
 
   fun getResource(path: String): OsFile
 
-  override fun createDirectory(path: AbsolutePath): OsDirectory
+  override fun createDirectoryAt(path: AbsolutePath): OsDirectory
 
-  override fun createFile(path: AbsolutePath): OsFile
+  override fun createFileAt(path: AbsolutePath): OsFile
 }

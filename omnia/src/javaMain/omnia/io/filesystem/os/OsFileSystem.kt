@@ -18,13 +18,13 @@ actual class OsFileSystem actual constructor(): FileSystem {
   actual override fun objectExistsAt(path: AbsolutePath): Boolean =
     JavaFile(path.toString()).exists()
 
-  actual override fun isDirectory(path: AbsolutePath) =
+  actual override fun directoryExistsAt(path: AbsolutePath) =
     isDirectory(JavaFile(path.toString()))
 
   internal fun isDirectory(javaFile: JavaFile) =
     javaFile.isDirectory
 
-  actual override fun isFile(path: AbsolutePath) =
+  actual override fun fileExistsAt(path: AbsolutePath) =
     isFile(JavaFile(path.toString()))
 
   internal fun isFile(javaFile: JavaFile) =
@@ -41,16 +41,16 @@ actual class OsFileSystem actual constructor(): FileSystem {
       }
     }
 
-  actual override fun getDirectory(path: AbsolutePath) =
+  actual override fun getDirectoryAt(path: AbsolutePath) =
     OsDirectory(this, path.toString())
 
-  actual override fun getFile(path: AbsolutePath) =
+  actual override fun getFileAt(path: AbsolutePath) =
     OsFile(this, path.toString())
 
   actual fun getResource(path: String): OsFile =
     OsFile(this, ClassLoader.getSystemResource(path).file)
 
-  actual override fun createDirectory(path: AbsolutePath): OsDirectory =
+  actual override fun createDirectoryAt(path: AbsolutePath): OsDirectory =
     createDirectory(JavaFile(path.toString()))
 
   internal fun createDirectory(javaFile: JavaFile): OsDirectory =
@@ -64,7 +64,7 @@ actual class OsFileSystem actual constructor(): FileSystem {
       throw IOException(e)
     }
 
-  actual override fun createFile(path: AbsolutePath): OsFile =
+  actual override fun createFileAt(path: AbsolutePath): OsFile =
     createFile(JavaFile(path.toString()))
 
   internal fun createFile(javaFile: JavaFile): OsFile =

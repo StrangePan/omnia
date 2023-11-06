@@ -24,7 +24,7 @@ class VirtualDirectory internal constructor(
     if (fullPath.isRoot) {
       null
     } else {
-      fileSystem.getDirectory(fullPath - 1)
+      fileSystem.getDirectoryAt(fullPath - 1)
     }
 
   override val parentDirectories: Iterable<VirtualDirectory> get() {
@@ -48,10 +48,10 @@ class VirtualDirectory internal constructor(
     fileSystem.getDirectoriesInDirectory(this)
 
   override fun createFile(name: PathComponent): VirtualFile =
-    fileSystem.createFile(fullPath + name)
+    fileSystem.createFileAt(fullPath + name)
 
   override fun createSubdirectory(name: PathComponent): VirtualDirectory =
-    fileSystem.createDirectory(fullPath + name)
+    fileSystem.createDirectoryAt(fullPath + name)
 
   override fun toString() =
     "VirtualDirectory@$fullPath"

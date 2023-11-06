@@ -29,7 +29,7 @@ import omnia.util.test.fluent.isNotEqualTo
 class VirtualFileTest {
 
   val fileSystem = VirtualFileSystem()
-  val underTest = fileSystem.createFile("/file".asAbsolutePath())
+  val underTest = fileSystem.createFileAt("/file".asAbsolutePath())
 
   @Test
   fun directory_returnsParentDirectory() {
@@ -88,8 +88,8 @@ class VirtualFileTest {
     val originalPath = underTest.fullPath
     underTest.delete()
 
-    assertThat(fileSystem.isFile(originalPath)).isFalse()
-    assertThat { fileSystem.getFile(originalPath) }.failsWith(FileNotFoundException::class)
+    assertThat(fileSystem.fileExistsAt(originalPath)).isFalse()
+    assertThat { fileSystem.getFileAt(originalPath) }.failsWith(FileNotFoundException::class)
   }
 
   @Test
@@ -125,26 +125,26 @@ class VirtualFileTest {
     underTest.moveTo(newPath)
 
     assertThat(underTest.fullPath).isEqualTo(newPath)
-    assertThat(fileSystem.getFile(newPath))
+    assertThat(fileSystem.getFileAt(newPath))
       .isEqualTo(underTest)
       .actual
       .readLines()
       .test()
       .assertValues(input.toKotlinList())
-    assertThat(fileSystem.isFile(originalPath)).isFalse()
+    assertThat(fileSystem.fileExistsAt(originalPath)).isFalse()
   }
 
   @Test
   fun move_whenAlreadyExists_throwsException() {
     val originalPath = underTest.fullPath
     val existingPath = "/file2".asAbsolutePath()
-    val existingFile = fileSystem.createFile(existingPath)
+    val existingFile = fileSystem.createFileAt(existingPath)
 
     assertThat { underTest.moveTo(existingPath) }
       .failsWith(FileAlreadyExistsException::class)
 
-    assertThat(fileSystem.getFile(originalPath)).isEqualTo(underTest)
-    assertThat(fileSystem.getFile(existingPath)).isEqualTo(existingFile)
+    assertThat(fileSystem.getFileAt(originalPath)).isEqualTo(underTest)
+    assertThat(fileSystem.getFileAt(existingPath)).isEqualTo(existingFile)
   }
 
   @Test
@@ -158,7 +158,7 @@ class VirtualFileTest {
     val newFile = underTest.copyTo(newPath)
 
     assertThat(underTest.fullPath).isEqualTo(originalPath)
-    assertThat(fileSystem.getFile(newPath))
+    assertThat(fileSystem.getFileAt(newPath))
       .isEqualTo(newFile)
       .isNotEqualTo(underTest)
       .andThat(VirtualFile::fullPath) { it.isEqualTo(newPath) }
@@ -166,7 +166,7 @@ class VirtualFileTest {
       .readLines()
       .test()
       .assertValues(input.toKotlinList())
-    assertThat(fileSystem.getFile(originalPath)).isEqualTo(underTest)
+    assertThat(fileSystem.getFileAt(originalPath)).isEqualTo(underTest)
       .andThat(VirtualFile::fullPath) { it.isEqualTo(originalPath) }
 
     // ensure that their contents are completely disconnected
@@ -180,13 +180,13 @@ class VirtualFileTest {
   fun copy_whenAlreadyExists_throwsExceptions() {
     val originalPath = underTest.fullPath
     val existingPath = "/file2".asAbsolutePath()
-    val existingFile = fileSystem.createFile(existingPath)
+    val existingFile = fileSystem.createFileAt(existingPath)
 
     assertThat { underTest.copyTo(existingPath) }
       .failsWith(FileAlreadyExistsException::class)
 
-    assertThat(fileSystem.getFile(originalPath)).isEqualTo(underTest)
-    assertThat(fileSystem.getFile(existingPath)).isEqualTo(existingFile)
+    assertThat(fileSystem.getFileAt(originalPath)).isEqualTo(underTest)
+    assertThat(fileSystem.getFileAt(existingPath)).isEqualTo(existingFile)
   }
 
 }

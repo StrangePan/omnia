@@ -18,7 +18,7 @@ import platform.Foundation.NSURL.Companion.fileURLWithPath
 actual class OsDirectory internal constructor(internal val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): Directory, OsFileSystemObject {
 
   init {
-    if (!fileSystem.isDirectory(fullPath)) {
+    if (!fileSystem.directoryExistsAt(fullPath)) {
       throw NotADirectoryException(fullPath.toString())
     }
   }
@@ -34,7 +34,7 @@ actual class OsDirectory internal constructor(internal val fileSystem: OsFileSys
       return null
     }
     val parentDirectoryPath = fullPath - 1
-    return if (fileSystem.isDirectory(parentDirectoryPath)) OsDirectory(fileSystem, parentDirectoryPath) else null
+    return if (fileSystem.directoryExistsAt(parentDirectoryPath)) OsDirectory(fileSystem, parentDirectoryPath) else null
   }
 
   actual override val parentDirectories: Iterable<OsDirectory> get() {
@@ -81,10 +81,10 @@ actual class OsDirectory internal constructor(internal val fileSystem: OsFileSys
   private val fileWrapper get() = NSFileWrapper(fileURLWithPath(fullPath.toString()), 0u, null)
 
   actual override fun createFile(name: PathComponent): OsFile =
-    fileSystem.createFile(fullPath + name)
+    fileSystem.createFileAt(fullPath + name)
 
   actual override fun createSubdirectory(name: PathComponent): OsDirectory =
-    fileSystem.createDirectory(fullPath + name)
+    fileSystem.createDirectoryAt(fullPath + name)
 
   actual override fun delete() {
     val success = invokeWithErrorPointer { errorPtr ->

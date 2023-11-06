@@ -21,9 +21,9 @@ import omnia.util.test.fluent.isFalse
 class SandboxFileTest {
 
   val baseFileSystem = VirtualFileSystem()
-  val baseRootDirectory = baseFileSystem.createDirectory("/sandbox".asAbsolutePath())
+  val baseRootDirectory = baseFileSystem.createDirectoryAt("/sandbox".asAbsolutePath())
   val sandboxFileSystem = SandboxFileSystem(baseFileSystem, baseRootDirectory, baseRootDirectory)
-  val underTest = sandboxFileSystem.createFile("/file".asAbsolutePath())
+  val underTest = sandboxFileSystem.createFileAt("/file".asAbsolutePath())
 
   @Test
   fun name_isExpectedName() {
@@ -57,7 +57,7 @@ class SandboxFileTest {
 
     underTest.readLines().test().assertComplete().assertValues(lines)
 
-    baseFileSystem.getFile("/sandbox/file".asAbsolutePath()).readLines().test().assertComplete().assertValues(lines)
+    baseFileSystem.getFileAt("/sandbox/file".asAbsolutePath()).readLines().test().assertComplete().assertValues(lines)
   }
 
   @Test
@@ -69,7 +69,7 @@ class SandboxFileTest {
       "Except the ones who are dead",
     )
 
-    baseFileSystem.getFile("/sandbox/file".asAbsolutePath())
+    baseFileSystem.getFileAt("/sandbox/file".asAbsolutePath())
       .clearAndWriteLines(lines.asObservable()).test()
       .assertComplete()
 
@@ -78,7 +78,7 @@ class SandboxFileTest {
 
   @Test
   fun moveTo_whenAlreadyExists_fails() {
-    sandboxFileSystem.createFile("/existing".asAbsolutePath())
+    sandboxFileSystem.createFileAt("/existing".asAbsolutePath())
 
     assertThat { underTest.moveTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
   }
@@ -104,7 +104,7 @@ class SandboxFileTest {
 
   @Test
   fun copyTo_whenAlreadyExists_fails() {
-    sandboxFileSystem.createFile("/existing".asAbsolutePath())
+    sandboxFileSystem.createFileAt("/existing".asAbsolutePath())
 
     assertThat { underTest.copyTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
   }
@@ -143,7 +143,7 @@ class SandboxFileTest {
   fun delete_deletes() {
     underTest.delete()
 
-    assertThat(sandboxFileSystem.isFile(underTest.fullPath)).isFalse()
-    assertThat(baseFileSystem.isFile(sandboxFileSystem.toBasePath(underTest.fullPath))).isFalse()
+    assertThat(sandboxFileSystem.fileExistsAt(underTest.fullPath)).isFalse()
+    assertThat(baseFileSystem.fileExistsAt(sandboxFileSystem.toBasePath(underTest.fullPath))).isFalse()
   }
 }

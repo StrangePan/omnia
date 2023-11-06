@@ -17,38 +17,38 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
   internal val tree = VirtualFileSystemTree()
 
   init {
-    createDirectory(ROOT_DIRECTORY_PATH)
+    createDirectoryAt(ROOT_DIRECTORY_PATH)
     if (workingDirectoryPath != ROOT_DIRECTORY_PATH) {
       workingDirectoryPath
         .extractParentDirectoryPaths()
         .drop(1) // first is just the root directory
         .plus(workingDirectoryPath)
-        .forEach(::createDirectory)
+        .forEach(::createDirectoryAt)
     }
   }
 
   override val rootDirectory: VirtualDirectory get() =
-    getDirectory(AbsolutePath())
+    getDirectoryAt(AbsolutePath())
 
   override val workingDirectory: VirtualDirectory get() =
-    getDirectory(workingDirectoryPath)
+    getDirectoryAt(workingDirectoryPath)
 
   override fun objectExistsAt(path: AbsolutePath): Boolean =
     tree.getFileSystemObject(path) != null
 
-  override fun isDirectory(path: AbsolutePath): Boolean =
+  override fun directoryExistsAt(path: AbsolutePath): Boolean =
     tree.getDirectory(path) != null
 
-  override fun isFile(path: AbsolutePath): Boolean =
+  override fun fileExistsAt(path: AbsolutePath): Boolean =
     tree.getFile(path) != null
 
   override fun getObjectAt(path: AbsolutePath): VirtualFileSystemObject =
     tree.getFileSystemObject(path) ?: throw FileNotFoundException(path.toString())
 
-  override fun getDirectory(path: AbsolutePath): VirtualDirectory =
+  override fun getDirectoryAt(path: AbsolutePath): VirtualDirectory =
     tree.getDirectory(path) ?: throw FileNotFoundException(path.toString())
 
-  override fun getFile(path: AbsolutePath): VirtualFile =
+  override fun getFileAt(path: AbsolutePath): VirtualFile =
     tree.getFile(path) ?: throw FileNotFoundException(path.toString())
 
   internal fun getContentsInDirectory(directory: VirtualDirectory): ImmutableList<VirtualFileSystemObject> =
@@ -60,7 +60,7 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
   internal fun getFilesInDirectory(directory: VirtualDirectory): ImmutableList<VirtualFile> =
     tree.getFilesInDirectory(directory.fullPath)
 
-  override fun createDirectory(path: AbsolutePath): VirtualDirectory {
+  override fun createDirectoryAt(path: AbsolutePath): VirtualDirectory {
     val directory = VirtualDirectory(this, path)
     if (tree.addDirectory(directory)) {
       return directory
@@ -69,7 +69,7 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
     }
   }
 
-  override fun createFile(path: AbsolutePath): VirtualFile {
+  override fun createFileAt(path: AbsolutePath): VirtualFile {
     val file = VirtualFile(this, path)
     if (tree.addFile(file)) {
       return file

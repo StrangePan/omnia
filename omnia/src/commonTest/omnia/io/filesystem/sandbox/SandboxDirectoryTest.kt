@@ -27,7 +27,7 @@ import omnia.util.test.fluent.isTrue
 class SandboxDirectoryTest {
 
   val baseFileSystem = VirtualFileSystem()
-  val baseRootDirectory = baseFileSystem.createDirectory("/sandbox".asAbsolutePath())
+  val baseRootDirectory = baseFileSystem.createDirectoryAt("/sandbox".asAbsolutePath())
   val sandboxFileSystem = SandboxFileSystem(baseFileSystem, baseRootDirectory, baseRootDirectory)
 
   @Test
@@ -37,7 +37,7 @@ class SandboxDirectoryTest {
 
   @Test
   fun createDirectory_hasExpectedName_isEmpty() {
-    assertThat(sandboxFileSystem.createDirectory("/directory".asAbsolutePath()))
+    assertThat(sandboxFileSystem.createDirectoryAt("/directory".asAbsolutePath()))
       .andThat({ it.name.name }) { it.isEqualTo("directory") }
       .andThat(SandboxDirectory::fullPath) { it.isEqualTo("/directory".asAbsolutePath()) }
       .andThat(SandboxDirectory::files) { it.isEmpty() }
@@ -54,7 +54,7 @@ class SandboxDirectoryTest {
       .andThat(SandboxFile::fullPath) { it.isEqualTo("/file".asAbsolutePath()) }
       .andThat({ it.directory.fullPath }) { it.isEqualTo(sandboxFileSystem.rootDirectory.fullPath) }
       .actual.readLines().test().assertNoValues().assertComplete()
-    assertThat(baseFileSystem.isFile("/sandbox/file".asAbsolutePath()))
+    assertThat(baseFileSystem.fileExistsAt("/sandbox/file".asAbsolutePath()))
   }
 
   @Test
@@ -70,12 +70,12 @@ class SandboxDirectoryTest {
       }
 
     assertThat(directory3.files).isEmpty()
-    assertThat(sandboxFileSystem.isFile("/directory1/directory2/file0".asAbsolutePath())).isTrue()
-    assertThat(baseFileSystem.isFile("/sandbox/directory1/directory2/file0".asAbsolutePath())).isTrue()
-    assertThat(sandboxFileSystem.isFile("/directory1/file1".asAbsolutePath())).isTrue()
-    assertThat(baseFileSystem.isFile("/sandbox/directory1/file1".asAbsolutePath())).isTrue()
-    assertThat(sandboxFileSystem.isFile("/file2".asAbsolutePath())).isTrue()
-    assertThat(baseFileSystem.isFile("/sandbox/file2".asAbsolutePath())).isTrue()
+    assertThat(sandboxFileSystem.fileExistsAt("/directory1/directory2/file0".asAbsolutePath())).isTrue()
+    assertThat(baseFileSystem.fileExistsAt("/sandbox/directory1/directory2/file0".asAbsolutePath())).isTrue()
+    assertThat(sandboxFileSystem.fileExistsAt("/directory1/file1".asAbsolutePath())).isTrue()
+    assertThat(baseFileSystem.fileExistsAt("/sandbox/directory1/file1".asAbsolutePath())).isTrue()
+    assertThat(sandboxFileSystem.fileExistsAt("/file2".asAbsolutePath())).isTrue()
+    assertThat(baseFileSystem.fileExistsAt("/sandbox/file2".asAbsolutePath())).isTrue()
     assertThat(baseFileSystem.rootDirectory.files).isEmpty()
   }
 
@@ -90,17 +90,17 @@ class SandboxDirectoryTest {
 
   @Test
   fun moveTo_whenAlreadyExists_fails() {
-    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+    val underTest = sandboxFileSystem.createDirectoryAt("/undertest".asAbsolutePath())
 
-    sandboxFileSystem.createDirectory("/existing".asAbsolutePath())
+    sandboxFileSystem.createDirectoryAt("/existing".asAbsolutePath())
 
     assertThat { underTest.moveTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
-    assertThat(sandboxFileSystem.isDirectory("/undertest".asAbsolutePath())).isTrue()
+    assertThat(sandboxFileSystem.directoryExistsAt("/undertest".asAbsolutePath())).isTrue()
   }
 
   @Test
   fun moveTo_whenAlreadyDeleted_fails() {
-    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+    val underTest = sandboxFileSystem.createDirectoryAt("/undertest".asAbsolutePath())
 
     underTest.delete()
 
@@ -133,22 +133,22 @@ class SandboxDirectoryTest {
       .test()
       .assertValues("line1", "line2", "line3")
       .assertComplete()
-    assertThat { sandboxFileSystem.getDirectory("/undertest".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+    assertThat { sandboxFileSystem.getDirectoryAt("/undertest".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
   }
 
   @Test
   fun copyTo_whenAlreadyExists_fails() {
-    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+    val underTest = sandboxFileSystem.createDirectoryAt("/undertest".asAbsolutePath())
 
-    sandboxFileSystem.createDirectory("/existing".asAbsolutePath())
+    sandboxFileSystem.createDirectoryAt("/existing".asAbsolutePath())
 
     assertThat { underTest.copyTo("/existing".asAbsolutePath()) }.failsWith(FileAlreadyExistsException::class)
-    assertThat(sandboxFileSystem.isDirectory("/undertest".asAbsolutePath())).isTrue()
+    assertThat(sandboxFileSystem.directoryExistsAt("/undertest".asAbsolutePath())).isTrue()
   }
 
   @Test
   fun copyTo_whenAlreadyDeleted_fails() {
-    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+    val underTest = sandboxFileSystem.createDirectoryAt("/undertest".asAbsolutePath())
 
     underTest.delete()
 
@@ -201,7 +201,7 @@ class SandboxDirectoryTest {
 
   @Test
   fun delete_whenAlreadyDeleted_fails() {
-    val underTest = sandboxFileSystem.createDirectory("/undertest".asAbsolutePath())
+    val underTest = sandboxFileSystem.createDirectoryAt("/undertest".asAbsolutePath())
 
     underTest.delete()
 
@@ -219,8 +219,8 @@ class SandboxDirectoryTest {
 
     underTest.delete()
 
-    assertThat { sandboxFileSystem.getDirectory("/undertest".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
-    assertThat { sandboxFileSystem.getDirectory("/undertest/subdirectory".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
-    assertThat { sandboxFileSystem.getFile("/undertest/file".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+    assertThat { sandboxFileSystem.getDirectoryAt("/undertest".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+    assertThat { sandboxFileSystem.getDirectoryAt("/undertest/subdirectory".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
+    assertThat { sandboxFileSystem.getFileAt("/undertest/file".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
   }
 }
