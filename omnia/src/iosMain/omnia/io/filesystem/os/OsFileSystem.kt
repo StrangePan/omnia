@@ -2,12 +2,14 @@ package omnia.io.filesystem.os
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import omnia.io.IOException
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileSystem
 import omnia.io.filesystem.FileSystemObject
 import omnia.io.filesystem.RelativePath
 import omnia.io.filesystem.asAbsolutePath
+import platform.Foundation.NSBundle
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
@@ -47,7 +49,11 @@ actual class OsFileSystem actual constructor(): FileSystem {
     OsFile(this, path)
 
   actual fun getResourceAt(path: RelativePath): OsFile =
-    TODO("not implemented")
+    OsFile(
+      this,
+      (NSBundle.mainBundle.resourcePath ?: throw IOException("No resource path defined in main bundle"))
+        .asAbsolutePath()
+        + path)
 
   internal fun getFileSystemObject(path: AbsolutePath): FileSystemObject? =
     getFileInfo(path).let { info ->
