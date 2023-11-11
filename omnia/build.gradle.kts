@@ -3,17 +3,14 @@ plugins {
   id("com.android.library")
 }
 
-project.setBuildDir("out")
-
 kotlin {
   jvmToolchain(17)
   jvm()
-  android()
+  androidTarget()
   iosX64()
   iosArm64()
   iosSimulatorArm64()
 
-  @Suppress("UNUSED_VARIABLE")
   sourceSets {
     val commonMain by getting {
       kotlin.srcDir("src/commonMain")

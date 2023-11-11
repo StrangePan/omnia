@@ -48,10 +48,6 @@ cmake-build-*/
 # File-based project format
 *.iws
 
-# IntelliJ
-omnia/out/
-omnia-test/out/
-
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
@@ -80,3 +76,4 @@ fabric.properties
 gradle/
 gradlew
 gradlew.bat
+build/
