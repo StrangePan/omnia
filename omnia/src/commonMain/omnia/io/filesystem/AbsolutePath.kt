@@ -61,8 +61,12 @@ data class AbsolutePath(val components: ImmutableList<PathComponent> = Immutable
     this + RelativePath(components)
 
   fun replacePrefix(oldPrefix: AbsolutePath, newPrefix: AbsolutePath): AbsolutePath {
-    require(oldPrefix.contains(this)) { "expected $this to have prefix $oldPrefix" }
-    return newPrefix + RelativePath(0, this.components.drop(oldPrefix.components.count).toImmutableList())
+    return newPrefix + removePrefix(oldPrefix)
+  }
+
+  fun removePrefix(prefix: AbsolutePath): RelativePath {
+    require(prefix.contains(this)) { "expected $this to have prefix $prefix" }
+    return RelativePath(0, this.components.drop(prefix.components.count).toImmutableList())
   }
 
   fun contains(other: AbsolutePath) =
