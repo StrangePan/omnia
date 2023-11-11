@@ -20,7 +20,7 @@ class VirtualDirectory internal constructor(
   override val name: PathComponent get() =
     fullPath.components.lastOrNull() ?: throw IllegalStateException("Root directory does not have a name")
 
-  override val parentDirectory: VirtualDirectory? =
+  override val parentDirectory: VirtualDirectory? get() =
     if (fullPath.isRoot) {
       null
     } else {
