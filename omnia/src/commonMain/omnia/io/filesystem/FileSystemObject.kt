@@ -21,7 +21,7 @@ interface FileSystemObject {
   fun delete()
 
   /**
-   * Relocates this object to a new location. Bewre that this may invalidate any lingering references to this
+   * Relocates this object to a new location. Beware that this may invalidate any lingering references to this
    * [FileSystemObject] held in the program.
    */
   fun moveTo(path: AbsolutePath)
