@@ -6,6 +6,7 @@ import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.FileSystem
+import omnia.io.filesystem.RelativePath
 
 actual class OsFileSystem actual constructor(): FileSystem {
 
@@ -47,8 +48,8 @@ actual class OsFileSystem actual constructor(): FileSystem {
   actual override fun getFileAt(path: AbsolutePath) =
     OsFile(this, path.toString())
 
-  actual fun getResource(path: String): OsFile =
-    OsFile(this, ClassLoader.getSystemResource(path).file)
+  actual fun getResourceAt(path: RelativePath): OsFile =
+    OsFile(this, ClassLoader.getSystemResource(path.toString()).file)
 
   actual override fun createDirectoryAt(path: AbsolutePath): OsDirectory =
     createDirectory(JavaFile(path.toString()))

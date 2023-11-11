@@ -2,6 +2,7 @@ package omnia.io.filesystem.os
 
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileSystem
+import omnia.io.filesystem.RelativePath
 
 expect class OsFileSystem(): FileSystem {
 
@@ -21,7 +22,7 @@ expect class OsFileSystem(): FileSystem {
 
   override fun getFileAt(path: AbsolutePath): OsFile
 
-  fun getResource(path: String): OsFile
+  fun getResourceAt(path: RelativePath): OsFile
 
   override fun createDirectoryAt(path: AbsolutePath): OsDirectory
 

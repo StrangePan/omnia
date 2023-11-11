@@ -6,6 +6,7 @@ import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileSystem
 import omnia.io.filesystem.FileSystemObject
+import omnia.io.filesystem.RelativePath
 import omnia.io.filesystem.asAbsolutePath
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -45,7 +46,7 @@ actual class OsFileSystem actual constructor(): FileSystem {
   actual override fun getFileAt(path: AbsolutePath) =
     OsFile(this, path)
 
-  actual fun getResource(path: String): OsFile =
+  actual fun getResourceAt(path: RelativePath): OsFile =
     TODO("not implemented")
 
   internal fun getFileSystemObject(path: AbsolutePath): FileSystemObject? =
