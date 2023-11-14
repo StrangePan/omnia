@@ -136,6 +136,8 @@ data class RelativePath(val trimmedParents: Int = 0, val components: ImmutableLi
 
       return RelativePath(numTrimmedParents, parsedComponents.build())
     }
+
+    fun empty() = RelativePath()
   }
 }
 

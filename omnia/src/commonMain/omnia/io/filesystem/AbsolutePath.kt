@@ -114,6 +114,8 @@ data class AbsolutePath(val components: ImmutableList<PathComponent> = Immutable
 
       return AbsolutePath(parsedComponents.build())
     }
+
+    fun empty() = AbsolutePath()
   }
 }
 
