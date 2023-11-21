@@ -12,7 +12,7 @@ import omnia.io.filesystem.PathComponent
 import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.asPathComponent
 
-actual class OsDirectory internal constructor(private val fileSystem: OsFileSystem, private val javaFile: JavaFile):
+actual class OsDirectory internal constructor(override val fileSystem: OsFileSystem, private val javaFile: JavaFile):
     Directory, OsFileSystemObject {
 
   internal constructor(fileSystem: OsFileSystem, path: String): this(fileSystem, JavaFile(path))

@@ -8,7 +8,7 @@ import omnia.io.filesystem.PathComponent
  * A [Directory] wrapper that prevents access to directories outside its parent [SandboxFileSystem].
  */
 class SandboxDirectory internal constructor(
-  private val fileSystem: SandboxFileSystem,
+  override val fileSystem: SandboxFileSystem,
   private val baseDirectory: Directory):
   Directory, SandboxFileSystemObject {
 

@@ -14,6 +14,9 @@ interface FileSystemObject {
    */
   val fullPath: AbsolutePath
 
+  /** The filesystem associated with this object. */
+  val fileSystem: FileSystem
+
   /**
    * Attempts to delete this file system object. Beware that this may invalidate any lingering references to this
    * [FileSystemObject] held in the program.

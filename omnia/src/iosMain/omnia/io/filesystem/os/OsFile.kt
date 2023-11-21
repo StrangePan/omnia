@@ -30,7 +30,7 @@ import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-actual class OsFile internal constructor(internal val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): File, OsFileSystemObject {
+actual class OsFile internal constructor(override val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): File, OsFileSystemObject {
 
   init {
     if (!fileSystem.fileExistsAt(fullPath)) {

@@ -11,7 +11,7 @@ import omnia.io.filesystem.PathComponent
  * we want to run file-manipulation algorithms without accessing the operating system's storage.
  */
 class VirtualDirectory internal constructor(
-  internal val fileSystem: VirtualFileSystem,
+  override val fileSystem: VirtualFileSystem,
   internal var fullPathMutable: AbsolutePath):
   VirtualFileSystemObject, Directory {
 
