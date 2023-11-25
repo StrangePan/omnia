@@ -53,7 +53,7 @@ fun <T, R: Any> Assertion<T>.isA(expected: KClass<R>): Assertion<R> {
   @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
   assertTrue(
       expected.isInstance(actual),
-      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is not an instance of ${expected.qualifiedName}")
+      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else "null"}) is not an instance of ${expected.qualifiedName}")
   return assertThat(expected.cast(actual))
 }
 
@@ -61,7 +61,17 @@ fun <T> Assertion<T>.isNotA(expected: KClass<*>): Assertion<T> {
   @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
   assertFalse(
       expected.isInstance(actual),
-      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else ""}) is an instance of ${expected.qualifiedName}")
+      message?: "$actual (${if (actual != null) actual!!::class.qualifiedName else "null"}) is an instance of ${expected.qualifiedName}")
+  return this
+}
+
+fun <T> Assertion<T>.isOneOf(expected1: KClass<*>, vararg expectedN: KClass<*>): Assertion<T> {
+  val expected = listOf(expected1) + expectedN
+  @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+  assertTrue(
+    expected.any { it.isInstance(actual) },
+    message ?: "$actual (${if (actual != null) actual!!::class.qualifiedName else "null"}) is not an instance of any of: ${expected.joinToString()}"
+  )
   return this
 }
 
