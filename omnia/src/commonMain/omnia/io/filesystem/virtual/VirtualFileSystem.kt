@@ -15,6 +15,7 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
   constructor(): this(ROOT_DIRECTORY_PATH)
 
   internal val tree = VirtualFileSystemTree()
+  private var listener: ((Event) -> Unit)? = null
 
   init {
     createDirectoryAt(ROOT_DIRECTORY_PATH)
@@ -61,8 +62,10 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
     tree.getFilesInDirectory(directory.fullPath)
 
   override fun createDirectoryAt(path: AbsolutePath): VirtualDirectory {
+    emit(OnBeforeCreateDirectory(path))
     val directory = VirtualDirectory(this, path)
     if (tree.addDirectory(directory)) {
+      emit(OnAfterCreateDirectory(path))
       return directory
     } else {
       throw FileAlreadyExistsException(tree.getFileSystemObject(path)!!)
@@ -70,17 +73,52 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
   }
 
   override fun createFileAt(path: AbsolutePath): VirtualFile {
+    emit(OnBeforeCreateFile(path))
     val file = VirtualFile(this, path)
     if (tree.addFile(file)) {
+      emit(OnAfterCreateFile(path))
       return file
     } else {
       throw FileAlreadyExistsException(tree.getFileSystemObject(path)!!)
     }
   }
 
+  /**
+   * Registers a file system listener callback that will receive notifications when the file system changes. These
+   * notifications are blocking, and can be used to as an opportunity to react to changes or throw errors for tests.
+   * Any previous listeners will be overwritten.
+   */
+  fun setListener(listener: (Event) -> Unit) {
+    this.listener = listener
+  }
+
+  /** Removes any current listener from the file system. */
+  fun clearListener() {
+    this.listener = null
+  }
+
+  /** Sends the given event to the registered listener, if any. */
+  internal fun emit(event: Event) {
+    listener?.invoke(event)
+  }
+
   companion object {
     private val ROOT_DIRECTORY_PATH = AbsolutePath()
   }
+
+  sealed interface Event
+  sealed interface OnBeforeEvent: Event
+  sealed interface OnAfterEvent: Event
+  sealed interface CreateFileSystemObject: Event {
+    val path: AbsolutePath
+  }
+  sealed interface OnBeforeCreateFileSystemObject: CreateFileSystemObject, OnBeforeEvent
+  data class OnBeforeCreateFile(override val path: AbsolutePath): OnBeforeCreateFileSystemObject
+  data class OnBeforeCreateDirectory(override val path: AbsolutePath): OnBeforeCreateFileSystemObject
+  sealed interface OnAfterCreateFileSystemObject: CreateFileSystemObject, OnAfterEvent
+  data class OnAfterCreateFile(override val path: AbsolutePath): OnAfterCreateFileSystemObject
+  data class OnAfterCreateDirectory(override val path: AbsolutePath): OnAfterCreateFileSystemObject
+  // TODO add more file system events
 }
 
 internal fun AbsolutePath.extractParentDirectoryPaths() =

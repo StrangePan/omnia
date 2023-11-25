@@ -9,6 +9,10 @@ import omnia.io.filesystem.File
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.asAbsolutePath
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateFile
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateFile
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.contains
@@ -93,6 +97,36 @@ class VirtualFileSystemTest {
   }
 
   @Test
+  fun createDirectoryAt_notifiesListener() {
+    val directoryToCreatePath = "/directory".asAbsolutePath()
+
+    // TODO replace with a mocking library
+    var onBeforeCreateDirectoryInvocations = 0
+    var onAfterCreateDirectoryInvocations = 0
+    underTest.setListener { event ->
+      when (event) {
+        is OnBeforeCreateDirectory -> {
+          ++onBeforeCreateDirectoryInvocations
+          assertThat(onAfterCreateDirectoryInvocations).isEqualTo(0)
+          assertThat(event.path).isEqualTo(directoryToCreatePath)
+          assertThat(underTest.directoryExistsAt(event.path)).isFalse()
+        }
+        is OnAfterCreateDirectory -> {
+          ++onAfterCreateDirectoryInvocations
+          assertThat(onBeforeCreateDirectoryInvocations).isEqualTo(1)
+          assertThat(event.path).isEqualTo(directoryToCreatePath)
+          assertThat(underTest.directoryExistsAt(event.path)).isTrue()
+        }
+        else -> throw AssertionError("Unexpected event $event")
+      }
+    }
+
+    underTest.createDirectoryAt(directoryToCreatePath)
+    assertThat(onBeforeCreateDirectoryInvocations).isEqualTo(1)
+    assertThat(onAfterCreateDirectoryInvocations).isEqualTo(1)
+  }
+
+  @Test
   fun createFileAt_returnsCreatedEmptyFile() {
     assertThat(underTest.createFileAt("/file".asAbsolutePath()))
       .andThat({ it.name.toString() }) { it.isEqualTo("file") }
@@ -133,6 +167,36 @@ class VirtualFileSystemTest {
     underTest.createFileAt(path)
     assertThat { underTest.createFileAt(path) }
       .failsWith(FileAlreadyExistsException::class)
+  }
+
+  @Test
+  fun createFileAt_notifiesListener() {
+    val fileToCreatePath = "/file".asAbsolutePath()
+
+    // TODO replace with a mocking library
+    var onBeforeCreateFileInvocations = 0
+    var onAfterCreateFileInvocations = 0
+    underTest.setListener { event ->
+      when (event) {
+        is OnBeforeCreateFile -> {
+          ++onBeforeCreateFileInvocations
+          assertThat(onAfterCreateFileInvocations).isEqualTo(0)
+          assertThat(event.path).isEqualTo(fileToCreatePath)
+          assertThat(underTest.fileExistsAt(event.path)).isFalse()
+        }
+        is OnAfterCreateFile -> {
+          ++onAfterCreateFileInvocations
+          assertThat(onBeforeCreateFileInvocations).isEqualTo(1)
+          assertThat(event.path).isEqualTo(fileToCreatePath)
+          assertThat(underTest.fileExistsAt(event.path)).isTrue()
+        }
+        else -> throw AssertionError("Unexpected event $event")
+      }
+    }
+
+    underTest.createFileAt(fileToCreatePath)
+    assertThat(onBeforeCreateFileInvocations).isEqualTo(1)
+    assertThat(onAfterCreateFileInvocations).isEqualTo(1)
   }
 
   @Test
