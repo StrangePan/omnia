@@ -13,8 +13,12 @@ import omnia.io.filesystem.NotADirectoryException
 import omnia.io.filesystem.NotAFileException
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateDirectory
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateFile
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterMoveDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterMoveFile
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateDirectory
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateFile
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeMoveDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeMoveFile
 
 /**
  * A helper data structure for storing, tracking, and querying virtual files and directories. Designed to separate the
@@ -125,8 +129,10 @@ internal class VirtualFileSystemTree {
       throw FileNotFoundException(parentDirectory.toString())
     }
 
+    emit(OnBeforeMoveFile(from, to))
     files.putMapping(to, file)
     files.removeKey(from)
+    emit(OnAfterMoveFile(from, to))
     file.fullPathMutable = to
   }
 
@@ -140,6 +146,13 @@ internal class VirtualFileSystemTree {
     }
     files.valueOf(to)?.let { throw FileAlreadyExistsException(it) }
     directories.valueOf(to)?.let { throw FileAlreadyExistsException(it) }
+
+    files.keys.filter(from::contains)
+      .map { OnBeforeMoveFile(it, it.replacePrefix(from, to)) }
+      .forEach(::emit)
+    directories.keys.filter(from::contains)
+      .map { OnBeforeMoveDirectory(it, it.replacePrefix(from, to)) }
+      .forEach(::emit)
 
     files.entries
       .filter { from.contains(it.key) }
@@ -159,6 +172,13 @@ internal class VirtualFileSystemTree {
         directories.putMapping(newPath, entry.value)
         entry.value.fullPathMutable = newPath
       }
+
+    files.keys.filter(to::contains)
+      .map { OnAfterMoveFile(it.replacePrefix(to, from), it) }
+      .forEach(::emit)
+    directories.keys.filter(to::contains)
+      .map { OnAfterMoveDirectory(it.replacePrefix(to, from), it) }
+      .forEach(::emit)
   }
 
   fun copyFile(from: AbsolutePath, to: AbsolutePath): VirtualFile {

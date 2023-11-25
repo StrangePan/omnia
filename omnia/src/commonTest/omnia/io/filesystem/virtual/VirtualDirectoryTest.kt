@@ -22,7 +22,9 @@ import omnia.io.filesystem.getOrCreateFile
 import omnia.io.filesystem.getOrCreateSubdirectory
 import omnia.io.filesystem.getSubdirectory
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterMoveDirectory
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeMoveDirectory
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.contains
@@ -320,7 +322,7 @@ class VirtualDirectoryTest {
   }
 
   @Test
-  fun move_moves() {
+  fun moveTo_moves() {
     val newPath = parentDirectory.fullPath + "renamed".asPathComponent()
     val originalPath = underTest.fullPath
 
@@ -341,7 +343,7 @@ class VirtualDirectoryTest {
   }
 
   @Test
-  fun move_whenDirectoryAlreadyExists_fails() {
+  fun moveTo_whenDirectoryAlreadyExists_fails() {
     val existingPath = "/existing".asAbsolutePath()
     val originalPath = underTest.fullPath
 
@@ -352,7 +354,7 @@ class VirtualDirectoryTest {
   }
 
   @Test
-  fun move_whenFileAlreadyExists_fails() {
+  fun moveTo_whenFileAlreadyExists_fails() {
     val existingPath = "/existing".asAbsolutePath()
     val originalPath = underTest.fullPath
 
@@ -361,6 +363,43 @@ class VirtualDirectoryTest {
     assertThat { underTest.moveTo(existingPath) }.failsWith(FileAlreadyExistsException::class)
     assertThat(underTest.fullPath).isEqualTo(originalPath)
   }
+
+  @Test
+  fun moveTo_notifiesListener() {
+    val newPath = parentDirectory.fullPath + "new_location".asPathComponent()
+    val oldPath = underTest.fullPath
+
+    // TODO replace with a mocking library
+    var onBeforeMoveDirectoryInvocations = 0
+    var onAfterMoveDirectoryInvocations = 0
+    fileSystem.setListener { event ->
+      when (event) {
+        is OnBeforeMoveDirectory -> {
+          ++onBeforeMoveDirectoryInvocations
+          assertThat(onAfterMoveDirectoryInvocations).isEqualTo(0)
+          assertThat(event.from).isEqualTo(oldPath)
+          assertThat(event.to).isEqualTo(newPath)
+          assertThat(fileSystem.directoryExistsAt(event.from)).isTrue()
+          assertThat(fileSystem.directoryExistsAt(event.to)).isFalse()
+        }
+        is OnAfterMoveDirectory -> {
+          ++onAfterMoveDirectoryInvocations
+          assertThat(onBeforeMoveDirectoryInvocations).isEqualTo(1)
+          assertThat(event.from).isEqualTo(oldPath)
+          assertThat(event.to).isEqualTo(newPath)
+          assertThat(fileSystem.directoryExistsAt(event.from)).isFalse()
+          assertThat(fileSystem.directoryExistsAt(event.to)).isTrue()
+        }
+        else -> throw AssertionError("Unexpected event $event")
+      }
+    }
+
+    underTest.moveTo(newPath)
+
+    assertThat(onBeforeMoveDirectoryInvocations).isEqualTo(1)
+    assertThat(onAfterMoveDirectoryInvocations).isEqualTo(1)
+  }
+
   @Test
   fun copyTo_copies() {
     val newPath = parentDirectory.fullPath + "copy".asPathComponent()

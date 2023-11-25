@@ -109,6 +109,16 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
   sealed interface OnAfterCreateFileSystemObject: CreateFileSystemObject, OnAfterEvent
   data class OnAfterCreateFile(override val path: AbsolutePath): OnAfterCreateFileSystemObject
   data class OnAfterCreateDirectory(override val path: AbsolutePath): OnAfterCreateFileSystemObject
+  sealed interface MoveFileSystemObject: Event {
+    val from: AbsolutePath
+    val to: AbsolutePath
+  }
+  sealed interface OnBeforeMoveFileSystemObject: MoveFileSystemObject, OnBeforeEvent
+  data class OnBeforeMoveFile(override val from: AbsolutePath, override val to: AbsolutePath): OnBeforeMoveFileSystemObject
+  data class OnBeforeMoveDirectory(override val from: AbsolutePath, override val to: AbsolutePath): OnBeforeMoveFileSystemObject
+  sealed interface OnAfterMoveFileSystemObject: MoveFileSystemObject, OnAfterEvent
+  data class OnAfterMoveFile(override val from: AbsolutePath, override val to: AbsolutePath): OnAfterMoveFileSystemObject
+  data class OnAfterMoveDirectory(override val from: AbsolutePath, override val to: AbsolutePath): OnAfterMoveFileSystemObject
   // TODO add more file system events
 }
 

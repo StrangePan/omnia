@@ -19,7 +19,9 @@ import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateFile
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterMoveFile
 import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateFile
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeMoveFile
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.contains
@@ -113,7 +115,7 @@ class VirtualFileTest {
     assertThat { underTest.copyTo("/file2".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
   }
   @Test
-  fun move_moves() {
+  fun moveTo_moves() {
     val input = ImmutableList.of(
       "There once was a man from Vienna",
       "Who slipped on a peel of banana",
@@ -138,7 +140,7 @@ class VirtualFileTest {
   }
 
   @Test
-  fun move_whenAlreadyExists_throwsException() {
+  fun moveTo_whenAlreadyExists_throwsException() {
     val originalPath = underTest.fullPath
     val existingPath = "/file2".asAbsolutePath()
     val existingFile = fileSystem.createFileAt(existingPath)
@@ -148,6 +150,42 @@ class VirtualFileTest {
 
     assertThat(fileSystem.getFileAt(originalPath)).isEqualTo(underTest)
     assertThat(fileSystem.getFileAt(existingPath)).isEqualTo(existingFile)
+  }
+
+  @Test
+  fun moveTo_notifiesListener() {
+    val newPath = "/new_location".asAbsolutePath()
+    val oldPath = underTest.fullPath
+
+    // TODO replace with a mocking library
+    var onBeforeMoveFileInvocations = 0
+    var onAfterMoveFileInvocations = 0
+    fileSystem.setListener { event ->
+      when (event) {
+        is OnBeforeMoveFile -> {
+          ++onBeforeMoveFileInvocations
+          assertThat(onAfterMoveFileInvocations).isEqualTo(0)
+          assertThat(event.from).isEqualTo(oldPath)
+          assertThat(event.to).isEqualTo(newPath)
+          assertThat(fileSystem.fileExistsAt(event.from)).isTrue()
+          assertThat(fileSystem.fileExistsAt(event.to)).isFalse()
+        }
+        is OnAfterMoveFile -> {
+          ++onAfterMoveFileInvocations
+          assertThat(onBeforeMoveFileInvocations).isEqualTo(1)
+          assertThat(event.from).isEqualTo(oldPath)
+          assertThat(event.to).isEqualTo(newPath)
+          assertThat(fileSystem.fileExistsAt(event.from)).isFalse()
+          assertThat(fileSystem.fileExistsAt(event.to)).isTrue()
+        }
+        else -> throw AssertionError("Unexpected event $event")
+      }
+    }
+
+    underTest.moveTo(newPath)
+
+    assertThat(onBeforeMoveFileInvocations).isEqualTo(1)
+    assertThat(onAfterMoveFileInvocations).isEqualTo(1)
   }
 
   @Test
