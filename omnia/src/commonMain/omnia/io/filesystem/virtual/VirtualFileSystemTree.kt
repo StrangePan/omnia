@@ -11,6 +11,10 @@ import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.NotADirectoryException
 import omnia.io.filesystem.NotAFileException
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateFile
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateFile
 
 /**
  * A helper data structure for storing, tracking, and querying virtual files and directories. Designed to separate the
@@ -20,6 +24,7 @@ internal class VirtualFileSystemTree {
 
   private val directories = HashMap.create<AbsolutePath, VirtualDirectory>()
   private val files = HashMap.create<AbsolutePath, VirtualFile>()
+  internal var listener: ((VirtualFileSystem.Event) -> Unit)? = null
 
   fun getDirectory(path: AbsolutePath) =
     directories.valueOf(path)
@@ -41,7 +46,9 @@ internal class VirtualFileSystemTree {
                 "does not exist.")
           }
         }
+      emit(OnBeforeCreateDirectory(directory.fullPath))
       directories.putMapping(directory.fullPath, directory)
+      emit(OnAfterCreateDirectory(directory.fullPath))
       true
     } else {
       false
@@ -58,7 +65,9 @@ internal class VirtualFileSystemTree {
                 "not exist.")
           }
         }
+      emit(OnBeforeCreateFile(file.fullPath))
       files.putMapping(file.fullPath, file)
+      emit(OnAfterCreateFile(file.fullPath))
       true
     } else {
       false
@@ -170,7 +179,9 @@ internal class VirtualFileSystemTree {
     }
 
     val newFile = VirtualFile(file.fileSystem, to, ArrayList.copyOf(file.lines))
+    emit(OnBeforeCreateFile(newFile.fullPath))
     files.putMapping(to, newFile)
+    emit(OnAfterCreateFile(newFile.fullPath))
     return newFile
   }
 
@@ -189,7 +200,9 @@ internal class VirtualFileSystemTree {
       .toImmutableList()
       .forEach { entry ->
         val newPath = entry.key.replacePrefix(from, to)
+        emit(OnBeforeCreateDirectory(newPath))
         directories.putMapping(newPath, VirtualDirectory(entry.value.fileSystem, newPath))
+        emit(OnAfterCreateDirectory(newPath))
       }
 
     files.entries
@@ -197,10 +210,16 @@ internal class VirtualFileSystemTree {
       .toImmutableList()
       .forEach { entry ->
         val newPath = entry.key.replacePrefix(from, to)
+        emit(OnBeforeCreateFile(newPath))
         files.putMapping(newPath, VirtualFile(entry.value.fileSystem, newPath, ArrayList.copyOf(entry.value.lines)))
+        emit(OnAfterCreateFile(newPath))
       }
 
     return directories.valueOf(to)!!
+  }
+
+  private fun emit(event: VirtualFileSystem.Event) {
+    listener?.invoke(event)
   }
 }
 

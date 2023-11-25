@@ -21,6 +21,8 @@ import omnia.io.filesystem.getFile
 import omnia.io.filesystem.getOrCreateFile
 import omnia.io.filesystem.getOrCreateSubdirectory
 import omnia.io.filesystem.getSubdirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateDirectory
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateDirectory
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.contains
@@ -312,7 +314,7 @@ class VirtualDirectoryTest {
   }
 
   @Test
-  fun delete_thenCopy_fails() {
+  fun delete_thencopyTo_fails() {
     underTest.delete()
     assertThat { underTest.moveTo("/another_copy".asAbsolutePath()) }.failsWith(FileNotFoundException::class)
   }
@@ -360,7 +362,7 @@ class VirtualDirectoryTest {
     assertThat(underTest.fullPath).isEqualTo(originalPath)
   }
   @Test
-  fun copy_copies() {
+  fun copyTo_copies() {
     val newPath = parentDirectory.fullPath + "copy".asPathComponent()
     val originalPath = underTest.fullPath
 
@@ -396,7 +398,7 @@ class VirtualDirectoryTest {
   }
 
   @Test
-  fun copy_whenDirectoryAlreadyExists_fails() {
+  fun copyTo_whenDirectoryAlreadyExists_fails() {
     val existingPath = "/existing".asAbsolutePath()
 
     fileSystem.createDirectoryAt(existingPath)
@@ -405,11 +407,42 @@ class VirtualDirectoryTest {
   }
 
   @Test
-  fun copy_whenFileAlreadyExists_fails() {
+  fun copyTo_whenFileAlreadyExists_fails() {
     val existingPath = "/existing".asAbsolutePath()
 
     fileSystem.createFileAt(existingPath)
 
     assertThat { underTest.copyTo(existingPath) }.failsWith(FileAlreadyExistsException::class)
+  }
+
+  @Test
+  fun copyTo_notifiesListener() {
+    val newPath = parentDirectory.fullPath + "copy".asPathComponent()
+
+    // TODO replace with a mocking library
+    var onBeforeCreateDirectoryInvocations = 0
+    var onAfterCreateDirectoryInvocations = 0
+    fileSystem.setListener { event ->
+      when (event) {
+        is OnBeforeCreateDirectory -> {
+          ++onBeforeCreateDirectoryInvocations
+          assertThat(onAfterCreateDirectoryInvocations).isEqualTo(0)
+          assertThat(event.path).isEqualTo(newPath)
+          assertThat(fileSystem.directoryExistsAt(event.path)).isFalse()
+        }
+        is OnAfterCreateDirectory -> {
+          ++onAfterCreateDirectoryInvocations
+          assertThat(onBeforeCreateDirectoryInvocations).isEqualTo(1)
+          assertThat(event.path).isEqualTo(newPath)
+          assertThat(fileSystem.directoryExistsAt(event.path)).isTrue()
+        }
+        else -> throw AssertionError("Unexpected event $event")
+      }
+    }
+
+    underTest.copyTo(newPath)
+
+    assertThat(onBeforeCreateDirectoryInvocations).isEqualTo(1)
+    assertThat(onAfterCreateDirectoryInvocations).isEqualTo(1)
   }
 }

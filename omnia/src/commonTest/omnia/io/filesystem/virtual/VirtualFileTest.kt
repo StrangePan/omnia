@@ -18,6 +18,8 @@ import omnia.io.filesystem.Directory
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.asAbsolutePath
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnAfterCreateFile
+import omnia.io.filesystem.virtual.VirtualFileSystem.OnBeforeCreateFile
 import omnia.util.test.fluent.Assertion.Companion.assertThat
 import omnia.util.test.fluent.andThat
 import omnia.util.test.fluent.contains
@@ -25,6 +27,7 @@ import omnia.util.test.fluent.failsWith
 import omnia.util.test.fluent.isEqualTo
 import omnia.util.test.fluent.isFalse
 import omnia.util.test.fluent.isNotEqualTo
+import omnia.util.test.fluent.isTrue
 
 class VirtualFileTest {
 
@@ -148,7 +151,7 @@ class VirtualFileTest {
   }
 
   @Test
-  fun copy_copies() {
+  fun copyTo_copies() {
     val input = ImmutableList.of("Ok I'm out of limericks.")
     underTest.clearAndWriteLines(input.asObservable()).test().assertComplete()
 
@@ -177,7 +180,7 @@ class VirtualFileTest {
   }
 
   @Test
-  fun copy_whenAlreadyExists_throwsExceptions() {
+  fun copyTo_whenAlreadyExists_throwsExceptions() {
     val originalPath = underTest.fullPath
     val existingPath = "/file2".asAbsolutePath()
     val existingFile = fileSystem.createFileAt(existingPath)
@@ -189,4 +192,34 @@ class VirtualFileTest {
     assertThat(fileSystem.getFileAt(existingPath)).isEqualTo(existingFile)
   }
 
+  @Test
+  fun copyTo_notifiesListener() {
+    val newPath = "/file2".asAbsolutePath()
+
+    // TODO replace with a mocking library
+    var onBeforeCreateFileInvocations = 0
+    var onAfterCreateFileInvocations = 0
+    fileSystem.setListener { event ->
+      when (event) {
+        is OnBeforeCreateFile -> {
+          ++onBeforeCreateFileInvocations
+          assertThat(onAfterCreateFileInvocations).isEqualTo(0)
+          assertThat(event.path).isEqualTo(newPath)
+          assertThat(fileSystem.fileExistsAt(event.path)).isFalse()
+        }
+        is OnAfterCreateFile -> {
+          ++onAfterCreateFileInvocations
+          assertThat(onBeforeCreateFileInvocations).isEqualTo(1)
+          assertThat(event.path).isEqualTo(newPath)
+          assertThat(fileSystem.fileExistsAt(event.path)).isTrue()
+        }
+        else -> throw AssertionError("Unexpected event $event")
+      }
+    }
+
+    underTest.copyTo(newPath)
+
+    assertThat(onBeforeCreateFileInvocations).isEqualTo(1)
+    assertThat(onAfterCreateFileInvocations).isEqualTo(1)
+  }
 }

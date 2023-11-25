@@ -62,10 +62,8 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
     tree.getFilesInDirectory(directory.fullPath)
 
   override fun createDirectoryAt(path: AbsolutePath): VirtualDirectory {
-    emit(OnBeforeCreateDirectory(path))
     val directory = VirtualDirectory(this, path)
     if (tree.addDirectory(directory)) {
-      emit(OnAfterCreateDirectory(path))
       return directory
     } else {
       throw FileAlreadyExistsException(tree.getFileSystemObject(path)!!)
@@ -73,10 +71,8 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
   }
 
   override fun createFileAt(path: AbsolutePath): VirtualFile {
-    emit(OnBeforeCreateFile(path))
     val file = VirtualFile(this, path)
     if (tree.addFile(file)) {
-      emit(OnAfterCreateFile(path))
       return file
     } else {
       throw FileAlreadyExistsException(tree.getFileSystemObject(path)!!)
@@ -89,17 +85,12 @@ class VirtualFileSystem(private val workingDirectoryPath: AbsolutePath): FileSys
    * Any previous listeners will be overwritten.
    */
   fun setListener(listener: (Event) -> Unit) {
-    this.listener = listener
+    this.tree.listener = listener
   }
 
   /** Removes any current listener from the file system. */
   fun clearListener() {
-    this.listener = null
-  }
-
-  /** Sends the given event to the registered listener, if any. */
-  internal fun emit(event: Event) {
-    listener?.invoke(event)
+    this.tree.listener = null
   }
 
   companion object {
