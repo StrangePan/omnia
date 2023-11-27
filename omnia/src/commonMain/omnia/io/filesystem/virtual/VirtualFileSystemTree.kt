@@ -65,7 +65,7 @@ internal class VirtualFileSystemTree {
         .forEach { parentDirectoryPath ->
           if (getDirectory(parentDirectoryPath) == null) {
             throw FileNotFoundException(
-              "Cannot create directory '${file.fullPath}' when missing parent directory '$parentDirectoryPath' does " +
+              "Cannot create file '${file.fullPath}' when missing parent directory '$parentDirectoryPath' does " +
                 "not exist.")
           }
         }
