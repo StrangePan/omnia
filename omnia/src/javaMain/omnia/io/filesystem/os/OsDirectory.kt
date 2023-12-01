@@ -12,7 +12,7 @@ import omnia.io.filesystem.PathComponent
 import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.asPathComponent
 
-actual class OsDirectory internal constructor(override val fileSystem: OsFileSystem, private val javaFile: JavaFile):
+actual class OsDirectory internal constructor(override val fileSystem: OsFileSystem, private var javaFile: JavaFile):
     Directory, OsFileSystemObject {
 
   internal constructor(fileSystem: OsFileSystem, path: String): this(fileSystem, JavaFile(path))
@@ -74,7 +74,10 @@ actual class OsDirectory internal constructor(override val fileSystem: OsFileSys
   }
 
   actual override fun moveTo(path: AbsolutePath) {
-    if (!javaFile.renameTo(JavaFile(path.toString()))) {
+    val newJavaFile = JavaFile(path.toString())
+    if (javaFile.renameTo(newJavaFile)) {
+      javaFile = newJavaFile
+    } else {
       throw IOException("Unable to move directory: $fullPath => $path")
     }
   }
