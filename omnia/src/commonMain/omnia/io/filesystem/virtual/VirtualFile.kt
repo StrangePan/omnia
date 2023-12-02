@@ -47,7 +47,10 @@ class VirtualFile internal constructor(
     "VirtualFile@$fullPath"
 
   override fun equals(other: Any?) =
-    other === this // equivalency is important since this file object actually holds the contents of the file
+    other === this
+      || other is VirtualFile
+      && other.fullPath == this.fullPath
+      && other.lines == this.lines
 
   override fun hashCode() =
     fullPath.hashCode()

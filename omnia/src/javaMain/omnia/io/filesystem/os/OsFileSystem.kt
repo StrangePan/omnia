@@ -1,13 +1,15 @@
 package omnia.io.filesystem.os
 
 import java.io.File as JavaFile
+import omnia.data.cache.Memoized
 import omnia.io.IOException
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.FileSystem
 
-actual class OsFileSystem actual constructor(): FileSystem {
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+actual class OsFileSystem private constructor(): FileSystem {
 
   actual override val rootDirectory get() =
     OsDirectory(this, "/")
@@ -96,4 +98,10 @@ actual class OsFileSystem actual constructor(): FileSystem {
     } catch (e: java.io.IOException) {
       throw IOException(e)
     }
+
+  actual companion object {
+    private val memoizedInstance = Memoized.memoize(::OsFileSystem)
+
+    actual val instance get() = memoizedInstance.value
+  }
 }

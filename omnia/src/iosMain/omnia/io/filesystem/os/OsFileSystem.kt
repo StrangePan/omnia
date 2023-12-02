@@ -2,6 +2,7 @@ package omnia.io.filesystem.os
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import omnia.data.cache.Memoized.Companion.memoize
 import omnia.io.IOException
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileAlreadyExistsException
@@ -14,7 +15,7 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
-actual class OsFileSystem actual constructor(): FileSystem {
+actual class OsFileSystem private constructor(): FileSystem {
 
   actual override val rootDirectory get() =
     OsDirectory(this, AbsolutePath())
@@ -90,4 +91,10 @@ actual class OsFileSystem actual constructor(): FileSystem {
         assert(NSFileManager.defaultManager.createFileAtPath(it.toString(), null, emptyMap<Any?, Any?>()))
       }
       .let { OsFile(this, it) }
+
+  actual companion object {
+    private val memoizedInstance = memoize(::OsFileSystem)
+
+    actual val instance get() = memoizedInstance.value
+  }
 }

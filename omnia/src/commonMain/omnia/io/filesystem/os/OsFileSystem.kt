@@ -3,7 +3,8 @@ package omnia.io.filesystem.os
 import omnia.io.filesystem.AbsolutePath
 import omnia.io.filesystem.FileSystem
 
-expect class OsFileSystem(): FileSystem {
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+expect class OsFileSystem: FileSystem {
 
   override val rootDirectory: OsDirectory
 
@@ -30,4 +31,9 @@ expect class OsFileSystem(): FileSystem {
   override fun createDirectoryAt(path: AbsolutePath): OsDirectory
 
   override fun createFileAt(path: AbsolutePath): OsFile
+
+  @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+  companion object {
+    val instance: OsFileSystem
+  }
 }

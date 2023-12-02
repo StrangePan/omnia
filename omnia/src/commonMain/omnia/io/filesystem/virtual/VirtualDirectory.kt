@@ -57,7 +57,7 @@ class VirtualDirectory internal constructor(
     "VirtualDirectory@$fullPath"
 
   override fun equals(other: Any?) =
-    other is VirtualDirectory && this.fileSystem === other.fileSystem && this.fullPath == other.fullPath
+    other is VirtualDirectory && this.fileSystem == other.fileSystem && this.fullPath == other.fullPath
 
   override fun hashCode() =
     fullPath.hashCode()
