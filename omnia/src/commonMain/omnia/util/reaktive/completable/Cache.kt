@@ -7,4 +7,4 @@ import com.badoo.reaktive.observable.autoConnect
 import com.badoo.reaktive.observable.replay
 
 fun Completable.cache(subscriberCount: Int = 1) =
-  this.asObservable<Unit>().replay(1).autoConnect(subscriberCount).asCompletable()
+  this.asObservable().replay(1).autoConnect(subscriberCount).asCompletable()

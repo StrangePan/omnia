@@ -7,4 +7,4 @@ import com.badoo.reaktive.observable.publish
 import com.badoo.reaktive.observable.refCount
 
 fun Completable.publishRefCount(subscriberCount: Int = 1) =
-  this.asObservable<Unit>().publish().refCount(subscriberCount).asCompletable()
+  this.asObservable().publish().refCount(subscriberCount).asCompletable()
