@@ -11,7 +11,6 @@ import com.badoo.reaktive.single.notNull
 import com.badoo.reaktive.single.singleDefer
 import com.badoo.reaktive.single.singleFromFunction
 import com.badoo.reaktive.single.singleOfError
-import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import omnia.cli.out.lineSeparator
 import omnia.io.IOException
@@ -29,7 +28,7 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(ExperimentalForeignApi::class)
 actual class OsFile internal constructor(override val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): File, OsFileSystemObject {
 
   init {

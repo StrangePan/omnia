@@ -8,7 +8,6 @@ import omnia.io.filesystem.FileAlreadyExistsException
 import omnia.io.filesystem.FileNotFoundException
 import omnia.io.filesystem.FileSystem
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class OsFileSystem private constructor(): FileSystem {
 
   actual override val rootDirectory get() =
