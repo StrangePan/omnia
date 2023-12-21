@@ -7,9 +7,11 @@ import com.badoo.reaktive.observable.firstOrError
 import com.badoo.reaktive.observable.replay
 import com.badoo.reaktive.observable.scan
 import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.map
 import com.badoo.reaktive.subject.publish.PublishSubject
 import com.badoo.reaktive.subject.replay.ReplaySubject
 import omnia.data.structure.tuple.Couple
+import omnia.data.structure.tuple.Tuple
 
 class ObservableState<T : Any> private constructor(initialState: T) {
 
@@ -28,18 +30,8 @@ class ObservableState<T : Any> private constructor(initialState: T) {
 
   /** Mutates the state asynchronously and returns the result of the mutation.  */
   fun mutate(mutator: (T) -> T): Single<T> {
-    val result: ReplaySubject<T> = ReplaySubject(1)
-    mutations.onNext { state: T ->
-      val newState: T = try {
-        mutator(state)
-      } catch (t: Throwable) {
-        result.onError(t)
-        state
-      }
-      result.onNext(newState)
-      newState
-    }
-    return result.firstOrError()
+    return mutateAndReturn { original -> Tuple.of<T, Any?>(mutator(original), null) }
+      .map(Couple<out T, out Any?>::first)
   }
 
   /**
@@ -49,21 +41,24 @@ class ObservableState<T : Any> private constructor(initialState: T) {
    */
   fun <R> mutateAndReturn(mutator: (T) -> Couple<out T, out R>): Single<Couple<out T, out R>> {
     val result: ReplaySubject<Couple<out T, out R>> = ReplaySubject(1)
-    mutations.onNext { state: T ->
+    mutations.onNext { originalState: T ->
       val newState: Couple<out T, out R> = try {
-        mutator(state)
+        mutator(originalState)
       } catch (t: Throwable) {
         result.onError(t)
-        return@onNext state
+        return@onNext originalState
       }
-      result.onNext(newState)
+      if (newState.first == originalState) {
+        result.onNext(Tuple.of(originalState, newState.second))
+      } else {
+        result.onNext(newState)
+      }
       newState.first
     }
     return result.firstOrError()
   }
 
   companion object {
-
     fun <T : Any> create(initialState: T): ObservableState<T> {
       return ObservableState(initialState)
     }
