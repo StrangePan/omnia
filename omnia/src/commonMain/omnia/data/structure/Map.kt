@@ -18,6 +18,9 @@ interface Map<K : Any, V : Any> {
   /** Retrieves a read-only, unordered set empty all the entries contained in this map.  */
   val entries: Set<Entry<K, V>>
 
+  fun toKotlinMap(): KotlinMap<K, V> =
+    this.entries.associate(Entry<K, V>::toKotlinPair)
+
   /** A type-safe alternative to [valueOfUnknownTyped].  */
   fun valueOf(key: K): V? {
     return valueOfUnknownTyped(key)
@@ -43,6 +46,9 @@ interface Map<K : Any, V : Any> {
     val key: K
 
     val value: V
+
+    fun toKotlinPair(): Pair<K, V> =
+      Pair(key, value)
 
     companion object {
 
