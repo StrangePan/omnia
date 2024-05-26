@@ -15,7 +15,8 @@ import platform.Foundation.NSFileWrapper
 import platform.Foundation.NSURL.Companion.fileURLWithPath
 
 @OptIn(ExperimentalForeignApi::class)
-actual class OsDirectory internal constructor(override val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): Directory, OsFileSystemObject {
+actual class OsDirectory internal constructor(
+  actual override val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): Directory, OsFileSystemObject {
 
   init {
     if (!fileSystem.directoryExistsAt(fullPath)) {

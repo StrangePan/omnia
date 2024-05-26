@@ -22,8 +22,8 @@ import omnia.io.filesystem.PathComponent
 import omnia.io.filesystem.asAbsolutePath
 import omnia.io.filesystem.asPathComponent
 
-actual class OsFile internal constructor(override val fileSystem: OsFileSystem, private var jFile: JavaFile):
-    File, OsFileSystemObject {
+actual class OsFile internal constructor(
+  actual override val fileSystem: OsFileSystem, private var jFile: JavaFile): File, OsFileSystemObject {
 
   internal constructor(fileSystem: OsFileSystem, path: String) : this(fileSystem, JavaFile(path))
 

@@ -29,7 +29,8 @@ import platform.Foundation.stringWithContentsOfFile
 import platform.Foundation.writeToFile
 
 @OptIn(ExperimentalForeignApi::class)
-actual class OsFile internal constructor(override val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): File, OsFileSystemObject {
+actual class OsFile internal constructor(
+  actual override val fileSystem: OsFileSystem, internal var mutablePath: AbsolutePath): File, OsFileSystemObject {
 
   init {
     if (!fileSystem.fileExistsAt(fullPath)) {

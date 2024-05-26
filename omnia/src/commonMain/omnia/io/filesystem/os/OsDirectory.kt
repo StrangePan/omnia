@@ -7,6 +7,8 @@ import omnia.io.filesystem.PathComponent
 /** A representation of a directory in the operating system's filesystem. */
 expect class OsDirectory: Directory, OsFileSystemObject {
 
+  override val fileSystem: OsFileSystem
+
   override val name: PathComponent
 
   override val fullPath: AbsolutePath
