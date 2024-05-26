@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
   kotlin("multiplatform")
   id("com.android.library")
@@ -72,6 +74,13 @@ kotlin {
         api(libraries.reaktive.iossimulatorarm64)
       }
     }
+  }
+
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class)
+  compilerOptions {
+    // Common compiler options applied to all Kotlin source sets
+    freeCompilerArgs.add("-Xexpect-actual-classes")
   }
 }
 
