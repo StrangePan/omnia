@@ -171,13 +171,13 @@ object GraphAlgorithms {
    *   that every node will appear in the list before its successors
    * @throws IllegalArgumentException if the graph is given graph is cyclic
    */
-  fun <T: Any> topologicallySort(graph: DirectedGraph<out T>): ImmutableList<T> {
+  fun <T: Any> topologicallySort(graph: DirectedGraph<T>): ImmutableList<DirectedNode<T>> {
     // iterative depth-first search with back tracking
-    val result: ImmutableList.Builder<T> = ImmutableList.builder()
-    val itemsInResult: MutableSet<DirectedNode<out T>> = HashSet.create()
-    val stack: Stack<Couple<DirectedNode<out T>, Iterator<DirectedNode<out T>>>> =
+    val result: ImmutableList.Builder<DirectedNode<T>> = ImmutableList.builder()
+    val itemsInResult: MutableSet<DirectedNode<T>> = HashSet.create()
+    val stack: Stack<Couple<DirectedNode<T>, Iterator<DirectedNode<T>>>> =
       ArrayStack.create()
-    val itemsInStack: MutableSet<DirectedNode<out T>> = HashSet.create()
+    val itemsInStack: MutableSet<DirectedNode<T>> = HashSet.create()
 
     // all starting nodes
     for (sourceNode in graph.nodes) {
@@ -186,7 +186,7 @@ object GraphAlgorithms {
       }
 
       // traverse entire sub-graph to help cluster nodes
-      val subgraphNodes: Set<DirectedNode<out T>> = findOtherNodesInSubgraphContaining(sourceNode)
+      val subgraphNodes: Set<DirectedNode<T>> = findOtherNodesInSubgraphContaining(sourceNode)
       for (rootNode in subgraphNodes) {
         if (rootNode.outgoingEdges.isPopulated) {
           continue
@@ -215,7 +215,7 @@ object GraphAlgorithms {
             val current = frame.first
 
             // no other successors, add to result
-            result.add(current.item)
+            result.add(current)
             itemsInResult.add(current)
             stack.pop()
             itemsInStack.remove(current)

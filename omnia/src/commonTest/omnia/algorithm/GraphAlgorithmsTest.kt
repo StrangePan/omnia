@@ -622,30 +622,30 @@ class GraphAlgorithmsTest {
   }
 }
 
-private fun <T : Any, C : List<T>> Assertion<C>.isATopologicalSortOf(graph: DirectedGraph<T>):
+private fun <T : Any, C : List<out DirectedGraph.DirectedNode<T>>> Assertion<C>.isATopologicalSortOf(graph: DirectedGraph<T>):
     Assertion<C> {
   this.hasCount(graph.nodes.count)
 
   // O(N)
-  for (item in actual) {
-    assertThat(graph.nodeOf(item)).isNotNull()
+  for (node in actual) {
+    assertThat(graph.nodeOf(node.item)).isNotNull()
   }
   val cumulativePredecessors: MutableSet<T> = HashSet.create()
 
   // O(N^2)
-  for (item in actual) {
+  for (node in actual) {
 
     // predecessors of item exist in cumulative predecessors: O(N)
-    (graph.nodeOf(item)?.predecessors ?: Set.empty())
+    (graph.nodeOf(node.item)?.predecessors ?: Set.empty())
       .map { it.item }
       .forEach { assertThat(cumulativePredecessors).contains(it) }
 
     // successors of item do NOT exist in cumulative predecessors yet: O(N)
-    (graph.nodeOf(item)?.successors ?: Set.empty())
+    (graph.nodeOf(node.item)?.successors ?: Set.empty())
       .map { it.item }
       .forEach { assertThat(cumulativePredecessors).doesNotContain(it) }
 
-    cumulativePredecessors.add(item)
+    cumulativePredecessors.add(node.item)
   }
 
   // all nodes in graph exist in the result: O(N)
