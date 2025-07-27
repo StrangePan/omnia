@@ -81,6 +81,7 @@ kotlin {
   compilerOptions {
     // Common compiler options applied to all Kotlin source sets
     freeCompilerArgs.add("-Xexpect-actual-classes")
+    freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
   }
 }
 
