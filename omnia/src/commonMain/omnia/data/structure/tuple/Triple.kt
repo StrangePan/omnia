@@ -27,6 +27,10 @@ open class Triple<A, B, C>(
     return "Tuple{${first},${second},${third}}"
   }
 
+  fun <R> map(mapper: (A, B, C) -> R): R {
+    return mapper(first, second, third)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Triple<R, B, C> {
     return Tuple.of(mapper(first), second, third)
   }

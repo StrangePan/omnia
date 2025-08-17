@@ -53,6 +53,10 @@ open class Decuple<A, B, C, D, E, F, G, H, I, J>(
       "${seventh},${eighth},${ninth},${tenth}}"
   }
 
+  fun <R> map(mapper: (A, B, C, D, E, F, G, H, I, J) -> R): R {
+    return mapper(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Decuple<R, B, C, D, E, F, G, H, I, J> {
     return Tuple.of(
       mapper(first),

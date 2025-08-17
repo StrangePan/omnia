@@ -19,6 +19,10 @@ open class Couple<A, B>(override val first: A, override val second: B):
 
   override fun toString() = "Tuple{${first},${second}}"
 
+  fun <R> map(mapper: (A, B) -> R): R {
+    return mapper(first, second)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Couple<R, B> {
     return Tuple.of(mapper(first), second)
   }
