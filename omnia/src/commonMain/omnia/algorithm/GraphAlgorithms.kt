@@ -265,6 +265,15 @@ object GraphAlgorithms {
    *
    * @param nodes The nodes to start the search at. These will be included in the result.
    */
+  fun <T: DirectedNode<*>> findAllPredecessorsOf(node: T): ImmutableSet<T> {
+    return findAllPredecessorsOf(ImmutableSet.of(node)) { true }
+  }
+
+  /**
+   * Finds and returns all transitive predecessors of the specified nodes, including the nodes themselves.
+   *
+   * @param nodes The nodes to start the search at. These will be included in the result.
+   */
   fun <T: DirectedNode<*>> findAllPredecessorsOf(nodes: Iterable<T>): ImmutableSet<T> {
     return findAllPredecessorsOf(nodes) { true }
   }
@@ -303,6 +312,15 @@ object GraphAlgorithms {
       }
     }
     return ImmutableSet.copyOf(resultNodes)
+  }
+
+  /**
+   * Finds all transitive successors of the specified nodes, including the nodes themselves.
+   *
+   * @param nodes The nodes to start the search at. These will be included in the result.
+   */
+  fun <T: DirectedNode<*>> findAllSuccessorsOf(node: T): ImmutableSet<T> {
+    return findAllSuccessorsOf(ImmutableSet.of(node)) { true }
   }
 
   /**
