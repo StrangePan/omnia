@@ -21,6 +21,10 @@ fun <T, C : Collection<T>> Assertion<C>.isEmpty(): Assertion<C> {
 }
 
 fun <T, C : Collection<T>> Assertion<C>.contains(vararg expected: T): Assertion<C> {
+  return containsContentsOf(expected.toList())
+}
+
+fun <T, C : Collection<T>> Assertion<C>.containsContentsOf(expected: Iterable<T>): Assertion<C> {
   for (item in expected) {
     assertContains(actual, item, message)
   }
@@ -28,8 +32,12 @@ fun <T, C : Collection<T>> Assertion<C>.contains(vararg expected: T): Assertion<
 }
 
 fun <T, C : Collection<T>> Assertion<C>.containsExactly(vararg expected: T): Assertion<C> {
+  return containsExactlyContentsOf(expected.toList())
+}
+
+fun <T, C : Collection<T>, > Assertion<C>.containsExactlyContentsOf(expected: Iterable<T>): Assertion<C> {
   assertEquals(expected.count(), actual.count(), message)
-  return contains(*expected)
+  return containsContentsOf(expected)
 }
 
 fun <T, C : Collection<T>> Assertion<C>.doesNotContain(vararg expected: T): Assertion<C> {
