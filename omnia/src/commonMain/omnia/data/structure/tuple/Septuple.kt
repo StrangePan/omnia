@@ -35,6 +35,10 @@ open class Septuple<A, B, C, D, E, F, G>(
     return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth},${seventh}}"
   }
 
+  fun <R> map(mapper: (A, B, C, D, E, F, G) -> R): R {
+    return mapper(first, second, third, fourth, fifth, sixth, seventh)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Septuple<R, B, C, D, E, F, G> {
     return Tuple.of(mapper(first), second, third, fourth, fifth, sixth, seventh)
   }

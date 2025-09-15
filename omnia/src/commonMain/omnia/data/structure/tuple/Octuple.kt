@@ -37,6 +37,10 @@ open class Octuple<A, B, C, D, E, F, G, H>(
     return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth},${seventh},${eighth}}"
   }
 
+  fun <R> map(mapper: (A, B, C, D, E, F, G, H) -> R): R {
+    return mapper(first, second, third, fourth, fifth, sixth, seventh, eighth)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Octuple<R, B, C, D, E, F, G, H> {
     return Tuple.of(
         mapper(first),

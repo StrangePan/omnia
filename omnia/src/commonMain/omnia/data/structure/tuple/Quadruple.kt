@@ -29,6 +29,10 @@ open class Quadruple<A, B, C, D>(
     return "Tuple{${first},${second},${third},${fourth}}"
   }
 
+  fun <R> map(mapper: (A, B, C, D) -> R): R {
+    return mapper(first, second, third, fourth)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Quadruple<R, B, C, D> {
     return Tuple.of(mapper(first), second, third, fourth)
   }

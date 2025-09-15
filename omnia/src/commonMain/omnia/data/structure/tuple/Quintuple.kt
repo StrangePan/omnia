@@ -31,6 +31,10 @@ open class Quintuple<A, B, C, D, E>(
     return "Tuple{${first},${second},${third},${fourth},${fifth}}"
   }
 
+  fun <R> map(mapper: (A, B, C, D, E) -> R): R {
+    return mapper(first, second, third, fourth, fifth)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Quintuple<R, B, C, D, E> {
     return Tuple.of(mapper(first), second, third, fourth, fifth)
   }

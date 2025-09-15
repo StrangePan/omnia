@@ -33,6 +33,10 @@ open class Sextuple<A, B, C, D, E, F>(
     return "Tuple{${first},${second},${third},${fourth},${fifth},${sixth}}"
   }
 
+  fun <R> map(mapper: (A, B, C, D, E, F) -> R): R {
+    return mapper(first, second, third, fourth, fifth, sixth)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Sextuple<R, B, C, D, E, F> {
     return Tuple.of(mapper(first), second, third, fourth, fifth, sixth)
   }

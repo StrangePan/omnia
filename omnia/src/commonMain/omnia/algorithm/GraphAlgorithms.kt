@@ -1,5 +1,7 @@
 package omnia.algorithm
 
+import omnia.algorithm.GraphAlgorithms.findAnyCycle
+import omnia.algorithm.GraphAlgorithms.findOtherNodesInSubgraphContaining
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.DirectedGraph.DirectedNode
 import omnia.data.structure.Graph
@@ -232,12 +234,21 @@ object GraphAlgorithms {
   }
 
   /**
-   *  Isolates a specific subgraph in a larger graph by starting at the provided node and traversing
+   * Isolates a specific subgraph in a larger graph by starting at the provided node and traversing
    * all neighbors and trimming all others. Returns the set of nodes contained in the subgraph, but
    * does not return the subgraph itself. Callers need to know how to assemble a graph from the
    * returned results.
+   *
+   * @param source The first node to start building the subgraph from. Does not affect the order of
+   *   the returned result; any node in the subgraph will do, it's just needed to seed the search.
+   * @param filter The filter to use when determining if a node is to be included in the subgraph.
+   *   Nodes that do not pass the filter will not be included in the result. If [source] does not
+   *   pass the filter, then this function will immediately return an empty set.
    */
-  fun <T: Node<*>> findOtherNodesInSubgraphContaining(source: T): ImmutableSet<T> {
+  fun <T: Node<*>> findOtherNodesInSubgraphContaining(source: T, filter: (T) -> Boolean = { true }): ImmutableSet<T> {
+    if (!filter(source)) {
+      return ImmutableSet.empty()
+    }
     val set: MutableSet<T> = HashSet.create()
     val queue: Queue<T> = ArrayQueue.create()
     queue.enqueue(source)
@@ -249,6 +260,10 @@ object GraphAlgorithms {
       }
       set.add(node)
       for (neighbor in node.neighbors) {
+        @Suppress("UNCHECKED_CAST")
+        if (!filter(neighbor as T)) {
+          continue
+        }
         if (set.containsUnknownTyped(neighbor)) {
           continue
         }

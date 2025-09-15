@@ -50,6 +50,10 @@ open class Nonuple<A, B, C, D, E, F, G, H, I>(
       "${seventh},${eighth},${ninth}}"
   }
 
+  fun <R> map(mapper: (A, B, C, D, E, F, G, H, I) -> R): R {
+    return mapper(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
+  }
+
   override fun <R> mapFirst(mapper: (A) -> R): Nonuple<R, B, C, D, E, F, G, H, I> {
     return Tuple.of(
       mapper(first),
