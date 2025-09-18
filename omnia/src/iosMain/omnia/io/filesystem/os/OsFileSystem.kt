@@ -4,7 +4,9 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import omnia.data.cache.Memoized.Companion.memoize
 import omnia.io.filesystem.AbsolutePath
+import omnia.io.filesystem.DirectoryCreationException
 import omnia.io.filesystem.FileAlreadyExistsException
+import omnia.io.filesystem.FileCreationException
 import omnia.io.filesystem.FileSystem
 import omnia.io.filesystem.asAbsolutePath
 import platform.Foundation.NSDocumentDirectory
@@ -62,7 +64,9 @@ actual class OsFileSystem private constructor(): FileSystem {
         getFileSystemObject(it)?.let { fsObject -> throw FileAlreadyExistsException(fsObject) }
       }
       .also {
-        assert(NSFileManager.defaultManager.createDirectoryAtPath(it.toString(), emptyMap<Any?, Any?>()))
+        if (!NSFileManager.defaultManager.createDirectoryAtPath(it.toString(), emptyMap<Any?, Any?>())) {
+          throw DirectoryCreationException(path)
+        }
       }
       .let { OsDirectory(this, it) }
 
@@ -72,7 +76,9 @@ actual class OsFileSystem private constructor(): FileSystem {
         getFileSystemObject(it)?.let { fsObject -> throw FileAlreadyExistsException(fsObject) }
       }
       .also {
-        assert(NSFileManager.defaultManager.createFileAtPath(it.toString(), null, emptyMap<Any?, Any?>()))
+        if (!NSFileManager.defaultManager.createFileAtPath(it.toString(), null, emptyMap<Any?, Any?>())) {
+          throw FileCreationException(path)
+        }
       }
       .let { OsFile(this, it) }
 
