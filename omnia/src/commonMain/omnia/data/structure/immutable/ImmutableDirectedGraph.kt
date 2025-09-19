@@ -4,7 +4,6 @@ import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.structure.DirectedGraph
 import omnia.data.structure.Map
 import omnia.data.structure.Set
-import omnia.data.structure.immutable.ImmutableMap.Companion.toImmutableMap
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.mutable.HashMap
 import omnia.data.structure.mutable.HashMap.Companion.toHashMap

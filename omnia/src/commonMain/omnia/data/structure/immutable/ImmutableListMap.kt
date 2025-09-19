@@ -7,7 +7,6 @@ import omnia.data.structure.ListMap
 import omnia.data.structure.ListSet
 import omnia.data.structure.Map
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
-import omnia.data.structure.immutable.ImmutableMap.Companion.toImmutableMap
 import omnia.data.structure.tuple.Couple
 import omnia.data.structure.tuple.Tuple
 
@@ -115,35 +114,80 @@ class ImmutableListMap<K: Any, V: Any> private constructor(
     override fun toString() = "[$index] $key => $value"
   }
 
+  fun toBuilder() = ImmutableListMap.builder<K, V>().addAll(this.map { Tuple.of(it.key, it.value) })
+
   class Builder<K: Any, V: Any> {
-    class InnerBuilder<K: Any, V: Any>:
-      AbstractBuilder<Couple<K, V>, InnerBuilder<K, V>, kotlin.collections.List<Couple<K, V>>>() {
+    val list = kotlin.collections.ArrayList<K>()
+    val map = kotlin.collections.HashMap<K, V>()
+    val keyIndex = kotlin.collections.HashMap<K, Int>()
 
-      override fun build(): kotlin.collections.List<Couple<K, V>> = elements.distinctBy { it.first }
-
-      override val self: InnerBuilder<K, V> get() = this
-    }
-
-    val innerBuilder = InnerBuilder<K, V>()
-
-    fun putMapping(key: K, value: V): Builder<K, V> {
-      innerBuilder.add(Tuple.of(key, value))
+    fun addAll(iterable: Iterable<Couple<K, V>>): Builder<K, V> {
+      iterable.forEach { addMapping(it.first, it.second) }
       return this
     }
 
-    fun putAll(otherMap: Map<out K, out V>): Builder<K, V> {
-      otherMap.entries.forEach { putMapping(it.key, it.value) }
+    fun addMapping(key: K, value: V): Builder<K, V> {
+      remove(key)
+      map.put(key, value)
+      list.add(key)
+      keyIndex[key] = list.size - 1
+      check(list.size == map.size)
+      check(list.size == keyIndex.size)
       return this
     }
 
-    fun putAll(iterable: Iterable<Map.Entry<K, V>>): Builder<K, V> {
-      iterable.forEach { e: Map.Entry<K, V> -> putMapping(e.key, e.value) }
+    fun addMappingIfAbsent(key: K, value: V): Builder<K, V> {
+      return if (!map.contains(key)) {
+        addMapping(key, value)
+      } else {
+        this
+      }
+    }
+
+    fun insertMappingAt(index: Int, key: K, value: V): Builder<K, V> {
+      if (keyIndex[key] == index) {
+        return replaceMappingIfPresent(key, value)
+      }
+      remove(key)
+      map[key] = value
+      list.add(index, key)
+      keyIndex[key] = index
+      (index + 1 ..< list.size).forEach { keyIndex[list[it]] = it }
+      check(list.size == map.size)
+      check(list.size == keyIndex.size)
+      return this
+    }
+
+    fun addOrReplaceMapping(key: K, value: V): Builder<K, V> {
+      return if (map.contains(key)) {
+        replaceMappingIfPresent(key, value)
+      } else {
+        addMapping(key, value)
+      }
+    }
+
+    fun replaceMappingIfPresent(key: K, value: V): Builder<K, V> {
+      if (map.contains(key)) {
+        check(list[keyIndex[key]!!] == key)
+        map[key] = value
+      }
+      return this
+    }
+
+    fun remove(key: K): Builder<K, V> {
+      if (map.remove(key) != null) {
+        val oldIndex = keyIndex.remove(key)!!
+        check(list[oldIndex] == key)
+        (oldIndex + 1..<list.size).forEach { keyIndex[list[it]] = it }
+        list.removeAt(oldIndex)
+        check(list.size == map.size)
+        check(list.size == keyIndex.size)
+      }
       return this
     }
 
     fun build(): ImmutableListMap<K, V> =
-      innerBuilder.build()
-        .let { list -> ImmutableListMap(list.map{ it.first }.toImmutableList(), list.toImmutableMap()) }
+      ImmutableListMap(list.toImmutableList(), map.toImmutableMap())
   }
 
   companion object {
@@ -165,11 +209,11 @@ class ImmutableListMap<K: Any, V: Any> private constructor(
       }
 
     fun <K: Any, V: Any> copyOf(iterable: Iterable<Map.Entry<K, V>>): ImmutableListMap<K, V> =
-      builder<K, V>().putAll(iterable).build()
+      builder<K, V>().addAll(iterable.map { Tuple.of(it.key, it.value) }).build()
 
     fun <K: Any, V: Any> builder() = Builder<K, V>()
   }
 }
 
-fun <K: Any, V: Any> Iterable<Map.Entry<K, V>>.toImmutableListMap() =
-  ImmutableListMap.builder<K, V>().putAll(this).build()
+fun <K: Any, V: Any> Iterable<Couple<K, V>>.toImmutableListMap() =
+  ImmutableListMap.builder<K, V>().addAll(this).build()

@@ -10,6 +10,7 @@ import omnia.data.structure.Map
 import omnia.data.structure.Set
 import omnia.data.structure.immutable.ImmutableSet.Companion.toImmutableSet
 import omnia.data.structure.tuple.Couple
+import omnia.data.structure.tuple.Tuple
 
 class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
@@ -37,8 +38,8 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       return this
     }
 
-    fun putAll(iterable: Iterable<Map.Entry<K, V>>): Builder<K, V> {
-      iterable.forEach { e: Map.Entry<K, V> -> putMapping(e.key, e.value) }
+    fun putAll(iterable: Iterable<Couple<out K, out V>>): Builder<K, V> {
+      iterable.forEach { putMapping(it.first, it.second) }
       return this
     }
 
@@ -173,20 +174,7 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       }
 
     fun <K : Any, V : Any> copyOf(iterable: Iterable<Map.Entry<K, V>>): ImmutableMap<K, V> {
-      return builder<K, V>().putAll(iterable).build()
-    }
-
-    fun <K : Any, V : Any, E> Iterable<E>.toImmutableMap(
-      keyMapper: (E) -> K,
-      valueMapper: (E) -> V
-    ): ImmutableMap<K, V> {
-      val builder = builder<K, V>()
-      this.forEach { builder.putMapping(keyMapper(it), valueMapper(it)) }
-      return builder.build()
-    }
-
-    fun <K : Any, V : Any> Iterable<Couple<out K, out V>>.toImmutableMap(): ImmutableMap<K, V> {
-      return this.toImmutableMap({ it.first }, { it.second })
+      return builder<K, V>().putAll(iterable.map { Tuple.of(it.key, it.value) }).build()
     }
 
     fun <K : Any, V : Any> builder(): Builder<K, V> {
@@ -198,3 +186,13 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
     }
   }
 }
+
+fun <K: Any, V: Any> KotlinMap<K, V>.toImmutableMap() =
+  ImmutableMap.copyOf(this)
+
+fun <K : Any, V : Any, E> Iterable<E>.toImmutableMap(keyMapper: (E) -> K, valueMapper: (E) -> V) =
+  ImmutableMap.builder<K, V>().putAll(this.map { Tuple.of(keyMapper(it), valueMapper(it)) }).build()
+
+fun <K : Any, V : Any> Iterable<Couple<out K, out V>>.toImmutableMap() =
+  ImmutableMap.builder<K, V>().putAll(this).build()
+
