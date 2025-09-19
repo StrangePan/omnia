@@ -5,6 +5,7 @@ import omnia.data.iterate.IntegerRangeIterator
 import omnia.data.iterate.MappingIterator
 import omnia.data.structure.IntRange
 import omnia.data.structure.List
+import omnia.data.structure.immutable.ImmutableList.Companion.empty
 
 class ImmutableList<E : Any> : List<E> {
 
@@ -87,6 +88,9 @@ class ImmutableList<E : Any> : List<E> {
   override val count get() = elements.size
 
   override fun equals(other: Any?): Boolean {
+    if (other === this) {
+      return true
+    }
     if (other !is ImmutableList<*>) {
       return false
     }
@@ -150,7 +154,7 @@ class ImmutableList<E : Any> : List<E> {
      * item must be provided; use [empty] to get an [ImmutableList] with no contents.
      */
     fun <E : Any> of(firstItem: E, vararg items: E): ImmutableList<E> {
-      return builder<E>().add(firstItem).addAll(*items).build()
+      return builder<E>().addAll(firstItem, *items).build()
     }
 
     /**
@@ -161,7 +165,9 @@ class ImmutableList<E : Any> : List<E> {
     fun <E : Any> copyOf(iterable: Iterable<E>): ImmutableList<E> {
       return if (iterable is ImmutableList<*>) {
         iterable as ImmutableList<E>
-      } else builder<E>().addAll(iterable).build()
+      } else {
+        builder<E>().addAll(iterable).build()
+      }
     }
 
     /** Copies the items from the provided array into a new [ImmutableList] instance.  */

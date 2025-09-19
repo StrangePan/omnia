@@ -4,6 +4,7 @@ import kotlin.collections.HashMap as KotlinHashMap
 import kotlin.collections.Map as KotlinMap
 import omnia.algorithm.HashAlgorithms.Companion.hash
 import omnia.data.cache.Memoized.Companion.memoize
+import omnia.data.iterate.map
 import omnia.data.structure.Collection
 import omnia.data.structure.Map
 import omnia.data.structure.Set
@@ -19,7 +20,8 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
 
   class Builder<K : Any, V : Any> {
 
-    val backingMap: MutableMap<K, V> = KotlinHashMap()
+    internal val backingMap: MutableMap<K, V> = KotlinHashMap()
+
     fun putMapping(key: K, value: V): Builder<K, V> {
       backingMap[key] = value
       return this
@@ -72,43 +74,21 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       return Collection.masking(backingMap.values)
     }
 
-  override val entries: ImmutableSet<Map.Entry<K, V>>
-    get() {
-      class Entry(private val backingEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
+  override val entries: Set<Map.Entry<K, V>> get() =
+    object: Set<Map.Entry<K, V>> {
+      override fun containsUnknownTyped(item: Any?) =
+        item is ImmutableMap.Entry<*, *> && backingMap[item.key]?.let { item.value == it } ?: false
 
-        override val key: K
-          get() {
-            return backingEntry.key
-          }
+      override val count get() = backingMap.size
 
-        override val value: V
-          get() {
-            return backingEntry.value
-          }
-
-        override fun equals(other: Any?): Boolean {
-          if (other === this) {
-            return true
-          }
-          if (other !is Map.Entry<*, *>) {
-            return false
-          }
-          return (key == other.key
-              && value == other.value)
-        }
-
-        override fun hashCode() = hash(key, value)
-
-        override fun toString(): String {
-          return "$key => $value"
-        }
-      }
-      return backingMap.entries.map { Entry(it) }.toImmutableSet()
+      override fun iterator() = backingMap.iterator().map(::Entry)
     }
 
   override fun valueOfUnknownTyped(key: Any?): V? {
     return backingMap[key]
   }
+
+  override fun keysOf(value: V): ImmutableSet<K> = keysOfUnknownTyped(value)
 
   override fun keysOfUnknownTyped(value: Any?): ImmutableSet<K> {
     return backingMap.entries.filter { it.value == value }.map { it.key }.toImmutableSet()
@@ -147,7 +127,26 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
   }
 
   override fun toString(): String {
-    return "${this::class.simpleName}[${entries.joinToString { "{$it}" }}]"
+    return "ImmutableMap(${backingMap.size})[${entries.joinToString { "{$it}" }}]"
+  }
+
+  private class Entry<K: Any, V: Any>(private val backingEntry: MutableMap.MutableEntry<K, V>) : Map.Entry<K, V> {
+
+    override val key: K get() = backingEntry.key
+
+    override val value: V get() = backingEntry.value
+
+    override fun equals(other: Any?) =
+      other === this
+        || other is Entry<*, *>
+          && other.key == key
+          && other.value == value
+
+    override fun hashCode() = hash(key, value)
+
+    override fun toString(): String {
+      return "$key => $value"
+    }
   }
 
   companion object {
@@ -159,20 +158,19 @@ class ImmutableMap<K : Any, V : Any> : Map<K, V> {
       return EMPTY_IMMUTABLE_MAP as ImmutableMap<K, V>
     }
 
-    fun <K : Any, V : Any> of(key: K, value: V): ImmutableMap<K, V> {
-      return ImmutableMap(mapOf(Pair(key, value)))
-    }
+    fun <K : Any, V : Any> of(key: K, value: V): ImmutableMap<K, V> =
+      ImmutableMap(mapOf(Pair(key, value)))
 
-    fun <K : Any, V : Any> copyOf(otherMap: KotlinMap<out K, V>): ImmutableMap<K, V> {
-      return copyOf(Map.masking(otherMap))
-    }
+    fun <K : Any, V : Any> copyOf(otherMap: KotlinMap<out K, V>): ImmutableMap<K, V> =
+      copyOf(Map.masking(otherMap))
 
-    fun <K : Any, V : Any> copyOf(otherMap: Map<out K, out V>): ImmutableMap<K, V> {
-      return if (otherMap is ImmutableMap<*, *>) {
+    fun <K : Any, V : Any> copyOf(otherMap: Map<out K, out V>): ImmutableMap<K, V> =
+      if (otherMap is ImmutableMap<*, *>) {
         @Suppress("UNCHECKED_CAST")
         otherMap as ImmutableMap<K, V>
-      } else builder<K, V>().putAll(otherMap).build()
-    }
+      } else {
+        builder<K, V>().putAll(otherMap).build()
+      }
 
     fun <K : Any, V : Any> copyOf(iterable: Iterable<Map.Entry<K, V>>): ImmutableMap<K, V> {
       return builder<K, V>().putAll(iterable).build()
