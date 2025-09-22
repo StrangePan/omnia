@@ -2,13 +2,11 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
   kotlin("multiplatform")
-  id("com.android.library")
 }
 
 kotlin {
   jvmToolchain(22)
   jvm()
-  androidTarget()
   iosX64()
   iosArm64()
   iosSimulatorArm64()
@@ -45,10 +43,6 @@ kotlin {
         implementation(kotlin("test-junit"))
       }
     }
-    val androidMain by getting {
-      kotlin.srcDir("src/androidMain")
-      dependsOn(javaMain)
-    }
     val iosMain by creating {
       kotlin.srcDir("src/iosMain")
       dependsOn(commonMain)
@@ -82,18 +76,5 @@ kotlin {
     // Common compiler options applied to all Kotlin source sets
     freeCompilerArgs.add("-Xexpect-actual-classes")
     freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
-  }
-}
-
-android {
-  namespace = "me.strangepan.omnia"
-  compileSdk = 33
-  sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-  defaultConfig {
-    minSdk = 26
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
   }
 }
