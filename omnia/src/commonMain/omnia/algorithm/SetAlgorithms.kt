@@ -26,9 +26,7 @@ object SetAlgorithms {
 
   /**
    * Computes the mathematical intersection of two sets. Returns a new set containing all of the
-   * items present in set [a] and all of the items present in set [b] *except* for
-   * items present in *both* sets.
-   *
+   * items present in both set [a] and in set [b].
    *
    * This operation is commutative; the order of parameters will not affect the result.
    *
