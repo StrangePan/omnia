@@ -67,3 +67,17 @@ object SetAlgorithms {
       a.filterNot(b::containsUnknownTyped).toImmutableSet()
     }
 }
+
+/** Returns true if this set contains ALL the items in the other set. Returns true if the other set is empty. */
+fun <T: Any> Set<T>.containsAllIn(other: Set<*>): Boolean {
+  if (this === other) {
+    return true
+  }
+  if (!other.isPopulated) {
+    return true
+  }
+  if (this.count < other.count) {
+    return false
+  }
+  return other.all(this::containsUnknownTyped)
+}
