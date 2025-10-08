@@ -22,21 +22,27 @@ interface FileSystem {
   /** Searches the file system for a file system object at the given path and returns it. */
   fun getObjectAt(path: AbsolutePath): FileSystemObject
 
-  /** Searches the file system for a directory at the given path and returns it, or null if it doesn't exist. */
+  /**
+   * Searches the file system for a directory at the given path and returns it.
+   * @throws FileNotFoundException if the directory does not exist.
+   */
   fun getDirectoryAt(path: AbsolutePath): Directory
 
-  /** Searches the file system for a file at the given path and returns it, or null if it doesn't exist. */
+  /**
+   * Searches the file system for a file at the given path and returns it.
+   * @throws FileNotFoundException if the file does not exist.
+   */
   fun getFileAt(path: AbsolutePath): File
 
   /**
-   * Create a directory at the given path if the parent directory already exists. If the directory already exists,
-   * returns the existing directory instead of creating a new one.
+   * Create a directory at the given path if the parent directory already exists.
+   * @throws FileAlreadyExistsException if the directory already exists.
    */
   fun createDirectoryAt(path: AbsolutePath): Directory
 
   /**
-   * Create a regular file at the given path if the parent directory already exists. If the file already exists,
-   * returns the existing file instead of creating a new one.
+   * Create a regular file at the given path if the parent directory already exists.
+   * @throws FileAlreadyExistsException if the file already exists.
    */
   fun createFileAt(path: AbsolutePath): File
 }

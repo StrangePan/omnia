@@ -27,9 +27,9 @@ class SandboxFileSystem(
   override val workingDirectory: SandboxDirectory =
     SandboxDirectory(this, baseWorkingDirectory)
 
-  internal fun toSandboxPath(basePath: AbsolutePath): AbsolutePath {
-    require(this.baseRootPath.contains(basePath))
-    return AbsolutePath(basePath.components.drop(baseRootPath.components.count).toImmutableList())
+  internal fun toSandboxPath(path: AbsolutePath): AbsolutePath {
+    require(baseRootPath.contains(path))
+    return AbsolutePath(path.components.drop(baseRootPath.components.count).toImmutableList())
   }
 
   override fun objectExistsAt(path: AbsolutePath): Boolean =

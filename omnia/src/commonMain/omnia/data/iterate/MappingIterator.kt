@@ -1,6 +1,5 @@
 package omnia.data.iterate
 
-
 /** An [Iterator] that takes a source iterator and maps its elements to a new value.  */
 class MappingIterator<T, R>(
     private val source: Iterator<T>,
@@ -15,3 +14,5 @@ class MappingIterator<T, R>(
     return mapper(source.next())
   }
 }
+
+fun <T, R> Iterator<T>.map(mapper: (T) -> R) = MappingIterator(this, mapper)

@@ -3,13 +3,12 @@ package omnia.io.filesystem.os
 import kotlin.experimental.ExperimentalNativeApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import omnia.data.cache.Memoized.Companion.memoize
-import omnia.io.IOException
 import omnia.io.filesystem.AbsolutePath
+import omnia.io.filesystem.DirectoryCreationException
 import omnia.io.filesystem.FileAlreadyExistsException
-import omnia.io.filesystem.FileNotFoundException
+import omnia.io.filesystem.FileCreationException
 import omnia.io.filesystem.FileSystem
 import omnia.io.filesystem.asAbsolutePath
-import platform.Foundation.NSBundle
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
@@ -48,19 +47,6 @@ actual class OsFileSystem private constructor(): FileSystem {
   actual override fun getFileAt(path: AbsolutePath) =
     OsFile(this, path)
 
-  private fun getResourcePath(path: AbsolutePath) =
-    (NSBundle.mainBundle.resourcePath ?: throw IOException("No resource path defined in main bundle"))
-      .asAbsolutePath() + path.removePrefix(AbsolutePath.empty())
-
-  actual fun getResourceFileAt(path: AbsolutePath): OsFile =
-    OsFile(this, getResourcePath(path))
-
-  actual fun getResourceDirectoryAt(path: AbsolutePath): OsDirectory =
-    OsDirectory(this, getResourcePath(path))
-
-  actual fun getResourceObjectAt(path: AbsolutePath): OsFileSystemObject =
-    getFileSystemObject(getResourcePath(path)) ?: throw FileNotFoundException(getResourcePath(path).toString())
-
   internal fun getFileSystemObject(path: AbsolutePath): OsFileSystemObject? =
     getFileInfo(path).let { info ->
       if (!info.exists) {
@@ -78,7 +64,9 @@ actual class OsFileSystem private constructor(): FileSystem {
         getFileSystemObject(it)?.let { fsObject -> throw FileAlreadyExistsException(fsObject) }
       }
       .also {
-        assert(NSFileManager.defaultManager.createDirectoryAtPath(it.toString(), emptyMap<Any?, Any?>()))
+        if (!NSFileManager.defaultManager.createDirectoryAtPath(it.toString(), emptyMap<Any?, Any?>())) {
+          throw DirectoryCreationException(path)
+        }
       }
       .let { OsDirectory(this, it) }
 
@@ -88,7 +76,9 @@ actual class OsFileSystem private constructor(): FileSystem {
         getFileSystemObject(it)?.let { fsObject -> throw FileAlreadyExistsException(fsObject) }
       }
       .also {
-        assert(NSFileManager.defaultManager.createFileAtPath(it.toString(), null, emptyMap<Any?, Any?>()))
+        if (!NSFileManager.defaultManager.createFileAtPath(it.toString(), null, emptyMap<Any?, Any?>())) {
+          throw FileCreationException(path)
+        }
       }
       .let { OsFile(this, it) }
 

@@ -21,12 +21,6 @@ expect class OsFileSystem: FileSystem {
 
   override fun getFileAt(path: AbsolutePath): OsFile
 
-  fun getResourceFileAt(path: AbsolutePath): OsFile
-
-  fun getResourceDirectoryAt(path: AbsolutePath): OsDirectory
-
-  fun getResourceObjectAt(path: AbsolutePath): OsFileSystemObject
-
   override fun createDirectoryAt(path: AbsolutePath): OsDirectory
 
   override fun createFileAt(path: AbsolutePath): OsFile

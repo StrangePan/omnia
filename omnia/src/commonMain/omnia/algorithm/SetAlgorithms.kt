@@ -15,25 +15,33 @@ object SetAlgorithms {
    *
    * @return a new set representing the union of sets [a] and [b]
    */
-  fun <T : Any> unionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
-    return ImmutableSet.builder<T>().addAll(a).addAll(b).build()
-  }
+  fun <T : Any> unionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> =
+    if (!a.isPopulated) {
+      ImmutableSet.copyOf(b)
+    } else if (!b.isPopulated) {
+      ImmutableSet.copyOf(a)
+    } else {
+      ImmutableSet.builder<T>().addAll(a).addAll(b).build()
+    }
 
   /**
    * Computes the mathematical intersection of two sets. Returns a new set containing all of the
-   * items present in set [a] and all of the items present in set [b] *except* for
-   * items present in *both* sets.
-   *
+   * items present in both set [a] and in set [b].
    *
    * This operation is commutative; the order of parameters will not affect the result.
    *
    * @return a new set representing the intersection of sets [a] and [b]
    */
-  fun <T : Any> intersectionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> {
-    val smaller = if (a.count < b.count) a else b
-    val larger = if (smaller !== a) a else b
-    return smaller.filter(larger::containsUnknownTyped).toImmutableSet()
-  }
+  fun <T : Any> intersectionOf(a: Set<out T>, b: Set<out T>): ImmutableSet<T> =
+    if (!a.isPopulated) {
+      ImmutableSet.empty()
+    } else if (!b.isPopulated) {
+      ImmutableSet.empty()
+    } else {
+      val smaller = if (a.count < b.count) a else b
+      val larger = if (smaller !== a) a else b
+      smaller.filter(larger::containsUnknownTyped).toImmutableSet()
+    }
 
   /**
    * Returns a new set that contains all of the items present in set [a] except for the items
@@ -50,24 +58,26 @@ object SetAlgorithms {
    * @return a new set containing the items from set [a] except for the items contained in
    * set [b]
    */
-  fun <T : Any> differenceBetween(a: Set<out T>, b: Set<*>): ImmutableSet<T> {
-    return a.filterNot(b::containsUnknownTyped).toImmutableSet()
-  }
+  fun <T : Any> differenceBetween(a: Set<out T>, b: Set<*>): ImmutableSet<T> =
+    if (!a.isPopulated) {
+      ImmutableSet.empty()
+    } else if (!b.isPopulated) {
+      ImmutableSet.copyOf(a)
+    } else {
+      a.filterNot(b::containsUnknownTyped).toImmutableSet()
+    }
+}
 
-  /**
-   * Computes whether or not two sets are mathematically disjoint. Two sets are disjoint if they
-   * share no common items. In other words, In other words, this function returns false if any
-   * item in set [a] is also present in set [b]. Empty sets are considered disjoint,
-   * despite also being considered equal.
-   *
-   *
-   * This operation is commutative; the order of parameters will not affect the result.
-   *
-   * @return true if the sets are disjoint, false if any item is present in both.
-   */
-  fun areDisjoint(a: Set<*>, b: Set<*>): Boolean {
-    val smaller = if (a.count < b.count) a else b
-    val larger = if (smaller !== a) a else b
-    return smaller.any(larger::containsUnknownTyped)
+/** Returns true if this set contains ALL the items in the other set. Returns true if the other set is empty. */
+fun <T: Any> Set<T>.containsAllIn(other: Set<*>): Boolean {
+  if (this === other) {
+    return true
   }
+  if (!other.isPopulated) {
+    return true
+  }
+  if (this.count < other.count) {
+    return false
+  }
+  return other.all(this::containsUnknownTyped)
 }

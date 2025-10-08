@@ -48,28 +48,6 @@ actual class OsFileSystem private constructor(): FileSystem {
   actual override fun getFileAt(path: AbsolutePath) =
     OsFile(this, path.toString())
 
-  private fun getResourcePath(path: AbsolutePath) =
-    ClassLoader.getSystemResource(path.removePrefix(AbsolutePath.empty()).toString()).file
-
-  actual fun getResourceFileAt(path: AbsolutePath): OsFile =
-    OsFile(this, getResourcePath(path))
-
-  actual fun getResourceDirectoryAt(path: AbsolutePath): OsDirectory =
-    OsDirectory(this, getResourcePath(path))
-
-  actual fun getResourceObjectAt(path: AbsolutePath): OsFileSystemObject {
-    val resourcePath = getResourcePath(path)
-    return JavaFile(resourcePath).let { javaFile ->
-      if (javaFile.isDirectory) {
-        OsDirectory(this, resourcePath)
-      } else if (javaFile.isFile) {
-        OsFile(this, resourcePath)
-      } else {
-        throw FileNotFoundException(resourcePath)
-      }
-    }
-  }
-
   actual override fun createDirectoryAt(path: AbsolutePath): OsDirectory =
     createDirectory(JavaFile(path.toString()))
 

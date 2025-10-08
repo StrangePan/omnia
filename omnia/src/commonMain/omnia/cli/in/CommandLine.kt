@@ -4,11 +4,11 @@ import omnia.data.structure.List
 import omnia.data.structure.immutable.ImmutableList
 import omnia.data.structure.immutable.ImmutableList.Companion.toImmutableList
 import omnia.data.structure.immutable.ImmutableMap
-import omnia.data.structure.immutable.ImmutableMap.Companion.toImmutableMap
-import omnia.data.structure.mutable.MutableMap
+import omnia.data.structure.immutable.toImmutableMap
+import omnia.data.structure.mutable.ArrayList
 import omnia.data.structure.mutable.HashMap
 import omnia.data.structure.mutable.MutableList
-import omnia.data.structure.mutable.ArrayList
+import omnia.data.structure.mutable.MutableMap
 import omnia.data.structure.tuple.Couple
 import omnia.data.structure.tuple.Tuple
 

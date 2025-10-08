@@ -25,6 +25,7 @@ kotlin {
         implementation(project(":omnia-test"))
         api(libraries.reaktive.testing)
       }
+      resources.setSrcDirs(listOf("resources/commonTest"))
     }
     val javaMain by creating {
       kotlin.srcDir("src/javaMain")

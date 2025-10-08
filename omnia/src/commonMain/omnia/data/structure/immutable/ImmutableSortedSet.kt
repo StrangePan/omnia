@@ -1,12 +1,11 @@
 package omnia.data.structure.immutable
 
-import omnia.data.structure.Collection
 import omnia.data.structure.SortedSet
 import omnia.data.structure.mutable.SortedArraySet
 
 /** An immutable version of [SortedSet]. */
 class ImmutableSortedSet<E : Any>
-private constructor(comparator: Comparator<in E>, other: Collection<out E>) : SortedSet<E> {
+private constructor(comparator: Comparator<in E>, other: Iterable<E>) : SortedSet<E> {
 
   private val backingSet: SortedArraySet<E> = SortedArraySet.create(comparator)
 
@@ -56,11 +55,10 @@ private constructor(comparator: Comparator<in E>, other: Collection<out E>) : So
       return EMPTY_SET as ImmutableSortedSet<E>
     }
 
-    fun <E : Any> copyOf(
-      comparator: Comparator<in E>, other: Collection<out E>,
-    ): ImmutableSortedSet<E> {
-      return ImmutableSortedSet(comparator, other)
-    }
-  }
+    fun <E : Any> copyOf(comparator: Comparator<in E>, other: Iterable<E>): ImmutableSortedSet<E> =
+      ImmutableSortedSet(comparator, other)
 
+    fun <E : Comparable<E>> copyOf(other: Iterable<E>): ImmutableSortedSet<E> =
+      ImmutableSortedSet(Comparable<E>::compareTo, other)
+  }
 }
